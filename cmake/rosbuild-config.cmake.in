@@ -146,7 +146,7 @@ if (NOT @PACKAGE_NAME@_FOUND)
     endif()
   endfunction()
 
-  function(find_the_goods)
+  function(wgbuild_workspace)
     em_expand(
       @INFRA_INSTALL_DIR@/generate-context.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake/generate-context.py
