@@ -31,6 +31,7 @@ install(
   cmake/parse_arguments.cmake
   cmake/wg_python.cmake
   cmake/debian-util.cmake
+  cmake/empy_cmake.py
   cmake/safe_execute_process.cmake
 
   cmake/pkg-config.cmake.in

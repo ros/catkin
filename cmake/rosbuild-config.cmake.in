@@ -1,4 +1,5 @@
 if (NOT @PACKAGE_NAME@_FOUND)
+  set(@PACKAGE_NAME@_FOUND)
 
   include(@INFRA_INSTALL_DIR@/log.cmake)
   log(1 "rosbuild (@PKG_LOCATION@) (@INFRA_INSTALL_DIR@)")
@@ -87,6 +88,24 @@ if (NOT @PACKAGE_NAME@_FOUND)
       DESTINATION share/cmake/${PACKAGE_NAME}
       )
 
+    # install libraries
+    if(PACKAGE_LIBRARIES)
+      install(TARGETS ${PACKAGE_LIBRARIES}
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+	)
+    endif()
+
+    # install headers, only works for one dir right now
+    if(PACKAGE_INCLUDE_DIRS)
+      if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_INCLUDE_DIRS})
+	install(DIRECTORY ${PACKAGE_INCLUDE_DIRS}/
+	  DESTINATION include)
+      else()
+	message(WARNING "Include directory '${PACKAGE_INCLUDE_DIRS}' for ${PROJECT_NAME} not found")
+      endif()
+    endif()
+
     if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/debian)
       log(1 "${PROJECT_NAME}: Enabling deb target since directory 'debian' exists")
       safe_execute_process(COMMAND /bin/mkdir -p ${CMAKE_BINARY_DIR}/debs)
@@ -107,9 +126,8 @@ if (NOT @PACKAGE_NAME@_FOUND)
     configure_file(${CONTEXT_FILE_IN} ${CONTEXT_FILE_OUT})
     log(2 "Expanding ${EM_FILE_IN}")
     safe_execute_process(COMMAND
-      /usr/bin/env PYTHONPATH=${genmsg_PYTHONPATH}
       ${EMPY_EXECUTABLE}
-      -F ${rosbuild_SOURCE_DIR}/cmake/empy_cmake.py
+      -F @INFRA_INSTALL_DIR@/empy_cmake.py
       -F ${CONTEXT_FILE_OUT}
       -o ${CMAKE_FILE_OUT}
       ${EM_FILE_IN}
@@ -126,6 +144,14 @@ if (NOT @PACKAGE_NAME@_FOUND)
     else()
       log(1 "${ARG_PROGRAM_NAME} was found at ${${ARG_VAR}}")
     endif()
+  endfunction()
+
+  function(find_the_goods)
+    em_expand(
+      @INFRA_INSTALL_DIR@/generate-context.in
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake/generate-context.py
+      @INFRA_INSTALL_DIR@/generate.cmake.em
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake/generate.cmake)
   endfunction()
 
 endif()

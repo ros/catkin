@@ -16,7 +16,7 @@ if (NOT @PACKAGE_NAME@_FOUND)
       find_library(onelib ${lib}
         PATHS @PKG_LIB_PREFIX@/lib
         )
-      if(NOT ${onelib})
+      if(NOT onelib)
 	message(FATAL_ERROR "Lib ${lib} for @PACKAGE_NAME@ not installed properly")
       endif()
     endif()
