@@ -1,0 +1,12 @@
+Source: rosbuild
+Section: misc
+Priority: extra
+Maintainer: Troy Straszheim <straszheim@willowgarage.com>
+Build-Depends: debhelper (>= 7), cmake, gcc, make
+Homepage: http://www.ros.org
+
+Package: rosbuild
+Architecture: all
+Depends: ${misc:Depends} python-empy
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

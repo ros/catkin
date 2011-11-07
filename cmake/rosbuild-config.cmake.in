@@ -1,0 +1,131 @@
+if (NOT @PACKAGE_NAME@_FOUND)
+
+  include(@INFRA_INSTALL_DIR@/log.cmake)
+  log(1 "rosbuild (@PKG_LOCATION@) (@INFRA_INSTALL_DIR@)")
+
+  include(@INFRA_INSTALL_DIR@/log.cmake)
+  include(@INFRA_INSTALL_DIR@/assert.cmake)
+  include(@INFRA_INSTALL_DIR@/safe_execute_process.cmake)
+  include(@INFRA_INSTALL_DIR@/parse_arguments.cmake)
+  include(@INFRA_INSTALL_DIR@/wg_python.cmake)
+  include(@INFRA_INSTALL_DIR@/debian-util.cmake)
+
+  macro(install_cmake_infrastructure PACKAGE_NAME)
+    parse_arguments(PACKAGE
+      "VERSION;INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
+      ""
+      ${ARGN})
+
+    log(2 "install_cmake_infrastructure ${PACKAGE_NAME} at version ${PACKAGE_VERSION} in @CMAKE_INSTALL_PREFIX@")
+    set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
+    set(PACKAGE_NAME ${PACKAGE_NAME})
+    set(PACKAGE_VERSION ${PACKAGE_VERSION})
+    set(PACKAGE_INCLUDE_DIRS ${PACKAGE_INCLUDE_DIRS})
+    set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
+    set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
+    set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/cmake/${PACKAGE_NAME})
+    set(PACKAGE_MSG_DIRS ${PACKAGE_MSG_DIRS})
+    set(PACKAGE_PYTHONPATH ${PACKAGE_PYTHONPATH})
+
+
+    # in source
+    set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
+    set(PKG_LIB_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
+    set(PKG_MSG_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/msg)
+    set(PKG_CMAKE_DIR ${CMAKE_CURRENT_BINARY_DIR}/cmake)
+    set(PKG_CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+    set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts ${CMAKE_CURRENT_BINARY_DIR}/bin)
+    set(PKG_LOCATION "Source")
+
+    foreach(extra ${PACKAGE_CFG_EXTRAS})
+      configure_file(cmake/${extra}.in
+	cmake/${extra}
+	@ONLY
+	)
+    endforeach()
+
+    configure_file(@INFRA_INSTALL_DIR@/pkg-config.cmake.in
+      cmake/${PACKAGE_NAME}-config.cmake
+      @ONLY
+      )
+    configure_file(@INFRA_INSTALL_DIR@/pkg-config-version.cmake.in
+      cmake/${PACKAGE_NAME}-config-version.cmake
+      @ONLY
+      )
+
+    # installable
+    set(PKG_INCLUDE_PREFIX ${CMAKE_INSTALL_PREFIX})
+    set(PKG_LIB_PREFIX ${CMAKE_INSTALL_PREFIX})
+    set(PKG_MSG_DIRS ${CMAKE_INSTALL_PREFIX}/share/msg/${PACKAGE_NAME})
+    set(PKG_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/share/cmake/${PACKAGE_NAME})
+    set(PKG_CMAKE_SRC_DIR ${PKG_CMAKE_DIR})
+    set(PKG_BIN_DIRS ${CMAKE_INSTALL_PREFIX}/bin)
+    set(PKG_LOCATION "Installed")
+
+    set(INSTALLABLE_CFG_EXTRAS "")
+    foreach(extra ${PACKAGE_CFG_EXTRAS})
+      list(APPEND INSTALLABLE_CFG_EXTRAS ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${extra})
+      configure_file(cmake/${extra}.in
+	cmake_install/${extra}
+	@ONLY
+	)
+    endforeach()
+
+    configure_file(@INFRA_INSTALL_DIR@/pkg-config.cmake.in
+      cmake_install/${PACKAGE_NAME}-config.cmake
+      @ONLY
+      )
+    configure_file(@INFRA_INSTALL_DIR@/pkg-config-version.cmake.in
+      cmake_install/${PACKAGE_NAME}-config-version.cmake
+      @ONLY
+      )
+
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${PACKAGE_NAME}-config.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${PACKAGE_NAME}-config-version.cmake
+      ${INSTALLABLE_CFG_EXTRAS}
+      DESTINATION share/cmake/${PACKAGE_NAME}
+      )
+
+    if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/debian)
+      log(1 "${PROJECT_NAME}: Enabling deb target since directory 'debian' exists")
+      safe_execute_process(COMMAND /bin/mkdir -p ${CMAKE_BINARY_DIR}/debs)
+      add_custom_target(${PROJECT_NAME}-deb
+	COMMAND dpkg-source -b ${CMAKE_CURRENT_SOURCE_DIR}
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/debs
+	)
+      add_dependencies(debs ${PROJECT_NAME}-deb)
+    endif()
+  endmacro()
+
+  find_program(EMPY_EXECUTABLE empy)
+  if (NOT EMPY_EXECUTABLE)
+    message(FATAL_ERROR "Unable to find executable 'empy'... try installing package 'python-empy'")
+  endif()
+
+  macro(em_expand CONTEXT_FILE_IN CONTEXT_FILE_OUT EM_FILE_IN CMAKE_FILE_OUT)
+    configure_file(${CONTEXT_FILE_IN} ${CONTEXT_FILE_OUT})
+    log(2 "Expanding ${EM_FILE_IN}")
+    safe_execute_process(COMMAND
+      /usr/bin/env PYTHONPATH=${genmsg_PYTHONPATH}
+      ${EMPY_EXECUTABLE}
+      -F ${rosbuild_SOURCE_DIR}/cmake/empy_cmake.py
+      -F ${CONTEXT_FILE_OUT}
+      -o ${CMAKE_FILE_OUT}
+      ${EM_FILE_IN}
+      )
+    log(2 STATUS "*** including ${CMAKE_FILE_OUT}")
+    include(${CMAKE_FILE_OUT})
+  endmacro()
+
+  function(find_program_required ARG_VAR ARG_PROGRAM_NAME)
+    parse_arguments(ARG "PATHS" "" ${ARGN})
+    find_program(${ARG_VAR} ${ARG_PROGRAM_NAME} PATHS ${ARG_PATHS})
+    if(NOT ${ARG_VAR})
+      message(FATAL_ERROR "${ARG_PROGRAM_NAME} not found")
+    else()
+      log(1 "${ARG_PROGRAM_NAME} was found at ${${ARG_VAR}}")
+    endif()
+  endfunction()
+
+endif()
