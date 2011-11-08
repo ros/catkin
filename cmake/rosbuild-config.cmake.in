@@ -33,24 +33,24 @@ if (NOT @PACKAGE_NAME@_FOUND)
     set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
     set(PKG_LIB_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
     set(PKG_MSG_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/msg)
-    set(PKG_CMAKE_DIR ${CMAKE_CURRENT_BINARY_DIR}/cmake)
+    set(PKG_CMAKE_DIR ${CMAKE_BINARY_DIR}/cmake)
     set(PKG_CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
     set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts ${CMAKE_CURRENT_BINARY_DIR}/bin)
     set(PKG_LOCATION "Source")
 
     foreach(extra ${PACKAGE_CFG_EXTRAS})
       configure_file(cmake/${extra}.in
-	cmake/${extra}
+	${CMAKE_BINARY_DIR}/cmake/${extra}
 	@ONLY
 	)
     endforeach()
 
     configure_file(@INFRA_INSTALL_DIR@/pkg-config.cmake.in
-      cmake/${PACKAGE_NAME}-config.cmake
+      ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME}-config.cmake
       @ONLY
       )
     configure_file(@INFRA_INSTALL_DIR@/pkg-config-version.cmake.in
-      cmake/${PACKAGE_NAME}-config-version.cmake
+      ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME}-config-version.cmake
       @ONLY
       )
 
@@ -124,9 +124,10 @@ if (NOT @PACKAGE_NAME@_FOUND)
 
   macro(em_expand CONTEXT_FILE_IN CONTEXT_FILE_OUT EM_FILE_IN CMAKE_FILE_OUT)
     configure_file(${CONTEXT_FILE_IN} ${CONTEXT_FILE_OUT})
-    log(2 "Expanding ${EM_FILE_IN}")
+    log(2 "Expanding ${EM_FILE_IN} from ${CONTEXT_FILE_OUT}")
     safe_execute_process(COMMAND
       ${EMPY_EXECUTABLE}
+      --raw-errors
       -F @INFRA_INSTALL_DIR@/empy_cmake.py
       -F ${CONTEXT_FILE_OUT}
       -o ${CMAKE_FILE_OUT}

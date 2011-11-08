@@ -62,13 +62,20 @@ for dirpath,dirnames,filenames in os.walk(source_root_dir):
 #print pkg_dep_map
 external = find_external_pkgs(pkg_dep_map)
 
+remove_deps(pkg_dep_map, ['rosbuild'])
+
 for ext in external:
-    print 'MESSAGE(STATUS " - put check for external dep %s - ")'%ext
+    print 'MESSAGE(FATAL_ERROR " - external dep %s not found - ")'%ext
 
 remove_deps(pkg_dep_map, external)
 
+del pkg_dep_map['rosbuild']
+del pkg_dep_map['gencpp']
+
 for pkg in topological_sort_generator(pkg_dep_map):
-    print 'MESSAGE(STATUS "******* %s ******")'%pkg
-    print "add_subdirectory(%s)"%pkg_dirs[pkg]
+    print 'MESSAGE(STATUS "******* %s ******")' % pkg
+    print "configure_file(%s/debian/control" % pkg_dirs[pkg]
+    print "               ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/%s.debian.control.stamp @ONLY)" % pkg
+    print "if (NOT %s_SOURCE_DIR)\n   add_subdirectory(%s)\nendif()" % (pkg, pkg_dirs[pkg])
 
 }

@@ -10,3 +10,7 @@ Architecture: all
 Depends: ${misc:Depends} python-empy
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
+
+X-ROS-Pkg-Name: rosbuild
+X-ROS-Pkg-Depends: 
+X-ROS-System-Depends: 
