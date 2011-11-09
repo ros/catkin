@@ -2,7 +2,7 @@ if (NOT @PACKAGE_NAME@_FOUND)
   set(@PACKAGE_NAME@_FOUND)
 
   include(@INFRA_INSTALL_DIR@/log.cmake)
-  log(1 "rosbuild (@PKG_LOCATION@) (@INFRA_INSTALL_DIR@)")
+  log(1 "catkin (@PKG_LOCATION@) (@INFRA_INSTALL_DIR@)")
 
   include(@INFRA_INSTALL_DIR@/log.cmake)
   include(@INFRA_INSTALL_DIR@/assert.cmake)
@@ -147,7 +147,7 @@ if (NOT @PACKAGE_NAME@_FOUND)
     endif()
   endfunction()
 
-  function(wgbuild_workspace)
+  function(catkin_workspace)
     em_expand(
       @INFRA_INSTALL_DIR@/generate-context.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake/generate-context.py

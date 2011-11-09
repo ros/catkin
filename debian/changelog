@@ -1,4 +1,4 @@
-rosbuild (2.0.1) natty; urgency=low
+catkin (2.0.1) natty; urgency=low
 
   * Initial Release.
 

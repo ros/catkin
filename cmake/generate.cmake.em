@@ -1,6 +1,5 @@
 @{
-import apt_pkg
-import os
+import apt_pkg, os, sys
 
 pkg_dep_map = {}
 pkg_dep_versions = {}
@@ -50,26 +49,27 @@ def topological_sort_generator(dep_map):
         nodeps = find_pkgs_with_no_deps(dep_map)
 
 for dirpath,dirnames,filenames in os.walk(source_root_dir):
-    #print dirpath
-    if 'debian' in dirnames:
+    if 'debian' in dirnames and not os.path.basename(dirpath).startswith('.'):
         control_file = dirpath+"/debian/control"
         if os.path.exists(control_file):
             read_control_file(dirpath, control_file)
         dirnames[:] = [] #stop walk
 
 # check unsatisfied deps
-#print "pkg_dep_map"
-#print pkg_dep_map
+#print >>sys.stderr, "pkg_dep_map"
+#print >>sys.stderr, pkg_dep_map
+
 external = find_external_pkgs(pkg_dep_map)
 
-remove_deps(pkg_dep_map, ['rosbuild'])
 
-for ext in external:
-    print 'MESSAGE(FATAL_ERROR " - external dep %s not found - ")'%ext
+remove_deps(pkg_dep_map, ['catkin'])
+
+if len(external) > 0:
+   print 'MESSAGE(FATAL_ERROR " - external deps %s not found - ")' % ' '.join(external)
 
 remove_deps(pkg_dep_map, external)
 
-del pkg_dep_map['rosbuild']
+del pkg_dep_map['catkin']
 del pkg_dep_map['gencpp']
 
 for pkg in topological_sort_generator(pkg_dep_map):

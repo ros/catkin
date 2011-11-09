@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(rosbuild)
+project(catkin)
 
 set(INSTALL_SUFFIX share/cmake/${PROJECT_NAME})
 
-# in source, do we even want this to be possible for rosbuild? :)
+# in source, do we even want this to be possible for catkin? :)
 set(INFRA_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(PKG_LOCATION "Source")
 
