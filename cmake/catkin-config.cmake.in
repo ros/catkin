@@ -106,15 +106,6 @@ if (NOT @PACKAGE_NAME@_FOUND)
       endif()
     endif()
 
-    if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/debian)
-      log(1 "${PROJECT_NAME}: Enabling deb target since directory 'debian' exists")
-      safe_execute_process(COMMAND /bin/mkdir -p ${CMAKE_BINARY_DIR}/debs)
-      add_custom_target(${PROJECT_NAME}-deb
-	COMMAND dpkg-source -b ${CMAKE_CURRENT_SOURCE_DIR}
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/debs
-	)
-      add_dependencies(debs ${PROJECT_NAME}-deb)
-    endif()
   endmacro()
 
   find_program(EMPY_EXECUTABLE empy)

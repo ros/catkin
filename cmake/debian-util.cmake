@@ -8,7 +8,20 @@ function(catkin_package PKGNAME)
     ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/debian/control.stamp
     @ONLY
     )
-  add_custom_target(${PKGNAME}-deb
-    COMMAND /bin/echo "making deb"
+
+  # see http://www.mail-archive.com/cmake@cmake.org/msg03461.html
+  add_custom_target(${PKGNAME}-install
+    COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${PACKAGE_NAME} -P cmake_install.cmake
+    WORKING_DIRECTORY ${${PACKAGE_NAME}_BINARY_DIR}
+    COMMENT "making binary deb for package ${PKGNAME}"
     )
+
+  log(1 "${PROJECT_NAME}: Enabling deb target since directory 'debian' exists")
+  safe_execute_process(COMMAND /bin/mkdir -p ${CMAKE_BINARY_DIR}/debs)
+  add_custom_target(${PROJECT_NAME}-dsc
+    COMMAND dpkg-source -b ${CMAKE_CURRENT_SOURCE_DIR}
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/debs
+    )
+  add_dependencies(debs ${PROJECT_NAME}-deb)
+
 endfunction()
