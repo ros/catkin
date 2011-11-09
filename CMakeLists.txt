@@ -38,3 +38,6 @@ install(
   cmake/pkg-config-version.cmake.in
   DESTINATION ${INSTALL_SUFFIX}
   )
+
+include(cmake/debian-util.cmake)
+catkin_package(catkin)

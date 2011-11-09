@@ -72,10 +72,16 @@ remove_deps(pkg_dep_map, external)
 del pkg_dep_map['catkin']
 del pkg_dep_map['gencpp']
 
-for pkg in topological_sort_generator(pkg_dep_map):
-    print 'MESSAGE(STATUS "******* %s ******")' % pkg
-    print "configure_file(%s/debian/control" % pkg_dirs[pkg]
-    print "               ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/%s.debian.control.stamp @ONLY)" % pkg
-    print "if (NOT %s_SOURCE_DIR)\n   add_subdirectory(%s)\nendif()" % (pkg, pkg_dirs[pkg])
-
+topo_pkgs = topological_sort_generator(pkg_dep_map)
 }
+
+@[for pkg in topo_pkgs]
+      message(STATUS ">>> @pkg")
+      configure_file(@(pkg_dirs[pkg])/debian/control
+                     ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/debian/control.stamp
+                     @@ONLY)
+      if (NOT @(pkg)_SOURCE_DIR)
+         add_subdirectory(@(pkg_dirs[pkg]))
+      endif()
+@[end for]
+
