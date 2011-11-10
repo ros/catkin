@@ -42,7 +42,6 @@ install(
   )
 
 
-include(cmake/safe_execute_process.cmake)
-include(cmake/log.cmake)
-include(cmake/debian-util.cmake)
+include(${catkin_BINARY_DIR}/cmake/catkin-config.cmake)
+set(catkin_DIR ${catkin_BINARY_DIR}/cmake)
 catkin_package(catkin)

@@ -1,7 +1,7 @@
 Source: catkin
 Section: misc
 Priority: extra
-Maintainer: Troy Straszheim <straszheim@willowgarage.com>
+Maintainer: Troy Straszheim <straszheim@@willowgarage.com>
 Build-Depends: debhelper (>= 7), cmake, gcc, make
 Homepage: http://www.ros.org
 
