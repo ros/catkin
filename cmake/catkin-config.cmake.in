@@ -4,11 +4,9 @@ if (NOT catkin_FOUND)
   #set(CATKIN_LINUX_DISTRIBUTIONS "lucid maverick natty oneiric")
   set(catkin_FOUND)
   
-  configure_file(${catkin_SOURCE_DIR}/catkin-context.in
-    ${catkin_DIR}/catkin-context.py
-    )
+  set(CATKIN_CONTEXT_FILE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/catkin-context.py)
 
-  set(CATKIN_CONTEXT_FILE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/catkin-context.py)
+  configure_file(@INFRA_INSTALL_DIR@/catkin-context.in ${CATKIN_CONTEXT_FILE})
 
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}:${CMAKE_BINARY_DIR}/cmake)
   include(@INFRA_INSTALL_DIR@/log.cmake)

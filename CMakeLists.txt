@@ -33,7 +33,7 @@ install(
   cmake/debian-util.cmake
   cmake/empy_cmake.py
   cmake/safe_execute_process.cmake
-
+  cmake/catkin-context.in
   cmake/pkg-config.cmake.in
   cmake/pkg-config-version.cmake.in
   debian.rules
