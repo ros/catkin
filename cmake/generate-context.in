@@ -1,1 +1,2 @@
 source_root_dir = "@CMAKE_CURRENT_SOURCE_DIR@"
+enabled_projects = "@CATKIN_BUILD_PROJECTS@".split(';')

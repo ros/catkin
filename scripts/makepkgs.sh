@@ -33,7 +33,9 @@ debuildit () {
     fi
 
     cd .build
-    cmake .. -DCMAKE_PREFIX_PATH=$PREFIX -DCMAKE_INSTALL_PREFIX=$PREFIX \
+    cmake .. \
+        -DCMAKE_PREFIX_PATH=$PREFIX \
+        -DCMAKE_INSTALL_PREFIX=$PREFIX \
         -DCATKIN_PACKAGE_PREFIX=$SERIES \
         -DCATKIN_LINUX_DISTRIBUTIONS="$DISTRO" \
         -DCATKIN=YES

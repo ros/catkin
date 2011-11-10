@@ -15,6 +15,10 @@ def read_control_file(source_dir, control_file):
     for sec in tag_file:
         if PKG_NAME_FIELD in sec:
             pkg_name = sec[PKG_NAME_FIELD]
+            print >>sys.stderr, "ENABLED PROJECTS=", enabled_projects, "pkgname=", pkg_name
+            if pkg_name not in enabled_projects:
+                print >>sys.stderr, "skipping"
+                break
             pkg_dirs[pkg_name] = source_dir
 
             # full deps with version numbers
@@ -51,10 +55,10 @@ def topological_sort_generator(dep_map):
 for dirpath,dirnames,filenames in os.walk(source_root_dir):
     if 'debian' in dirnames and not os.path.basename(dirpath).startswith('.'):
         control_file = dirpath+"/debian/control"
-        if os.path.exists(control_file):
-            read_control_file(dirpath, control_file)
-        elif os.path.exists(control_file + ".em"):
+        if os.path.exists(control_file + ".em"):
             read_control_file(dirpath, control_file + ".em")
+        elif os.path.exists(control_file):
+            read_control_file(dirpath, control_file)
         dirnames[:] = [] #stop walk
 
 # check unsatisfied deps
@@ -72,7 +76,8 @@ if len(external) > 0:
 remove_deps(pkg_dep_map, external)
 
 del pkg_dep_map['catkin']
-del pkg_dep_map['gencpp']
+if 'gencpp' in pkg_dep_map:
+    del pkg_dep_map['gencpp']
 
 topo_pkgs = topological_sort_generator(pkg_dep_map)
 }

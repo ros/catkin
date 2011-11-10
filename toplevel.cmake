@@ -15,4 +15,3 @@ set(CATKIN TRUE CACHE BOOL "Yeah catkin! yay!")
 find_package(catkin)
 
 catkin_workspace()
-
