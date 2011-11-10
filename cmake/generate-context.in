@@ -1,2 +1,4 @@
 source_root_dir = "@CMAKE_CURRENT_SOURCE_DIR@"
 enabled_projects = "@CATKIN_BUILD_PROJECTS@".split(';')
+if 'catkin' not in enabled_projects:
+   enabled_projects = ['catkin'] + enabled_projects
