@@ -1,6 +1,14 @@
-if (NOT @PACKAGE_NAME@_FOUND)
+if (NOT catkin_FOUND)
 
-  set(@PACKAGE_NAME@_FOUND)
+  #set(CATKIN_PACKAGE_PREFIX "")
+  #set(CATKIN_LINUX_DISTRIBUTIONS "lucid maverick natty oneiric")
+  set(catkin_FOUND)
+  
+  configure_file(${catkin_SOURCE_DIR}/catkin-context.in
+    ${catkin_DIR}/catkin-context.py
+    )
+
+  set(CATKIN_CONTEXT_FILE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/catkin-context.py)
 
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}:${CMAKE_BINARY_DIR}/cmake)
   include(@INFRA_INSTALL_DIR@/log.cmake)
@@ -119,6 +127,9 @@ if (NOT @PACKAGE_NAME@_FOUND)
   endif()
 
   macro(em_expand CONTEXT_FILE_IN CONTEXT_FILE_OUT EM_FILE_IN CMAKE_FILE_OUT)
+    if (NOT EXISTS ${CONTEXT_FILE_IN})
+      message(FATAL_ERROR "Attempt to expand nonexistent file ${CONTEXT_FILE_IN}")
+    endif()
     configure_file(${CONTEXT_FILE_IN} ${CONTEXT_FILE_OUT})
     log(2 "Expanding ${EM_FILE_IN} from ${CONTEXT_FILE_OUT}")
     safe_execute_process(COMMAND
@@ -126,6 +137,7 @@ if (NOT @PACKAGE_NAME@_FOUND)
       --raw-errors
       -F @INFRA_INSTALL_DIR@/empy_cmake.py
       -F ${CONTEXT_FILE_OUT}
+      -F ${CATKIN_CONTEXT_FILE}
       -o ${CMAKE_FILE_OUT}
       ${EM_FILE_IN}
       )

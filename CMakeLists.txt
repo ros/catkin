@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 2.8)
 
 project(catkin)
 
-set(INSTALL_SUFFIX share/cmake/${PROJECT_NAME})
+set(INSTALL_SUFFIX share/cmake/catkin)
 
 # in source, do we even want this to be possible for catkin? :)
 set(INFRA_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(PKG_LOCATION "Source")
 
-configure_file(cmake/${PROJECT_NAME}-config.cmake.in
-  cmake/${PROJECT_NAME}-config.cmake
+configure_file(cmake/catkin-config.cmake.in
+  cmake/catkin-config.cmake
   @ONLY
   )
 
@@ -17,14 +17,14 @@ configure_file(cmake/${PROJECT_NAME}-config.cmake.in
 set(INFRA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_SUFFIX})
 set(PKG_LOCATION "Installed")
 
-configure_file(cmake/${PROJECT_NAME}-config.cmake.in
-  cmake_install/${PROJECT_NAME}-config.cmake
+configure_file(cmake/catkin-config.cmake.in
+  cmake_install/catkin-config.cmake
   @ONLY
   )
 
 install(
   FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${PROJECT_NAME}-config.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/catkin-config.cmake
 
   cmake/log.cmake
   cmake/assert.cmake

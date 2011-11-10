@@ -53,6 +53,8 @@ for dirpath,dirnames,filenames in os.walk(source_root_dir):
         control_file = dirpath+"/debian/control"
         if os.path.exists(control_file):
             read_control_file(dirpath, control_file)
+        elif os.path.exists(control_file + ".em"):
+            read_control_file(dirpath, control_file + ".em")
         dirnames[:] = [] #stop walk
 
 # check unsatisfied deps
@@ -77,9 +79,6 @@ topo_pkgs = topological_sort_generator(pkg_dep_map)
 
 @[for pkg in topo_pkgs]
       message(STATUS ">>> @pkg")
-      configure_file(@(pkg_dirs[pkg])/debian/control
-                     ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/debian/control.stamp
-                     @@ONLY)
       if (NOT @(pkg)_SOURCE_DIR)
          add_subdirectory(@(pkg_dirs[pkg]))
       endif()
