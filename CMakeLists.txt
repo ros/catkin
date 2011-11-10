@@ -36,9 +36,11 @@ install(
 
   cmake/pkg-config.cmake.in
   cmake/pkg-config-version.cmake.in
+  debian.rules
   DESTINATION ${INSTALL_SUFFIX}
   COMPONENT catkin
   )
+
 
 include(cmake/safe_execute_process.cmake)
 include(cmake/log.cmake)

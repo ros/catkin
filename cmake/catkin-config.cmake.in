@@ -1,6 +1,8 @@
 if (NOT @PACKAGE_NAME@_FOUND)
+
   set(@PACKAGE_NAME@_FOUND)
 
+  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}:${CMAKE_BINARY_DIR}/cmake)
   include(@INFRA_INSTALL_DIR@/log.cmake)
   log(1 "catkin (@PKG_LOCATION@) (@INFRA_INSTALL_DIR@)")
 
@@ -52,6 +54,9 @@ if (NOT @PACKAGE_NAME@_FOUND)
     configure_file(@INFRA_INSTALL_DIR@/pkg-config-version.cmake.in
       ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME}-config-version.cmake
       @ONLY
+      )
+    set(${PACKAGE_NAME}_DIR ${CMAKE_BINARY_DIR}/cmake/
+      CACHE FILEPATH "Where the cmake config stuff is"
       )
 
     # installable
