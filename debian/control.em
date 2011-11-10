@@ -2,7 +2,7 @@ Source: catkin
 Section: misc
 Priority: extra
 Maintainer: Troy Straszheim <straszheim@@willowgarage.com>
-Build-Depends: debhelper (>= 7), cmake, gcc, make
+Build-Depends: debhelper (>= 7), cmake, gcc, make, python-empy
 Homepage: http://www.ros.org
 
 Package: catkin
