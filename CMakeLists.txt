@@ -11,21 +11,16 @@ install_cmake_infrastructure(catkin
   VERSION 0.0.7
   )
 
-#configure_file(cmake/catkin-config.cmake.in
-#  ${catkin_BINARY_DIR}/cmake/catkin-config.cmake
-#  @ONLY
-#  )
+install_cmake_config_version(ROS 12.04)
 
-#include(${catkin_BINARY_DIR}/cmake/catkin-config.cmake)
+configure_file(ros-config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cmake
+  @ONLY)
 
-# set(catkin_EXTRAS_DIR_VALUE ${CMAKE_INSTALL_PREFIX}/share/cmake/catkin)
-# configure_file(cmake/catkin-config.cmake.in
-#   cmake_install/catkin-config.cmake
-#   @ONLY
-#   )
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cmake
+  DESTINATION share/cmake/ROS)
 
-install(
-  DIRECTORY cmake/
+install(DIRECTORY cmake/
   DESTINATION share/cmake/catkin
   )
 

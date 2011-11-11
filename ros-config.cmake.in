@@ -1,0 +1,20 @@
+set(ROS_ROOT @CMAKE_INSTALL_PREFIX@)
+
+set(CMAKE_PREFIX_PATH ${ROS_ROOT}:${CMAKE_PREFIX_PATH})
+
+set(ROS_FOUND TRUE)
+
+set(ROS_INCLUDE_DIRS "")
+set(ROS_LIBRARIES "")
+
+foreach(component ${ROS_FIND_COMPONENTS})
+
+  find_package(${component} REQUIRED NO_MODULE
+    PATHS ${ROS_ROOT}/share/cmake
+    )
+
+  list(APPEND ROS_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
+  list(APPEND ROS_LIBRARIES ${${component}_LIBRARIES})
+
+endforeach()
+
