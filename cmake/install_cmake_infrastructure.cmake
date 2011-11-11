@@ -1,4 +1,4 @@
-macro(install_cmake_infrastructure PACKAGE_NAME)
+function(install_cmake_infrastructure PACKAGE_NAME)
   parse_arguments(PACKAGE
     "VERSION;INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
     ""
@@ -103,4 +103,4 @@ macro(install_cmake_infrastructure PACKAGE_NAME)
     endif()
   endif()
 
-endmacro()
+endfunction()

@@ -332,3 +332,10 @@ flow
 * find available packages.  topological sort.  
 any langs depend on genmsg and come first.
 
+
+
+tests
+-----
+
+run cmake, count lines of help, run rebuild_cache, help should be same
+

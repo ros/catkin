@@ -8,6 +8,7 @@ endif()
 
 function(catkin_package PKGNAME)
   
+  return()
   file(GLOB EMFILES ${CMAKE_CURRENT_SOURCE_DIR}/debian/*.em)
   foreach(file ${EMFILES})
     get_filename_component(basename ${file} NAME_WE)

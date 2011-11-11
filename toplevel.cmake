@@ -3,6 +3,7 @@
 #
 cmake_minimum_required(VERSION 2.8)
 
+set(CATKIN YES)
 # set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 # set(CATKIN_LANGS cpp)
 # set(CATKIN_LOG 9)
@@ -14,10 +15,10 @@ else()
   find_package(catkin)
 endif()
 
-return()
 catkin_workspace()
 
 return()
+
 message("+++ genmsg")
 add_subdirectory(genmsg)
 

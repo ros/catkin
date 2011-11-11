@@ -1,8 +1,11 @@
 function(catkin_workspace)
+  assert(catkin_EXTRAS_DIR)
+  assert_file_exists(${catkin_EXTRAS_DIR}/topologically_traverse.py.in "${catkin_EXTRAS_DIR}")
+  assert_file_exists(${catkin_EXTRAS_DIR}/topologically_traverse.cmake.em "file nto found")
   em_expand(
-    ${catkin_EXTRAS_DIR}/generate-context.in
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/generate-context.py
-    ${catkin_EXTRAS_DIR}/generate.cmake.em
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/generate.cmake)
+    ${catkin_EXTRAS_DIR}/topologically_traverse.py.in
+    ${CMAKE_CURRENT_BINARY_DIR}/topologically_traverse.py
+    ${catkin_EXTRAS_DIR}/topologically_traverse.cmake.em
+    ${CMAKE_CURRENT_BINARY_DIR}/topologically_traverse.cmake)
 endfunction()
 

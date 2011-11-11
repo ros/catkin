@@ -1,4 +1,4 @@
-if (NOT @PACKAGE_NAME@_FOUND)
+#if (NOT @PACKAGE_NAME@_FOUND)
   log(1 "@PACKAGE_NAME@ @PACKAGE_VERSION@ (@PKG_LOCATION@) (@PKG_INCLUDE_PREFIX@)")
 
   #todo, need to handle more than one include dir?
@@ -31,4 +31,4 @@ if (NOT @PACKAGE_NAME@_FOUND)
   set(@PACKAGE_NAME@_MSG_INCLUDE_DIRS @PKG_MSG_DIRS@)
 
   set(@PACKAGE_NAME@_FOUND TRUE)
-endif()
+#endif()
