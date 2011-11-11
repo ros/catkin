@@ -323,3 +323,12 @@ debootstrap --variant=buildd --arch=amd64 distro /mnt/distro
 umount /mnt/distro
 losetup -d /dev/loop0
 
+
+
+flow
+----
+
+* either add catkin subdirectory if present or find_package it.
+* find available packages.  topological sort.  
+any langs depend on genmsg and come first.
+

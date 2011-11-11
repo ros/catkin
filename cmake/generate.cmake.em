@@ -15,9 +15,8 @@ def read_control_file(source_dir, control_file):
     for sec in tag_file:
         if PKG_NAME_FIELD in sec:
             pkg_name = sec[PKG_NAME_FIELD]
-            print >>sys.stderr, "ENABLED PROJECTS=", enabled_projects, "pkgname=", pkg_name
-            if pkg_name not in enabled_projects:
-                print >>sys.stderr, "skipping"
+            if enabled_projects[0] != 'ALL' and pkg_name not in enabled_projects:
+                print >>sys.stderr, "SKIPPING", pkg_name
                 break
             pkg_dirs[pkg_name] = source_dir
 
@@ -62,28 +61,21 @@ for dirpath,dirnames,filenames in os.walk(source_root_dir):
         dirnames[:] = [] #stop walk
 
 # check unsatisfied deps
-#print >>sys.stderr, "pkg_dep_map"
-#print >>sys.stderr, pkg_dep_map
+print >>sys.stderr, "pkg_dep_map"
+print >>sys.stderr, pkg_dep_map
 
 external = find_external_pkgs(pkg_dep_map)
-
-
-remove_deps(pkg_dep_map, ['catkin'])
 
 if len(external) > 0:
    print 'MESSAGE(FATAL_ERROR " - external deps %s not found - ")' % ' '.join(external)
 
 remove_deps(pkg_dep_map, external)
 
-del pkg_dep_map['catkin']
-if 'gencpp' in pkg_dep_map:
-    del pkg_dep_map['gencpp']
-
 topo_pkgs = topological_sort_generator(pkg_dep_map)
 }
 
 @[for pkg in topo_pkgs]
-      message(STATUS ">>> @pkg")
+      message(STATUS "+++ @pkg")
       if (NOT @(pkg)_SOURCE_DIR)
          add_subdirectory(@(pkg_dirs[pkg]))
       endif()

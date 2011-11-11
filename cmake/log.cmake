@@ -13,3 +13,8 @@ function(LOG ARG_LEVEL ARG_MSG)
     message(STATUS "*${ARG_LEVEL}* ${ARG_MSG}")
   endif()
 endfunction()
+
+
+macro(info MSG)
+  message(STATUS "~~ ${PROJECT_NAME} ${MSG}")
+endmacro()

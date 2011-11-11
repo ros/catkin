@@ -1,7 +1,7 @@
 #
 # catkin-config.cmake
 #
-set(catkin_EXTRAS_DIR @catkin_EXTRAS_DIR_VALUE@)
+set(catkin_EXTRAS_DIR /home/overhaul/src/catkin_test/nose/src/catkin/cmake)
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
 
