@@ -6,6 +6,8 @@ foreach(f
     log
     assert
     empy
+    stamp
+    set_once
     safe_execute_process
     parse_arguments
     wg_python
@@ -19,7 +21,7 @@ foreach(f
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
 endforeach()
 
-set(CATKIN_CONTEXT_FILE ${catkin_DIR}/catkin-context.py
+set(CATKIN_CONTEXT_FILE ${catkin_BINARY_DIR}/catkin-context.py
   CACHE INTERNAL "catkin context file")
 
 configure_file(${catkin_EXTRAS_DIR}/catkin-context.in ${CATKIN_CONTEXT_FILE})

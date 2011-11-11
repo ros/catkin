@@ -1,16 +1,14 @@
 
 macro(em_expand CONTEXT_FILE_IN CONTEXT_FILE_OUT EM_FILE_IN CMAKE_FILE_OUT)
-  if (NOT EXISTS ${CONTEXT_FILE_IN})
-    message(FATAL_ERROR "Attempt to expand nonexistent file ${CONTEXT_FILE_IN}")
-  endif()
+  assert_file_exists("${CONTEXT_FILE_IN}" "empy input file")
   configure_file(${CONTEXT_FILE_IN} ${CONTEXT_FILE_OUT})
   log(2 "Expanding ${EM_FILE_IN} from ${CONTEXT_FILE_OUT}")
 
   assert_file_exists("${CONTEXT_FILE_OUT}" "CONTEXT_FILE_OUT")
   assert_file_exists("${CATKIN_CONTEXT_FILE}" "CATKIN_CONTEXT_FILE")
-  assert_file_exists(${catkin_EXTRAS_DIR}/empy_util.py "CATKIN_CONTEXT_FILE")
+  assert_file_exists(${catkin_EXTRAS_DIR}/empy_util.py "empy utilities")
 
-  configure_file(${EM_FILE_IN} ${CMAKE_CURRENT_BINARY_DIR}${EM_FILE_IN}.stamp @ONLY)
+  stamp(${EM_FILE_IN})
 
   safe_execute_process(COMMAND
     ${EMPY_EXECUTABLE}

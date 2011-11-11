@@ -44,9 +44,6 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME}-config-version.cmake
     @ONLY
     )
-  set(${PACKAGE_NAME}_DIR ${CMAKE_BINARY_DIR}/cmake/
-    CACHE FILEPATH "Where the cmake config stuff is"
-    )
 
   # installable
   set(PKG_INCLUDE_PREFIX ${CMAKE_INSTALL_PREFIX})
