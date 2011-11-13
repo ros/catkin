@@ -6,14 +6,9 @@ class Pkg:
         self.__dict__.update(path=None, versioned_depends=None, genlang=None, depends=None)
         self.__dict__.update(kwds)
     def __repr__(self):
-        return "%s %s %s %s\n" % (self.path, self.versioned_depends, self.depends, self.genlang) 
+        return "%s %s %s %s\n" % (self.path, self.versioned_depends, self.depends, self.genlang)
 
 pkgs = {}
-
-#pkg_dep_map = {}
-#pkg_dep_versions = {}
-#pkg_dirs = {}
-#pkg_with_generators = {}
 
 PKG_NAME_FIELD = "X-ROS-Pkg-Name"
 PKG_DEP_FIELD = "X-ROS-Pkg-Depends"
@@ -22,19 +17,18 @@ GENERATOR_FIELD = "X-ROS-Message-Generator"
 
 def read_control_file(source_dir, control_file):
     tag_file = apt_pkg.TagFile(open(control_file))
-    
+
     for sec in tag_file:
         if PKG_NAME_FIELD in sec:
             pkg_name = sec[PKG_NAME_FIELD]
             if enabled_projects[0] != 'ALL' and pkg_name not in enabled_projects:
-                print >>sys.stderr, "SKIPPING", pkg_name
                 break
             pkgs[pkg_name] = p = Pkg(path=source_dir)
             p.versioned_depends = apt_pkg.parse_depends(sec[PKG_DEP_FIELD])
             p.depends = set([d[0][0] for d in p.versioned_depends])
             p.genlang = sec.get(GENERATOR_FIELD, None)
-
             break
+
     else:
         print 'MESSAGE(STATUS "%s missing %s")'%(control_file, PKG_NAME_FIELD)
 
@@ -73,13 +67,12 @@ for dirpath,dirnames,filenames in os.walk(source_root_dir):
         dirnames[:] = [] #stop walk
 
 all_deps = reduce(set.union, [p.depends for p in pkgs.values()])
-print >>sys.stderr, "ALLDEPS=", all_deps
 
 unknown_deps = all_deps - set(pkgs)
-print >>sys.stderr, "unknown_deps=", unknown_deps
 
 del pkgs['catkin']
 remove_deps(pkgs, 'catkin')
+
 if len(unknown_deps) > 0:
     print 'message(FATAL_ERROR "\nUnknown dependencies: %s\n")' % ' '.join(unknown_deps)
     topo_pkgs = []
@@ -90,6 +83,7 @@ else:
 message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 message(STATUS "~v^V^v~   traversing stacks/projects in topological order   ~v^V^v~")
 message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+set(ROS_LANGS genpy gencpp)
 
 @[for pkgname in topo_pkgs]
 message(STATUS "+++ @pkgname")
