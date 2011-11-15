@@ -4,6 +4,8 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     ""
     ${ARGN})
 
+  string(TOLOWER ${PACKAGE_NAME} PACKAGE_NAME_LOWER)
+
   log(2 "install_cmake_infrastructure ${PACKAGE_NAME} at version ${PACKAGE_VERSION} in @CMAKE_INSTALL_PREFIX@")
   set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
   set(PACKAGE_NAME ${PACKAGE_NAME})
@@ -37,11 +39,11 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   # Versions find_packageable from the buildspace
   #
   configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME}-config.cmake
+    ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME_LOWER}-config.cmake
     @ONLY
     )
   configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME}-config-version.cmake
+    ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME_LOWER}-config-version.cmake
     @ONLY
     )
 
