@@ -5,6 +5,13 @@ function(assert VAR)
   log(3 "assert(${VAR}) okay (== ${${VAR}})")
 endfunction()
 
+function(assert_unset VAR)
+  if (${VAR})
+    message(FATAL_ERROR "Assertion failed: ${VAR} is set but shoudl not be (value is ${${VAR}})")
+  endif()
+  log(3 "assert_unset(${VAR}) okay")
+endfunction()
+
 function(assert_file_exists FILENAME MESSAGE)
   if (NOT FILENAME)
     message(FATAL_ERROR
@@ -15,3 +22,6 @@ function(assert_file_exists FILENAME MESSAGE)
   endif()
 endfunction()
 
+
+function(abort)
+  message(FATAL_ERROR "Aborting: ${ARGN}")
