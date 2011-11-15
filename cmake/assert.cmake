@@ -22,6 +22,3 @@ function(assert_file_exists FILENAME MESSAGE)
   endif()
 endfunction()
 
-
-function(abort)
-  message(FATAL_ERROR "Aborting: ${ARGN}")
