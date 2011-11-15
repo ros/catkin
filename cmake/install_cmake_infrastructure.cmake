@@ -1,4 +1,9 @@
 function(install_cmake_infrastructure PACKAGE_NAME)
+  if (NOT PROJECT_NAME STREQUAL PACKAGE_NAME)
+    message(FATAL_ERROR "install_cmake_infrastructure called for project (PROJECT_NAME=${PROJECT_NAME}) "
+      "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\nDid you forget to call project()?\n")
+  endif()
+
   parse_arguments(PACKAGE
     "VERSION;INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
     ""

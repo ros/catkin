@@ -20,7 +20,7 @@ foreach(lib @PACKAGE_LIBRARIES@)
       NO_DEFAULT_PATH
       )
     if(NOT onelib)
-      message(FATAL_ERROR "Lib ${lib} for @PACKAGE_NAME@ not installed properly")
+      message(FATAL_ERROR "Library '${lib}' in package @PACKAGE_NAME@ is not installed properly")
     endif()
   endif()
 
