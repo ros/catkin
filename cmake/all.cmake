@@ -1,10 +1,10 @@
 include(${catkin_EXTRAS_DIR}/log.cmake)
+include(${catkin_EXTRAS_DIR}/assert.cmake)
+assert(catkin_EXTRAS_DIR)
 
 info(all)
 
 foreach(f
-    log
-    assert
     empy
     stamp
     set_once
@@ -18,7 +18,7 @@ foreach(f
     install_cmake_config_version
     catkin_workspace
     )
-  # info(${f})
+  info(${f})
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
 endforeach()
 

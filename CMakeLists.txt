@@ -26,7 +26,7 @@ install(DIRECTORY cmake/
 
 install(
   FILES
-  # ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/catkin-config.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/catkin-config.cmake
   debian.rules
   DESTINATION share/cmake/catkin
   )

@@ -9,8 +9,6 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     ""
     ${ARGN})
 
-  string(TOLOWER ${PACKAGE_NAME} PACKAGE_NAME_LOWER)
-
   log(2 "install_cmake_infrastructure ${PACKAGE_NAME} at version ${PACKAGE_VERSION} in @CMAKE_INSTALL_PREFIX@")
   set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
   set(PACKAGE_NAME ${PACKAGE_NAME})
@@ -43,15 +41,19 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   #
   # Versions find_packageable from the buildspace
   #
-  configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME_LOWER}-config.cmake
-    @ONLY
-    )
-  configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/${PACKAGE_NAME_LOWER}-config-version.cmake
-    @ONLY
-    )
-
+  #  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PACKAGE_NAME}-config.cmake.in)
+  string(TOLOWER ${PACKAGE_NAME} package_lower)
+    configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
+      ${CMAKE_BINARY_DIR}/cmake/${package_lower}-config.cmake
+      @ONLY
+      )
+#  endif()
+#  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PACKAGE_NAME}-config-version.cmake.in)
+    configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
+      ${CMAKE_BINARY_DIR}/cmake/${package_lower}-config-version.cmake
+      @ONLY
+      )
+#  endif()
   # installable
   set(PKG_INCLUDE_PREFIX ${CMAKE_INSTALL_PREFIX})
   set(PKG_LIB_PREFIX ${CMAKE_INSTALL_PREFIX})
@@ -73,18 +75,34 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       )
   endforeach()
 
-  configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
-    cmake_install/${PACKAGE_NAME}-config.cmake
-    @ONLY
-    )
-  configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
-    cmake_install/${PACKAGE_NAME}-config-version.cmake
-    @ONLY
-    )
+  string(TOLOWER ${PROJECT_NAME} project_lower)
+  if(EXISTS ${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config.cmake.in)
+    configure_file(${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config.cmake
+      @ONLY
+      )
+  else()
+    configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config.cmake
+      @ONLY
+      )
+  endif()
 
+  if(EXISTS ${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config-version.cmake.in)
+    configure_file(${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config-version.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config-version.cmake
+      @ONLY
+      )
+  else()
+    configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config-version.cmake
+      @ONLY
+      )
+  endif()
+  
   install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${PACKAGE_NAME}-config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${PACKAGE_NAME}-config-version.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config-version.cmake
     ${INSTALLABLE_CFG_EXTRAS}
     DESTINATION share/cmake/${PACKAGE_NAME}
     )
