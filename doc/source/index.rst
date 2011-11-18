@@ -60,6 +60,48 @@ obeys ``DESTDIR`` for ease of packaging.  Projects specify what should
 be installed and where in the usual cmake fashion, via the
 ``install()`` macro.
 
+Installed layout
+^^^^^^^^^^^^^^^^
+::
+
+  CMAKE_INSTALL_PREFIX/       # e.g. /opt/ros/fuerte
+    bin/
+      what_goes_here?         # binaries at the toplevel
+    lib/
+      libros.so               # libs for all packages
+      libcpp_common.so
+      librostime.so
+      pythonX.Y/              # python from all packages
+        rospy/
+          __init__.py
+          client.py
+          core.py
+          ...
+    share/             
+      roscpp_tutorials/       # per-package binaries
+        bin/
+          talker
+          listener
+      cmake/                  # cmake infrastructure, per-package
+        roscpp/
+          roscpp-config.cmake
+          roscpp-config-version.cmake
+    include/                  # all includes, together
+      std_msgs/
+        Float64.h             # generated header
+      ros/
+        node_handle.h         # "static" hand-coded header
+        time.h
+        xmlrpc_manager.h
+    
+
+open issues: where exactly to put python.  where to install
+per-package binaries other than bin/ 
+  
+
+
+
+
 
 Main trickery
 -------------
