@@ -1,7 +1,10 @@
 from pkgutil import extend_path
+import sys
+sys.path += ["@CMAKE_CURRENT_SOURCE_DIR@/src"]
 __path__ = extend_path(__path__, __name__)
 
 import os.path
-src_init_file = '%s/src/__init__.py' % ("@CMAKE_CURRENT_SOURCE_DIR@")
-if os.path.isfile('%s'):
-  execfile('%s')
+src_init_file = '%s/src/%s/__init__.py' % ("@CMAKE_CURRENT_SOURCE_DIR@", "@PACKAGE_NAME@")
+if os.path.isfile(src_init_file):
+  execfile(src_init_file)
+
