@@ -338,3 +338,49 @@ tests
 
 run cmake, count lines of help, run rebuild_cache, help should be same
 
+
+
+
+
+
+linode
+------
+
+
+oneiric image 64 bit chosen
+
+pkgs:  lvm2 debootstrap git-core schroot apt-cacher ubuntu-dev-tools
+
+install jenkins on slave and master. TODO: how do you keep master from
+starting on slave.  
+
+setup ssh keys so that jenkins can ssh around on the cluster.
+
+make raw partition, attach in linode interface
+
+install apt-cacher
+set autostart to 1 in /etc/apt-cacher/apt-cacher.conf
+/etc/init.d/apt-cacher start
+
+pvcreate /dev/xvdc
+vgdisplay
+vgcreate chroots /dev/xvdc
+lvcreate -L10G -n lucid chroots
+lvscan
+mkfs -t ext3 /dev/chroots/lucid
+mkdir /mnt/lucid
+mount /dev/chroots/lucid /mnt/lucid
+debootstrap --variant=buildd --arch=amd64 --components=universe, lucid /mnt/lucid
+
+# making a backup
+
+lvcreate -L50M -s -n lucid_snapshot /dev/chroots/lucid
+lvscan
+mkdir /mnt/lucidsnap
+mount /dev/chroots/lucidsnap /mnt/lucidsnap
+
+
+
+# jenkins setup
+install jenkins via https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins
+
