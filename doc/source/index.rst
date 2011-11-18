@@ -9,11 +9,13 @@ the *fuerte* release.
 Terminology
 -----------
 
-Stack:    unit of installation.
+Stack: unit of installation.  These get made in to debs.
 
 Package: generally something "smaller" than a stack... but a package
 can be a stack.
 
+Project: CMake's notion of buildable subdirectory: it contains a
+``CMakeLists.txt`` that calls CMake's ``project()`` macro.
 
 Design sketch
 -------------
@@ -21,8 +23,18 @@ Design sketch
 * There is only one invocation of cmake (and make) to build a source
   directory containing N stacks.  
 
+* There is no search of ROS_PACKAGE_PATH: the stacks/packages to be
+  built are the subdirectories (not recursive) of the
+  ``CMAKE_SOURCE_DIR``.
+
+* Catkin does not differentiate between stacks or packages: it simply
+  examines the subdirectories of ``CMAKE_SOURCE_DIR`` for buildable
+  projects.  It determines the dependency ordering of projects from
+  examining their source directories.
+
 * The ability to build only specific targets or sets of targets are
-  provided through cmake's "natural" mechanisms.
+  provided through cmake's "natural" mechanisms.  The ability to
+  exclude certain 
 
 * The build does not modify the source directories in any way.
 
@@ -43,9 +55,12 @@ Design sketch
 Build Parameters
 ----------------
 
-* The language projects that are found in the buildspace.
 * The standard set of cmake variables, especially
-  ``CMAKE_INSTALL_PREFIX``, ``CMAKE_BUILD_TYPE``, etc.
+  ``CMAKE_INSTALL_PREFIX``, ``CMAKE_BUILD_TYPE``,
+  ``CMAKE_TOOLCHAIN_FILE`` etc.
+
+* The language projects that are found in the buildspace.
+
 * Assorted others as needed by individual stacks/packages, i.e. to
   enable/disable certain features or dependencies.
 
@@ -60,9 +75,59 @@ obeys ``DESTDIR`` for ease of packaging.  Projects specify what should
 be installed and where in the usual cmake fashion, via the
 ``install()`` macro.
 
+Layout of src/build directory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+e.g. for project 'proj'::
+
+  src/
+    proj/
+      CMakeLists.txt
+      debian/
+        control.em               # explains interstack dependencies.  Will probably change
+      msg/
+        ProjMsg.msg
+      srv/
+        ProjSrv.srv
+      src/
+        proj/
+          __init__.py
+          othercode.py
+        libproj/
+          CMakeLists.txt
+          proj.cpp
+      include/
+        proj/
+          proj.hpp
+          otherheaders.hpp
+
+  build/
+    gen/
+      cpp/
+        proj/
+          ProjMsg.h
+          ProjSrvRequest.h  
+          ProjSrvResponse.h  
+      py/                     # single pythonpath setting for buildspace
+        proj/
+          __init__.py         # uses pkgutil to add src/proj/src/ to pythonpath
+          msg/
+            __init__.py
+            _ProjMsg.py
+            _ProjSrvRequest.py
+            _ProjSrvResponse.py
+    lib/
+      libproj.so
+    proj/
+      # the usual cmake-generated stuff.
+      Makefile
+      CMakeFiles/
+      cmake_install.cmake
+
 Installed layout
 ^^^^^^^^^^^^^^^^
-::
+
+as such::
 
   CMAKE_INSTALL_PREFIX/       # e.g. /opt/ros/fuerte
     bin/
@@ -93,14 +158,9 @@ Installed layout
         node_handle.h         # "static" hand-coded header
         time.h
         xmlrpc_manager.h
+
+
     
-
-open issues: where exactly to put python.  where to install
-per-package binaries other than bin/ 
-  
-
-
-
 
 
 Main trickery
@@ -139,3 +199,11 @@ Main trickery
   ``CMAKE_BINARY_DIR``)
 
 
+open issues
+^^^^^^^^^^^
+
+
+* exactly where to put python code.  
+* where to install per-package binaries other than bin/ 
+* roslib usage inside generated messages  
+* where to put interdependencies information between stacks
