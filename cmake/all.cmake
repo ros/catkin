@@ -2,8 +2,6 @@ include(${catkin_EXTRAS_DIR}/log.cmake)
 include(${catkin_EXTRAS_DIR}/assert.cmake)
 assert(catkin_EXTRAS_DIR)
 
-info(all)
-
 foreach(f
     empy
     stamp
@@ -19,7 +17,6 @@ foreach(f
     catkin_workspace
     enable_python
     )
-  info(${f})
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
 endforeach()
 
