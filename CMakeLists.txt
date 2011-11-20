@@ -22,13 +22,13 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cma
 
 install(DIRECTORY cmake/
   DESTINATION share/cmake/catkin
+  USE_SOURCE_PERMISSIONS
   )
 
-install(
-  FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/catkin-config.cmake
-  debian.rules
-  DESTINATION share/cmake/catkin
-  )
+#install(
+#  FILES
+#  ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/catkin-config.cmake
+#  DESTINATION share/cmake/catkin
+#  )
 
-# catkin_package(catkin)
+catkin_package(catkin)

@@ -41,19 +41,17 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   #
   # Versions find_packageable from the buildspace
   #
-  #  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PACKAGE_NAME}-config.cmake.in)
   string(TOLOWER ${PACKAGE_NAME} package_lower)
-    configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
-      ${CMAKE_BINARY_DIR}/cmake/${package_lower}-config.cmake
-      @ONLY
-      )
-#  endif()
-#  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PACKAGE_NAME}-config-version.cmake.in)
-    configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
-      ${CMAKE_BINARY_DIR}/cmake/${package_lower}-config-version.cmake
-      @ONLY
-      )
-#  endif()
+  configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
+    ${CMAKE_BINARY_DIR}/cmake/${package_lower}-config.cmake
+    @ONLY
+    )
+
+  configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
+    ${CMAKE_BINARY_DIR}/cmake/${package_lower}-config-version.cmake
+    @ONLY
+    )
+
   # installable
   set(PKG_INCLUDE_PREFIX ${CMAKE_INSTALL_PREFIX})
   set(PKG_LIB_PREFIX ${CMAKE_INSTALL_PREFIX})
