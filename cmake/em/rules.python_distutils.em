@@ -6,7 +6,7 @@ export DH_OPTIONS=-v
 
 
 %:
-       dh  $@@
+	dh  $@@
 
 override_dh_auto_configure:
        dh_auto_configure -Scmake -- \
