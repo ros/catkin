@@ -1,9 +1,16 @@
 cmake_minimum_required(VERSION 2.8)
 
+find_package(PythonInterp)
+
+
+
 project(catkin)
 
 set(catkin_EXTRAS_DIR_VALUE ${catkin_SOURCE_DIR}/cmake)
 set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
+
+execute_process(COMMAND ${PYTHON_EXECUTABLE} ${cakin_EXTRAS_DIR}/python_version.py
+  OUTPUT_VARIBLE PYTHON_VERSION_XDOTY)
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
