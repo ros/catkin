@@ -85,7 +85,7 @@ else:
 message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 message(STATUS "~v^V^v~   traversing stacks/projects in topological order   ~v^V^v~")
 message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-set(CATKIN_GENLANGS @(' '.join(langs))
+set(CATKIN_GENLANGS @(' '.join(langs)))
 
 @[for pkgname in topo_pkgs]
 message(STATUS "+++ @pkgname")
