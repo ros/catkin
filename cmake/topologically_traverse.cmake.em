@@ -73,6 +73,8 @@ del pkgs['catkin']
 remove_deps(pkgs, 'catkin')
 
 print >>sys.stderr, "len=", len(unknown_deps), unknown_deps
+langs = [name for name,p in pkgs.items() if p.genlang]
+
 if len(unknown_deps) > 0:
     print 'message(FATAL_ERROR "\nUnknown dependencies: <%s>\n")' % '|'.join(unknown_deps)
     topo_pkgs = []
@@ -83,7 +85,7 @@ else:
 message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 message(STATUS "~v^V^v~   traversing stacks/projects in topological order   ~v^V^v~")
 message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-set(ROS_LANGS genpy gencpp)
+set(CATKIN_GENLANGS @(' '.join(langs))
 
 @[for pkgname in topo_pkgs]
 message(STATUS "+++ @pkgname")

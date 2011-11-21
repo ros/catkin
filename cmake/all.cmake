@@ -16,6 +16,7 @@ foreach(f
     install_cmake_config_version
     catkin_workspace
     enable_python
+    langs
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
 endforeach()
