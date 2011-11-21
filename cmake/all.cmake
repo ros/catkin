@@ -24,11 +24,12 @@ endforeach()
 if(catkin_BINARY_DIR)
   set(CATKIN_CONTEXT_FILE ${catkin_BINARY_DIR}/catkin-context.py
     CACHE INTERNAL "catkin context file")
-  set(CATKIN_ENV ${CMAKE_BINARY_DIR}/env.sh)
+  set(CATKIN_ENV ${CMAKE_BINARY_DIR}/env.sh CACHE INTERNAL "catkin env")
 else()
   set(CATKIN_CONTEXT_FILE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/catkin-context.py
     CACHE INTERNAL "catkin context file")
-  set(CATKIN_ENV ${catkin_INSTALL_PREFIX}/env.sh)
+  set(CATKIN_ENV ${catkin_INSTALL_PREFIX}/env.sh
+    CACHE INTERNAL "catkin env")
 endif()
 configure_file(${catkin_EXTRAS_DIR}/catkin-context.in ${CATKIN_CONTEXT_FILE})
 
