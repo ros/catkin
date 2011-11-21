@@ -29,7 +29,7 @@ configure_file(setup.sh.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/s
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh
   setup.bash
   setup.zsh
-  DESTINATION /
+  DESTINATION ${CMAKE_INSTALL_PREFIX}
   )
 
 catkin_package(catkin)
