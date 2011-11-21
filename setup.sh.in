@@ -1,0 +1,2 @@
+PYTHONPATH=@CMAKE_INSTALL_PREFIX@/lib/python$(python -c 'from sys import version_info as v; print "%u.%u" % (v.major, v.minor)'):$PYTHONPATH
+

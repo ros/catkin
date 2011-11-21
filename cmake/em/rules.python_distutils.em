@@ -18,7 +18,8 @@ override_dh_auto_configure:
 
 override_dh_auto_install:
 	dh_auto_install -Scmake
-	dh_auto_install -Spython_distutils -- --prefix="@(CMAKE_INSTALL_PREFIX)"
+	dh_auto_install -Spython_distutils -- \
+		--prefix="@(CMAKE_INSTALL_PREFIX)" --install-layout=deb
 
 override_dh_auto_build:
 	dh_auto_build -Scmake

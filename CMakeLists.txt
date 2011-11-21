@@ -25,10 +25,11 @@ install(DIRECTORY cmake/
   USE_SOURCE_PERMISSIONS
   )
 
-#install(
-#  FILES
-#  ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/catkin-config.cmake
-#  DESTINATION share/cmake/catkin
-#  )
+configure_file(setup.sh.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh
+  setup.bash
+  setup.zsh
+  DESTINATION /
+  )
 
 catkin_package(catkin)
