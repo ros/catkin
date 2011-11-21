@@ -11,6 +11,7 @@ macro(em_expand CONTEXT_FILE_IN CONTEXT_FILE_OUT EM_FILE_IN CMAKE_FILE_OUT)
   stamp(${EM_FILE_IN})
 
   safe_execute_process(COMMAND
+    ${CATKIN_ENV}
     ${EMPY_EXECUTABLE}
     --raw-errors
     -F ${catkin_EXTRAS_DIR}/empy_util.py

@@ -83,8 +83,7 @@ e.g. for project 'proj'::
   src/
     proj/
       CMakeLists.txt
-      debian/
-        control.em               # explains interstack dependencies.  Will probably change
+      stack.yaml  # explains interstack dependencies and debian-generating rules
       msg/
         ProjMsg.msg
       srv/

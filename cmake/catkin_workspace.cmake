@@ -14,12 +14,9 @@ function(catkin_workspace)
     ${catkin_EXTRAS_DIR}/topologically_traverse.cmake.em
     ${CMAKE_CURRENT_BINARY_DIR}/topologically_traverse.cmake)
 
-  configure_file(${catkin_EXTRAS_DIR}/setup.sh.in
-    ${CMAKE_BINARY_DIR}/setup.sh
-    @ONLY)
-
-  foreach(shfile setup.zsh setup.bash)
-    configure_file(${catkin_EXTRAS_DIR}/${shfile} ${CMAKE_BINARY_DIR}/${shfile} @ONLY)
+  foreach(shfile setup.sh setup.zsh setup.bash env.sh)
+    configure_file(${catkin_EXTRAS_DIR}/${shfile}.in ${CMAKE_BINARY_DIR}/${shfile} 
+      @ONLY)
   endforeach()
 
 endfunction()
