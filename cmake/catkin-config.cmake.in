@@ -1,6 +1,7 @@
 #
 # catkin-config.cmake
 #
+set(catkin_INSTALL_PREFIX @CMAKE_INSTALL_PREFIX@)
 set(catkin_EXTRAS_DIR @CMAKE_INSTALL_PREFIX@/share/cmake/catkin)
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
