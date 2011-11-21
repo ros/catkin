@@ -51,6 +51,9 @@ Design sketch
   poorest taste.  Exception: sphinx-generated Makefiles used to
   generate documentation.
 
+* ``stack.yaml`` contains everything necessary to to make debian
+  source packages.
+
 
 Build Parameters
 ----------------

@@ -3,6 +3,7 @@ include(${catkin_EXTRAS_DIR}/assert.cmake)
 assert(catkin_EXTRAS_DIR)
 
 foreach(f
+    python
     empy
     stamp
     set_once

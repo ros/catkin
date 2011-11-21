@@ -4,13 +4,12 @@
 set(catkin_INSTALL_PREFIX @CMAKE_INSTALL_PREFIX@)
 set(catkin_EXTRAS_DIR @CMAKE_INSTALL_PREFIX@/share/cmake/catkin)
 include(${catkin_EXTRAS_DIR}/all.cmake)
-
+set(CATKIN YES CACHE INTERNAL "YES")
 
 if (NOT catkin_FOUND)
   #set(CATKIN_PACKAGE_PREFIX "")
   #set(CATKIN_LINUX_DISTRIBUTIONS "lucid maverick natty oneiric")
   set(catkin_FOUND)
   
-  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}:${CMAKE_BINARY_DIR}/cmake)
-
+  # set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/CMAKE_PREFIX_PATH:${CMAKE_PREFIX_PATH}")
 endif()

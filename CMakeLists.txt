@@ -7,14 +7,6 @@ set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
-find_package(PythonInterp)
-execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/python_version.py
-  OUTPUT_VARIABLE PYTHON_VERSION_XDOTY
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-set(PYTHON_VERSION_XDOTY ${PYTHON_VERSION_XDOTY})
-
-
 install_cmake_infrastructure(catkin
   VERSION 0.0.7
   )

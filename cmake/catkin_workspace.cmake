@@ -8,16 +8,17 @@ function(catkin_workspace)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-  em_expand(
-    ${catkin_EXTRAS_DIR}/topologically_traverse.py.in
-    ${CMAKE_CURRENT_BINARY_DIR}/topologically_traverse.py
-    ${catkin_EXTRAS_DIR}/topologically_traverse.cmake.em
-    ${CMAKE_CURRENT_BINARY_DIR}/topologically_traverse.cmake)
-
   foreach(shfile setup.sh setup.zsh setup.bash env.sh)
     configure_file(${catkin_EXTRAS_DIR}/${shfile}.in ${CMAKE_BINARY_DIR}/${shfile} 
       @ONLY)
   endforeach()
+
+  em_expand(
+    ${catkin_EXTRAS_DIR}/topologically_traverse.py.in
+    ${CMAKE_CURRENT_BINARY_DIR}/topologically_traverse.py
+    ${catkin_EXTRAS_DIR}/topologically_traverse.cmake.em
+    ${CMAKE_CURRENT_BINARY_DIR}/topologically_traverse.cmake
+    )
 
 endfunction()
 

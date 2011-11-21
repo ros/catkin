@@ -27,7 +27,8 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   set(PKG_MSG_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/msg)
   set(PKG_CMAKE_DIR ${CMAKE_BINARY_DIR}/cmake)
   set(PKG_CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-  set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts ${CMAKE_CURRENT_BINARY_DIR}/bin)
+  set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts 
+    ${CMAKE_CURRENT_BINARY_DIR}/bin)
   set(PKG_LOCATION "Source")
 
   foreach(extra ${PACKAGE_CFG_EXTRAS})
@@ -42,13 +43,22 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   # Versions find_packageable from the buildspace
   #
   string(TOLOWER ${PACKAGE_NAME} package_lower)
+  set(_cfgdir ${CMAKE_BINARY_DIR}/CMAKE_PREFIX_PATH/share/cmake/${package_lower})
+  set(_cfgout ${_cfgdir}/${package_lower}-config.cmake)
+  log(2 "Writing config to ${_cfgout}")
+
+  # THIS IS IMPORTANT. CMAKE_PREFIX_PATH appears to be twitchy: just
+  # spent hours figuring out that having /opt/ros/fuerte first is
+  # necessary for this finding to work.  Very strange.  xxx_DIR
+  # circumvents this twitchiness.
+  set(${PACKAGE_NAME}_DIR ${_cfgdir} CACHE FILEPATH "${PACKAGE_NAME} cmake config file dir")
   configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/${package_lower}-config.cmake
+    ${_cfgout}
     @ONLY
     )
 
   configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/${package_lower}-config-version.cmake
+    ${_cfgdir}/${package_lower}-config-version.cmake
     @ONLY
     )
 
