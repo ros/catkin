@@ -1,3 +1,6 @@
 if (NOT catkin_SOURCE_DIR)
-   file(GLOB CATKIN_GENLANGS RELATIVE /opt/ros/fuerte/etc/langs /opt/ros/fuerte/etc/langs/gen*)
+  if (NOT CATKIN_GENLANGS)
+    file(GLOB CATKIN_GENLANGS RELATIVE /opt/ros/fuerte/etc/langs /opt/ros/fuerte/etc/langs/gen*)
+    message(STATUS "Using these generator languages from the installation: ${CATKIN_GENLANGS}")
+  endif()
 endif()
