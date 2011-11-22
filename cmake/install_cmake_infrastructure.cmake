@@ -127,7 +127,9 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   if(PACKAGE_INCLUDE_DIRS)
     if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_INCLUDE_DIRS})
       install(DIRECTORY ${PACKAGE_INCLUDE_DIRS}/
-	DESTINATION include)
+	DESTINATION include
+        PATTERN .svn EXCLUDE
+        )
     else()
       message(WARNING "Include directory '${PACKAGE_INCLUDE_DIRS}' for ${PROJECT_NAME} not found")
     endif()
