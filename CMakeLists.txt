@@ -17,6 +17,10 @@ configure_file(ros-config.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cmake
   @ONLY)
 
+configure_file(ros-config.buildspace.cmake.in
+  ${CMAKE_BINARY_DIR}/cmake/ros-config.cmake
+  @ONLY)
+
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cmake
   DESTINATION share/cmake/ROS)
 
