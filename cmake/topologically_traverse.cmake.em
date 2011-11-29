@@ -18,7 +18,7 @@ def read_control_file(source_dir, control_file):
     stackyaml = yaml.load(open(control_file))
 
     pkg_name = stackyaml[PKG_NAME_FIELD]
-    print >>sys.stderr, "pkg_name=<%s>" % pkg_name
+    # print >>sys.stderr, "pkg_name=<%s>" % pkg_name
     if enabled_projects[0] != 'ALL' and pkg_name not in enabled_projects:
         return
     pkgs[pkg_name] = p = Pkg(path=source_dir)
@@ -28,7 +28,7 @@ def read_control_file(source_dir, control_file):
     else:
         p.depends = set([])
     p.genlang = stackyaml.get(GENERATOR_FIELD, None)
-    print >>sys.stderr, "p=", p
+    # print >>sys.stderr, "p=", p
 
 #def find_external_pkgs(pkgs):
 #    return reduce( set.union, pkgs.values()) - set(dep_map.keys())
@@ -53,13 +53,13 @@ def topo_packages_generators_first(pkgs):
     
     while len(pkgs) > 0:
         name = next_pkg()
-        print >>sys.stderr, "name=", name
+        # print >>sys.stderr, "name=", name
         del pkgs[name]
         remove_deps(pkgs, name)
         yield name
 
 stackyamls = glob.glob(os.path.join(source_root_dir, '*', 'stack.yaml'))
-print >>sys.stderr, "stackyamls=", stackyamls
+# print >>sys.stderr, "stackyamls=", stackyamls
 for stackyamlfilename in stackyamls:
     if os.path.basename(os.path.dirname(stackyamlfilename)).startswith('.'):
         continue
@@ -72,7 +72,7 @@ unknown_deps = all_deps - set(pkgs)
 del pkgs['catkin']
 remove_deps(pkgs, 'catkin')
 
-print >>sys.stderr, "len=", len(unknown_deps), unknown_deps
+# print >>sys.stderr, "len=", len(unknown_deps), unknown_deps
 langs = [name for name,p in pkgs.items() if p.genlang]
 
 if len(unknown_deps) > 0:
