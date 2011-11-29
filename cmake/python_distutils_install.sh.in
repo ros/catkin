@@ -1,0 +1,9 @@
+#!/bin/sh -x
+
+if [ -n "$DESTDIR" ] ; then
+    DESTDIR_ARG="--root=$DESTDIR"
+fi
+
+cd @INSTALL_CMD_WORKING_DIRECTORY@
+
+/usr/bin/env PYTHONPATH=@INSTALLED_PYTHONPATH@ @PYTHON_EXECUTABLE@ @CMAKE_CURRENT_SOURCE_DIR@/setup.py install $DESTDIR_ARG --install-layout=deb --prefix=@CMAKE_INSTALL_PREFIX@

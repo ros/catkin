@@ -5,8 +5,15 @@ function(enable_python pkg_name)
     @ONLY)
   if(EXISTS ${${pkg_name}_SOURCE_DIR}/setup.py)
     assert(INSTALLED_PYTHONPATH)
-    set(CMD "/usr/bin/env PYTHONPATH=${INSTALLED_PYTHONPATH} ${PYTHON_EXECUTABLE} setup.py install --root=$DESTDIR --install-layout=deb --prefix=${CMAKE_INSTALL_PREFIX} WORKING_DIRECTORY ${${pkg_name}_SOURCE_DIR}")
+    set(INSTALL_CMD_WORKING_DIRECTORY ${${pkg_name}_SOURCE_DIR})
+    set(INSTALL_SCRIPT
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/python_distutils_install.sh)
+
+    configure_file(${catkin_EXTRAS_DIR}/python_distutils_install.sh.in
+      ${INSTALL_SCRIPT}
+      @ONLY)
+
     install(CODE "message(COMMAND = ${CMD})")
-    install(CODE "execute_process(COMMAND ${CMD})")
+    install(CODE "execute_process(COMMAND ${INSTALL_SCRIPT})")
   endif()
 endfunction()
