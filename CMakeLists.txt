@@ -9,6 +9,7 @@ include(${catkin_EXTRAS_DIR}/all.cmake)
 
 install_cmake_infrastructure(catkin
   VERSION 0.0.7
+  PYTHONPATH python
   )
 
 install_cmake_config_version(ROS 12.04)
@@ -32,7 +33,7 @@ install(DIRECTORY cmake/
 configure_file(setup.sh.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh)
 configure_file(env.sh.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
 
-install(FILES 
+install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh
   setup.bash
   setup.zsh
@@ -45,3 +46,4 @@ install(PROGRAMS
   )
 
 catkin_package(catkin)
+enable_python(catkin)
