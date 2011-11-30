@@ -1,5 +1,11 @@
 function(enable_python pkg_name)
   set(PACKAGE_NAME ${pkg_name})
+  if(${pkg_name}_PYTHONPATH)
+    set(PACKAGE_PYTHONPATH ${${pkg_name}_PYTHONPATH})
+  else()
+    set(PACKAGE_PYTHONPATH src/${pkg_name})
+  endif()
+
   configure_file(${catkin_EXTRAS_DIR}/__init__.py.in
     ${CMAKE_BINARY_DIR}/gen/py/${pkg_name}/__init__.py
     @ONLY)

@@ -18,16 +18,18 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
   set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/cmake/${PACKAGE_NAME})
   set(PACKAGE_MSG_DIRS ${PACKAGE_MSG_DIRS})
-  set(PACKAGE_PYTHONPATH ${PACKAGE_PYTHONPATH})
-
-
+  if (PACKAGE_PYTHONPATH)
+    set(PACKAGE_PYTHONPATH ${PACKAGE_PYTHONPATH})
+    message(STATUS "python: ${PACKAGE_PYTHONPATH}")
+    set(${PACKAGE_NAME}_PYTHONPATH ${PACKAGE_PYTHONPATH} CACHE FILEPATH "python path")
+  endif()
   # in source
   set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
   set(PKG_LIB_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
   set(PKG_MSG_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/msg)
   set(PKG_CMAKE_DIR ${CMAKE_BINARY_DIR}/cmake)
   set(PKG_CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-  set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts 
+  set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts
     ${CMAKE_CURRENT_BINARY_DIR}/bin)
   set(PKG_LOCATION "Source")
 
@@ -107,7 +109,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       @ONLY
       )
   endif()
-  
+
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config-version.cmake
