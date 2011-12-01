@@ -8,7 +8,6 @@ set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
 install_cmake_infrastructure(catkin
-  VERSION 0.0.7
   PYTHONPATH python
   )
 
@@ -49,3 +48,4 @@ catkin_package(catkin)
 enable_python(catkin)
 
 stamp(cmake/catkin_generate_debian.py)
+stamp(cmake/stack_get.py)

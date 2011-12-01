@@ -4,15 +4,17 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\nDid you forget to call project()?\n")
   endif()
 
+  set(PACKAGE_VERSION "0.0.0")
+
   parse_arguments(PACKAGE
-    "VERSION;INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
+    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
     ""
     ${ARGN})
 
-  log(2 "install_cmake_infrastructure ${PACKAGE_NAME} at version ${PACKAGE_VERSION} in @CMAKE_INSTALL_PREFIX@")
+  log(2 "install_cmake_infrastructure ${PACKAGE_NAME} at version ${${PACKAGE_NAME}_VERSION} in @CMAKE_INSTALL_PREFIX@")
   set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
   set(PACKAGE_NAME ${PACKAGE_NAME})
-  set(PACKAGE_VERSION ${PACKAGE_VERSION})
+  set(PACKAGE_VERSION ${${PACKAGE}_VERSION})
   set(PACKAGE_INCLUDE_DIRS ${PACKAGE_INCLUDE_DIRS})
   set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
@@ -20,7 +22,6 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   set(PACKAGE_MSG_DIRS ${PACKAGE_MSG_DIRS})
   if (PACKAGE_PYTHONPATH)
     set(PACKAGE_PYTHONPATH ${PACKAGE_PYTHONPATH})
-    message(STATUS "python: ${PACKAGE_PYTHONPATH}")
     set(${PACKAGE_NAME}_PYTHONPATH ${PACKAGE_PYTHONPATH} CACHE FILEPATH "python path")
   endif()
   # in source
