@@ -6,7 +6,7 @@ import sys, yaml, pprint, em, os.path, datetime, dateutil.tz, platform, catkin
 cache = catkin.load_cmake_cache(sys.argv[5])
 
 ctxfile = sys.argv[1]
-ctx = {}
+ctx = { 'Catkin-ChangelogType' : '' }
 execfile(ctxfile, ctx)
 cache.update(ctx)
 
@@ -28,8 +28,8 @@ def debexpand(name, d, filetype=''):
     ifilename = os.path.join(templatedir, name)
 
     if filetype != '':
-        if filetype.startswith('custom:'):
-            ifilename = os.path.join(srcdir, filetype[7:])
+        if filetype.startswith('+'):
+            ifilename = os.path.join(srcdir, filetype[1:])
         else:
             ifilename += ('.' + filetype + '.em')
     else:
@@ -49,7 +49,7 @@ d['Date'] = t.strftime('%a, %d %b %Y %T %z')
 d['YYYY'] = t.strftime('%Y')
 
 debexpand('control', d)
-debexpand('changelog', d)
+debexpand('changelog', d, d['Catkin-ChangelogType'])
 debexpand('rules', d, d['Catkin-DebRulesType'])
 debexpand('copyright', d, d['Catkin-CopyrightType'])
 
