@@ -47,3 +47,5 @@ install(PROGRAMS
 
 catkin_package(catkin)
 enable_python(catkin)
+
+stamp(cmake/catkin_generate_debian.py)

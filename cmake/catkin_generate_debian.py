@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import sys, yaml, pprint, em, os.path, datetime, dateutil.tz, platform
+import sys, yaml, pprint, em, os.path, datetime, dateutil.tz, platform, catkin
+
+cache = catkin.load_cmake_cache(sys.argv[5])
 
 ctxfile = sys.argv[1]
 ctx = {}
 execfile(ctxfile, ctx)
+cache.update(ctx)
+
 infile = sys.argv[2]
 templatedir = sys.argv[3]
 outdir = sys.argv[4]
@@ -15,13 +19,21 @@ if not os.path.isdir(outdir):
 
 stackyaml = open(infile)
 
+
 d = yaml.load(stackyaml)
 d.update(ctx)
+d.update(cache)
+srcdir = d[d['Catkin-ProjectName'] + '_SOURCE_DIR']
 def debexpand(name, d, filetype=''):
     ifilename = os.path.join(templatedir, name)
+
     if filetype != '':
-        ifilename += ('.' + filetype)
-    ifilename += '.em'
+        if filetype.startswith('custom:'):
+            ifilename = os.path.join(srcdir, filetype[7:])
+        else:
+            ifilename += ('.' + filetype + '.em')
+    else:
+        ifilename += '.em'
     file_em = open(ifilename).read()
 
     s = em.expand(file_em, **d)
