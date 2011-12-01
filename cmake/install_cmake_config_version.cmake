@@ -1,4 +1,4 @@
-function(install_cmake_config_version PACKAGE_NAME_UPPER PACKAGE_VERSION)
+function(install_cmake_config_version PACKAGE_NAME_UPPER)
   set(PACKAGE_VERSION ${PACKAGE_VERSION})
   string(TOLOWER ${PACKAGE_NAME_UPPER} PACKAGE_NAME)
 

@@ -16,6 +16,7 @@ foreach(f
     install_cmake_infrastructure
     install_cmake_config_version
     catkin_workspace
+    catkin_project
     enable_python
     langs
     )
