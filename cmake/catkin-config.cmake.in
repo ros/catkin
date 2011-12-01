@@ -1,9 +1,9 @@
 #
 # catkin-config.cmake
 #
-#if (PROJECT_NAME STREQUAL "Project")
-#  message(FATAL_ERROR "Please use the project() macro to specify the name of your project... catkin needs it.")
-#endif()
+if (PROJECT_NAME STREQUAL "Project")
+  message(FATAL_ERROR "Please use the project() macro to specify the name of your project... catkin needs it.")
+endif()
 set(catkin_INSTALL_PREFIX @CMAKE_INSTALL_PREFIX@)
 set(catkin_EXTRAS_DIR @CMAKE_INSTALL_PREFIX@/share/cmake/catkin)
 include(${catkin_EXTRAS_DIR}/all.cmake)
