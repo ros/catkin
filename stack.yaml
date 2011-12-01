@@ -3,8 +3,8 @@ Version: 3.4.5
 Section: misc
 Priority: extra
 Architecture: all
-Depends: ${misc:Depends} python-empy, cmake, make, lsb-release
-Build-Depends: debhelper (>= 7), cmake, gcc, make, python-empy, lsb-release
+Depends: ${misc:Depends} cmake, make, lsb-release, python-yaml, python-empy 
+Build-Depends: debhelper (>= 7), cmake, gcc, make, python-empy, python-yaml, lsb-release 
 Description: Willow Garage low level build system macros and infrastructure
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard
 Maintainer: Troy Straszheim <straszheim@willowgarage.com>
@@ -12,4 +12,4 @@ Homepage: http://www.ros.org
 
 Catkin-ProjectName: catkin
 Catkin-CopyrightType:  willowgarage
-Catkin-DebRulesType: cmake
+Catkin-DebRulesType: python_distutils
