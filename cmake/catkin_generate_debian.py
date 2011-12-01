@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import sys, yaml, pprint, em, os.path, datetime, dateutil.tz, platform, catkin
+import os, sys, yaml, pprint, em, os.path, datetime, dateutil.tz, platform, catkin
 
 cache = catkin.load_cmake_cache(sys.argv[5])
 
