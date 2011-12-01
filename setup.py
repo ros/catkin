@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='catkin',
-      version= "0.0.0"
+      version= "0.0.0",
       packages=['catkin'],
       package_dir = {'':'python'},
       scripts = [],
