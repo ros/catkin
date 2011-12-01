@@ -1,4 +1,4 @@
-import re
+import os, re
 
 def load_cmake_cache(bindir):
     ifile = open(os.path.join(bindir, 'CMakeCache.txt')).readlines()
