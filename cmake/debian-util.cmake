@@ -12,6 +12,8 @@ function(catkin_package PKGNAME)
     return()
   endif()
 
+  assert(CATKIN_ENV)
+  message("CATKIN_ENV IS NOW ${CATKIN_ENV}")
   #
   # Generate control file
   #
@@ -23,6 +25,7 @@ function(catkin_package PKGNAME)
     ${PROJECT_SOURCE_DIR}/debian/changelog
     ${PROJECT_SOURCE_DIR}/debian/copyright
 
+    COMMAND pwd
     COMMAND
     ${CATKIN_ENV}
     ${catkin_EXTRAS_DIR}/catkin_generate_debian.py
@@ -39,6 +42,9 @@ function(catkin_package PKGNAME)
     ${catkin_EXTRAS_DIR}/em/rules.cmake.em
     ${catkin_EXTRAS_DIR}/em/copyright.willowgarage.em
     ${catkin_EXTRAS_DIR}/em/changelog.em
+
+    COMMENT "Shelling out..."
+    VERBATIM
     )
 
   add_custom_target(
@@ -49,6 +55,8 @@ function(catkin_package PKGNAME)
     ${PROJECT_SOURCE_DIR}/debian/rules
     ${PROJECT_SOURCE_DIR}/debian/changelog
     ${PROJECT_SOURCE_DIR}/debian/copyright
+
+    COMMENT "Generating debian directory *in-source* for stack ${PROJECT_NAME}"
     )
 
   add_custom_command(TARGET ${PROJECT_NAME}-gendebian
