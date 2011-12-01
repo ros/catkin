@@ -4,6 +4,8 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\nDid you forget to call project()?\n")
   endif()
 
+  set(PACKAGE_VERSION "0.0.0")
+
   parse_arguments(PACKAGE
     "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
     ""
