@@ -36,12 +36,6 @@ function(catkin_package PKGNAME)
     ${PROJECT_SOURCE_DIR}/debian      # outdir
     ${CMAKE_BINARY_DIR}
 
-    DEPENDS
-    ${PROJECT_SOURCE_DIR}/debian/control
-    ${PROJECT_SOURCE_DIR}/debian/rules
-    ${PROJECT_SOURCE_DIR}/debian/changelog
-    ${PROJECT_SOURCE_DIR}/debian/copyright
-
     COMMENT "Generating debian directory *in-source* for stack ${PROJECT_NAME}"
     )
 

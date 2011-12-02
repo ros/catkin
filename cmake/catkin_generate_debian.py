@@ -24,7 +24,7 @@ d = yaml.load(stackyaml)
 d.update(ctx)
 d.update(cache)
 if 'Catkin-ChangelogType' not in d:
-    cache['Catkin-ChangelogType'] = ''
+    d['Catkin-ChangelogType'] = ''
 
 srcdir = d[d['Catkin-ProjectName'] + '_SOURCE_DIR']
 def debexpand(name, d, filetype=''):
