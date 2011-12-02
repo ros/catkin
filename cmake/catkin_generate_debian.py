@@ -52,7 +52,9 @@ if 'CATKIN_DEB_SNAPSHOTS' in d:
 else:
     d['SnapshotVersion'] = ''
 
-d['Distribution'] = platform.dist()[2]
+d['Distribution'] = os.environ.get('CATKIN_DEBIAN_DISTRIBUTION',
+                                   platform.dist()[2])
+
 d['Date'] = t.strftime('%a, %d %b %Y %T %z')
 d['YYYY'] = t.strftime('%Y')
 
