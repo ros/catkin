@@ -37,7 +37,7 @@ def debexpand(name, d, filetype=''):
             ifilename += ('.' + filetype + '.em')
     else:
         ifilename += '.em'
-    print("Reading %s template from %s" % (name, ifilename)) 
+    print("Reading %s template from %s" % (name, ifilename))
     file_em = open(ifilename).read()
 
     s = em.expand(file_em, **d)
@@ -47,6 +47,10 @@ def debexpand(name, d, filetype=''):
     print(s, file=ofilestr)
 
 t = datetime.datetime.now(dateutil.tz.tzlocal())
+if 'CATKIN_DEB_SNAPSHOTS' in d:
+    d['SnapshotVersion'] = '-' + t.strftime('%Y%m%d-%H%M%z')
+else:
+    d['SnapshotVersion'] = ''
 
 d['Distribution'] = platform.dist()[2]
 d['Date'] = t.strftime('%a, %d %b %Y %T %z')
