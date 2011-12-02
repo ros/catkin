@@ -15,6 +15,8 @@ def load_cmake_cache(bindir):
 
     return cache
 
+def prefixed(pfx, *args):
+    return ', '.join([pfx + x for x in args])
 
 
 

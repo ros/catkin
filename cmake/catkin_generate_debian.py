@@ -23,6 +23,8 @@ stackyaml = open(infile)
 d = yaml.load(stackyaml)
 d.update(ctx)
 d.update(cache)
+d.update(catkin.__dict__)
+
 if 'Catkin-ChangelogType' not in d:
     d['Catkin-ChangelogType'] = ''
 
