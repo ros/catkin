@@ -6,6 +6,10 @@ if (NOT TARGET debs)
   add_custom_target(debs)
 endif()
 
+if (NOT TARGET gendebian)
+  add_custom_target(gendebian)
+endif()
+
 set(CATKIN_DPKG_BUILDPACKAGE_FLAGS "-S")
 function(catkin_package PKGNAME)
 
@@ -18,10 +22,6 @@ function(catkin_package PKGNAME)
     )
 
   include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/stack.cmake)
-
-  if (NOT CATKIN_ENABLE_DEBBUILDING)
-    return()
-  endif()
 
   assert(CATKIN_ENV)
 
@@ -45,6 +45,8 @@ function(catkin_package PKGNAME)
     COMMAND dpkg-buildpackage ${CATKIN_DPKG_BUILDPACKAGE_FLAGS} # ${PROJECT_SOURCE_DIR}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
+
+  add_dependencies(gendebian ${PROJECT_NAME}-gendebian)
 
 endfunction()
 
