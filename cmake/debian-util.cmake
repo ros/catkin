@@ -6,6 +6,7 @@ if (NOT TARGET debs)
   add_custom_target(debs)
 endif()
 
+set(CATKIN_DPKG_BUILDPACKAGE_FLAGS "-S")
 function(catkin_package PKGNAME)
 
   stamp(${PROJECT_SOURCE_DIR}/stack.yaml)
@@ -41,8 +42,8 @@ function(catkin_package PKGNAME)
 
   add_custom_command(TARGET ${PROJECT_NAME}-gendebian
     POST_BUILD
-    COMMAND dpkg-source -b ${PROJECT_SOURCE_DIR}
-    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    COMMAND dpkg-buildpackage ${CATKIN_DPKG_BUILDPACKAGE_FLAGS} # ${PROJECT_SOURCE_DIR}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 
 endfunction()
