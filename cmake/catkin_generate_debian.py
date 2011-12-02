@@ -47,6 +47,9 @@ def debexpand(name, d, filetype=''):
     ofilename = outdir + '/' + name
     ofilestr = open(ofilename, "w")
     print(s, file=ofilestr)
+    ofilestr.close()
+    if name == 'rules':
+        os.chmod(ofilename, 0755)
 
 t = datetime.datetime.now(dateutil.tz.tzlocal())
 if 'CATKIN_DEB_SNAPSHOTS' in d:

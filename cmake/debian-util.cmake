@@ -1,16 +1,10 @@
-execute_process(COMMAND date +%F-%0k-%0M-%0S%z
-  OUTPUT_VARIABLE DEBIAN_SNAPSHOT_SUFFIX
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-if (NOT TARGET debs)
-  add_custom_target(debs)
-endif()
-
 if (NOT TARGET gendebian)
   add_custom_target(gendebian)
 endif()
 
-set(CATKIN_DPKG_BUILDPACKAGE_FLAGS "-S")
+set(CATKIN_DPKG_BUILDPACKAGE_FLAGS "-S" CACHE STRING 
+  "Flags passed when running dpkg-buildpackage as part of -gendeiban targets")
+
 function(catkin_package PKGNAME)
 
   stamp(${PROJECT_SOURCE_DIR}/stack.yaml)
