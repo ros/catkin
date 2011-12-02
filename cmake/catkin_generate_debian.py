@@ -6,7 +6,7 @@ import os, sys, yaml, pprint, em, os.path, datetime, dateutil.tz, platform, catk
 cache = catkin.load_cmake_cache(sys.argv[5])
 
 ctxfile = sys.argv[1]
-ctx = { 'Catkin-ChangelogType' : '' }
+ctx = {}
 execfile(ctxfile, ctx)
 cache.update(ctx)
 
@@ -23,6 +23,9 @@ stackyaml = open(infile)
 d = yaml.load(stackyaml)
 d.update(ctx)
 d.update(cache)
+if 'Catkin-ChangelogType' not in d:
+    cache['Catkin-ChangelogType'] = ''
+
 srcdir = d[d['Catkin-ProjectName'] + '_SOURCE_DIR']
 def debexpand(name, d, filetype=''):
     ifilename = os.path.join(templatedir, name)
@@ -34,6 +37,7 @@ def debexpand(name, d, filetype=''):
             ifilename += ('.' + filetype + '.em')
     else:
         ifilename += '.em'
+    print("Reading %s template from %s" % (name, ifilename)) 
     file_em = open(ifilename).read()
 
     s = em.expand(file_em, **d)
