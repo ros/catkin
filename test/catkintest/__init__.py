@@ -7,6 +7,7 @@ import os
 import shutil
 
 pwd = os.getcwd()
+print "pwd=", pwd
 srcdir = os.path.join(pwd, 'src')
 builddir = os.path.join(pwd, 'build')
 destdir='DESTDIR'
@@ -25,6 +26,8 @@ def succeed(cmd, **kwargs):
     return out
 
 def rosinstall(pth, specfile):
+    assert exists(pth)
+    assert exists(specfile)
     succeed("rosinstall -n %s %s" % (pth, specfile))
     assert( exists(pth + "/catkin/toplevel.cmake"))
     succeed("rm -f CMakeLists.txt", cwd=pth)

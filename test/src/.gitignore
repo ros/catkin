@@ -10,7 +10,7 @@ std_msgs
 setup.sh
 setup.bash
 setup.zsh
-CMakeLists.txt
+./CMakeLists.txt
 *.dsc
 *.changes
 *.tar.gz
