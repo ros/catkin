@@ -1,10 +1,13 @@
 #!/bin/bash -ex
 
 TOP=$(cd `dirname $0` ; pwd)
+CATKIN_DEB_SNAPSHOT_VERSION=-$(date +%Y%m%d-%H%M%z)
+export CATKIN_DEB_SNAPSHOT_VERSION
+
 CMAKE="cmake -DCATKIN_PACKAGE_PREFIX=ros-fuerte- -DCATKIN_DEB_SNAPSHOTS=YES -DCMAKE_INSTALL_PREFIX=/opt/ros/fuerte -DCMAKE_PREFIX_PATH=/opt/ros/fuerte -DCATKIN=YES"
 CHROOTDIR="/home/chroot/natty-amd64"
 BUILDDIR=$TOP/debbuild
-SRCDIR=$TOP/src/test.rosinstall
+SRCDIR=$TOP/src
 rm -rf $BUILDDIR || /bin/false
 mkdir -p $BUILDDIR || /bin/false
 REPODIR=$TOP/apt
@@ -89,10 +92,10 @@ do_one () {
         $MAKE CATKIN_DEBIAN_DISTRIBUTION=$d ${dirname}-gendebian
     done
     $MAKE ${dirname}-gendebian
-    sudo sbuild -A -d natty $SRCDIR/ros-fuerte-${debname}_${debversion}~natty.dsc
-    sudo dpkg -i ros-fuerte-${debname}_${debversion}~natty_${debplatform}.deb
-    scanrepo ros-fuerte-${debname}_${debversion}~natty_${debplatform}.deb
-    dput ppa:straszheim/ros $SRCDIR/ros-fuerte-${debname}_${debversion}~*_source.changes
+    sudo sbuild -A -d natty $SRCDIR/ros-fuerte-${debname}_${debversion}${CATKIN_DEB_SNAPSHOT_VERSION}~natty.dsc
+    sudo dpkg -i ros-fuerte-${debname}_${debversion}${CATKIN_DEB_SNAPSHOT_VERSION}~natty_${debplatform}.deb
+    scanrepo ros-fuerte-${debname}_${debversion}${CATKIN_DEB_SNAPSHOT_VERSION}~natty_${debplatform}.deb
+    dput ppa:straszheim/ros $SRCDIR/ros-fuerte-${debname}_${debversion}${CATKIN_DEB_SNAPSHOT_VERSION}~natty_source.changes
 }
 
 do_one catkin catkin 3.4.5 all

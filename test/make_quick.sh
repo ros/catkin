@@ -21,7 +21,7 @@ doone () {
     pkg=$1
     mkdir $BUILD/$pkg
     pushd $BUILD/$pkg
-    SRC=../../src/test.rosinstall/$pkg
+    SRC=../../src/$pkg
     $CMAKE $SRC
     make VERBOSE=1
     make VERBOSE=1 install
@@ -36,7 +36,7 @@ fatbuild ()
 {
     mkdir $BUILD/buildall
     pushd $BUILD/buildall
-    cmake ../../src/test.rosinstall -DCMAKE_INSTALL_PREFIX=/opt/ros/fuerte
+    cmake ../../src -DCMAKE_INSTALL_PREFIX=/opt/ros/fuerte
     make
     make install
     popd
@@ -52,10 +52,10 @@ doone std_msgs
 doone common_msgs
 doone roscpp_core
 doone ros_comm
-# doone catkin_test_nolangs
-# doone catkin_test
+doone nolangs
+doone catkin_test
 
-for i in $TOP/src/test.rosinstall/ros-fuerte-*.changes
+for i in $TOP/src/ros-fuerte-*.changes
 do
     dput ppa:straszheim/ros $i || /bin/true
 done
