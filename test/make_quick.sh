@@ -51,9 +51,9 @@ doone genpy
 doone std_msgs
 doone common_msgs
 doone roscpp_core
-doone catkin_test_nolangs
-doone catkin_test
 doone ros_comm
+# doone catkin_test_nolangs
+# doone catkin_test
 
 for i in $TOP/src/test.rosinstall/ros-fuerte-*.changes
 do
