@@ -3,5 +3,7 @@ build
 .\#*
 \#*\#
 doc/build
+*.pyc
+.rosinstall
 .*
 *~

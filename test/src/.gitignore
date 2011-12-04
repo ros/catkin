@@ -1,0 +1,17 @@
+common_msgs
+ros
+ros_comm
+catkin
+genmsg
+genpy
+gencpp
+roscpp_core
+std_msgs
+setup.sh
+setup.bash
+setup.zsh
+./CMakeLists.txt
+*.dsc
+*.changes
+*.tar.gz
+*.deb
