@@ -4,6 +4,11 @@
     version: master
 
 - git:
+    uri: 'git://github.com/ros/genmsg.git'
+    local-name: genmsg
+    version: master
+
+- git:
     uri: 'git://github.com/ros/gencpp.git'
     local-name: gencpp
     version: master
@@ -14,8 +19,8 @@
     version: master
 
 - git:
-    uri: 'git://github.com/ros/genmsg.git'
-    local-name: genmsg
+    uri: 'git://github.com/ros/genpybindings.git'
+    local-name: genpybindings
     version: master
 
 - git:
