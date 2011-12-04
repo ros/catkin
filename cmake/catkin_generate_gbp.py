@@ -69,7 +69,6 @@ def catkin_gendebian_files(repo, rosdistro, distro, version, build_path, deb_pat
     deb_path = os.path.abspath(deb_path)
     target = 'gendebian-files'
     MAKE = '''make
-CATKIN_DEB_SNAPSHOT_VERSION=%(stamp)s
 CATKIN_DEBIAN_DISTRIBUTION=%(distro)s
 %(target)s''' % locals()
     MAKE = MAKE.split('\n')
@@ -84,8 +83,7 @@ CATKIN_DEBIAN_DISTRIBUTION=%(distro)s
 if __name__ == '__main__':
     options = parse_options()
     init_git(options.repo)
-    stamp = time.strftime('+%Y%m%d-%H%M%z')
-
+    stamp = time.strftime('-%Y%m%d-%H%M%z')
     import_orig(options.repo, options.upstream, options.version)
     catkin_cmake(options.repo, options.rosdistro, options.build_path)
     for distro in options.distros:
