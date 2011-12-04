@@ -7,8 +7,8 @@ import os
 import shutil
 
 pwd = os.getcwd()
-srcdir = os.path.join(pwd, 'src/test.rosinstall')
-builddir = os.path.join(pwd, 'build/test.rosinstall')
+srcdir = os.path.join(pwd, 'src')
+builddir = os.path.join(pwd, 'build')
 destdir='DESTDIR'
 cmake_install_prefix='/CMAKE_INSTALL_PREFIX'
 diskprefix="%s/%s/%s" % (builddir, destdir, cmake_install_prefix)

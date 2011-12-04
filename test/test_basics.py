@@ -22,25 +22,25 @@ bt = with_setup(startbuild, endbuild)
 
 @bt
 def test_tiny():
-    out = cmake(CATKIN_BUILD_PROJECTS='catkin_test_nolangs',
+    out = cmake(CATKIN_BUILD_PROJECTS='nolangs',
                 CMAKE_INSTALL_PREFIX=cmake_install_prefix)
-    assert exists(builddir + "/catkin_test_nolangs")
+    assert exists(builddir + "/nolangs")
     assert not exists(builddir + "/std_msgs")
     assert not exists(builddir + "/genmsg")
     out = succeed("make VERBOSE=1", cwd=builddir)
-    assert exists(builddir + "/bin/catkin_test_nolangs_exec")
+    assert exists(builddir + "/bin/nolangs_exec")
 
     out = succeed("make VERBOSE=1 install DESTDIR=%s" % destdir, cwd=builddir)
 
     assert_exists(diskprefix,
-                  "bin/catkin_test_nolangs_exec",
-                  "share/cmake/catkin_test_nolangs/catkin_test_nolangs-config.cmake")
+                  "bin/nolangs_exec",
+                  "share/cmake/nolangs/nolangs-config.cmake")
 
     out = succeed("make help", cwd=builddir)
-    out = succeed("make VERBOSE=1 catkin_test_nolangs-gendebian", cwd=builddir)
+    out = succeed("make VERBOSE=1 nolangs-gendebian", cwd=builddir)
     
-    assert exists(builddir + "/catkin_test_nolangs/catkin-test-nolangs_3.4.5~natty.dsc")
-    assert exists(builddir + "/catkin_test_nolangs/catkin-test-nolangs_3.4.5~natty.tar.gz")
+    assert exists(builddir + "/nolangs/catkin-test-nolangs_3.4.5~natty.dsc")
+    assert exists(builddir + "/nolangs/catkin-test-nolangs_3.4.5~natty.tar.gz")
 
 @bt
 def test_00():
@@ -54,8 +54,8 @@ def test_00():
                   "lib/libb.so",
                   "lib/libc.so",
                   "lib/libd.so",
-                  "catkin_test_nolangs",
-                  "bin/catkin_test_nolangs_exec",
+                  "nolangs",
+                  "bin/nolangs_exec",
                   "bin/quux_srv-exec",
                   "genmsg",
                   "common_msgs")
@@ -64,7 +64,7 @@ def test_00():
                   "a/__init__.py")
 
     assert_exists(diskprefix,
-                  "bin/catkin_test_nolangs_exec",
+                  "bin/nolangs_exec",
                   "include/std_msgs/String.h",
                   pyinstall + "/sensor_msgs/msg/_PointCloud2.py",
                   "share/msg/std_msgs/String.msg",
@@ -110,7 +110,7 @@ def test_noproject():
 #
 #     out = succeed("make", cwd=builddir)
 #     print "OUT=", out
-#     assert exists(builddir + "/catkin_test_nolangs/catkin_test_nolangs_exec")
+#     assert exists(builddir + "/nolangs/nolangs_exec")
 
 
 

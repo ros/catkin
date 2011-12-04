@@ -1,8 +1,0 @@
-src/test.rosinstall
-build
-DESTDIR
-apt
-bld
-pkgbuild
-debbuild
-._*
