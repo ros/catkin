@@ -1,3 +1,4 @@
+include(${catkin_EXTRAS_DIR}/dist.cmake)
 include(${catkin_EXTRAS_DIR}/log.cmake)
 include(${catkin_EXTRAS_DIR}/assert.cmake)
 assert(catkin_EXTRAS_DIR)
