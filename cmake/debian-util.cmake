@@ -50,7 +50,26 @@ function(catkin_package PKGNAME)
     )
 
   catkin_make_dist(${PROJECT_NAME} ${${PKGNAME}_VERSION})
-  add_dependencies( ${PROJECT_NAME}-gendebian ${PROJECT_NAME}-gendebian-files)
+  
+  add_custom_target(
+    ${PROJECT_NAME}-gbp
+    
+    COMMAND
+    ${CATKIN_ENV}
+    ${catkin_EXTRAS_DIR}/catkin_generate_gbp.py
+    --repo gbp_${PROJECT_NAME}
+    --upstream ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_${${PKGNAME}_VERSION}.orig.tar.gz
+    --version ${${PKGNAME}_VERSION}
+    --rosdistro electric
+    --build_path ${CMAKE_BINARY_DIR}/gbp_${PROJECT_NAME}_build
+    --deb_path ${CMAKE_BINARY_DIR}/debs
+    
+    COMMENT "Generating debs using git-buildpackage"
+    
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+  add_dependencies(${PROJECT_NAME}-gbp ${PROJECT_NAME}-dist)
+  add_dependencies(${PROJECT_NAME}-gendebian ${PROJECT_NAME}-gendebian-files)
   add_dependencies(gendebian-files ${PROJECT_NAME}-gendebian-files)
   add_dependencies(gendebian ${PROJECT_NAME}-gendebian)
 
