@@ -74,6 +74,13 @@ def test_00():
                   "share/cmake/std_msgs/std_msgs-config-version.cmake",
                   "lib/libcpp_common.so")
 
+    #
+    #  make sure python imports work
+    #
+    succeed(builddir + "/env.sh " + pwd + "/import_a.py")
+    succeed(builddir + "/env.sh " + pwd + "/import_b.py")
+
+
 @bt
 def test_noproject():
     mybuild = pwd + '/build/ck'
@@ -88,31 +95,9 @@ def test_noproject():
     shutil.rmtree(mybuild)
     os.makedirs(mybuild)
 
-    out = cmake(srcdir=pwd+'/src/noproject',
+    out = cmake(srcdir=pwd+'/src-fail/noproject',
                 cwd=mybuild,
                 CMAKE_PREFIX_PATH=INST,
                 expect=fail)
     print "failed as expected, out=", out
     assert 'macro to specify the name of your project' in out
-
-#
-# This one needs love:  catkin looks in wrong directory for buildable projects
-#
-#@attr('this')
-#def test_as_subdirectory():
-#    succeed("rosinstall -n subdir_src/src test.rosinstall")
-#    succeed("rm -rf subdir_build")
-#    succeed("mkdir subdir_build")
-#    cmake(this_srcdir="subdir_src", cwd="subdir_build")
-
-
-# @with_setup(startbuild, endbuild)
-# def test_01():
-#     out = cmake()
-#
-#     out = succeed("make", cwd=builddir)
-#     print "OUT=", out
-#     assert exists(builddir + "/nolangs/nolangs_exec")
-
-
-

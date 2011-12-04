@@ -21,7 +21,6 @@ def teardown():
 bt = with_setup(startbuild, endbuild)
 
 @bt
-@attr('this')
 def test_tiny():
     diskprefix = builddir + cmake_install_prefix
     cmake(CMAKE_INSTALL_PREFIX = diskprefix,
@@ -37,7 +36,7 @@ def test_tiny():
     succeed("rm CMakeCache.txt", cwd=builddir)
     cmake(CATKIN_ENABLE_DEBBUILDING='TRUE',
           CMAKE_PREFIX_PATH=diskprefix,
-          srcdir=pwd+'/src/badly_specified_changelog',
+          srcdir=pwd+'/src-fail/badly_specified_changelog',
           CATKIN='YES')
     succeed('make VERBOSE=1 help', cwd=builddir)
     out = fail('make VERBOSE=1 badly_specified_changelog-gendebian', cwd=builddir)
@@ -47,7 +46,7 @@ def test_tiny():
     succeed("rm CMakeCache.txt", cwd=builddir)
     cmake(CATKIN_ENABLE_DEBBUILDING="TRUE",
           CMAKE_PREFIX_PATH=diskprefix,
-          srcdir=pwd+'/src/test.rosinstall/catkin_test_nolangs')
+          srcdir=pwd+'/src/nolangs')
     succeed('make VERBOSE=1 help', cwd=builddir)
-    succeed('make VERBOSE=1 catkin_test_nolangs-gendebian', cwd=builddir)
+    succeed('make VERBOSE=1 nolangs-gendebian', cwd=builddir)
     
