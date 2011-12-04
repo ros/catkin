@@ -39,8 +39,10 @@ def test_tiny():
     out = succeed("make help", cwd=builddir)
     out = succeed("make VERBOSE=1 nolangs-gendebian", cwd=builddir)
     
-    assert exists(builddir + "/nolangs/catkin-test-nolangs_3.4.5~natty.dsc")
-    assert exists(builddir + "/nolangs/catkin-test-nolangs_3.4.5~natty.tar.gz")
+    assert_exists(srcdir,
+                  "catkin-test-nolangs_3.4.5~natty.dsc",
+                  "catkin-test-nolangs_3.4.5~natty.tar.gz",
+                  "catkin-test-nolangs_3.4.5~natty_source.changes")
 
 @bt
 def test_00():
