@@ -36,7 +36,7 @@ def novel_version(repo, version):
     if not os.path.isdir(repo):
         return True
     tags = repo_call(repo, ['git', 'tag'])
-    if version in tags:
+    if 'upstream/%s' % version in tags:
         return False
     return True
 
@@ -45,6 +45,8 @@ def import_orig(repo, upstream, version):
         print('Warning: removing previous upstream version %(version)s!' % locals(), file=sys.stderr)
         repo_call(repo, ['git', 'tag', '-d', 'upstream/%(version)s' % locals()])
     upstream = os.path.abspath(upstream)
+    if len(repo_call(repo, ['git', 'diff'])):
+        repo_call(repo, ['git', 'commit', '-a', '-m', '"commit all..."'])
     return repo_call(repo, ['git', 'import-orig', upstream, '--no-interactive'])
 
 def catkin_cmake(repo, rosdistro, build_path):
@@ -56,7 +58,6 @@ def catkin_cmake(repo, rosdistro, build_path):
 -DCMAKE_INSTALL_PREFIX=/opt/ros/%(rosdistro)s
 -DCMAKE_PREFIX_PATH=/opt/ros/%(rosdistro)s
 -DCATKIN_PACKAGE_PREFIX=ros-%(rosdistro)s-
--DCATKIN_DEB_SNAPSHOTS=YES
 %(repo)s''' % locals()
     CMAKE = CMAKE.split('\n')
     repo_call(build_path, CMAKE)
@@ -78,7 +79,7 @@ CATKIN_DEBIAN_DISTRIBUTION=%(distro)s
 ''' % locals()
     tag = '--git-debian-tag=debian/ros_%(rosdistro)s_%(version)s_%(distro)s' % locals()
     repo_call(repo, ['git', 'commit', '-m', message])
-    repo_call(repo, ['git', 'buildpackage', '-S', '--git-export-dir=%s' % deb_path, '--git-retag', '--git-tag', '--git-dist=%s' % distro, tag] + signed.split(' '))
+    repo_call(repo, ['git', 'buildpackage', '-S', '--git-export-dir=%s' % deb_path, '--git-ignore-new', '--git-retag', '--git-tag', '--git-dist=%s' % distro, tag] + signed.split(' '))
 
 if __name__ == '__main__':
     options = parse_options()

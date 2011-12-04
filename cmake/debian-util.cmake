@@ -57,12 +57,12 @@ function(catkin_package PKGNAME)
     COMMAND
     ${CATKIN_ENV}
     ${catkin_EXTRAS_DIR}/catkin_generate_gbp.py
-    --repo gbp_${PROJECT_NAME}
+    --repo gbp/${PROJECT_NAME}
     --upstream ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_${${PKGNAME}_VERSION}.orig.tar.gz
     --version ${${PKGNAME}_VERSION}
     --rosdistro electric
-    --build_path ${CMAKE_BINARY_DIR}/gbp_${PROJECT_NAME}_build
-    --deb_path ${CMAKE_BINARY_DIR}/debs
+    --build_path ${CMAKE_BINARY_DIR}/gbp/build_${PROJECT_NAME}
+    --deb_path ${CMAKE_BINARY_DIR}/gbp/debs
     
     COMMENT "Generating debs using git-buildpackage"
     
