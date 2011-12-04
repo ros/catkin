@@ -8,6 +8,9 @@ endif()
 
 set(CATKIN_DPKG_BUILDPACKAGE_FLAGS "-S" CACHE STRING 
   "Flags passed when running dpkg-buildpackage as part of -gendeiban targets")
+  
+#EAR: make sure to declare cache variables so that the cmake doesn't warn about unused manually specified cache variables.
+option(CATKIN_DEB_SNAPSHOTS "Use a snapshot timestamp in the debian package name." YES)
 
 function(catkin_package PKGNAME)
 
