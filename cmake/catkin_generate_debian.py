@@ -53,7 +53,7 @@ def debexpand(name, d, filetype=''):
 
 t = datetime.datetime.now(dateutil.tz.tzlocal())
 if 'CATKIN_DEB_SNAPSHOTS' in d:
-    d['SnapshotVersion'] = t.strftime('-%s')
+    d['SnapshotVersion'] = t.strftime('%s')
 else:
     d['SnapshotVersion'] = ''
 
