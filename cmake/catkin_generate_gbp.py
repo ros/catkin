@@ -19,7 +19,7 @@ def parse_options():
 
 def repo_call(repo, call):
     print('+' + ' '.join(call))
-    r = subprocess.check_output(call, cwd=repo)
+    (r,v) = subprocess.Popen(call, cwd=repo, stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()
     print(r, end='')
     return r
 
@@ -27,10 +27,6 @@ def init_git(repo):
     if not os.path.isdir(repo):
         os.makedirs(repo)
         repo_call(repo, ['git', 'init'])
-
-def create_gbp(repo, upstream):
-    upstream = os.path.abspath(upstream)
-    return repo_call(repo, ['git', 'import-orig', upstream, '--no-interactive'])
 
 def novel_version(repo, version):
     if not os.path.isdir(repo):
@@ -47,7 +43,7 @@ def import_orig(repo, upstream, version):
     upstream = os.path.abspath(upstream)
     if len(repo_call(repo, ['git', 'diff'])):
         repo_call(repo, ['git', 'commit', '-a', '-m', '"commit all..."'])
-    return repo_call(repo, ['git', 'import-orig', upstream, '--no-interactive'])
+    return repo_call(repo, ['git', 'import-orig', upstream])
 
 def catkin_cmake(repo, rosdistro, build_path):
     repo = os.path.abspath(repo)
@@ -79,7 +75,7 @@ CATKIN_DEBIAN_DISTRIBUTION=%(distro)s
 ''' % locals()
     tag = '--git-debian-tag=debian/ros_%(rosdistro)s_%(version)s_%(distro)s' % locals()
     repo_call(repo, ['git', 'commit', '-m', message])
-    repo_call(repo, ['git', 'buildpackage', '-S', '--git-export-dir=%s' % deb_path, '--git-ignore-new', '--git-retag', '--git-tag', '--git-dist=%s' % distro, tag] + signed.split(' '))
+    repo_call(repo, ['git', 'buildpackage', '-S', '--git-export-dir=%s' % deb_path, '--git-ignore-new', '--git-retag', '--git-tag', tag] + signed.split(' '))
 
 if __name__ == '__main__':
     options = parse_options()

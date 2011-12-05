@@ -4,8 +4,9 @@ endif()
 
 
 macro( catkin_make_dist project version)
+    set(${project}_tarball_name ${CMAKE_BINARY_DIR}/${project}-${version}.tar.gz) 
     add_custom_target(${project}-dist
-      COMMENT "Generating an upstream tarball --- ${CMAKE_BINARY_DIR}/${project}_${version}.orig.tar.gz"
+      COMMENT "Generating an upstream tarball --- ${${project}_tarball_name}"
     )
     
     #just uses tar to create an upstream tarball
@@ -14,7 +15,7 @@ macro( catkin_make_dist project version)
       COMMAND
       tar --exclude-vcs
        -czf
-      ${CMAKE_BINARY_DIR}/${project}_${version}.orig.tar.gz
+      ${${project}_tarball_name}
       ./
       WORKING_DIRECTORY ${${project}_SOURCE_DIR}
       )

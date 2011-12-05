@@ -58,7 +58,7 @@ function(catkin_package PKGNAME)
     ${CATKIN_ENV}
     ${catkin_EXTRAS_DIR}/catkin_generate_gbp.py
     --repo gbp/${PROJECT_NAME}
-    --upstream ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_${${PKGNAME}_VERSION}.orig.tar.gz
+    --upstream ${${PROJECT_NAME}_tarball_name}
     --version ${${PKGNAME}_VERSION}
     --rosdistro electric
     --build_path ${CMAKE_BINARY_DIR}/gbp/build_${PROJECT_NAME}

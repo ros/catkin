@@ -37,6 +37,8 @@ else()
 endif()
 configure_file(${catkin_EXTRAS_DIR}/catkin-context.in ${CATKIN_CONTEXT_FILE})
 
+#TODO EAR: expose the catkin cmake path in the env.sh?
+set(CATKIN_CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/catkin/cmake_install)
 foreach(shfile setup.sh setup.zsh setup.bash env.sh)
   configure_file(${catkin_EXTRAS_DIR}/${shfile}.in ${CMAKE_BINARY_DIR}/${shfile} 
     @ONLY)
