@@ -33,7 +33,7 @@ def test_tiny():
                   "setup.sh",
                   "setup.zsh")
 
-    succeed("rm CMakeCache.txt", cwd=builddir)
+    succeed(["/bin/rm", "CMakeCache.txt"], cwd=builddir)
     cmake(CATKIN_ENABLE_DEBBUILDING='TRUE',
           CMAKE_PREFIX_PATH=diskprefix,
           srcdir=pwd+'/src-fail/badly_specified_changelog',
