@@ -10,7 +10,7 @@ def setup():
 def startbuild():
     if isdir(builddir):
         shutil.rmtree(builddir)
-    succeed("mkdir %s" % builddir)
+    succeed(["/bin/mkdir", builddir])
 
 def endbuild():
     pass
@@ -27,18 +27,18 @@ def test_tiny():
     assert exists(builddir + "/nolangs")
     assert not exists(builddir + "/std_msgs")
     assert not exists(builddir + "/genmsg")
-    out = succeed("make VERBOSE=1", cwd=builddir)
+    out = succeed(make, cwd=builddir)
     assert exists(builddir + "/bin/nolangs_exec")
 
-    out = succeed("make VERBOSE=1 install DESTDIR=%s" % destdir, cwd=builddir)
+    out = succeed(make + ["install", "DESTDIR=" + destdir], cwd=builddir)
 
     assert_exists(diskprefix,
                   "bin/nolangs_exec",
                   "share/cmake/nolangs/nolangs-config.cmake")
 
-    out = succeed("make help", cwd=builddir)
-    out = succeed("make VERBOSE=1 nolangs-gendebian", cwd=builddir)
-    
+    out = succeed(make + ["help"], cwd=builddir)
+    out = succeed(make + ["nolangs-gendebian"], cwd=builddir)
+
     assert_exists(srcdir,
                   "catkin-test-nolangs_3.4.5~natty.dsc",
                   "catkin-test-nolangs_3.4.5~natty.tar.gz",
@@ -47,8 +47,8 @@ def test_tiny():
 @bt
 def test_00():
     out = cmake(CMAKE_INSTALL_PREFIX=cmake_install_prefix)
-    out = succeed("make", cwd=builddir)
-    out = succeed("make install DESTDIR=%s" % destdir, cwd=builddir)
+    out = succeed(make, cwd=builddir)
+    out = succeed(make + ["install", "DESTDIR=" + destdir], cwd=builddir)
     prefix = "%s/%s/%s" % (builddir, destdir, cmake_install_prefix)
 
     assert_exists(builddir,
@@ -77,8 +77,8 @@ def test_00():
     #
     #  make sure python imports work
     #
-    succeed(builddir + "/env.sh " + pwd + "/import_a.py")
-    succeed(builddir + "/env.sh " + pwd + "/import_b.py")
+    succeed([builddir + "/env.sh", pwd + "/import_a.py"])
+    succeed([builddir + "/env.sh", pwd + "/import_b.py"])
 
 
 @bt
@@ -91,7 +91,7 @@ def test_noproject():
     out = cmake(CATKIN_BUILD_PROJECTS='catkin',
                 CMAKE_INSTALL_PREFIX=INST,
                 cwd=mybuild)
-    out = succeed("make install", cwd=mybuild)
+    out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
     shutil.rmtree(mybuild)
     os.makedirs(mybuild)
 

@@ -1,5 +1,6 @@
 from sys import version_info as v
-from pexpect import *
+import subprocess
+# from pexpect import *
 from nose.tools import *
 from nose.plugins.attrib import attr
 from os.path import *
@@ -14,13 +15,22 @@ destdir='DESTDIR'
 cmake_install_prefix='/CMAKE_INSTALL_PREFIX'
 diskprefix="%s/%s/%s" % (builddir, destdir, cmake_install_prefix)
 pyinstall='lib/python%u.%u/dist-packages' % (v[0], v[1])
+make=['/usr/bin/make', '-j4', 'VERBOSE=1']
+
+def run(args, **kwargs):
+    print "run:", args
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                         cwd=kwargs.get('cwd', None))
+    print "P==", p.__dict__
+    (stdout, stderr) = p.communicate()
+    return (p.returncode, stdout, stderr)
 
 def succeed(cmd, **kwargs):
     print ">>>", cmd, kwargs
-    (out, r) = run(cmd, withexitstatus=True, **kwargs)
+    (r, out, err) = run(cmd, **kwargs)
     print "<<<", out
     if r != 0:
-        print "cmd failed: %s\noutput=\n%s" % (cmd, out)
+        print "cmd failed: " + str(cmd)
         print "result=", r
         assert r == 0
     return out
@@ -28,14 +38,14 @@ def succeed(cmd, **kwargs):
 def rosinstall(pth, specfile):
     assert exists(pth)
     assert exists(specfile)
-    succeed("rosinstall -n %s %s" % (pth, specfile))
+    succeed(["/usr/local/bin/rosinstall", "-n", pth, specfile], cwd=pwd)
     assert( exists(pth + "/catkin/toplevel.cmake"))
-    succeed("rm -f CMakeLists.txt", cwd=pth)
-    succeed("ln -s catkin/toplevel.cmake CMakeLists.txt", cwd=pth)
+    succeed(["/bin/rm", "-f", "CMakeLists.txt"], cwd=pth)
+    succeed(["/bin/ln", "-s", "catkin/toplevel.cmake", "CMakeLists.txt"], cwd=pth)
 
 def fail(cmd, **kwargs):
     print ">>>", cmd, kwargs
-    (out, r) = run(cmd, withexitstatus=True, **kwargs)
+    (r, out, err) = run(cmd, withexitstatus=True, **kwargs)
     print "<<<", out
     if r == 0:
         print "cmd failed: %s\n  result=%u\n  output=\n%s" % (cmd, r, out)
@@ -46,7 +56,7 @@ def has_cmakecache():
     assert isfile(builddir + "/CMakeCache.txt")
 
 def cmake(**kwargs):
-    args = ''
+    args = []
     this_builddir = builddir
     this_srcdir = srcdir
     expect = succeed
@@ -61,11 +71,11 @@ def cmake(**kwargs):
             print "USING EXPECT=", v
             expect = v
         else:
-            args += " '-D%s=%s'" % (k,v)
+            args += ["-D%s=%s" % (k,v)]
 
     if not isdir(this_builddir):
         os.makedirs(this_builddir)
-    cmd = "cmake " + this_srcdir + " " + args
+    cmd = ["/usr/bin/cmake", this_srcdir] + args
     o = expect(cmd, cwd=this_builddir)
     if (expect == succeed):
         assert isfile(this_builddir + "/CMakeCache.txt")
