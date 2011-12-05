@@ -27,17 +27,17 @@ def test_tiny():
     assert exists(builddir + "/nolangs")
     assert not exists(builddir + "/std_msgs")
     assert not exists(builddir + "/genmsg")
-    out = succeed(["/usr/bin/make", "VERBOSE=1"], cwd=builddir)
+    out = succeed(make, cwd=builddir)
     assert exists(builddir + "/bin/nolangs_exec")
 
-    out = succeed(["/usr/bin/make", "VERBOSE=1", "install", "DESTDIR=" + destdir], cwd=builddir)
+    out = succeed(make + ["install", "DESTDIR=" + destdir], cwd=builddir)
 
     assert_exists(diskprefix,
                   "bin/nolangs_exec",
                   "share/cmake/nolangs/nolangs-config.cmake")
 
-    out = succeed(["/usr/bin/make", "help"], cwd=builddir)
-    out = succeed(["/usr/bin/make", "VERBOSE=1", "nolangs-gendebian"], cwd=builddir)
+    out = succeed(make + ["help"], cwd=builddir)
+    out = succeed(make + ["nolangs-gendebian"], cwd=builddir)
 
     assert_exists(srcdir,
                   "catkin-test-nolangs_3.4.5~natty.dsc",
@@ -47,8 +47,8 @@ def test_tiny():
 @bt
 def test_00():
     out = cmake(CMAKE_INSTALL_PREFIX=cmake_install_prefix)
-    out = succeed(["/usr/bin/make"], cwd=builddir)
-    out = succeed(["/usr/bin/make", "install", "DESTDIR=" + destdir], cwd=builddir)
+    out = succeed(make, cwd=builddir)
+    out = succeed(make + ["install", "DESTDIR=" + destdir], cwd=builddir)
     prefix = "%s/%s/%s" % (builddir, destdir, cmake_install_prefix)
 
     assert_exists(builddir,
