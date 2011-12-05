@@ -18,10 +18,12 @@ def parse_options():
     return parser.parse_args()
 
 def repo_call(repo, call):
-    print('+' + ' '.join(call))
-    (r,v) = subprocess.Popen(call, cwd=repo, stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()
-    print(r, end='')
-    return r
+    print('+ ' + ' '.join(call))
+    p = subprocess.Popen(call, cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    (output,error) = p.communicate()
+    for l in output.split('\n'):
+      print('- %s'%l)
+    return output
 
 def init_git(repo):
     if not os.path.isdir(repo):
