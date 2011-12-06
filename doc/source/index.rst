@@ -21,7 +21,7 @@ Design sketch
 -------------
 
 * There is only one invocation of cmake (and make) to build a source
-  directory containing N stacks.  
+  directory containing N stacks.
 
 * There is no search of ROS_PACKAGE_PATH: the stacks/packages to be
   built are the subdirectories (not recursive) of the
@@ -34,7 +34,7 @@ Design sketch
 
 * The ability to build only specific targets or sets of targets are
   provided through cmake's "natural" mechanisms.  The ability to
-  exclude certain 
+  exclude certain
 
 * The build does not modify the source directories in any way.
 
@@ -43,7 +43,7 @@ Design sketch
 
 * Packages use standard cmake macros, modulo a few that are provided
   by catkin.
- 
+
 * The build system depends only only on python and cmake.
 
 * Downloading, untarring, patching and especially the wanton use of
@@ -108,8 +108,8 @@ e.g. for project 'proj'::
       cpp/
         proj/
           ProjMsg.h
-          ProjSrvRequest.h  
-          ProjSrvResponse.h  
+          ProjSrvRequest.h
+          ProjSrvResponse.h
       py/                     # single pythonpath setting for buildspace
         proj/
           __init__.py         # uses pkgutil to add src/proj/src/ to pythonpath
@@ -144,7 +144,7 @@ as such::
           client.py
           core.py
           ...
-    share/             
+    share/
       roscpp_tutorials/       # per-package binaries
         bin/
           talker
@@ -162,7 +162,7 @@ as such::
         xmlrpc_manager.h
 
 
-    
+
 
 
 Main trickery
@@ -205,7 +205,23 @@ open issues
 ^^^^^^^^^^^
 
 
-* exactly where to put python code.  
-* where to install per-package binaries other than bin/ 
-* roslib usage inside generated messages  
+* exactly where to put python code.
+* where to install per-package binaries other than bin/
+* roslib usage inside generated messages
 * where to put interdependencies information between stacks
+
+Nasty to build stuff:
+* xacro
+* actions
+* dynamic_reconfigure
+
+* tests
+
+* build farm
+
+* roscd, roslaunch
+
+* centralization of dependencies
+
+*
+
