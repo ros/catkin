@@ -12,7 +12,7 @@ cleanup
 
 cd $BUILD
 $CMAKE '-DCATKIN_DPKG_BUILDPACKAGE_FLAGS=-d;-S;-kBE0A7693' $SRC
-for distro in lucid maverick natty oneiric
+for distro in lucid maverick natty oneiric precise
 do
     make VERBOSE=1 \
         CATKIN_DEB_SNAPSHOT_VERSION=$CATKIN_DEB_SNAPSHOT_VERSION \
