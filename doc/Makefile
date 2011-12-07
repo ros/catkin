@@ -89,4 +89,4 @@ doctest:
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
 deploy: 
-	rsync -va build/html/ bsq.willowgarage.com:~straszheim/public_html/ros-cmake/
+	rsync -va build/html/ bsq.willowgarage.com:~straszheim/public_html/catkin-dev/
