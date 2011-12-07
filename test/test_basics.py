@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
-import sys
+import sys, platform
 from catkintest import *
+
+ubuntudist = platform.dist()[2]
+
 
 def setup():
     print "basics ***************************************************************\n"*8
@@ -40,9 +43,9 @@ def test_tiny():
     out = succeed(make + ["nolangs-gendebian"], cwd=builddir)
 
     assert_exists(srcdir,
-                  "catkin-test-nolangs_3.4.5~natty.dsc",
-                  "catkin-test-nolangs_3.4.5~natty.tar.gz",
-                  "catkin-test-nolangs_3.4.5~natty_source.changes")
+                  "catkin-test-nolangs_3.4.5~%s.dsc" % ubuntudist,
+                  "catkin-test-nolangs_3.4.5~%s.tar.gz" % ubuntudist,
+                  "catkin-test-nolangs_3.4.5~%s_source.changes" % ubuntudist)
 
 @bt
 def test_00():
