@@ -115,7 +115,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config-version.cmake
     ${INSTALLABLE_CFG_EXTRAS}
-    DESTINATION share/cmake/${PACKAGE_NAME}
+    DESTINATION share/${PACKAGE_NAME}/cmake
     )
 
   # install libraries
