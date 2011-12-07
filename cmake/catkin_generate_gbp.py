@@ -23,6 +23,8 @@ def repo_call(repo, call):
     (output,error) = p.communicate()
     for l in output.split('\n'):
       print('- %s'%l)
+    if error:
+        print(error,file=sys.stderr)
     return output
 
 def init_git(repo):
@@ -45,7 +47,7 @@ def import_orig(repo, upstream, version):
     upstream = os.path.abspath(upstream)
     if len(repo_call(repo, ['git', 'diff'])):
         repo_call(repo, ['git', 'commit', '-a', '-m', '"commit all..."'])
-    return repo_call(repo, ['git', 'import-orig', upstream])
+    return repo_call(repo, ['git', 'import-orig', '--no-interactive', upstream])
 
 def catkin_cmake(repo, rosdistro, build_path):
     repo = os.path.abspath(repo)
