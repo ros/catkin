@@ -36,8 +36,16 @@ else()
 endif()
 configure_file(${catkin_EXTRAS_DIR}/catkin-context.in ${CATKIN_CONTEXT_FILE})
 
-foreach(shfile setup.sh setup.zsh setup.bash env.sh)
-  configure_file(${catkin_EXTRAS_DIR}/${shfile}.in ${CMAKE_BINARY_DIR}/${shfile} 
+#
+# These get generated no matter what.
+#
+foreach(shfile setup.zsh setup.bash)
+  configure_file(${catkin_EXTRAS_DIR}/templates/${shfile} ${CMAKE_BINARY_DIR}/${shfile} 
+    @ONLY)
+endforeach()
+
+foreach(shfile setup.sh env.sh)
+  configure_file(${catkin_EXTRAS_DIR}/templates/${shfile}.buildspace.in ${CMAKE_BINARY_DIR}/${shfile}
     @ONLY)
 endforeach()
 

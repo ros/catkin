@@ -29,13 +29,15 @@ install(DIRECTORY cmake/
   USE_SOURCE_PERMISSIONS
   )
 
-configure_file(setup.sh.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh)
-configure_file(env.sh.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
+configure_file(cmake/templates/setup.sh.installable.in 
+  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh)
+configure_file(cmake/templates/env.sh.installable.in 
+  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh
-  setup.bash
-  setup.zsh
+  cmake/templates/setup.bash
+  cmake/templates/setup.zsh
   DESTINATION ${CMAKE_INSTALL_PREFIX}
   )
 
