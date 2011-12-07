@@ -4,7 +4,8 @@
 # Uncomment this to turn on verbose mode.
 @{
 from sys import version_info as v
-pyversion="%u.%u" % (v.major, v.minor)
+# don't use version.major, version.minor, this is pys >= 2.7
+pyversion="%u.%u" % (v[0], v[1])
 }
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
