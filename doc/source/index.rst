@@ -204,7 +204,6 @@ Main trickery
 open issues
 ^^^^^^^^^^^
 
-
 * exactly where to put python code.
 * where to install per-package binaries other than bin/
 * roslib usage inside generated messages
@@ -217,11 +216,28 @@ Nasty to build stuff:
 
 * tests
 
-* build farm
-
 * roscd, roslaunch
 
 * centralization of dependencies
 
-*
+* rosdep:  lookup procedures, etc
 
+* build farm
+* buildfarm, integration with catkin and gbp
+
+* running own build slaves
+* invalidation and repos.
+* wanna-build and buildd (the way debian does it) vs launchpad... what do we run.
+* chroots, lvm snapshots, sbuild, puppet, etc. modern admin techniques
+  on clusterboxen: cgils coming in january.
+* armel buildslaves
+
+
+workflows
+---------
+
+* commit made to project A
+* build farm notified
+* project A src updated on build farm
+* tests run
+* project A 
