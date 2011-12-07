@@ -18,8 +18,8 @@ Userspace ros utilities
 .. rubric:: Troy
 
 ros_comm working under catkin, install of thunk-manifests to share/,
-env variables ROS_BUILD_DIR ROS_SOURCE_DIR set from catkin in env.sh,
-whatever anybody needs.
+env variables ``CATKIN_BUILD_DIR`` and ``CATKIN_SOURCE_DIR`` set from
+catkin in ``setup.sh``, whatever anybody needs.
 
 to the left (towards the build farm)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
