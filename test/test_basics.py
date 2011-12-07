@@ -37,7 +37,7 @@ def test_tiny():
 
     assert_exists(diskprefix,
                   "bin/nolangs_exec",
-                  "share/cmake/nolangs/nolangs-config.cmake")
+                  "share/nolangs/cmake/nolangs-config.cmake")
 
     out = succeed(make + ["help"], cwd=builddir)
     out = succeed(make + ["nolangs-gendebian"], cwd=builddir)
@@ -73,8 +73,8 @@ def test_00():
                   "include/std_msgs/String.h",
                   pyinstall + "/sensor_msgs/msg/_PointCloud2.py",
                   "share/msg/std_msgs/String.msg",
-                  "share/cmake/std_msgs/std_msgs-config.cmake",
-                  "share/cmake/std_msgs/std_msgs-config-version.cmake",
+                  "share/std_msgs/cmake/std_msgs-config.cmake",
+                  "share/std_msgs/cmake/std_msgs-config-version.cmake",
                   "lib/libcpp_common.so")
 
     #
