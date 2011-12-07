@@ -17,6 +17,10 @@ rm -rf $BUILD
 mkdir -p $BUILD
 cd $BUILD
 
+SRC=$TOP/src
+
+rm $SRC/*.tar.gz $SRC/*.deb $SRC/*.changes $SRC/*.dsc || /bin/true
+
 doone () {
     pkg=$1
     mkdir $BUILD/$pkg
