@@ -12,11 +12,12 @@ include_directories(${c_INCLUDE_DIRS})
 add_library(d SHARED lib.cpp)
 target_link_libraries(d ${b_LIBRARIES} ${c_LIBRARIES})
 
-generate_msgs(d
-  PATH msg
-  MESSAGES msg/DMsg.msg
-  DEPENDENCIES std_msgs b c a
-  )
+add_message_files(
+  DIRECTORY msg
+  FILES DMsg.msg
+)
+
+generate_messages(DEPENDENCIES std_msgs b c a)
 
 install_cmake_infrastructure(d
   VERSION 0.0.1

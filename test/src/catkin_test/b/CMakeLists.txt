@@ -8,11 +8,12 @@ include_directories(${a_INCLUDE_DIRS})
 add_library(b SHARED lib.cpp)
 target_link_libraries(b ${a_LIBRARIES})
 
-generate_msgs(b
-  PATH msg
-  MESSAGES msg/BMsg.msg
-  DEPENDENCIES std_msgs
-  )
+add_message_files(
+  DIRECTORY msg
+  FILES BMsg.msg
+)
+
+generate_messages(DEPENDENCIES std_msgs)
 
 install_cmake_infrastructure(b
   VERSION 0.0.1
