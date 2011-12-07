@@ -4,11 +4,12 @@ find_package(catkin)
 
 add_library(a SHARED lib.cpp)
 
-generate_msgs(a
-  PATH msg
-  MESSAGES msg/AMsg.msg
-  DEPENDENCIES std_msgs
-  )
+add_message_files(
+  DIRECTORY msg
+  FILES AMsg.msg
+)
+
+generate_messages(DEPENDENCIES std_msgs)
 
 install_cmake_infrastructure(a
   VERSION 0.0.1

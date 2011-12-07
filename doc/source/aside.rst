@@ -1,5 +1,5 @@
-SCRATCH
--------
+DETRITUS/SCRATCH
+================
 
 evolving docs for new build stuff
 
@@ -242,10 +242,15 @@ examine "libeigen3-dev=3.0.1-1+ros4~lucid"
 
 
 * run my release script
+
  * .distro file gets checked in: you have commit access: https://code.ros.org/svn/release/trunk/distros/electric.rosdistro
+
  * creates local repo branches
+
  * uploads tarball and yaml file (after this point, everything proceed from this tarball)
+
  * creates test-on-commit-to-dev-branch jobs (by cronjob looking at .distro files)
+
  * triggers hudson job to build debians (debbuilder).  first source debians then automatically binaries.
 
 
@@ -268,8 +273,8 @@ proper stripping of debug symbols in .debs
 
 job-per-deb.  current system is job-per-architecture, parameterized:
 
-not electric-lucid-amd64 but also *-*-*-stack.  use jenkins to chain
-through them i.e. if *-*-*-ros_com succeeds then the next guy is
+not electric-lucid-amd64 but also \*-\*-\*-stack.  use jenkins to chain
+through them i.e. if \*-\*-\*-ros_com succeeds then the next guy is
 triggered.
 
 it doesn't now...   easy to add:
@@ -329,7 +334,7 @@ flow
 
 * either add catkin subdirectory if present or find_package it.
 * find available packages.  topological sort.  
-any langs depend on genmsg and come first.
+* any langs depend on genmsg and come first.
 
 
 

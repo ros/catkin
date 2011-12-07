@@ -15,6 +15,7 @@ destdir='DESTDIR'
 cmake_install_prefix='/CMAKE_INSTALL_PREFIX'
 diskprefix="%s/%s/%s" % (builddir, destdir, cmake_install_prefix)
 pyinstall='lib/python%u.%u/dist-packages' % (v[0], v[1])
+make=['/usr/bin/make', '-j4', 'VERBOSE=1']
 
 def run(args, **kwargs):
     print "run:", args
