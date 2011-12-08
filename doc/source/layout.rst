@@ -1,0 +1,129 @@
+Pre- and Post-installation Disk Layout reference
+================================================
+
+Pre-installation
+----------------
+
+.. rubric:: Source directory
+
+e.g. for project 'proj'::
+
+  src/
+    proj/
+      CMakeLists.txt
+      stack.yaml  # explains interstack dependencies and debian-generating rules
+      msg/
+        ProjMsg.msg
+      srv/
+        ProjSrv.srv
+      src/
+        proj/
+          __init__.py
+          othercode.py
+        libproj/
+          CMakeLists.txt
+          proj.cpp
+      include/
+        proj/
+          proj.hpp
+          otherheaders.hpp
+
+.. rubric:: Build directory
+
+::
+
+  build/
+    gen/
+      cpp/                    # All generated C++ headers go here.  
+        proj/
+          ProjMsg.h
+          ProjSrvRequest.h
+          ProjSrvResponse.h
+      py/                     # All generated python goes here.
+        proj/
+          __init__.py         # uses pkgutil to add src/proj/src/ to pythonpath
+          msg/
+            __init__.py       # generated code
+            _ProjMsg.py
+            _ProjSrvRequest.py
+            _ProjSrvResponse.py
+    lib/                      # all compiled libraries go here
+      libproj.so
+    proj/
+      # the usual cmake-generated stuff.
+      Makefile
+      CMakeFiles/
+      cmake_install.cmake
+
+Post-installation
+-----------------
+
+::
+
+  /opt/ros/fuerte/            # CMAKE_INSTALL_PREFIX
+
+    bin/
+      roscore                 # possibly some special anointed binaries
+      rosbag@                 # symlink to share/rosbag/bin/rosbag
+      setup.sh                # generated for this environment by catkin
+      env.sh                    
+
+    lib/
+      libros.so               # shared libraries for all packages
+      libcpp_common.so
+      librostime.so
+      libfoo.a                # also static libraries
+      pythonX.Y/              # python from all packages
+        rospy/
+          __init__.py         # static code
+          client.py
+          core.py
+          ...
+        std_msgs/
+          __init__.py         # generated code
+
+    include/                  # all includes, together. 
+      std_msgs/
+        Float64.h             # generated header
+      ros/
+        node_handle.h         # "static" hand-coded header
+        time.h
+        xmlrpc_manager.h
+
+    etc/
+      ros/
+        rosinstall.conf       # used by rosinstall to set ROS_PACKAGE_PATH
+        langs/                # to determine which code generators are available.
+          roscpp              # contains "C++"
+          rospy               # contains "Python"
+        profile.d/
+          00_standard_settings.sh
+          10_pkg1_custom.sh
+          20_pkg2_custom.sh
+        depends.yaml          # rosdep main database
+        depends.d/
+          00_something.yaml   # addons
+          10_somethingelse.yaml
+
+    share/                    # During transition, this is also ROS_PACKAGE_PATH
+      roscpp_tutorials/       # one dir like this per package
+        manifest.xml          # for transition; takes care of exporting to legacy rosmake
+        bin/                  
+          talker              # possibly linked-to from CMAKE_PREFIX_PATH/bin
+          listener
+        cmake/                # cmake infrastructure, per-package
+          roscpp_tutorials-config.cmake
+          roscpp_tutorials-config-version.cmake
+          messages.cmake
+        msg/
+          Foo.msg
+          Bar.msg
+        action/
+          
+        something.launch      # the rest is as the package installs it
+
+     stacks/
+       dry_stack1             # built/installed via rosmake
+       dry_stack2             # built/installed via rosmake
+
+     

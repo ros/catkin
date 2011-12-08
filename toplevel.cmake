@@ -7,7 +7,7 @@ set(CATKIN YES)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
 if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/catkin)
-  message("+++ catkin")
+  message(STATUS "+++ catkin")
   add_subdirectory(catkin)
 else()
   find_package(catkin)

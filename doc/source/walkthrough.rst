@@ -1,5 +1,5 @@
-Quickstart
-==========
+How to build
+============
 
 Pick a temp directory::
 

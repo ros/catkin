@@ -34,8 +34,17 @@ Contents
 
    walkthrough
    current_goal
-   glossary
+   layout
 
+Evolving Documentation Snippets
+-------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   find_package
+   standards
+   glossary
 
 
 Design sketch
@@ -50,12 +59,12 @@ Design sketch
 
 * Catkin does not differentiate between stacks or packages: it simply
   examines the subdirectories of ``CMAKE_SOURCE_DIR`` for buildable
-  projects.  It determines the dependency ordering of projects from
-  examining their source directories.
+  projects (indicated by the presence of a file ``stack.yaml``).  It
+  determines the dependency ordering of stacks by examining these
+  files.
 
 * The ability to build only specific targets or sets of targets are
-  provided through cmake's "natural" mechanisms.  The ability to
-  exclude certain
+  provided through cmake's "natural" mechanisms.  
 
 * The build does not modify the source directories in any way.
 
@@ -69,8 +78,8 @@ Design sketch
 
 * Downloading, untarring, patching and especially the wanton use of
   ``sed`` and/or handcoded Makefiles is considered to be in the very
-  poorest taste.  Exception: sphinx-generated Makefiles used to
-  generate documentation.
+  poorest taste.  Exception: for now, Sphinx-generated Makefiles used
+  to generate documentation are okay.
 
 * ``stack.yaml`` contains everything necessary to to make debian
   source packages.
@@ -100,131 +109,6 @@ be installed and where in the usual cmake fashion, via the
 ``install()`` macro.  Resources, assets, launchfiles, etc get
 installed to ``share/PKGNAME/``.  
 
-Layout of src directory
-^^^^^^^^^^^^^^^^^^^^^^^
-
-e.g. for project 'proj'::
-
-  src/
-    proj/
-      CMakeLists.txt
-      stack.yaml  # explains interstack dependencies and debian-generating rules
-      msg/
-        ProjMsg.msg
-      srv/
-        ProjSrv.srv
-      src/
-        proj/
-          __init__.py
-          othercode.py
-        libproj/
-          CMakeLists.txt
-          proj.cpp
-      include/
-        proj/
-          proj.hpp
-          otherheaders.hpp
-
-Layout of build directory
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-::
-
-  build/
-    gen/
-      cpp/
-        proj/
-          ProjMsg.h
-          ProjSrvRequest.h
-          ProjSrvResponse.h
-      py/                     # single pythonpath setting for buildspace
-        proj/
-          __init__.py         # uses pkgutil to add src/proj/src/ to pythonpath
-          msg/
-            __init__.py
-            _ProjMsg.py
-            _ProjSrvRequest.py
-            _ProjSrvResponse.py
-    lib/
-      libproj.so
-    proj/
-      # the usual cmake-generated stuff.
-      Makefile
-      CMakeFiles/
-      cmake_install.cmake
-
-Installed layout
-^^^^^^^^^^^^^^^^
-
-::
-
-  /opt/ros/fuerte/            # CMAKE_INSTALL_PREFIX
-
-    bin/
-      roscore                 # possibly some special anointed binaries
-      rosbag@                 # symlink to share/rosbag/bin/rosbag
-      setup.sh                # generated for this environment by catkin
-      env.sh                    
-
-    lib/
-      libros.so               # shared libraries for all packages
-      libcpp_common.so
-      librostime.so
-      libfoo.a                # also static libraries
-      pythonX.Y/              # python from all packages
-        rospy/
-          __init__.py         # static code
-          client.py
-          core.py
-          ...
-        std_msgs/
-          __init__.py         # generated code
-
-    include/                  # all includes, together. 
-      std_msgs/
-        Float64.h             # generated header
-      ros/
-        node_handle.h         # "static" hand-coded header
-        time.h
-        xmlrpc_manager.h
-
-    etc/
-      ros/
-        rosinstall.conf       # used by rosinstall to set ROS_PACKAGE_PATH
-        langs/                # to determine which code generators are available.
-          roscpp              # contains "C++"
-          rospy               # contains "Python"
-        profile.d/
-          00_standard_settings.sh
-          10_pkg1_custom.sh
-          20_pkg2_custom.sh
-        depends.yaml          # rosdep main database
-        depends.d/
-          00_something.yaml   # addons
-          10_somethingelse.yaml
-
-    share/                    # During transition, this is also ROS_PACKAGE_PATH
-      roscpp_tutorials/       # one dir like this per package
-        manifest.xml          # for transition; takes care of exporting to legacy rosmake
-        bin/                  
-          talker              # possibly linked-to from CMAKE_PREFIX_PATH/bin
-          listener
-        cmake/                # cmake infrastructure, per-package
-          roscpp_tutorials-config.cmake
-          roscpp_tutorials-config-version.cmake
-          messages.cmake
-        msg/
-          Foo.msg
-          Bar.msg
-        action/
-          
-        something.launch      # the rest is as the package installs it
-
-     stacks/
-       dry_stack1             # built/installed via rosmake
-       dry_stack2             # built/installed via rosmake
-
-     
 
 Main trickery
 -------------
@@ -254,21 +138,10 @@ Main trickery
   installed alongside the generated message code in the same
   directory.
 
-* All C++ headers are generated into ``CMAKE_BINARY_DIR/gen/cpp``;
-  only this directory need be in one's include path.
-
 * When cmake runs, it knows the locations of the ``CMAKE_BINARY_DIR``
   and so forth, it generates an environment file (in
   ``CMAKE_BINARY_DIR``)
 
-Docs Go Here
-------------
-
-.. toctree::
-   :maxdepth: 1
-
-   find_package
-   standards
 
 
 Open Issues and Unstructured Detritus -- Probably Out Of Date
