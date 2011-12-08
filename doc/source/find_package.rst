@@ -1,6 +1,6 @@
 
-find_package() infrastructure
------------------------------
+Internals of the generated find_package() infrastructure
+--------------------------------------------------------
 
 CMake's ``find_package`` is the preferred method for packages to
 communciate to CMake (and thereby to catkin) the libraries, include
@@ -36,8 +36,35 @@ be like this::
   endif()
   
 where `9.9.9` is replaced by the numeric version of the package.  The
-second file tells the caller what the assorted includes/libs are for
-the package::
+second file, ``t-config.cmake``, tells the client what the assorted
+includes/libs are for the package by setting variables
+``t_INCLUDE_DIRS``, ``t_LIBRARIES`` and so forth.  The user passes
+these values to cmake's ``include_directories()`` and
+``target_link_libraries()``.
+
+
+Finding ROS by component (recommended method)
+---------------------------------------------
+
+If you want to specify a dependency on several ROS components
+simultaneously, use ``find_package(ROS [XX.YY] COMPONENTS comp1 comp2)``, e.g.::
+
+  find_package(ROS
+               COMPONENTS
+               cpp_common rostime roscpp_traits 
+               roscpp_serialization sensor_msgs)
+  include_directories(${ROS_INCLUDE_DIRS})
+
+  add_executable(myexec ...)
+  target_link_libraries(${ROS_LIBRARIES})
+
+See the cmake documentation for ``find_package()`` for more details.
+Your ``CMAKE_PREFIX_PATH`` will need to point to a ROS installation.
+The version string is as yet to be determined; "electric", for
+instance, is not a valid version.  We will have to establish some
+mapping between ROS versions and a numeric version of only numbers and
+dots.
+
 
 
 

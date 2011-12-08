@@ -264,6 +264,9 @@ Main trickery
 Docs Go Here
 ------------
 
+.. toctree::
+   :maxdepth: 1
+
    find_package
    standards
 
