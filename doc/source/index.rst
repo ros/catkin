@@ -35,6 +35,7 @@ Contents
    walkthrough
    current_goal
    layout
+   environment
 
 Evolving Documentation Snippets
 -------------------------------
