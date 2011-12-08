@@ -72,7 +72,7 @@ def test_00():
                   "bin/nolangs_exec",
                   "include/std_msgs/String.h",
                   pyinstall + "/sensor_msgs/msg/_PointCloud2.py",
-                  "share/msg/std_msgs/String.msg",
+                  "share/std_msgs/msg/String.msg",
                   "share/std_msgs/cmake/std_msgs-config.cmake",
                   "share/std_msgs/cmake/std_msgs-config-version.cmake",
                   "lib/libcpp_common.so")
