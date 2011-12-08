@@ -38,3 +38,9 @@ in the middle
 
 Look for gotchas in actionlib and dynamic_reconfigure, get 'em going.
 
+Found: dynamic_reconfigure .cfg files import things from generated
+python messages, but only one type from driver_base
+
+Found: actionlib does some unnecessary calculations that introduce
+buildtime dependency loops.
+

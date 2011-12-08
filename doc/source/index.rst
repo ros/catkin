@@ -32,6 +32,7 @@ Contents
 .. toctree::
    :maxdepth: 1   
 
+   walkthrough
    current_goal
    glossary
 
@@ -211,6 +212,12 @@ Installed layout
         cmake/                # cmake infrastructure, per-package
           roscpp_tutorials-config.cmake
           roscpp_tutorials-config-version.cmake
+          messages.cmake
+        msg/
+          Foo.msg
+          Bar.msg
+        action/
+          
         something.launch      # the rest is as the package installs it
 
      stacks/
