@@ -51,6 +51,9 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   log(2 "Writing config to ${_cfgout}")
 
   file(RELATIVE_PATH PACKAGE_RELATIVE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  if(PACKAGE_RELATIVE_PATH STREQUAL "")
+    set(PACKAGE_RELATIVE_PATH ".")
+  endif()
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/etc)
   safe_execute_process(COMMAND ${catkin_EXTRAS_DIR}/update_index.py
     ${CMAKE_BINARY_DIR}/etc/packages.yaml
