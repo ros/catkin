@@ -6,7 +6,7 @@ function(enable_python pkg_name)
     set(PACKAGE_PYTHONPATH src/${pkg_name})
   endif()
 
-  configure_file(${catkin_EXTRAS_DIR}/__init__.py.in
+  configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
     ${CMAKE_BINARY_DIR}/gen/py/${pkg_name}/__init__.py
     @ONLY)
   if(EXISTS ${${pkg_name}_SOURCE_DIR}/setup.py)
@@ -15,7 +15,7 @@ function(enable_python pkg_name)
     set(INSTALL_SCRIPT
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/python_distutils_install.sh)
 
-    configure_file(${catkin_EXTRAS_DIR}/python_distutils_install.sh.in
+    configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.sh.in
       ${INSTALL_SCRIPT}
       @ONLY)
 

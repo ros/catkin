@@ -50,17 +50,24 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   set(_cfgout ${_cfgdir}/${package_lower}-config.cmake)
   log(2 "Writing config to ${_cfgout}")
 
+  file(RELATIVE_PATH PACKAGE_RELATIVE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  safe_execute_process(COMMAND ${catkin_EXTRAS_DIR}/update_index.py
+    ${CMAKE_BINARY_DIR}/packages.yaml
+    ${PACKAGE_NAME}
+    ${PACKAGE_RELATIVE_PATH}
+    )
+
   # THIS IS IMPORTANT. CMAKE_PREFIX_PATH appears to be twitchy: just
   # spent hours figuring out that having /opt/ros/fuerte first is
   # necessary for this finding to work.  Very strange.  xxx_DIR
   # circumvents this twitchiness.
   set(${PACKAGE_NAME}_DIR ${_cfgdir} CACHE FILEPATH "${PACKAGE_NAME} cmake config file dir")
-  configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
+  configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.in
     ${_cfgout}
     @ONLY
     )
 
-  configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
+  configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config-version.cmake.in
     ${_cfgdir}/${package_lower}-config-version.cmake
     @ONLY
     )
@@ -93,7 +100,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       @ONLY
       )
   else()
-    configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
+    configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config.cmake
       @ONLY
       )
@@ -105,7 +112,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       @ONLY
       )
   else()
-    configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
+    configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config-version.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config-version.cmake
       @ONLY
       )
