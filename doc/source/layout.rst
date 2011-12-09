@@ -33,6 +33,8 @@ e.g. for project 'proj'::
 ::
 
   build/
+    etc/
+      packages.yaml           # yaml mapping from pkg name to subdirectory of build/src dirs
     gen/
       cpp/                    # All generated C++ headers go here.  
         proj/
@@ -54,6 +56,8 @@ e.g. for project 'proj'::
       Makefile
       CMakeFiles/
       cmake_install.cmake
+
+
 
 Post-installation
 -----------------
@@ -127,3 +131,40 @@ Post-installation
        dry_stack2             # built/installed via rosmake
 
      
+
+
+Notes on individual files
+-------------------------
+
+.. index:: 
+   double: packages.yaml; files in etc/
+
+.. _etc/packages.yaml:
+
+``etc/packages.yaml``
+^^^^^^^^^^^^^^^^^^^^^
+
+contains a mapping of package name to
+path-to-the-package-relative-to-\ ``CATKIN_(BUILD|SOURCE)_DIR``, e.g.::
+
+     XmlRpc: ros_comm/utilities/xmlrpcpp
+     catkin: catkin
+     cpp_common: roscpp_core/cpp_common
+     gencpp: gencpp
+     genmsg: genmsg
+     genpy: genpy
+     genpybindings: genpybindings
+     geometry_msgs: common_msgs/geometry_msgs
+     nav_msgs: common_msgs/nav_msgs
+     nolangs: nolangs
+     rosconsole: ros_comm/tools/rosconsole
+     roscpp: ros_comm/clients/cpp/roscpp
+     roscpp_serialization: roscpp_core/roscpp_serialization
+     roscpp_traits: roscpp_core/roscpp_traits
+     rosgraph_msgs: ros_comm/messages/rosgraph_msgs
+     roslib: ros/core/roslib
+     rospy: ros_comm/clients/rospy
+     rostime: roscpp_core/rostime
+     sensor_msgs: common_msgs/sensor_msgs
+     std_msgs: std_msgs
+    

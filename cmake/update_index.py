@@ -11,7 +11,7 @@ else:
 y[sys.argv[2]] = sys.argv[3]
 
 ofile = open(pkgfile, 'w')
-yaml.dump(y, ofile)
+yaml.dump(y, ofile, default_flow_style=False)
 ofile.close()
 
 
