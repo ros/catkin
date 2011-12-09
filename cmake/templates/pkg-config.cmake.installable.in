@@ -7,22 +7,14 @@ if (@PACKAGE_NAME@_SOURCE_DIR)
 endif()
 
 foreach(lib @PACKAGE_LIBRARIES@)
-  if(@PACKAGE_NAME@_SOURCE_DIR)
-    if (NOT TARGET ${lib})
-      message(FATAL_ERROR "Looking for ${lib}, source for @PACKAGE_NAME@ is present in workspace, but ${lib} is not a target")
-    endif()
-    set(onelib ${lib})
-  else()
-    set(onelib "${lib}-NOTFOUND")
-    find_library(onelib ${lib}
-      PATHS @PKG_LIB_PREFIX@/lib
-      NO_DEFAULT_PATH
-      )
-    if(NOT onelib)
-      message(FATAL_ERROR "Library '${lib}' in package @PACKAGE_NAME@ is not installed properly")
-    endif()
+  set(onelib "${lib}-NOTFOUND")
+  find_library(onelib ${lib}
+    PATHS @PKG_LIB_PREFIX@/lib
+    NO_DEFAULT_PATH
+    )
+  if(NOT onelib)
+    message(FATAL_ERROR "Library '${lib}' in package @PACKAGE_NAME@ is not installed properly")
   endif()
-
   list(APPEND @PACKAGE_NAME@_LIBRARIES ${onelib})
 endforeach()
 

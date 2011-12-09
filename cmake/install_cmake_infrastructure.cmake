@@ -46,7 +46,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   # Versions find_packageable from the buildspace
   #
   string(TOLOWER ${PACKAGE_NAME} package_lower)
-  set(_cfgdir ${CMAKE_BINARY_DIR}/CMAKE_PREFIX_PATH/share/cmake/${package_lower})
+  set(_cfgdir ${CMAKE_BINARY_DIR}/cmake/${package_lower})
   set(_cfgout ${_cfgdir}/${package_lower}-config.cmake)
   log(2 "Writing config to ${_cfgout}")
 
@@ -66,7 +66,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   # necessary for this finding to work.  Very strange.  xxx_DIR
   # circumvents this twitchiness.
   set(${PACKAGE_NAME}_DIR ${_cfgdir} CACHE FILEPATH "${PACKAGE_NAME} cmake config file dir")
-  configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.in
+  configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.buildspace.in
     ${_cfgout}
     @ONLY
     )
@@ -104,7 +104,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       @ONLY
       )
   else()
-    configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.in
+    configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.installable.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config.cmake
       @ONLY
       )
