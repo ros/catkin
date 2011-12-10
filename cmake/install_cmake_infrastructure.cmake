@@ -64,6 +64,13 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     "${PACKAGE_RELATIVE_PATH}"
     )
 
+  #
+  #  Install stuff for share/ relative to this.  Maybe we'll want 
+  #  to use PACKAGE_RELATIVE_PATH here?
+  #
+  set(PROJECT_SHARE_INSTALL_PREFIX share/${PACKAGE_NAME})
+
+
   # THIS IS IMPORTANT. CMAKE_PREFIX_PATH appears to be twitchy: just
   # spent hours figuring out that having /opt/ros/fuerte first is
   # necessary for this finding to work.  Very strange.  xxx_DIR
@@ -138,7 +145,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config-version.cmake
     ${INSTALLABLE_CFG_EXTRAS}
-    DESTINATION share/${PACKAGE_NAME}/cmake
+    DESTINATION ${PROJECT_SHARE_INSTALL_PREFIX}/cmake
     )
 
   # install libraries
