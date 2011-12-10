@@ -6,7 +6,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   endif()
 
   parse_arguments(PACKAGE
-    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
+    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH;DEPENDS"
     ""
     ${ARGN})
 
@@ -19,6 +19,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     set(PACKAGE_VERSION "0.0.0")
   endif()
   set(PACKAGE_INCLUDE_DIRS ${PACKAGE_INCLUDE_DIRS})
+  set(PACKAGE_DEPENDS ${PACKAGE_DEPENDS})
   set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
   set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/cmake/${PACKAGE_NAME})
@@ -103,6 +104,15 @@ function(install_cmake_infrastructure PACKAGE_NAME)
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}.pc
     DESTINATION lib/pkgconfig
+    )
+
+  em_expand(${catkin_EXTRAS_DIR}/templates/pkg-config.pc.context.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkg-config.pc.context.py
+    ${catkin_EXTRAS_DIR}/em/manifest.xml.em
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/manifest.xml)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/manifest.xml
+    DESTINATION share/${PACKAGE_NAME}
     )
   #
   #  Versions to be installed
