@@ -13,6 +13,7 @@ if (NOT catkin_FOUND)
   #set(CATKIN_PACKAGE_PREFIX "")
   #set(CATKIN_LINUX_DISTRIBUTIONS "lucid maverick natty oneiric")
   set(catkin_FOUND)
+  set(CATKIN_PACKAGE_PREFIX "" CACHE STRING "Prefix to apply to package generated via gendebian")
 
   # set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/CMAKE_PREFIX_PATH:${CMAKE_PREFIX_PATH}")
 endif()

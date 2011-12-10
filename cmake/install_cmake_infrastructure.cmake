@@ -1,10 +1,9 @@
 function(install_cmake_infrastructure PACKAGE_NAME)
   if (NOT PROJECT_NAME STREQUAL PACKAGE_NAME)
     message(FATAL_ERROR "install_cmake_infrastructure called for project (PROJECT_NAME=${PROJECT_NAME}) "
-      "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\nDid you forget to call project()?\n")
+      "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\n"
+      "Did you forget to call project()?\n")
   endif()
-
-  set(PACKAGE_VERSION "0.0.0")
 
   parse_arguments(PACKAGE
     "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
@@ -14,7 +13,11 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   log(2 "install_cmake_infrastructure ${PACKAGE_NAME} at version ${${PACKAGE_NAME}_VERSION} in @CMAKE_INSTALL_PREFIX@")
   set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
   set(PACKAGE_NAME ${PACKAGE_NAME})
-  set(PACKAGE_VERSION ${${PACKAGE}_VERSION})
+  if(NOT "${${PACKAGE}_VERSION}" STREQUAL "")
+    set(PACKAGE_VERSION ${${PACKAGE}_VERSION})
+  else()
+    set(PACKAGE_VERSION "0.0.0")
+  endif()
   set(PACKAGE_INCLUDE_DIRS ${PACKAGE_INCLUDE_DIRS})
   set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
@@ -85,6 +88,15 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   set(PKG_BIN_DIRS ${CMAKE_INSTALL_PREFIX}/bin)
   set(PKG_LOCATION "Installed")
 
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/pkg-config)
+  em_expand(${catkin_EXTRAS_DIR}/templates/pkg-config.pc.context.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkg-config.pc.context.py
+    ${catkin_EXTRAS_DIR}/em/pkg-config.pc.em
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}.pc)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}.pc
+    DESTINATION lib/pkgconfig
+    )
   #
   #  Versions to be installed
   #
