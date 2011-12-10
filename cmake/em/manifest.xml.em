@@ -7,7 +7,7 @@
   <license>BSD</license>
   <url>FIXME</url>
 
-  @[for pkg in PACKAGE_DEPENDS]
+  @[for pkg in PACKAGE_DEPENDS.split(';')]
   <depend package="@pkg" />
   @[end for]
 
