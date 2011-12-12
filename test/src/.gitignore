@@ -4,13 +4,15 @@ ros_comm
 catkin
 genmsg
 genpy
+genpybindings
 gencpp
 roscpp_core
 std_msgs
 setup.sh
 setup.bash
 setup.zsh
-./CMakeLists.txt
+CMakeLists.txt
+nolangs/debian
 *.dsc
 *.changes
 *.tar.gz
