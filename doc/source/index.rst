@@ -1,14 +1,6 @@
 Catkin
 ======
 
-.. cmake::  cmakethingy
-
-   :flag: SOMEFLAG
-   :arg:  SOMEARG [file1, file2]
-
-   this is some contents in *there*
-
-
 `Catkin <http://en.wikipedia.org/wiki/Catkin>`_ is a collection of
 cmake macros and associated code used to build some parts of ROS as of
 the *fuerte* release.
@@ -43,6 +35,7 @@ Contents
    walkthrough
    current_goal
    layout
+   macros
    environment
    variables
    code_generation
