@@ -1,6 +1,8 @@
 How to build
 ============
 
+.. highlight:: catkin-sh
+
 Pick a temp directory::
 
   % cd /tmp
@@ -20,14 +22,14 @@ Rosinstall it.  You don't want it built, use ``-n``, like this::
   Now, type 'source /tmp/src/setup.bash' to set up your environment.
   Add that to the bottom of your ~/.bashrc to set it up every time.
 
-  If you are not using bash please see http://www.ros.org/wiki/rosinstall/NonBashShells 
+  If you are not using bash please see http://www.ros.org/wiki/rosinstall/NonBashShells
 
 There will be lots of output.  Currently you need a toplevel
 ``CMakeLists.txt``, make a symlink to ``catkin/toplevel.cmake``::
 
   % cd src
   % ln -s catkin/toplevel.cmake CMakeLists.txt
-  % ls 
+  % ls
   catkin/          common_msgs/  genmsg/	genpybindings/	ros_comm/     setup.bash  setup.zsh
   CMakeLists.txt@  gencpp/       genpy/	        ros/		roscpp_core/  setup.sh	  std_msgs/
 
@@ -42,7 +44,7 @@ Now do the typical cmake thing::
     ...
 
   -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  -- ~v^V^v~   traversing stacks/projects in topological order   ~v^V^v~
+  -- ~~        traversing stacks/projects in topological order        ~~
   -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     ...
@@ -64,8 +66,8 @@ And make::
   [ 97%] Built target nav_msgs_genpy
   Scanning dependencies of target nav_msgs_genpybindings
   [100%] Built target nav_msgs_genpybindings
-  
 
-  
+
+
 
 

@@ -1,6 +1,14 @@
 Catkin
 ======
 
+.. cmake::  cmakethingy
+
+   :flag: SOMEFLAG
+   :arg:  SOMEARG [file1, file2]
+
+   this is some contents in *there*
+
+
 `Catkin <http://en.wikipedia.org/wiki/Catkin>`_ is a collection of
 cmake macros and associated code used to build some parts of ROS as of
 the *fuerte* release.
@@ -30,7 +38,7 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 1   
+   :maxdepth: 1
 
    walkthrough
    current_goal
@@ -67,7 +75,7 @@ Design sketch
   files.
 
 * The ability to build only specific targets or sets of targets are
-  provided through cmake's "natural" mechanisms.  
+  provided through cmake's "natural" mechanisms.
 
 * The build does not modify the source directories in any way.
 
@@ -110,7 +118,7 @@ compliant (or as close as we can get) filesystem under
 obeys ``DESTDIR`` for ease of packaging.  Projects specify what should
 be installed and where in the usual cmake fashion, via the
 ``install()`` macro.  Resources, assets, launchfiles, etc get
-installed to ``share/PKGNAME/``.  
+installed to ``share/PKGNAME/``.
 
 
 Main trickery
@@ -479,7 +487,7 @@ flow
 ----
 
 * either add catkin subdirectory if present or find_package it.
-* find available packages.  topological sort.  
+* find available packages.  topological sort.
 * any langs depend on genmsg and come first.
 
 
@@ -503,7 +511,7 @@ oneiric image 64 bit chosen
 pkgs:  lvm2 debootstrap git-core schroot apt-cacher ubuntu-dev-tools
 
 install jenkins on slave and master. TODO: how do you keep master from
-starting on slave.  
+starting on slave.
 
 setup ssh keys so that jenkins can ssh around on the cluster.
 
