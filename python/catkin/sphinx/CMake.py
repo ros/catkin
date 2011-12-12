@@ -26,25 +26,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-from pygments.lexer import RegexLexer
-from pygments.token import *
+from docutils.parsers import rst
+import docutils.nodes
 
-class ShLexer(RegexLexer):
-    name = 'Better lexer sh examples'
-    aliases = ['catkin-sh']
+class cmake(docutils.nodes.Element): pass
 
-    tokens = {
-        'root': [
-            (r'^(%|\$|\>\>\>|\(gdb\))', Generic.Prompt, 'afterprompt'),
-            (r'\#.*$', Comment.Single),
-            (r'.', Text),
-        ],
-        'afterprompt': [
-            (r'\#.*$', Comment.Single, '#pop'),
-            (r'.', Text),
-            (r'\n', Comment.Multiline, '#pop'),
-        ]
-    }
+class CMakeDirective(rst.Directive):
+    has_content = True
+    final_argument_whitespace = True
+    required_arguments = 1
+
+    option_spec = dict(flag=rst.directives.flag)
+
+    def run(self):
+        node = cmake()
+        contentnode = docutils.nodes.paragraph()
+        self.state.nested_parse(self.content, self.content_offset, contentnode)
+        node.content = contentnode
+        return [node]
+
+def do_cmake(app, doctree):
+    #print doctree
+    for node in doctree.traverse(cmake):
+        print (("v"*50) +"\n")*3
+        print node.content
+        print (("^"*50) +"\n")*3
+        para = docutils.nodes.title("EEEP")
+        para += docutils.nodes.paragraph(text=node.content)
+        node.replace_self(para)
 
 def setup(app):
-    app.add_lexer('catkin-sh', ShLexer())
+    app.add_directive('cmake', CMakeDirective)
+    app.connect('doctree-read', do_cmake)
