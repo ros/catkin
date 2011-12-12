@@ -36,7 +36,8 @@ class ShLexer(RegexLexer):
     tokens = {
         'root': [
             (r'^(%|\>\>\>|\(gdb\))', Literal.Number.Float, 'afterprompt'),
-            (r'.+', Text),
+            (r'#.*', Literal.Number.String),
+            (r'[^\#]+', Text),
         ],
         'afterprompt': [
             (r'.*', Generic.Deleted, '#pop'),
