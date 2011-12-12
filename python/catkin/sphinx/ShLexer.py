@@ -31,16 +31,17 @@ from pygments.token import *
 
 class ShLexer(RegexLexer):
     name = 'Better lexer sh examples'
-    aliases = ['ectosh']
+    aliases = ['catkin-sh']
 
     tokens = {
         'root': [
-            (r'^(%|\>\>\>|\(gdb\))', Literal.Number.Float, 'afterprompt'),
-            (r'#.*', Literal.Number.String),
-            (r'[^\#]+', Text),
+            (r'^(%|\$|\>\>\>|\(gdb\))', Generic.Prompt, 'afterprompt'),
+            (r'\#.*$', Comment.Single),
+            (r'.', Text),
         ],
         'afterprompt': [
-            (r'.*', Generic.Deleted, '#pop'),
+            (r'\#.*$', Comment.Single, '#pop'),
+            (r'.', Text),
             (r'\n', Comment.Multiline, '#pop'),
         ]
     }

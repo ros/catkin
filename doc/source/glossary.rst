@@ -27,4 +27,12 @@ Glossary
    static code
         Code typed in by a developer, contrast :term:`generated code`        
 
+   config-mode infrastructure
+        Files named ``<project>-config.cmake`` and
+        ``<project>-config-version.cmake`` which are used by cmake's
+        ``find_package()`` in "config mode".  
+
+   pkgutil
+        Nifty python package:
+        http://docs.python.org/library/pkgutil.html
 
