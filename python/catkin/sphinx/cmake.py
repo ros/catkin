@@ -250,11 +250,11 @@ class CMakeModulelevel(CMakeObject):
     def get_index_text(self, modname, name_cls):
         if self.objtype == 'macro':
             if not modname:
-                return _('%s() (cmake macro)') % name_cls[0]
+                return _('%s() (CMake macro)') % name_cls[0]
             return _('%s() (in module %s)') % (name_cls[0], modname)
         elif self.objtype == 'data':
             if not modname:
-                return _('%s (built-in variable)') % name_cls[0]
+                return _('%s (CMake variable)') % name_cls[0]
             return _('%s (in module %s)') % (name_cls[0], modname)
         else:
             return ''
