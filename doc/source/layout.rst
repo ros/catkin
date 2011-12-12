@@ -4,6 +4,8 @@ Pre- and Post-installation Disk Layout reference
 Pre-installation
 ----------------
 
+.. highlight:: catkin-sh
+
 .. rubric:: Source directory
 
 e.g. for project 'proj'::

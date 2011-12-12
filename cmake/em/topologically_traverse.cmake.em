@@ -41,7 +41,7 @@ def topo_packages_generators_first(pkgs):
     """
     First return packages which have generators. Then return the rest.
     """
-    
+
     def next_pkg():
         for name, p in pkgs.items():
             if p.genlang and not p.depends:
@@ -50,7 +50,7 @@ def topo_packages_generators_first(pkgs):
             if not p.depends:
                 return name
         return None
-    
+
     while len(pkgs) > 0:
         name = next_pkg()
         # print >>sys.stderr, "name=", name
@@ -82,9 +82,9 @@ else:
     topo_pkgs = topo_packages_generators_first(pkgs)
 }
 
-message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-message(STATUS "~v^V^v~   traversing stacks/projects in topological order   ~v^V^v~")
-message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+message(STATUS "~~         traversing stacks/projects in dependency order         ~~")
+message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 set(CATKIN_GENLANGS @(' '.join(langs)))
 
 @[for pkgname in topo_pkgs]
