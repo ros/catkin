@@ -26,7 +26,8 @@ bt = with_setup(startbuild, endbuild)
 @bt
 def test_tiny():
     out = cmake(CATKIN_BUILD_PROJECTS='nolangs',
-                CMAKE_INSTALL_PREFIX=cmake_install_prefix)
+                CMAKE_INSTALL_PREFIX=cmake_install_prefix,
+                CATKIN_DPKG_BUILDPACKAGE_FLAGS='-d;-S;-us;-uc')
     assert exists(builddir + "/nolangs")
     assert not exists(builddir + "/std_msgs")
     assert not exists(builddir + "/genmsg")
@@ -57,7 +58,8 @@ def test_00():
     assert_exists(builddir,
                   "lib/liba.so",
                   "lib/libb.so",
-                  "lib/libc.so",
+                  "lib/libc-one.so",
+                  "lib/libc-two.so",
                   "lib/libd.so",
                   "nolangs",
                   "bin/nolangs_exec",

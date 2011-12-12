@@ -5,8 +5,10 @@ find_package(catkin)
 find_package(a)
 include_directories(${a_INCLUDE_DIRS})
 
-add_library(c SHARED lib.cpp)
-target_link_libraries(c ${a_LIBRARIES})
+add_library(c-one SHARED lib.cpp)
+add_library(c-two SHARED lib.cpp)
+target_link_libraries(c-one ${a_LIBRARIES})
+target_link_libraries(c-two ${a_LIBRARIES})
 
 add_message_files(
   DIRECTORY msg
@@ -18,7 +20,7 @@ generate_messages(DEPENDENCIES std_msgs a)
 install_cmake_infrastructure(c
   VERSION 0.0.1
   INCLUDE_DIRS include
-  LIBRARIES c
+  LIBRARIES c-one c-two
   MSG_DIRS msg
   )
 

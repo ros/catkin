@@ -8,6 +8,7 @@ genpybindings
 gencpp
 roscpp_core
 std_msgs
+ros_tutorials
 setup.sh
 setup.bash
 setup.zsh

@@ -38,6 +38,10 @@
     local-name: ros_comm
 
 - svn:
+    uri: 'https://code.ros.org/svn/ros/stacks/ros_tutorials/trunk/'
+    local-name: ros_tutorials
+
+- svn:
     uri: 'https://code.ros.org/svn/ros/stacks/ros/trunk/'
     local-name: ros
 

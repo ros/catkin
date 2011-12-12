@@ -7,7 +7,7 @@ Glossary
         a (package/stack/whatever) not yet converted to catkin/FHS build & install.
 
    wet
-        a (package/stack/whatever) stack not yet converted to catkin/FHS build & install.
+        a (package/stack/whatever) stack already converted to catkin/FHS build & install.
 
    stack
         unit of installation.  These get made in to debs.

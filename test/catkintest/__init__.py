@@ -15,7 +15,7 @@ destdir='DESTDIR'
 cmake_install_prefix='/CMAKE_INSTALL_PREFIX'
 diskprefix="%s/%s/%s" % (builddir, destdir, cmake_install_prefix)
 pyinstall='lib/python%u.%u/dist-packages' % (v[0], v[1])
-make=['/usr/bin/make', '-j4', 'VERBOSE=1']
+make=['/usr/bin/make', 'VERBOSE=1']
 
 def run(args, **kwargs):
     print "run:", args
@@ -61,6 +61,9 @@ def cmake(**kwargs):
     this_srcdir = srcdir
     expect = succeed
     print "v~_", this_builddir, this_srcdir
+    if 'CATKIN_DPKG_BUILDPACKAGE_FLAGS' not in kwargs:
+        kwargs['CATKIN_DPKG_BUILDPACKAGE_FLAGS'] = '-d;-S;-us;-uc'
+
     for k, v in kwargs.items():
         print "~v^v~", k, v
         if k == 'cwd':
