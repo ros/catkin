@@ -21,6 +21,8 @@ macro(em_expand CONTEXT_FILE_IN CONTEXT_FILE_OUT EM_FILE_IN CMAKE_FILE_OUT)
     -o ${CMAKE_FILE_OUT}
     ${EM_FILE_IN}
     )
-  log(2 STATUS "*** including ${CMAKE_FILE_OUT}")
-  include(${CMAKE_FILE_OUT})
+  if(${CMAKE_FILE_OUT} MATCHES ".*\\.cmake")
+    log(2 STATUS "*** including ${CMAKE_FILE_OUT}")
+    include(${CMAKE_FILE_OUT})
+  endif()
 endmacro()

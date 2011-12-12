@@ -1,21 +1,25 @@
 function(install_cmake_infrastructure PACKAGE_NAME)
   if (NOT PROJECT_NAME STREQUAL PACKAGE_NAME)
     message(FATAL_ERROR "install_cmake_infrastructure called for project (PROJECT_NAME=${PROJECT_NAME}) "
-      "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\nDid you forget to call project()?\n")
+      "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\n"
+      "Did you forget to call project()?\n")
   endif()
 
-  set(PACKAGE_VERSION "0.0.0")
-
   parse_arguments(PACKAGE
-    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH"
+    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH;DEPENDS"
     ""
     ${ARGN})
 
   log(2 "install_cmake_infrastructure ${PACKAGE_NAME} at version ${${PACKAGE_NAME}_VERSION} in @CMAKE_INSTALL_PREFIX@")
   set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
   set(PACKAGE_NAME ${PACKAGE_NAME})
-  set(PACKAGE_VERSION ${${PACKAGE}_VERSION})
+  if(NOT "${${PACKAGE}_VERSION}" STREQUAL "")
+    set(PACKAGE_VERSION ${${PACKAGE}_VERSION})
+  else()
+    set(PACKAGE_VERSION "0.0.0")
+  endif()
   set(PACKAGE_INCLUDE_DIRS ${PACKAGE_INCLUDE_DIRS})
+  set(PACKAGE_DEPENDS ${PACKAGE_DEPENDS})
   set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
   set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/cmake/${PACKAGE_NAME})
@@ -46,21 +50,39 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   # Versions find_packageable from the buildspace
   #
   string(TOLOWER ${PACKAGE_NAME} package_lower)
-  set(_cfgdir ${CMAKE_BINARY_DIR}/CMAKE_PREFIX_PATH/share/cmake/${package_lower})
+  set(_cfgdir ${CMAKE_BINARY_DIR}/cmake/${package_lower})
   set(_cfgout ${_cfgdir}/${package_lower}-config.cmake)
   log(2 "Writing config to ${_cfgout}")
+
+  file(RELATIVE_PATH PACKAGE_RELATIVE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  if(PACKAGE_RELATIVE_PATH STREQUAL "")
+    set(PACKAGE_RELATIVE_PATH ".")
+  endif()
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/etc)
+  safe_execute_process(COMMAND ${catkin_EXTRAS_DIR}/update_index.py
+    ${CMAKE_BINARY_DIR}/etc/packages.list
+    "${PACKAGE_NAME}"
+    "${PACKAGE_RELATIVE_PATH}"
+    )
+
+  #
+  #  Install stuff for share/ relative to this.  Maybe we'll want 
+  #  to use PACKAGE_RELATIVE_PATH here?
+  #
+  set(PROJECT_SHARE_INSTALL_PREFIX share/${PACKAGE_NAME})
+
 
   # THIS IS IMPORTANT. CMAKE_PREFIX_PATH appears to be twitchy: just
   # spent hours figuring out that having /opt/ros/fuerte first is
   # necessary for this finding to work.  Very strange.  xxx_DIR
   # circumvents this twitchiness.
   set(${PACKAGE_NAME}_DIR ${_cfgdir} CACHE FILEPATH "${PACKAGE_NAME} cmake config file dir")
-  configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
+  configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.buildspace.in
     ${_cfgout}
     @ONLY
     )
 
-  configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
+  configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config-version.cmake.in
     ${_cfgdir}/${package_lower}-config-version.cmake
     @ONLY
     )
@@ -74,6 +96,24 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   set(PKG_BIN_DIRS ${CMAKE_INSTALL_PREFIX}/bin)
   set(PKG_LOCATION "Installed")
 
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/pkg-config)
+  em_expand(${catkin_EXTRAS_DIR}/templates/pkg-config.pc.context.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkg-config.pc.context.py
+    ${catkin_EXTRAS_DIR}/em/pkg-config.pc.em
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}.pc)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}.pc
+    DESTINATION lib/pkgconfig
+    )
+
+  em_expand(${catkin_EXTRAS_DIR}/templates/pkg-config.pc.context.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkg-config.pc.context.py
+    ${catkin_EXTRAS_DIR}/em/manifest.xml.em
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/manifest.xml)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/manifest.xml
+    DESTINATION share/${PACKAGE_NAME}
+    )
   #
   #  Versions to be installed
   #
@@ -93,7 +133,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       @ONLY
       )
   else()
-    configure_file(${catkin_EXTRAS_DIR}/pkg-config.cmake.in
+    configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.installable.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config.cmake
       @ONLY
       )
@@ -105,7 +145,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
       @ONLY
       )
   else()
-    configure_file(${catkin_EXTRAS_DIR}/pkg-config-version.cmake.in
+    configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config-version.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config-version.cmake
       @ONLY
       )
@@ -115,7 +155,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config-version.cmake
     ${INSTALLABLE_CFG_EXTRAS}
-    DESTINATION share/${PACKAGE_NAME}/cmake
+    DESTINATION ${PROJECT_SHARE_INSTALL_PREFIX}/cmake
     )
 
   # install libraries

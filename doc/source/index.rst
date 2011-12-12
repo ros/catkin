@@ -36,6 +36,8 @@ Contents
    current_goal
    layout
    environment
+   variables
+   code_generation
 
 Evolving Documentation Snippets
 -------------------------------

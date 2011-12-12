@@ -36,7 +36,7 @@ function(catkin_package PKGNAME)
 
   add_custom_command(TARGET ${PROJECT_NAME}-gendebian
     POST_BUILD
-    COMMAND dpkg-buildpackage ${CATKIN_DPKG_BUILDPACKAGE_FLAGS} # ${PROJECT_SOURCE_DIR}
+    COMMAND dpkg-buildpackage ${CATKIN_DPKG_BUILDPACKAGE_FLAGS}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 

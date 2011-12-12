@@ -34,7 +34,7 @@ else()
     CACHE INTERNAL "catkin env")
   message(STATUS "Shell environment is defined in catkin installation at ${catkin_INSTALL_PREFIX}/env.sh")
 endif()
-configure_file(${catkin_EXTRAS_DIR}/catkin-context.in ${CATKIN_CONTEXT_FILE})
+configure_file(${catkin_EXTRAS_DIR}/templates/catkin-context.in ${CATKIN_CONTEXT_FILE})
 
 #
 # These get generated no matter what.
