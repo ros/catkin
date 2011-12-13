@@ -8,10 +8,14 @@ Catkin cmake macro reference
    :param INCLUDE_DIRS: source-relative path to C/C++ headers
    :param LIBRARIES: names of library targets 
    :param MSG_DIRS: source-relative paths to directories containing messages
-
    :param PYTHONPATH: source-relative paths to directory containing
       static python code.  A "thunk" will be created to this (source)
       directory from the build directory if :cmake:macro:`enable_python` is called.
+
+   :var DONK_badonk: badonkadongk
+   :outvar PROJECT_SHARE_INSTALL_PREFIX: set to
+      ``CMAKE_INSTALL_PREFIX/share/${PROJECT_NAME}`` by default.  For
+      use with cmake ``install()`` macro.
 
    Create buildspace :term:`config-mode infrastructure`.
 
