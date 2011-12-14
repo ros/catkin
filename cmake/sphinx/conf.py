@@ -23,6 +23,7 @@ sys.path.append(os.path.abspath('.'))
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.ifconfig', 'sphinx.ext.todo', 'sphinx.ext.graphviz',
+              'sphinx.ext.intersphinx',
               'catkin.sphinx.ShLexer', 'catkin.sphinx.cmake']
 todo_include_todos = True
 
@@ -206,6 +207,11 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+catkin_docs_dir = '/ssd/catkin/test/build/doc/html'
+
+intersphinx_mapping = dict(catkin=('../catkin', catkin_docs_dir + '/catkin/objects.inv'),
+                           genmsg=(catkin_docs_dir + '/genmsg', catkin_docs_dir + '/genmsg/objects.inv'))
 
 rst_epilog="""
 

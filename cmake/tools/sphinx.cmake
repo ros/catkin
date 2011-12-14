@@ -73,8 +73,9 @@ macro(sphinx SOURCE_DIR BUILD_DIR)
       -c ${catkin_EXTRAS_DIR}/sphinx
       -D html_title=${PROJECT_NAME}
       -D project=${PROJECT_NAME}
-      ${SOURCE_DIR} ${BUILD_DIR}/html
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      -D catkin_docs_dir="${CMAKE_BINARY_DIR}/doc/html"
+      ${SOURCE_DIR} ${CMAKE_BINARY_DIR}/doc/html/${PROJECT_NAME}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       )
     add_dependencies(sphinx-doc ${PROJECT_NAME}-sphinx)
     if (CATKIN_DOCS_DEPLOY_DESTINATION)
