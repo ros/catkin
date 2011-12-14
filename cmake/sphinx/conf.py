@@ -211,7 +211,7 @@ latex_documents = [
 catkin_docs_dir = '/ssd/catkin/test/build/doc/html'
 
 intersphinx_mapping = dict(catkin=('../catkin', catkin_docs_dir + '/catkin/objects.inv'),
-                           genmsg=(catkin_docs_dir + '/genmsg', catkin_docs_dir + '/genmsg/objects.inv'))
+                           genmsg=('../genmsg', catkin_docs_dir + '/genmsg/objects.inv'))
 
 rst_epilog="""
 
