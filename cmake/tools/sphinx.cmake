@@ -81,7 +81,7 @@ macro(sphinx SOURCE_DIR BUILD_DIR)
     if (CATKIN_DOCS_DEPLOY_DESTINATION)
       add_custom_target(${PROJECT_NAME}-sphinx-deploy)
       add_custom_command(TARGET ${PROJECT_NAME}-sphinx-deploy
-        COMMAND rsync --perms --chmod=a+rX -va ${BUILD_DIR}/ ${CATKIN_DOCS_DEPLOY_DESTINATION}/${PROJECT_NAME})
+        COMMAND rsync --perms --chmod=a+rX -va ${CMAKE_BINARY_DIR}/doc/html/${PROJECT_NAME}/ ${CATKIN_DOCS_DEPLOY_DESTINATION}/${PROJECT_NAME})
       add_dependencies(sphinx-deploy ${PROJECT_NAME}-sphinx-deploy)
     endif()
   endif()
