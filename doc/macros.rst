@@ -6,7 +6,7 @@ Catkin cmake macro reference
    :param projectname: requires the same value as passed to cmake's ``project()``
    :param VERSION: the version in MM.NN.PP format
    :param INCLUDE_DIRS: source-relative path to C/C++ headers
-   :param LIBRARIES: names of library targets 
+   :param LIBRARIES: names of library targets
    :param MSG_DIRS: source-relative paths to directories containing messages
    :param PYTHONPATH: source-relative paths to directory containing
       static python code.  A "thunk" will be created to this (source)
@@ -42,6 +42,22 @@ Catkin cmake macro reference
    :term:`static code`.
 
 
+Documentation Macros
+^^^^^^^^^^^^^^^^^^^^
+
+.. cmake:macro:: sphinx(SOURCEDIR BUILDDIR)
+
+   :param SOURCEDIR:  Directory containing sphinx .rst documentation source code
+   :param BUILDDIR:   Directory to contain generated html
+   :target <PROJECT_NAME>-sphinx:  Builds html documentation.  Dependee:  toplevel target ``doc``
+
+.. cmake:macro:: find_sphinx()
+
+   :outvar SPHINX_BUILD: Path to ``sphinx-build`` binary.
+
+   Finds sphinx binary.  You don't need this... called automatically by :cmake:macro:`sphinx()`
+
+
 Macros pulled in from project genmsg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -50,7 +66,7 @@ Macros pulled in from project genmsg
 .. cmake:macro:: generate_messages([parameters])
 
    :param optional DEPENDENCIES: names of projects that the messages in this
-      package depend on.  
+      package depend on.
 
    :param optional LANGS: generate messages for these languages.
       This will fail if you specify messages that catkin doesn't know

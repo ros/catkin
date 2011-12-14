@@ -2,6 +2,12 @@ include(${catkin_EXTRAS_DIR}/log.cmake)
 include(${catkin_EXTRAS_DIR}/assert.cmake)
 assert(catkin_EXTRAS_DIR)
 
+if (CATKIN_ALL_INCLUDED)
+  return()
+else()
+  set(CATKIN_ALL_INCLUDED)
+endif()
+
 foreach(f
     python
     empy
@@ -18,6 +24,8 @@ foreach(f
     catkin_workspace
     enable_python
     langs
+    tools/doxygen
+    tools/sphinx
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
 endforeach()
@@ -40,7 +48,7 @@ configure_file(${catkin_EXTRAS_DIR}/templates/catkin-context.in ${CATKIN_CONTEXT
 # These get generated no matter what.
 #
 foreach(shfile setup.zsh setup.bash)
-  configure_file(${catkin_EXTRAS_DIR}/templates/${shfile} ${CMAKE_BINARY_DIR}/${shfile} 
+  configure_file(${catkin_EXTRAS_DIR}/templates/${shfile} ${CMAKE_BINARY_DIR}/${shfile}
     @ONLY)
 endforeach()
 
@@ -48,5 +56,4 @@ foreach(shfile setup.sh env.sh)
   configure_file(${catkin_EXTRAS_DIR}/templates/${shfile}.buildspace.in ${CMAKE_BINARY_DIR}/${shfile}
     @ONLY)
 endforeach()
-
 

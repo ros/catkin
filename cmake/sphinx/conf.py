@@ -43,7 +43,6 @@ master_doc = 'index'
 # General information about the project.
 project = u'catkin'
 gitcmd = 'git log -n1 --pretty=format:%cD'.split()
-print gitcmd
 
 lastmod = subprocess.Popen(gitcmd, stdout=subprocess.PIPE).communicate()[0]
 dochash = subprocess.Popen('git log -n1 --pretty=format:%H'.split(),
@@ -111,7 +110,7 @@ html_theme = 'catkin'
 # html_theme_options = { 'rightsidebar' : 'true' }
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = ['.']
+html_theme_path = ['themes']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".

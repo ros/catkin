@@ -29,9 +29,9 @@ install(DIRECTORY cmake/
   USE_SOURCE_PERMISSIONS
   )
 
-configure_file(cmake/templates/setup.sh.installable.in 
+configure_file(cmake/templates/setup.sh.installable.in
   ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh)
-configure_file(cmake/templates/env.sh.installable.in 
+configure_file(cmake/templates/env.sh.installable.in
   ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
 
 install(FILES
@@ -51,3 +51,5 @@ enable_python(catkin)
 
 stamp(cmake/catkin_generate_debian.py)
 stamp(cmake/stack_get.py)
+
+sphinx(${CMAKE_CURRENT_SOURCE_DIR}/doc ${CMAKE_CURRENT_BINARY_DIR}/doc)
