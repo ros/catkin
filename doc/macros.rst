@@ -12,7 +12,6 @@ Catkin cmake macro reference
       static python code.  A "thunk" will be created to this (source)
       directory from the build directory if :cmake:macro:`enable_python` is called.
 
-   :var DONK_badonk: badonkadongk
    :outvar PROJECT_SHARE_INSTALL_PREFIX: set to
       ``CMAKE_INSTALL_PREFIX/share/${PROJECT_NAME}`` by default.  For
       use with cmake ``install()`` macro.
@@ -51,11 +50,22 @@ Documentation Macros
    :param BUILDDIR:   Directory to contain generated html
    :target <PROJECT_NAME>-sphinx:  Builds html documentation.  Dependee:  toplevel target ``doc``
 
+   Optionally creates ``-deploy`` targets, see :cmake:data:`CATKIN_DOCS_DEPLOY_DESTINATION`.
+
 .. cmake:macro:: find_sphinx()
 
    :outvar SPHINX_BUILD: Path to ``sphinx-build`` binary.
 
    Finds sphinx binary.  You don't need this... called automatically by :cmake:macro:`sphinx()`
+
+.. cmake:data:: CATKIN_DOCS_DEPLOY_DESTINATION
+
+   :default: ``OFF``
+
+   If  this is set, the  ``*-sphinx``  targets above  will also  have
+   ``*-sphinx-deploy``  targets which rsync  the documentation  to the
+   provided  location  (value  may  contain ``user@``:  it  is  passed
+   directly to cmake)
 
 
 Macros pulled in from project genmsg

@@ -112,6 +112,8 @@ class CMakeObject(ObjectDescription):
         GroupedField('exceptions', label=l_('Raises'), rolename='exc',
                      names=('raises', 'raise', 'exception', 'except'),
                      can_collapse=True),
+        Field('default', label=l_('Default Value'), rolename='obj',
+              names=('default',)),
         Field('returnvalue', label=l_('Returns'), has_arg=False,
               names=('returns', 'return')),
         Field('returntype', label=l_('Return type'), has_arg=False,
