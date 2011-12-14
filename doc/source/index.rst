@@ -26,6 +26,12 @@ the center.  To the right is userland, to the left is the build farm.
 
 2011.12.06: https://www.evernote.com/shard/s148/sh/ea09aa77-45a0-41e4-8f0d-0dd4fb2e3f6e/27b87ea0af0afe1c2178b89fb5f1b0c9
 
+More thinking about the build farm side of things, integration of
+git-buildpackage:
+
+2011.12.13: https://www.evernote.com/shard/s148/sh/22c609f9-276d-430d-8ebd-5c566fe64872/9543665cf1dd862c27c6398fc8469593
+
+
 Contents
 --------
 
