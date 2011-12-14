@@ -2,14 +2,16 @@ Package: catkin
 Version: 0.1.1
 Section: misc
 Priority: extra
-Architecture: all
-Depends: ${misc:Depends}, cmake, make, lsb-release, python-yaml, python-empy
-Build-Depends: debhelper (>= 7), cmake, gcc, make, python-empy, python-yaml, lsb-release
-Description: Willow Garage low level build system macros and infrastructure.
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard
 Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
 
+Architecture: all
+Depends: cmake, lsb-release, python-yaml, python-empy
+Build-Depends: cmake, lsb-release, python-yaml, python-empy
+Description: Willow Garage low level build system macros and infrastructure.
+
 Catkin-ProjectName: catkin
 Catkin-CopyrightType:  willowgarage
 Catkin-DebRulesType: python_distutils
+
