@@ -65,15 +65,7 @@ endmacro()
 macro(sphinx SOURCE_DIR BUILD_DIR)
   find_sphinx()
   if(SPHINX_BUILD)
-    set(_PYTHONPATH )
-    #put user path first
-    list(APPEND _PYTHONPATH ${ARGN})
-    list(APPEND _PYTHONPATH  ${ecto_PYTHONPATH})
-    #transform the cmake list to a sh path list
-    string(REPLACE ";" ":"
-        _PYTHONPATH
-        "${_PYTHONPATH}"
-    )
+
     add_custom_target(${PROJECT_NAME}-sphinx)
     add_custom_command(TARGET ${PROJECT_NAME}-sphinx
       COMMAND
@@ -81,30 +73,18 @@ macro(sphinx SOURCE_DIR BUILD_DIR)
       -c ${catkin_EXTRAS_DIR}/sphinx
       -D html_title=${PROJECT_NAME}
       -D project=${PROJECT_NAME}
-      ${SOURCE_DIR} ${BUILD_DIR}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      -D catkin_docs_dir="${CMAKE_BINARY_DIR}/doc/html"
+      ${SOURCE_DIR} ${CMAKE_BINARY_DIR}/doc/html/${PROJECT_NAME}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       )
     add_dependencies(sphinx-doc ${PROJECT_NAME}-sphinx)
     if (CATKIN_DOCS_DEPLOY_DESTINATION)
       add_custom_target(${PROJECT_NAME}-sphinx-deploy)
       add_custom_command(TARGET ${PROJECT_NAME}-sphinx-deploy
-        COMMAND /bin/echo rsync --perms --chmod=a+rX -va ${BUILD_DIR} ${CATKIN_DOCS_DEPLOY_DESTINATION})
+        COMMAND rsync --perms --chmod=a+rX -va ${CMAKE_BINARY_DIR}/doc/html/${PROJECT_NAME}/ ${CATKIN_DOCS_DEPLOY_DESTINATION}/${PROJECT_NAME})
       add_dependencies(sphinx-deploy ${PROJECT_NAME}-sphinx-deploy)
     endif()
   endif()
 endmacro()
-
-##
-# deploy(<TARGET_NAME> <DOCS> <DESTINATION>)
-# using rsync create a target that deploys the docs
-#
-macro(deploy TARGET_NAME DOCS DESTINATION)
-  add_custom_target(${TARGET_NAME})
-  add_custom_command(TARGET ${TARGET_NAME}
-    COMMAND rsync --perms --chmod=a+rX -va  ${DOCS} ${DESTINATION}
-  )
-
-endmacro()
-
 
 find_sphinx()
