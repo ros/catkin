@@ -1,10 +1,11 @@
 Package: catkin
-Version: 0.1.2
+Version: 0.1.9
 Section: misc
 Priority: extra
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard
 Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
+Vcs-Git: git://github.com/willowgarage/catkin.git
 
 Architecture: all
 Depends: cmake, lsb-release, python-yaml, python-empy
@@ -15,3 +16,5 @@ Catkin-ProjectName: catkin
 Catkin-CopyrightType:  willowgarage
 Catkin-DebRulesType: python_distutils
 
+Release-Pull: git://github.com/wg-debs/catkin.git
+Release-Push: git@github.com:wg-debs/catkin.git
