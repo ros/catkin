@@ -1,3 +1,4 @@
+*.orig
 build
 ._*
 .\#*
@@ -5,3 +6,5 @@ build
 doc/build
 *.pyc
 .rosinstall
+.*
+*~
