@@ -5,3 +5,7 @@ build
 doc/build
 *.pyc
 .rosinstall
+.project
+.pydevproject
+*~
+*.orig
