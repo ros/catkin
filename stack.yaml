@@ -7,7 +7,7 @@ Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
 Vcs-Git: git://github.com/willowgarage/catkin.git
 
-Architecture: all
+Architecture: any
 Depends: cmake, lsb-release, python-yaml, python-empy
 Build-Depends: cmake, lsb-release, python-yaml, python-empy
 Description: Willow Garage low level build system macros and infrastructure.
