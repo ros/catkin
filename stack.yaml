@@ -1,11 +1,11 @@
-Package: catkin
+Catkin-ProjectName: catkin
 Description: Willow Garage low level build system macros and infrastructure.
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard
 Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
 Vcs-Git: git://github.com/willowgarage/catkin.git
 
-Version: 0.1.17
+Version: 0.1.18
 
 Depends: cmake, python-yaml, python-empy
 

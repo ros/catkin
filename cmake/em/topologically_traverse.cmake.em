@@ -1,5 +1,5 @@
 @{
-import yaml, os, sys, glob
+import yaml, os, sys, glob, em
 
 class Pkg:
     def __init__(self, **kwds):
@@ -11,7 +11,7 @@ class Pkg:
 pkgs = {}
 
 PKG_NAME_FIELD = "Catkin-ProjectName"
-PKG_DEP_FIELD = "Catkin-Depends"
+PKG_DEP_FIELD = "Depends"
 GENERATOR_FIELD = "Catkin-ROS-Message-Generator"
 
 def read_control_file(source_dir, control_file):
@@ -22,7 +22,8 @@ def read_control_file(source_dir, control_file):
     if enabled_projects[0] != 'ALL' and pkg_name not in enabled_projects:
         return
     pkgs[pkg_name] = p = Pkg(path=source_dir)
-    p.depends = stackyaml.get('Catkin-Depends', '')
+    dd = dict(PackagePrefix='')
+    p.depends = em.expand(stackyaml.get('Depends', ''),**dd)
     if type(p.depends) == str:
         p.depends = set([x.strip() for x in p.depends.split(',') if len(x.strip()) > 0])
     else:
@@ -53,7 +54,6 @@ def topo_packages_generators_first(pkgs):
 
     while len(pkgs) > 0:
         name = next_pkg()
-        # print >>sys.stderr, "name=", name
         del pkgs[name]
         remove_deps(pkgs, name)
         yield name
@@ -69,17 +69,16 @@ all_deps = reduce(set.union, [p.depends for p in pkgs.values()])
 
 unknown_deps = all_deps - set(pkgs)
 
+#remove unknown dependencies from the list
+for p in pkgs.values():
+  p.depends = set(p.depends) - set(unknown_deps)
+
 del pkgs['catkin']
 remove_deps(pkgs, 'catkin')
 
-# print >>sys.stderr, "len=", len(unknown_deps), unknown_deps
 langs = [name for name,p in pkgs.items() if p.genlang]
 
-if len(unknown_deps) > 0:
-    print 'message(FATAL_ERROR "\nUnknown dependencies: <%s>\n")' % '|'.join(unknown_deps)
-    topo_pkgs = []
-else:
-    topo_pkgs = topo_packages_generators_first(pkgs)
+topo_pkgs = topo_packages_generators_first(pkgs)
 }
 
 message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
