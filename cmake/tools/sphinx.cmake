@@ -30,12 +30,14 @@ set(CATKIN_DOCS_DEPLOY_DESTINATION "OFF" CACHE STRING
   "Deploy destination for docs, or OFF.  Will be passed to rsync; may contain user@ syntax for ssh"
   )
 
-if (NOT TARGET doc)
+if (NOT TARGET sphinx-doc)
   add_custom_target(sphinx-doc)
 endif()
 
 if(CATKIN_DOCS_DEPLOY_DESTINATION)
-  add_custom_target(sphinx-deploy)
+    if (NOT TARGET sphinx-deploy)
+        add_custom_target(sphinx-deploy)
+    endif()
 endif()
 
 macro(find_sphinx)
