@@ -5,9 +5,13 @@ Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
 Vcs-Git: git://github.com/willowgarage/catkin.git
 
-Version: 0.1.19
+Version: 0.1.21
 
-Depends: cmake, python-yaml, python-empy
+Depends: cmake,
+  python-setuptools,
+  python-empy,
+  python-argparse,
+  python-yaml
 
 Catkin-CopyrightType: willowgarage
 Catkin-DebRulesType: python_distutils
