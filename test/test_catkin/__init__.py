@@ -39,14 +39,10 @@ def test_tiny():
           srcdir=pwd+'/src-fail/badly_specified_changelog',
           CATKIN='YES')
     succeed(['/usr/bin/make', 'VERBOSE=1', 'help'], cwd=builddir)
-    out = fail(['/usr/bin/make', 'VERBOSE=1', 'badly_specified_changelog-gendebian'], cwd=builddir)
-    assert 'No such file or directory' in out
-    assert 'NONEXISTENT_FILE' in out
 
     succeed(["/bin/rm", "CMakeCache.txt"], cwd=builddir)
     cmake(CATKIN_ENABLE_DEBBUILDING="TRUE",
           CMAKE_PREFIX_PATH=diskprefix,
           srcdir=pwd+'/src/nolangs')
     succeed(['/usr/bin/make', 'VERBOSE=1', 'help'], cwd=builddir)
-    succeed(['/usr/bin/make', 'VERBOSE=1', 'nolangs-gendebian'], cwd=builddir)
 
