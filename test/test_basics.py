@@ -41,12 +41,6 @@ def test_tiny():
                   "share/nolangs/cmake/nolangs-config.cmake")
 
     out = succeed(make + ["help"], cwd=builddir)
-    out = succeed(make + ["nolangs-gendebian"], cwd=builddir)
-
-    assert_exists(srcdir,
-                  "catkin-test-nolangs_3.4.5~%s.dsc" % ubuntudist,
-                  "catkin-test-nolangs_3.4.5~%s.tar.gz" % ubuntudist,
-                  "catkin-test-nolangs_3.4.5~%s_source.changes" % ubuntudist)
 
 @bt
 def test_00():
