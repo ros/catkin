@@ -4,7 +4,7 @@ Section: misc
 Priority: extra
 Architecture: all
 Depends: python-empy, cmake, make,
-  catkin, genmsg, genpy, gencpp, std-msgs, roscpp-core, common-msgs
+  catkin, genmsg, genpy, gencpp, std_msgs, roscpp_core, common_msgs
 Description: Willow Garage low level build system macros and infrastructure
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard, Ken Conley
 Maintainer: Troy Straszheim <straszheim@willowgarage.com>
