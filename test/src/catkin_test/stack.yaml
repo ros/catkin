@@ -4,9 +4,9 @@ Section: misc
 Priority: extra
 Architecture: all
 Depends: ${misc:Depends} python-empy, cmake, make,
-  @prefixed(CATKIN_PACKAGE_PREFIX, 'catkin', 'genmsg', 'genpy', 'gencpp', 'std-msgs', 'roscpp-core', 'common-msgs')
+  @prefixed(PackagePrefix, 'catkin', 'genmsg', 'genpy', 'gencpp', 'std-msgs', 'roscpp-core', 'common-msgs')
 Build-Depends: debhelper (>= 7), cmake, gcc, make, python, python-empy, python-setuptools,
-  @prefixed(CATKIN_PACKAGE_PREFIX, 'catkin', 'genmsg', 'genpy', 'gencpp', 'std-msgs', 'roscpp-core', 'common-msgs')
+  @prefixed(PackagePrefix, 'catkin', 'genmsg', 'genpy', 'gencpp', 'std-msgs', 'roscpp-core', 'common-msgs')
 Description: Willow Garage low level build system macros and infrastructure
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard, Ken Conley
 Maintainer: Troy Straszheim <straszheim@willowgarage.com>
