@@ -24,6 +24,11 @@
     version: master
 
 - git:
+    uri: 'git://github.com/ros/gentypelibxml.git'
+    local-name: gentypelibxml
+    version: master
+
+- git:
     uri: 'git://github.com/ros/std_msgs.git'
     local-name: std_msgs
     version: master
