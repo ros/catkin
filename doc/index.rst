@@ -571,3 +571,5 @@ Nasty to build stuff:
   on clusterboxen: cgils coming in january.
 * armel buildslaves
 * port number for rostest so's the masters don't collide.
+
+* how to separate Depends and Build-Depends

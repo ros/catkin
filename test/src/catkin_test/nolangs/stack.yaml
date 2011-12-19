@@ -4,11 +4,11 @@ Section: misc
 Priority: extra
 Architecture: any
 Depends: ${misc:Depends} python-empy, cmake, make, 
-         @(CATKIN_PACKAGE_PREFIX)genmsg, @(CATKIN_PACKAGE_PREFIX)genpy, @(CATKIN_PACKAGE_PREFIX)gencpp,
+         genmsg, genpy, gencpp,
          libboost-thread-dev, libboost-date-time-dev
 Build-Depends: debhelper (>= 7), cmake, gcc, make, python, python-empy, python-setuptools, 
-               @(CATKIN_PACKAGE_PREFIX)catkin, @(CATKIN_PACKAGE_PREFIX)genmsg, 
-               @(CATKIN_PACKAGE_PREFIX)genpy, @(CATKIN_PACKAGE_PREFIX)gencpp,
+               catkin, genmsg, 
+               genpy, gencpp,
                libboost-thread-dev, libboost-date-time-dev
 Description: Willow Garage low level build system macros and infrastructure
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard, Ken Conley
