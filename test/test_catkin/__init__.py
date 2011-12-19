@@ -48,5 +48,4 @@ def test_tiny():
           CMAKE_PREFIX_PATH=diskprefix,
           srcdir=pwd+'/src/nolangs')
     succeed(['/usr/bin/make', 'VERBOSE=1', 'help'], cwd=builddir)
-    succeed(['/usr/bin/make', 'VERBOSE=1', 'nolangs-gendebian'], cwd=builddir)
 
