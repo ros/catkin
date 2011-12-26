@@ -26,6 +26,8 @@ foreach(f
     langs
     tools/doxygen
     tools/sphinx
+    platform/lsb
+    platform/ubuntu
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
 endforeach()
