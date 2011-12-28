@@ -147,6 +147,7 @@ def test_strangelanguage_installed():
 
 
 @bt
+@attr('this')
 def test_common_msgs_against_installed():
     mybuild = pwd + '/build/cmsgs'
     if isdir(mybuild):
@@ -155,7 +156,7 @@ def test_common_msgs_against_installed():
     INST = pwd + "/INST/cmsgs-inst"
     if isdir(INST):
         shutil.rmtree(INST)
-    out = cmake(CATKIN_BUILD_PROJECTS='catkin;genmsg;genpy;gencpp;std_msgs;roscpp_core',
+    out = cmake(CATKIN_BUILD_PROJECTS='catkin;genmsg;genpy;gencpp;gentypelibxml;genpybindings;std_msgs;roscpp_core',
                 CMAKE_INSTALL_PREFIX=INST,
                 cwd=mybuild)
     out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
@@ -180,6 +181,10 @@ def test_common_msgs_against_installed():
     out = succeed(['/usr/bin/make', 'install', 'VERBOSE=1'], cwd=mybuild)
 
     assert_exists(INST,
-                  'include/sensor_msgs/PointCloud.h',
-                  pyinstall + '/geometry_msgs/msg/_PointStamped.py')
+                  'include/geometry_msgs/PointStamped.h',
+                  pyinstall + '/geometry_msgs/msg/_PointStamped.py',
+                  'share/geometry_msgs/msg/PointStamped.msg',
+                  'share/typelibxml/geometry_msgs/PointStamped.xml',
+
+        )
 
