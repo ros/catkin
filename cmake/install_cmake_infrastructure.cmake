@@ -66,7 +66,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
     )
 
   #
-  #  Install stuff for share/ relative to this.  Maybe we'll want 
+  #  Install stuff for share/ relative to this.  Maybe we'll want
   #  to use PACKAGE_RELATIVE_PATH here?
   #
   set(PROJECT_SHARE_INSTALL_PREFIX share/${PACKAGE_NAME})
@@ -90,7 +90,7 @@ function(install_cmake_infrastructure PACKAGE_NAME)
   # installable
   set(PKG_INCLUDE_PREFIX ${CMAKE_INSTALL_PREFIX})
   set(PKG_LIB_PREFIX ${CMAKE_INSTALL_PREFIX})
-  set(PKG_MSG_DIRS ${CMAKE_INSTALL_PREFIX}/share/msg/${PACKAGE_NAME})
+  set(PKG_MSG_DIRS ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/msg)
   set(PKG_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/cmake)
   set(PKG_CMAKE_SRC_DIR ${PKG_CMAKE_DIR})
   set(PKG_BIN_DIRS ${CMAKE_INSTALL_PREFIX}/bin)

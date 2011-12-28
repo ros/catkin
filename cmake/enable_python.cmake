@@ -1,9 +1,9 @@
 function(enable_python pkg_name)
   set(PACKAGE_NAME ${pkg_name})
   if(${pkg_name}_PYTHONPATH)
-    set(PACKAGE_PYTHONPATH ${${pkg_name}_PYTHONPATH})
+    set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${${pkg_name}_PYTHONPATH})
   else()
-    set(PACKAGE_PYTHONPATH src/${pkg_name})
+    set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/src/${pkg_name})
   endif()
 
   configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
