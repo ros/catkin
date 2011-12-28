@@ -64,5 +64,6 @@
     uri: 'https://code.ros.org/svn/ros-pkg/stacks/common_msgs/trunk'
     local-name: common_msgs
 
-
-
+- hg:
+    local-name: rospkg
+    uri: https://kforge.ros.org/rosrelease/rospkg
