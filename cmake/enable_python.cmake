@@ -23,3 +23,4 @@ function(enable_python pkg_name)
     install(CODE "execute_process(COMMAND ${INSTALL_SCRIPT})")
   endif()
 endfunction()
+
