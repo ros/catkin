@@ -2,11 +2,14 @@ common_msgs
 ros
 ros_comm
 catkin
+catkin-debs
 genmsg
 genpy
 genpybindings
+gentypelibxml
 gencpp
 roscpp_core
+rosdep_rules
 std_msgs
 ros_tutorials
 setup.sh
