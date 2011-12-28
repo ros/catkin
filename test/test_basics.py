@@ -100,3 +100,86 @@ def test_noproject():
                 expect=fail)
     print "failed as expected, out=", out
     assert 'macro to specify the name of your project' in out
+
+
+@bt
+def test_strangelanguage():
+    mybuild = pwd + '/build/typelib'
+    if isdir(mybuild):
+        shutil.rmtree(mybuild)
+    os.makedirs(mybuild)
+    INST = pwd + "/build/TLINST"
+    out = cmake(CATKIN_BUILD_PROJECTS='catkin;genmsg;gentypelibxml;std_msgs',
+                CMAKE_INSTALL_PREFIX=INST,
+                cwd=mybuild)
+    out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
+    shutil.rmtree(mybuild)
+    os.makedirs(mybuild)
+
+    assert_exists(INST, 'share/typelibxml/std_msgs/Float32.xml')
+
+@bt
+def test_strangelanguage_installed():
+    mybuild = pwd + '/build/typelib'
+    if isdir(mybuild):
+        shutil.rmtree(mybuild)
+    os.makedirs(mybuild)
+    INST = pwd + "/build/TLINST"
+    out = cmake(CATKIN_BUILD_PROJECTS='catkin;genmsg;gentypelibxml',
+                CMAKE_INSTALL_PREFIX=INST,
+                cwd=mybuild)
+    out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
+    assert_exists(INST,
+                  'etc/langs/gentypelibxml',
+                  'share/gentypelibxml/cmake/gentypelibxml.cmake')
+
+    shutil.rmtree(mybuild)
+    os.makedirs(mybuild)
+
+    out = cmake(srcdir=pwd+'/src/std_msgs',
+                cwd=mybuild,
+                CMAKE_PREFIX_PATH=INST,
+                CMAKE_INSTALL_PREFIX=INST)
+
+    out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
+    assert_exists(INST,
+                  'share/typelibxml/std_msgs/Float32.xml')
+
+
+@bt
+def test_common_msgs_against_installed():
+    mybuild = pwd + '/build/cmsgs'
+    if isdir(mybuild):
+        shutil.rmtree(mybuild)
+    os.makedirs(mybuild)
+    INST = pwd + "/INST/cmsgs-inst"
+    if isdir(INST):
+        shutil.rmtree(INST)
+    out = cmake(CATKIN_BUILD_PROJECTS='catkin;genmsg;genpy;gencpp;std_msgs;roscpp_core',
+                CMAKE_INSTALL_PREFIX=INST,
+                cwd=mybuild)
+    out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
+
+    assert_exists(INST,
+                  'etc/langs/genpy')
+
+    shutil.rmtree(mybuild)
+    os.makedirs(mybuild)
+
+    out = cmake(srcdir=pwd+'/src/common_msgs',
+                cwd=mybuild,
+                CATKIN='YES',
+                CMAKE_PREFIX_PATH=INST,
+                CMAKE_INSTALL_PREFIX=INST)
+
+    out = succeed(['/usr/bin/make', 'VERBOSE=1'], cwd=mybuild)
+    assert_exists(mybuild,
+                  'gen/py/nav_msgs/msg/_GridCells.py',
+                  'gen/cpp/nav_msgs/GridCells.h')
+
+    out = succeed(['/usr/bin/make', 'install', 'VERBOSE=1'], cwd=mybuild)
+
+    assert_exists(INST,
+                  'include/sensor_msgs/PointCloud.h',
+                  pyinstall + '/geometry_msgs/msg/_PointStamped.py')
+
