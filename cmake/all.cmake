@@ -24,6 +24,7 @@ foreach(f
     catkin_workspace
     enable_python
     langs
+    rosbuild_compat
     tools/doxygen
     tools/sphinx
     platform/lsb
@@ -60,4 +61,3 @@ foreach(shfile setup.sh env.sh)
   configure_file(${catkin_EXTRAS_DIR}/templates/${shfile}.buildspace.in ${CMAKE_BINARY_DIR}/${shfile}
     @ONLY)
 endforeach()
-

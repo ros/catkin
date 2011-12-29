@@ -1,14 +1,16 @@
 if (NOT "@PACKAGE_INCLUDE_DIRS@" STREQUAL "")
-  set(@PACKAGE_NAME@_INCLUDE_DIRS @PKG_INCLUDE_PREFIX@/@PACKAGE_INCLUDE_DIRS@)
+  set(@PACKAGE_NAME@_INCLUDE_DIRS @PKG_INCLUDE_PREFIX@/@PACKAGE_INCLUDE_DIRS@
+    CACHE FILEPATH "Includes for @PACKAGE_NAME@")
 endif()
 
 if (@PACKAGE_NAME@_SOURCE_DIR)
-  set(@PACKAGE_NAME@_PYTHONPATH ${@PACKAGE_NAME@_SOURCE_DIR}/@PACKAGE_PYTHONPATH@)
+  set(@PACKAGE_NAME@_PYTHONPATH ${@PACKAGE_NAME@_SOURCE_DIR}/@PACKAGE_PYTHONPATH@
+    CACHE FILEPATH "python path for @PACKAGE_NAME@")
 endif()
 
 foreach(lib @PACKAGE_LIBRARIES@)
   if (NOT TARGET ${lib})
-    message(FATAL_ERROR "Looking for ${lib}, source for @PACKAGE_NAME@ is present in workspace, but ${lib} is not a target")
+    message(FATAL_ERROR "Looking for ${lib}, source for @PACKAGE_NAME@ is present in workspace, but ${lib} is not a target.  Did you find_package() this thing before the subdirectory containing its code is included?")
   endif()
   list(APPEND @PACKAGE_NAME@_LIBRARIES ${lib})
 endforeach()
@@ -17,4 +19,6 @@ foreach(extra @PACKAGE_CFG_EXTRAS@)
   include(@PKG_CMAKE_DIR@/${extra})
 endforeach()
 
-set(@PACKAGE_NAME@_MSG_INCLUDE_DIRS @PKG_MSG_DIRS@)
+set(@PACKAGE_NAME@_MSG_INCLUDE_DIRS @PKG_MSG_DIRS@
+    CACHE FILEPATH "dir containing messages in @PACKAGE_NAME@")
+

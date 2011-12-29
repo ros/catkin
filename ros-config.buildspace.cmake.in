@@ -4,8 +4,16 @@ set(CMAKE_PREFIX_PATH @CMAKE_BINARY_DIR@:${CMAKE_PREFIX_PATH})
 
 set(ROS_FOUND TRUE)
 
-set(ROS_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
-set(ROS_LIBRARIES "")
+macro(list_push listname)
+  foreach(item ${ARGN})
+    list(FIND "${${listname}}" ${item} _index)
+    if(_index EQUAL -1)
+      list(APPEND ${listname} ${item})
+    endif()
+  endforeach()
+endmacro()
+
+list_push(ROS_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
 
 foreach(component ${ROS_FIND_COMPONENTS})
 
@@ -13,10 +21,16 @@ foreach(component ${ROS_FIND_COMPONENTS})
     PATHS @CMAKE_INSTALL_PREFIX@/share/cmake
     )
 
-  if(${component}_INCLUDE_DIRS)
-    list(APPEND ROS_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
+  if(NOT ${component}_FOUND)
+    message(FATAL_ERROR "Unable to find ROS component \"${component}\"")
   endif()
-  list(APPEND ROS_LIBRARIES ${${component}_LIBRARIES})
 
+  list_push(ROS_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
+  list_push(ROS_LIBRARIES ${${component}_LIBRARIES})
+
+  # message("In ROS: ${${component}_LIBRARIES}")
+  # list(APPEND ROS_LIBRARIES ${${component}_LIBRARIES})
 endforeach()
 
+# message("${PROJECT_NAME} ROS_LIBRARIES: ${ROS_LIBRARIES}")
+# mamessage("${PROJECT_NAME} ROS_INCLUDE_DIRS: ${ROS_INCLUDE_DIRS}")
