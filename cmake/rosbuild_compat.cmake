@@ -29,7 +29,7 @@ endfunction()
 
 function(rosbuild_add_library TARGET)
   message(STATUS "Rosbuild-compat: rosbuild_add_library ${ARGV}")
-  add_library(${TARGET} ${ARGN})
+  add_library(${TARGET} SHARED ${ARGN})
 endfunction()
 
 

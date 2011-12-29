@@ -33,4 +33,4 @@ foreach(component ${ROS_FIND_COMPONENTS})
 endforeach()
 
 # message("${PROJECT_NAME} ROS_LIBRARIES: ${ROS_LIBRARIES}")
-# mamessage("${PROJECT_NAME} ROS_INCLUDE_DIRS: ${ROS_INCLUDE_DIRS}")
+# message("${PROJECT_NAME} ROS_INCLUDE_DIRS: ${ROS_INCLUDE_DIRS}")
