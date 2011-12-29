@@ -1,5 +1,6 @@
 common_msgs
 ros
+rospkg
 ros_comm
 catkin
 catkin-debs
