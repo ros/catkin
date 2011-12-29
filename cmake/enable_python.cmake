@@ -22,5 +22,28 @@ function(enable_python pkg_name)
     install(CODE "message(COMMAND = ${CMD})")
     install(CODE "execute_process(COMMAND ${INSTALL_SCRIPT})")
   endif()
+
+  if (EXISTS ${${pkg_name}_SOURCE_DIR}/setup.py)
+    stamp(${${pkg_name}_SOURCE_DIR}/setup.py)
+
+    execute_process(COMMAND
+      ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
+      ${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py
+      ${pkg_name}
+      ${${pkg_name}_SOURCE_DIR}/setup.py
+      ${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
+
+    include(${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
+  endif()
+  foreach(script ${${pkg_name}_SCRIPTS})
+    get_filename_component(name ${script} NAME)
+    if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${name})
+      execute_process(COMMAND /bin/ln -s ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_BINARY_DIR}/bin/${name})
+    endif()
+  endforeach()
+
+
+
 endfunction()
 
+stamp(${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py)
