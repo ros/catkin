@@ -66,4 +66,4 @@
 
 - hg:
     local-name: rospkg
-    uri: https://kforge.ros.org/rosrelease/rospkg
+    uri: http://kforge.ros.org/rosrelease/rospkg
