@@ -23,10 +23,8 @@ function(enable_python pkg_name)
     configure_file(${catkin_EXTRAS_DIR}/templates/safe_execute_install.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
 
-    include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
-
     install(CODE "message(COMMAND = ${CMD})")
-    install(CODE "execute_process(COMMAND ${INSTALL_SCRIPT})")
+    install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
 
     stamp(${${pkg_name}_SOURCE_DIR}/setup.py)
 
