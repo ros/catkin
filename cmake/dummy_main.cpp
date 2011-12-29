@@ -1,11 +1,9 @@
 #include <iostream>
 
-#define STRINGIZE(X) #X
 int main(int, char**)
 {
-  std::cout << "DUMMY MAIN PROVIDED BY CATKIN: FIXME.\n"
-            << "Target: " << STRINGIZE(CATKIN_DUMMY_TARGET)
-            << "\n";
+  std::cout << "DUMMY MAIN PROVIDED BY CATKIN... this should be a test\n";
+  return 1;
 }
 
 
