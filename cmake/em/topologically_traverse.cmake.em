@@ -19,7 +19,7 @@ def read_control_file(source_dir, control_file):
 
     pkg_name = stackyaml[PKG_NAME_FIELD]
     # print >>sys.stderr, "pkg_name=<%s>" % pkg_name
-    if enabled_projects[0] != 'ALL' and pkg_name not in enabled_projects:
+    if 'ALL' not in enabled_projects and pkg_name not in enabled_projects:
         return
     pkgs[pkg_name] = p = Pkg(path=source_dir)
     dd = dict(PackagePrefix='')

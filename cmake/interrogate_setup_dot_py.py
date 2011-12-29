@@ -3,12 +3,12 @@
 from __future__ import print_function
 import pprint, sys, os.path
 
-print("%s" % sys.argv)
+# print("%s" % sys.argv)
 PREFIX = sys.argv[1]
 outfile = sys.argv[3]
 out = open(outfile, "w")
-print("Interrogating setup.py for package %s into %s " % (PREFIX, outfile),
-      file=sys.stderr)
+#print("Interrogating setup.py for package %s into %s " % (PREFIX, outfile),
+#      file=sys.stderr)
 
 def mysetup(*args, **kwargs):
     global out
@@ -46,7 +46,7 @@ setattr(d, 'setup', mysetup)
 sys.modules['setuptools'] = d
 sys.modules['distutils.core'] = d
 
-print("execcing %s" % sys.argv[2])
+# print("execcing %s" % sys.argv[2])
 
 execfile(sys.argv[2])
 

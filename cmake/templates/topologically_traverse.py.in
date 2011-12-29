@@ -1,7 +1,12 @@
+from __future__ import print_function
+import sys
 source_root_dir = "@CMAKE_CURRENT_SOURCE_DIR@"
-if "@CATKIN_BUILD_PROJECTS@" == "":
-   enabled_projects = ['ALL']
-else:
-   enabled_projects = "@CATKIN_BUILD_PROJECTS@".split(';')
-   if 'catkin' not in enabled_projects:
-      enabled_projects = ['catkin'] + enabled_projects
+enabled_projects = "@CATKIN_BUILD_PROJECTS@".split(';')
+
+if 'ALL' in enabled_projects and len(enabled_projects) > 1:
+    print("Error:  choose either a semicolon separated list of projects or ALL", file=sys.stderr)
+    print("for CATKIN_BUILD_PROJECTS.  Current value: @CATKIN_BUILD_PROJECTS@", file=sys.stderr)
+    sys.exit(1)
+
+if 'catkin' not in enabled_projects:
+    enabled_projects = ['catkin'] + enabled_projects

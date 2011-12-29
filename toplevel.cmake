@@ -10,6 +10,8 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/cmake)
 
 if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/catkin)
   message(STATUS "+++ catkin")
+  set(CATKIN_BUILD_PROJECTS "ALL" CACHE STRING
+    "List of projects to build, or ALL for all.  Use to completely exclude certain projects from cmake traversal.")
   add_subdirectory(catkin)
 else()
   find_package(catkin)

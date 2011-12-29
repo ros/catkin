@@ -1,0 +1,6 @@
+execute_process(COMMAND @INSTALL_SCRIPT@
+  RESULT_VARIABLE res)
+
+if (NOT res EQUAL 0)
+  message(FATAL_ERROR "Error executing process with arguments ${msg}")
+endif()

@@ -10,7 +10,7 @@ endif()
 
 foreach(lib @PACKAGE_LIBRARIES@)
   if (NOT TARGET ${lib})
-    message(FATAL_ERROR "Looking for ${lib}, source for @PACKAGE_NAME@ is present in workspace, but ${lib} is not a target.  Did you find_package() this thing before the subdirectory containing its code is included?")
+    message(FATAL_ERROR "In project ${PROJECT_NAME} I'm looking for ${lib} via find_package.  The source for @PACKAGE_NAME@ is present in workspace, but ${lib} is not a target.  Did you find_package() this thing before the subdirectory containing its code is included?")
   endif()
   list(APPEND @PACKAGE_NAME@_LIBRARIES ${lib})
 endforeach()

@@ -9,6 +9,7 @@ function(enable_python pkg_name)
   configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
     ${CMAKE_BINARY_DIR}/gen/py/${pkg_name}/__init__.py
     @ONLY)
+
   if(EXISTS ${${pkg_name}_SOURCE_DIR}/setup.py)
     assert(INSTALLED_PYTHONPATH)
     set(INSTALL_CMD_WORKING_DIRECTORY ${${pkg_name}_SOURCE_DIR})
@@ -19,11 +20,14 @@ function(enable_python pkg_name)
       ${INSTALL_SCRIPT}
       @ONLY)
 
+    configure_file(${catkin_EXTRAS_DIR}/templates/safe_execute_install.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
+
+    include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
+
     install(CODE "message(COMMAND = ${CMD})")
     install(CODE "execute_process(COMMAND ${INSTALL_SCRIPT})")
-  endif()
 
-  if (EXISTS ${${pkg_name}_SOURCE_DIR}/setup.py)
     stamp(${${pkg_name}_SOURCE_DIR}/setup.py)
 
     execute_process(COMMAND
@@ -34,15 +38,15 @@ function(enable_python pkg_name)
       ${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
 
     include(${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
+
+    foreach(script ${${pkg_name}_SCRIPTS})
+      get_filename_component(name ${script} NAME)
+      if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${name})
+        execute_process(COMMAND /bin/ln -s ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_BINARY_DIR}/bin/${name})
+      endif()
+    endforeach()
+
   endif()
-  foreach(script ${${pkg_name}_SCRIPTS})
-    get_filename_component(name ${script} NAME)
-    if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${name})
-      execute_process(COMMAND /bin/ln -s ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_BINARY_DIR}/bin/${name})
-    endif()
-  endforeach()
-
-
 
 endfunction()
 
