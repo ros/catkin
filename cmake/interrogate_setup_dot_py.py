@@ -32,7 +32,7 @@ def mysetup(*args, **kwargs):
         print(r'package_dir not in setup.py', file=sys.stderr)
         sys.exit(1)
     if '' not in kwargs['package_dir'].keys():
-        print(r' empty string not in package_dir: %s' % kwargs['package_dir'],
+        print(r'Error: empty string not in package_dir: %s\n(not yet supported)' % kwargs['package_dir'],
               file=sys.stderr)
         sys.exit(1)
 

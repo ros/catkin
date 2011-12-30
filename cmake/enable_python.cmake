@@ -33,8 +33,12 @@ function(enable_python pkg_name)
       ${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py
       ${pkg_name}
       ${${pkg_name}_SOURCE_DIR}/setup.py
-      ${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
-
+      ${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake
+      RESULT_VARIABLE RES
+      )
+    if (RES)
+      message(FATAL_ERROR "Attempt to interrogate setup.py of project ${pkg_name} returned ${RES}")
+    endif()
     include(${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
 
     foreach(script ${${pkg_name}_SCRIPTS})
