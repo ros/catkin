@@ -43,8 +43,15 @@ function(enable_python pkg_name)
 
     foreach(script ${${pkg_name}_SCRIPTS})
       get_filename_component(name ${script} NAME)
+      if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${script})
+        message(FATAL_ERROR "
+   Script ${name} as listed in setup.py of ${pkg_name} doesn't exist!!!
+")
+      endif()
       if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${name})
-        execute_process(COMMAND /bin/ln -s ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_BINARY_DIR}/bin/${name})
+        message(STATUS "   Making toplevel symlink for python script ${name}")
+        execute_process(COMMAND /bin/ln -s
+          ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_BINARY_DIR}/bin/${name})
       endif()
     endforeach()
 

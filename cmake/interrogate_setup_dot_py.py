@@ -12,8 +12,15 @@ out = open(outfile, "w")
 
 def mysetup(*args, **kwargs):
     global out
+    if 'version' not in kwargs:
+        print("""
+    *** Unable to find 'version' in setup.py of %s
+""" % PREFIX)
+        raise RuntimeError("version not found in setup.py")
+
     print(r'set(%s_VERSION "%s")' % (PREFIX, kwargs['version']), file=out)
-    print(r'set(%s_SCRIPTS "%s")' % (PREFIX, ';'.join(kwargs['scripts'])), file=out)
+    print(r'set(%s_SCRIPTS "%s")' % (PREFIX,
+                                     ';'.join(kwargs.get('scripts', []))), file=out)
     pkg_dir = kwargs.get('package_dir', {'':''})
     allprefix=''
     if '' in pkg_dir:
