@@ -1,14 +1,58 @@
 #!/bin/bash
 
 WORKSPACE=$(cd `dirname $0`/../..; pwd)
-USAGE=$(/bin/echo <<EOF
-Usage: git-catkin-status.  Tells you the statuses of your assorted source dirs
-
-EOF
-)
 
 #SUBDIRECTORY_OK=1
 #. $(git --exec-path)/git-sh-setup
+
+echo $USAGE
+
+help ()
+{
+    cat <<EOF
+
+Usage: git catkin [command] ..
+
+commands:
+
+   foreach TYPE [arg0 arg1 ..]
+
+      runs [arg0 arg1 ..] in each directory of type TYPE
+      (type in git, svn, hg, all)
+
+   difforigin
+
+      runs "hg outgoing --stat" or "git diff --stat origin/master"
+      in the git and hg directories
+
+   remotes
+
+      git remote -v
+      hg paths
+      svn info | grep URL
+
+   pull
+
+      git pull
+      hg  pull -u
+
+   fetch
+
+      git fetch --all
+      hg  pull
+      svn update
+
+   status
+
+      git status
+      hg  status
+      svn status
+
+
+
+EOF
+
+}
 
 examine_workspace ()
 {
@@ -34,26 +78,51 @@ foreach ()
     type=${1}
     TYPE=$(echo $type | tr '[:lower:]' '[:upper:]')DIRS
     shift
-    #/bin/echo $TYPE
     DIRS=${!TYPE}
-    #/bin/echo $DIRS
     for d in $DIRS
     do
         /bin/echo "===  $type: $(basename $d) ==="
         cd $d
-        eval $*
+        eval $JUSTECHO $*
     done
 }
 
-status ()
-{
-    examine_workspace
+status () {
+    foreach git git status
+    foreach hg hg status
+    foreach svn svn status
+}
+
+fetch () {
+    foreach git git fetch --all
+    foreach hg hg pull
+    foreach svn svn update
+}
+
+pull () {
+    foreach git git pull
+    foreach hg hg pull -u
+}
+
+difforigin () {
     foreach git git diff --stat origin/master
     foreach hg hg outgoing --stat
 }
 
+remotes () {
+    foreach git git remote -v
+    foreach hg hg paths
+    foreach svn "svn info | grep URL"
+}
 
 CMD=$1
 shift
+if [ "$CMD" = '-n' ] ; then
+    JUSTECHO=/bin/echo
+    CMD=$1
+else
+    JUSTECHO=""
+fi
+
 eval $CMD $*
 
