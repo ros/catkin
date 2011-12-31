@@ -1,4 +1,5 @@
 common_msgs
+rospack
 ros
 rospkg
 ros_comm
