@@ -1,0 +1,59 @@
+#!/bin/bash
+
+WORKSPACE=$(cd `dirname $0`/../..; pwd)
+USAGE=$(/bin/echo <<EOF
+Usage: git-catkin-status.  Tells you the statuses of your assorted source dirs
+
+EOF
+)
+
+#SUBDIRECTORY_OK=1
+#. $(git --exec-path)/git-sh-setup
+
+examine_workspace ()
+{
+    [ -z "$ALLDIRS" ] || return 0
+    for gitdir in $WORKSPACE/*/.git
+    do
+        GITDIRS="$GITDIRS $(dirname $gitdir)"
+    done
+    for svndir in $WORKSPACE/*/.svn
+    do
+        SVNDIRS="$SVNDIRS $(dirname $svndir)"
+    done
+    for hgdir in $WORKSPACE/*/.hg
+    do
+        HGDIRS="$HGDIRS $(dirname $hgdir)"
+    done
+    ALLDIRS="$GITDIRS $SVNDIRS $HGDIRS"
+}
+
+foreach ()
+{
+    examine_workspace
+    type=${1}
+    TYPE=$(echo $type | tr '[:lower:]' '[:upper:]')DIRS
+    shift
+    #/bin/echo $TYPE
+    DIRS=${!TYPE}
+    #/bin/echo $DIRS
+    for d in $DIRS
+    do
+        /bin/echo "===  $type: $(basename $d) ==="
+        cd $d
+        eval $*
+    done
+}
+
+status ()
+{
+    examine_workspace
+    foreach git git diff --stat origin/master
+    foreach hg hg outgoing --stat
+}
+
+
+CMD=$1
+shift
+eval $CMD $*
+
