@@ -40,8 +40,8 @@ else
     maybe_continue y "${redf}${boldon}ABOUT TO GIT CLEAN in directory $(/bin/pwd).${reset}"
     git clean -qdfx
 fi
-git-config -f catkin.conf catkin.upstream "$UPSTREAM_REPO"
-git-config -f catkin.conf catkin.upstreamtype "$UPSTREAM_TYPE"
+git config -f catkin.conf catkin.upstream "$UPSTREAM_REPO"
+git config -f catkin.conf catkin.upstreamtype "$UPSTREAM_TYPE"
 
 git add catkin.conf
 git commit -m "catkin branch update by git-catkin-set-upstream"

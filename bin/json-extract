@@ -5,7 +5,9 @@ import json, sys, pprint
 js = sys.stdin.read()
 dta = json.loads(js)
 
-# print pprint.pprint(dta)
+if len(sys.argv) == 1:
+    print pprint.pprint(dta)
+    sys.exit(0)
 
 class Done: pass
 
@@ -21,6 +23,8 @@ def search(result, data, args, indent=0):
             search(result, thing, [args[0].rstrip('+')] + args[1:], indent+4)
         return
 
+    if args[0] not in data:
+        sys.exit(1)
     search(result, data[args[0]], args[1:], indent+4)
 
 result = []

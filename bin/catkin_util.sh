@@ -172,23 +172,30 @@ get_latest_gbp_version ()
     GBP_PACKAGE=$VALUE
 
     /bin/echo "Got version components ${boldon}$GBP_MAJOR $GBP_MINOR $GBP_PATCH - $GBP_PACKAGE${reset}"
-    popd
+    popd > /dev/null
 }
 
 to_github_uri ()
 {
     SHORTY=$1
-    /bin/echo "Having a look at ${!SHORTY}"
+    /bin/echo "Having a look at ${!SHORTY}... is it a github url?"
 
     if [[ "${!SHORTY}" =~ ^git@github.com:wg-debs ]] ; then
         status "URI ${boldon}${!SHORTY}${boldoff} appears to already point to github."
         return 0
     fi
-    TO_GITHUB_TRANSFORM=$(git config catkin.gbproot)
+    export TO_GITHUB_TRANSFORM=$(git config catkin.gbproot)
+    DEFAULT='git@github.com:wg-debs/$ARG.git'
+    if [ -z "$TO_GITHUB_TRANSFORM" ] ; then
+        /bin/echo "Your git doesn't have a 'catkin.gbproot' defined."
+        /bin/echo "using default of $DEFAULT"
+        TO_GITHUB_TRANSFORM=$DEFAULT
+    fi
     ARG=${!SHORTY}
+    TRANSFORMED=$(eval /bin/echo "$TO_GITHUB_TRANSFORM")
     NEW=$(/bin/echo ${!TO_GITHUB_TRANSFORM})
-    status "Redirecting '${!SHORTY}' to ${boldon}$NEW${boldoff}"
-    eval $SHORTY=$NEW
+    status "Redirecting '${!SHORTY}' to ${boldon}$TRANSFORMED${boldoff}"
+    eval $SHORTY=$TRANSFORMED
 }
 
 check_git_version ()
@@ -210,6 +217,68 @@ check_git_version ()
     rm -rf $TMPDIR/gittest
 }
 
+github_api ()
+{
+    VARNAME=$1
+    shift
+    CALL=$1
+    shift
+    URLS=$(curl -s https://api.github.com/$CALL | $TOP/json-extract $*)
+    eval $VARNAME="\"$URLS\""
+}
 
+github_raw ()
+{
+    set -x
+    VARNAME=$1
+    shift
+    CALL=$1
+    shift
+    TXT=$(curl -s https://raw.github.com/$CALL)
+    eval $VARNAME="\"$TXT\""
+}
 # check_git_version
 
+
+repo_clone ()
+{
+    TYPE=$1
+    URL=$2
+    DEST=$3
+
+    set -x
+    case $TYPE in
+        git)
+            git clone $2 $3
+            ;;
+        hg)
+            hg clone $2 $3
+            ;;
+        svn)
+            svn co -q $2 $3
+    esac
+    set +x
+}
+
+repo_export ()
+{
+    TYPE=$1
+    REPO=$2
+    BASENAME=$3
+    VERSION=$4
+    cd $REPO
+
+    case $TYPE in
+        git)
+            git archive -o $BASENAME-$VERSION.tar $VERSION
+            gzip $BASENAME-$VERSION.tar
+            ;;
+        svn)
+            svn export -o $BASENAME-$VERSION
+            tar cvzf $BASENAME-$VERSION $BASENAME-$VERSION.tar.gz
+            ;;
+        hg)
+            /bin/echo "finish me"
+            exit 1
+    esac
+}

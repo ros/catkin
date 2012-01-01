@@ -10,3 +10,4 @@ doc/build
 *~
 *.orig
 *~
+.tmp
