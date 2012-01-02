@@ -22,37 +22,41 @@ function(catkin_project PACKAGE_NAME)
   set(PACKAGE_DEPENDS ${PACKAGE_DEPENDS})
   set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
-  set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/cmake/${PACKAGE_NAME})
+  set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/cmake)
   set(PACKAGE_MSG_DIRS ${PACKAGE_MSG_DIRS})
   if (PACKAGE_PYTHONPATH)
     set(PACKAGE_PYTHONPATH ${PACKAGE_PYTHONPATH})
     set(${PACKAGE_NAME}_PYTHONPATH ${PACKAGE_PYTHONPATH} CACHE FILEPATH "python path")
   endif()
-  # in source
-  set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
-  set(PKG_LIB_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
-  set(PKG_MSG_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/msg)
-  set(PKG_CMAKE_DIR ${CMAKE_BINARY_DIR}/cmake)
-  set(PKG_CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-  set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts
-    ${CMAKE_CURRENT_BINARY_DIR}/bin)
-  set(PKG_LOCATION "Source")
-
-  foreach(extra ${PACKAGE_CFG_EXTRAS})
-    assert_file_exists(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra}.in "Nonexistent extra")
-    configure_file(cmake/${extra}.in
-      ${CMAKE_BINARY_DIR}/cmake/${extra}
-      @ONLY
-      )
-  endforeach()
-
-  #
+  
+    #
   # Versions find_packageable from the buildspace
   #
   string(TOLOWER ${PACKAGE_NAME} package_lower)
   set(_cfgdir ${CMAKE_BINARY_DIR}/cmake/${package_lower})
   set(_cfgout ${_cfgdir}/${package_lower}-config.cmake)
   log(2 "Writing config to ${_cfgout}")
+  
+  # in source
+  set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
+  set(PKG_LIB_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
+  set(PKG_MSG_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/msg)
+  set(PKG_CMAKE_DIR ${_cfgdir})
+  set(PKG_CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+  set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts
+    ${CMAKE_CURRENT_BINARY_DIR}/bin)
+  set(PKG_LOCATION "Source")
+
+
+  
+  #put all extras into the cfg dir...
+  foreach(extra ${PACKAGE_CFG_EXTRAS})
+    assert_file_exists(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra}.in "Nonexistent extra")
+    configure_file(cmake/${extra}.in
+      ${_cfgdir}/${extra}
+      @ONLY
+      )
+  endforeach()
 
   file(RELATIVE_PATH PACKAGE_RELATIVE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
   if(PACKAGE_RELATIVE_PATH STREQUAL "")
@@ -72,6 +76,8 @@ function(catkin_project PACKAGE_NAME)
   set(PROJECT_SHARE_INSTALL_PREFIX share/${PACKAGE_NAME})
 
 
+  #EAR: Why can't the buildspace config files be overridden from the ${PROJECT_NAME}_EXTRAS_DIR ?
+  
   # THIS IS IMPORTANT. CMAKE_PREFIX_PATH appears to be twitchy: just
   # spent hours figuring out that having /opt/ros/fuerte first is
   # necessary for this finding to work.  Very strange.  xxx_DIR
