@@ -183,10 +183,9 @@ def expand(fname, stack_yaml, source_dir, dest_dir, filetype=''):
 
 def find_deps(stack_yaml, rosdeb_db, distro):
     def update_deps(ubuntu_deps, dep, dep_def, distro):
-        print("dep=%s dep_def=%s" %(dep, dep_def))
         if ' ' in dep_def:
             raise RuntimeError("Corrupt rosdep with internal space: '%s', check your stack.yaml" % dep_def)
-        assert ' ' not in dep_def
+
         if type(dep_def) == str:
             deps = [x.strip() for x in dep_def.split(' ') if len(x.strip()) > 0]
             ubuntu_deps.add(*deps)
@@ -263,6 +262,7 @@ def main(args):
     stamp = datetime.datetime.now(dateutil.tz.tzlocal())
     stack_yaml = parse_stack_yaml(args.upstream, args.rosdistro, args.repo_uri, args=args)
     pprint(stack_yaml)
+
     #repo_base = os.path.splitext(os.path.basename(stack_yaml['Release-Push']))[0]
     #repo_path = os.path.join(args.working, repo_base)
 
@@ -293,10 +293,6 @@ def main(args):
 
     sys.exit(0)
 
-#     if args.push:
-#         for x in tags:
-#             x = call(repo_path, ['git', 'push', 'origin', ':refs/tags/%s' % x],pipe=subprocess.PIPE) #delete any remote tags of the same name.
-#         call(repo_path, ['git', 'push'])
 
 if __name__ == "__main__":
     main(parse_options())

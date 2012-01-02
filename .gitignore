@@ -11,3 +11,5 @@ doc/build
 *.orig
 *~
 bin/.tmp
+.tmp
+

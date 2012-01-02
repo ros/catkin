@@ -248,5 +248,3 @@ case $UPSTREAM_TYPE in
         ;;
 esac
 
-
-

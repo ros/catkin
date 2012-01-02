@@ -6,6 +6,7 @@ exit 1
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
 
+<<<<<<< HEAD
 usage () {
     cat <<EOF
 Usage: $0 [args] <github_url>
@@ -58,6 +59,18 @@ assert_is_remote_git_repo $GITHUB_URL
 ##### HERE ######
 
 
+=======
+GITHUB_URL=$1
+to_github_uri GITHUB_URL
+assert_is_remote_git_repo $GITHUB_URL
+
+if [ $# -gt 1 ] ; then
+    NEW_VERSION=$2
+    status "Will try to create new version $NEW_VERSION"
+fi
+
+./catkin_patch_release.sh $GITHUB_URL $NEW_VERSION
+>>>>>>> c1393fe9d44e3e2f5a1cc1bcdb48fd6b346e75cb
 TMPDIR=$(cat $TOP/tmp.dir)
 cd $TMPDIR/gbp
 $TOP/update_debian.py . fuerte
