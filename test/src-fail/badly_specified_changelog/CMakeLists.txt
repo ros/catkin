@@ -3,5 +3,5 @@ cmake_minimum_required(VERSION 2.8)
 project(badly_specified_changelog)
 find_package(catkin)
 
-install_cmake_infrastructure(badly_specified_changelog)
+catkin_project(badly_specified_changelog)
 catkin_package(badly_specified_changelog)

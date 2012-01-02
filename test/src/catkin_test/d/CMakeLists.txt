@@ -19,7 +19,7 @@ add_message_files(
 
 generate_messages(DEPENDENCIES std_msgs b c a)
 
-install_cmake_infrastructure(d
+catkin_project(d
   VERSION 0.0.1
   INCLUDE_DIRS include
   LIBRARIES d

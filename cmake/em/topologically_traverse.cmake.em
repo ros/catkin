@@ -46,17 +46,17 @@ def topo_packages_generators_first(pkgs):
     def next_pkg():
         for name, p in pkgs.items():
             if p.genlang and not p.depends:
-                return name
+                return (name,p)
         for name, p in pkgs.items():
             if not p.depends:
-                return name
+                return (name,p)
         return None
 
     while len(pkgs) > 0:
-        name = next_pkg()
+        (name,p) = next_pkg()
         del pkgs[name]
         remove_deps(pkgs, name)
-        yield name
+        yield (name,p)
 
 stackyamls = glob.glob(os.path.join(source_root_dir, '*', 'stack.yaml'))
 # print >>sys.stderr, "stackyamls=", stackyamls
@@ -64,7 +64,6 @@ for stackyamlfilename in stackyamls:
     if os.path.basename(os.path.dirname(stackyamlfilename)).startswith('.'):
         continue
     read_control_file(os.path.dirname(stackyamlfilename), stackyamlfilename)
-
 all_deps = reduce(set.union, [p.depends for p in pkgs.values()])
 
 unknown_deps = all_deps - set(pkgs)
@@ -86,8 +85,8 @@ message(STATUS "~~         traversing stacks/projects in dependency order       
 message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 set(CATKIN_GENLANGS @(' '.join(langs)))
 
-@[for pkgname in topo_pkgs]
-message(STATUS "+++ @pkgname")
-stamp(@(pkgname)/stack.yaml)
-add_subdirectory(@(pkgname))
+@[for name,pkg in topo_pkgs]
+message(STATUS "+++ @name")
+stamp(@(pkg.path)/stack.yaml)
+add_subdirectory(@(pkg.path))
 @[end for]
