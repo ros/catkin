@@ -20,7 +20,6 @@ foreach(component ${ROS_FIND_COMPONENTS})
   #EAR: not sure if it is necessary to pass paths here, as the prefix path should help with this?
   find_package(${component} REQUIRED NO_MODULE
     PATHS
-    @CMAKE_INSTALL_PREFIX@/share/cmake
     @CMAKE_INSTALL_PREFIX@/share/${component}/cmake
     )
 

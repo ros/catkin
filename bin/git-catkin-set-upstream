@@ -1,0 +1,51 @@
+#!/bin/bash
+
+TOP=$(cd `dirname $0` ; /bin/pwd)
+. $TOP/catkin_util.sh
+
+LONG_USAGE=$(/bin/echo <<EOF
+usage: git catkin set-upstream <upstream-repo> <upstream-repo-type>
+
+Creates (if necessary) an orphan branch "catkin" in the current gbp repo and sets
+the upstream repo and type in the catkin.conf.  The rest of the catkin utilities
+pivot off of these values.
+
+EOF
+)
+USAGE=$LONG_USAGE
+SUBDIRECTORY_OK=1
+
+. "$(git --exec-path)/git-sh-setup"
+
+UPSTREAM_REPO=$1
+if [ $# -gt 1 ] ; then
+    UPSTREAM_TYPE=$2
+else
+    UPSTREAM_TYPE=git
+fi
+/bin/echo "Upstream ${boldon}$UPSTREAM_REPO${boldoff} type: ${boldon}$UPSTREAM_TYPE${boldoff}"
+cd_to_toplevel
+require_work_tree
+
+if git show-ref refs/heads/catkin
+then
+    status "Checking out catkin_state branch"
+    git checkout catkin_state
+else
+    status "No catkin_state branch... initializing"
+    git checkout --orphan catkin
+    rm .git/index
+    /bin/echo
+    /bin/echo "This is in order to create an 'orphan' branch."
+    maybe_continue y "${redf}${boldon}ABOUT TO GIT CLEAN in directory $(/bin/pwd).${reset}"
+    git clean -qdfx
+fi
+git config -f catkin.conf catkin.upstream "$UPSTREAM_REPO"
+git config -f catkin.conf catkin.upstreamtype "$UPSTREAM_TYPE"
+
+git add catkin.conf
+git commit -m "catkin branch update by git-catkin-set-upstream"
+
+status "You may inspect catkin.conf and \"git push --all\" when ready"
+
+exit 0

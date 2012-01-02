@@ -8,6 +8,6 @@ function(install_cmake_config_version PACKAGE_NAME_UPPER)
     )
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}-config-version.cmake
-    DESTINATION share/${PACKAGE_NAME_UPPER}/cmake
+    DESTINATION share/${PACKAGE_NAME}/cmake
     )
 endfunction()
