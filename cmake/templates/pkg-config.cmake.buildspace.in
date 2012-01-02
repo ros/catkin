@@ -4,8 +4,17 @@ endif()
 set(@PACKAGE_NAME@_CONFIG_INCLUDED TRUE)
 
 if (NOT "X@PACKAGE_INCLUDE_DIRS@" STREQUAL "X")
-  #set(@PACKAGE_NAME@_INCLUDE_DIRS @PKG_INCLUDE_PREFIX@/@PACKAGE_INCLUDE_DIRS@
-  set(@PACKAGE_NAME@_INCLUDE_DIRS @PACKAGE_INCLUDE_DIRS@  
+  set(@PACKAGE_NAME@_INCLUDE_DIRS_ )
+  foreach(include @PACKAGE_INCLUDE_DIRS@)
+    if(NOT IS_DIRECTORY ${include})
+      set(include @PKG_INCLUDE_PREFIX@/${include})
+    endif()
+    if(NOT IS_DIRECTORY ${include})
+      message(FATAL_ERROR "In project ${PROJECT_NAME} I'm looking for ${include} via find_package.  The source for @PACKAGE_NAME@ is present in workspace, but ${include} is not a directory.")
+    endif()
+    list(APPEND @PACKAGE_NAME@_INCLUDE_DIRS_  ${include})
+  endforeach()
+  set(@PACKAGE_NAME@_INCLUDE_DIRS @PACKAGE_NAME@_INCLUDE_DIRS_
   CACHE FILEPATH "Includes for @PACKAGE_NAME@")
 endif()
 
