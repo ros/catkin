@@ -21,8 +21,6 @@ mkdir -p $INSTALL
 
 CMAKE="cmake -DCMAKE_INSTALL_PREFIX=$INSTALL -DCMAKE_PREFIX_PATH=$INSTALL -DCATKIN=YES -DCATKIN_LOG=2"
 
-SRC=$TOP/src
-
 doone () {
     pkg=$1
     mkdir $BUILD/$pkg
