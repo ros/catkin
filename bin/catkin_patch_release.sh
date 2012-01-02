@@ -3,31 +3,74 @@
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
 
-if [ $# -lt 1 ] ; then
-    /bin/echo "Usage: $0 <gbp_repo>"
-    /bin/echo "gbp_repo will be determined automagically (in wg-debs) if not specified"
+usage () {
+    cat <<EOF
+Usage: $0 [args] <gbp_repo>
+
+args:
+      -i
+         the repo is new... don't be surprised that it contains no
+         debian tags
+
+      -v NEWVERSION
+         new version is NEWVERSION
+
+      -n
+         Don't really do anything, just show commands (not working)
+
+      -c
+         Do *not* commit/push tags to upstream
+
+example:
+
+      $0 -i git@github.com:wg-debs/roscpp_core.git
+
+EOF
     exit 1
+}
+
+EXPECT_GBP_REPO_IS_UNINITIALIZED=0
+TAG_UPSTREAM=1
+while getopts "cinv:" opt; do
+    case $opt in
+        i)
+            EXPECT_GBP_REPO_IS_UNINITIALIZED=1
+            /bin/echo "Expecting a fresh gbp repo... not checking for debian/ tags"
+            ;;
+        v)
+            NEW_VERSION=$OPTARG
+            /bin/echo "Will create new version ${boldon}$NEW_VERSION${boldoff}"
+            ;;
+        n)
+            DO_NOTHING=1
+            SUBSHELL="/bin/echo '>>>' "
+            /bin/echo "Not actually running commands."
+            ;;
+        c)
+            TAG_UPSTREAM=0
+            /bin/echo "I won't push/commit any tags to upstream"
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+GBP_REPO=${!OPTIND}
+if [ -z "$GBP_REPO" ] ; then
+    usage
 fi
 
-if [ $# -gt 1 ] ; then
-    NEW_VERSION=$2
-fi
-
-#if [ "$1" = "-n" ] ; then
-    SUBSHELL="/bin/echo '>>>' "
-#    shift
-#else
-#    SUBSHELL=""
-#fi
-
-GBP_REPO=$1
 to_github_uri GBP_REPO
-assert_is_gbp_repo $GBP_REPO
-
+if [ $EXPECT_GBP_REPO_IS_UNINITIALIZED -eq 0 ] ; then
+    assert_is_gbp_repo $GBP_REPO
+fi
 GBP_CLONE=$TMPDIR/gbp
 git clone -b catkin $GBP_REPO $GBP_CLONE
 assert_nonempty $GBP_CLONE
-get_latest_gbp_version $GBP_CLONE
+if [ -z "$NEW_VERSION" ] ; then
+    get_latest_gbp_version $GBP_CLONE
+fi
 cd $GBP_CLONE
 if [ ! -f catkin.conf ] ; then
     bailout "Could not find UPSTREAM (containing upstream URL) on catkin branch of gbp repo"
@@ -47,6 +90,12 @@ UPSTREAM_CLONE=$TMPDIR/upstream
 repo_clone $UPSTREAM_TYPE $UPSTREAM_REPO $UPSTREAM_CLONE
 read_stack_yaml $UPSTREAM_CLONE/stack.yaml
 /bin/echo "Upstream's stack.yaml has version ${boldon}$VERSION_FULL${reset}"
+
+if [ $EXPECT_GBP_REPO_IS_UNINITIALIZED -ne 1 ] ; then
+    get_latest_gbp_version $GBP_CLONE
+else
+    /bin/echo "Not looking for latest gbp version since this is a brand new repo."
+fi
 
 if [ "$GBP_MAJOR.$GBP_MINOR.$GBP_PATCH" = "$VERSION_FULL" ] ; then
     /bin/echo "${boldon}stack.yaml's version ${redf}($VERSION_FULL)${whitef} matches latest gbp tag${reset}"
@@ -73,16 +122,16 @@ case $UPSTREAM_TYPE in
     git)
         git add stack.yaml
         git commit -m "$COMMITMSG"
-        git tag -m "$TAGMSG" $NEW_VERSION
+        [ $TAG_UPSTREAM -eq 1 ] && $SUBSHELL git tag -m "$TAGMSG" $NEW_VERSION
         ;;
     hg)
-        /bin/echo "finish me"
-        exit 1
+        $SUBSHELL hg commit -m "$COMMITMSG"
+        [ $TAG_UPSTREAM -eq 1 ] && $SUBSHELL hg tag -m "$TAGMSG" $NEW_VERSION
         ;;
     svn)
         $SUBSHELL svn commit -m "$COMMITMSG"
         TAGURL=$(dirname $UPSTREAM_REPO)/tags/$(basename $GBP_REPO .git)-$NEW_VERSION
-        $SUBSHELL svn cp $UPSTREAM_REPO $TAGURL -m "$TAGMSG"
+        [ $TAG_UPSTREAM -eq 1 ] && $SUBSHELL svn cp $UPSTREAM_REPO $TAGURL -m "$TAGMSG"
         ;;
 esac
 
@@ -96,33 +145,106 @@ UPSTREAM_BASE=$(basename $UPSTREAM_REPO .git)
 #
 #  exporting for git-import-orig consumption
 #
-set -x
 cd $UPSTREAM_CLONE
-case $UPSTREAM_TYPE in
-    git)
-        git archive -o ../upstream.tar $NEW_VERSION
-        gzip ../upstream.tar
-        ;;
-    svn)
-        tar --exclude-vcs -cvzf ../upstream.tar.gz .
-        ;;
-    hg)
-        /bin/echo "finish me"
-        exit 1
-        ;;
-esac
+repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TMPDIR/export $NEW_VERSION
+
 
 
 cd $GBP_CLONE
-git checkout -b upstream origin/upstream
+if [ $EXPECT_GBP_REPO_IS_UNINITIALIZED -eq 1 ] ; then
+    git checkout -b upstream
+else
+    git checkout -b upstream origin/upstream
+fi
 git checkout -b master origin/master
 
 # older gbp needs things zipped
-git-import-orig -u $NEW_VERSION ../upstream.tar.gz
-
-# fixme: check that import worked as expected
-/bin/echo $TMPDIR > $TOP/tmp.dir
+status "Will now git-import-orig...  it doesn't matter what you enter as the source package name."
+git-import-orig -u $NEW_VERSION $TMPDIR/export.tar.gz
 
 status "Upstream imported into new gbp repo and committed."
 status "Now you should update the debian files."
 status "The relevant repos are in $TMPDIR (also in file tmp.dir)"
+
+$TOP/update_debian.py . fuerte
+/bin/echo "${boldon}Debian files updated in gbp master branch.${boldoff}"
+prompt_continue "Inspect now or just hit enter, you will get the chance to review the diffs before anything is pushed."
+
+NEWTAGS=$(git for-each-ref --sort='-*authordate' --format='%(tag)' refs/tags/debian/\* | head -3)
+/bin/echo "New tags are ${cyanf}$NEWTAGS${reset}"
+
+for t in $NEWTAGS
+do
+    git checkout $t
+    git clean -dfx
+    git-buildpackage -uc -us -S --git-ignore-branch
+done
+
+/bin/echo "${boldon}If this all worked, you should be able to push the gbp repo.${reset}"
+/bin/echo "I'll show you some logs/diffs."
+prompt_continue "First, the log of upstream.  This should contain the stack.yaml version change and .hgtags if upstream is hg."
+cd $TMPDIR/gbp
+git checkout catkin
+UPSTREAM_REPO=$(git config -f catkin.conf catkin.upstream)
+UPSTREAM_TYPE=$(git config -f catkin.conf catkin.upstreamtype)
+git checkout master
+
+cd $TMPDIR/upstream
+case $UPSTREAM_TYPE in
+    git)
+        git log --color -p -n1
+        ;;
+    svn)
+        svn diff
+        ;;
+    hg)
+        # one for the tag, one for the commit
+        hg log -gp -l 2
+        ;;
+esac
+
+case $UPSTREAM_TYPE in
+    git)
+        THETAG=$(git for-each-ref --sort='-*authordate' refs/tags --count 1 --format='%(tag)')
+        prompt_continue "The latest tag on upstream is ${boldon}$THETAG${boldoff}. I'll show you."
+        git show $THETAG
+        ;;
+    hg)
+        /bin/echo "Current hg tags"
+        hg tags
+        ;;
+    svn)
+        /bin/echo "Latest upstream tag list:"
+        svn ls $(dirname $UPSTREAM_REPO)/tags
+        ;;
+esac
+
+prompt_continue "Now the git log of the gbp repo"
+cd $TMPDIR/gbp
+git log --color -p || /bin/true # the pager only returns 0 if you go the bottom of the file.
+
+prompt_continue "Okay to push both?"
+
+status "Pushing gbp"
+cd $TMPDIR/gbp
+git push --tags
+
+cd $TMPDIR/upstream
+case $UPSTREAM_TYPE in
+    git)
+        status "Pushing upstream"
+        if [ $TAG_UPSTREAM -eq 1 ] ; then
+            git push --tags
+        else
+            git push
+        fi
+
+        ;;
+    hg)
+        hg push
+        ;;
+    svn)
+        status "svn commit time... do it yourself."
+        ;;
+esac
+

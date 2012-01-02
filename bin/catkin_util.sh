@@ -64,7 +64,7 @@ checking ()  {
 }
 
 status () {
-    /bin/echo "${cyanf}$*${reset}"
+    /bin/echo "$*"
 }
 
 okay ()  {
@@ -252,7 +252,7 @@ repo_clone ()
             git clone $2 $3
             ;;
         hg)
-            hg clone $2 $3
+            hg clone -q $2 $3
             ;;
         svn)
             svn co -q $2 $3
@@ -262,23 +262,30 @@ repo_clone ()
 
 repo_export ()
 {
+    set -x
     TYPE=$1
     REPO=$2
-    BASENAME=$3
+    BASEPATH=$3
     VERSION=$4
     cd $REPO
 
     case $TYPE in
         git)
-            git archive -o $BASENAME-$VERSION.tar $VERSION
-            gzip $BASENAME-$VERSION.tar
+            git archive -o $BASEPATH.tar $VERSION
+            gzip $BASEPATH.tar
             ;;
         svn)
-            svn export -o $BASENAME-$VERSION
-            tar cvzf $BASENAME-$VERSION $BASENAME-$VERSION.tar.gz
+            svn export $REPO $BASEPATH
+            pushd $BASEPATH
+            tar cvzf $BASEPATH.tar.gz .
+            popd
             ;;
         hg)
-            /bin/echo "finish me"
-            exit 1
+            hg archive -t tar -r $VERSION $BASEPATH.tar
+            gzip $BASEPATH.tar
+            ;;
+        *)
+            bailout "What kind of repo is $TYPE?"
+            ;;
     esac
 }

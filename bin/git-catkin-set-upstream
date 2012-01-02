@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
@@ -13,7 +13,7 @@ pivot off of these values.
 EOF
 )
 USAGE=$LONG_USAGE
-SUBDIRECTORY_OK=1
+# SUBDIRECTORY_OK=1
 
 . "$(git --exec-path)/git-sh-setup"
 
@@ -23,14 +23,30 @@ if [ $# -gt 1 ] ; then
 else
     UPSTREAM_TYPE=git
 fi
+case $UPSTREAM_TYPE in
+    git) ;;
+    svn) ;;
+    hg) ;;
+    *)
+        /bin/echo "What kind of repo type is $UPSTREAM_TYPE?"
+        exit 1
+        ;;
+esac
+
 /bin/echo "Upstream ${boldon}$UPSTREAM_REPO${boldoff} type: ${boldon}$UPSTREAM_TYPE${boldoff}"
-cd_to_toplevel
 require_work_tree
+
+if ! git show-ref HEAD
+then
+    status "You're in a freshly initialized repo, no?"
+    maybe_continue y "Going to make an empty initial commit in $(/bin/pwd)"
+    git commit -m "initial commit" --allow-empty
+fi
 
 if git show-ref refs/heads/catkin
 then
-    status "Checking out catkin_state branch"
-    git checkout catkin_state
+    status "Checking out catkin branch"
+    git checkout catkin
 else
     status "No catkin_state branch... initializing"
     git checkout --orphan catkin

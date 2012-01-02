@@ -1,8 +1,65 @@
-#!/bin/sh -ex
+#!/bin/sh -e
+
+/bin/echo "GOING AWAY"
+exit 1
 
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
 
+<<<<<<< HEAD
+usage () {
+    cat <<EOF
+Usage: $0 [args] <github_url>
+
+args:
+      -i
+         the repo is new... don't be surprised that it contains no
+         debian tags
+
+      -v NEWVERSION
+         new version is NEWVERSION
+
+      -n
+         Don't really do anything, just show commands (not working)
+
+example:
+
+      $0 -i -n 3.1.4 roscpp_core
+
+EOF
+    exit 1
+}
+
+while getopts "n:ih" opt; do
+    case $opt in
+        i)
+            INITIALIZE_GBP=1
+            /bin/echo "Expecting a fresh gbp repo... not checking for debian/ tags"
+            ;;
+        v)
+            NEW_VERSION=$OPTARG
+            /bin/echo "Will create new version ${boldon}$NEW_VERSION${boldoff}"
+            ;;
+        n)
+            DO_NOTHING=1
+            /bin/echo "Not actually runnign any commands."
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+GITHUB_URL=${!OPTIND}
+to_github_uri GITHUB_URL
+assert_is_remote_git_repo $GITHUB_URL
+
+./catkin_patch_release.sh $GITHUB_URL $NEW_VERSION
+
+##### HERE ######
+
+
+=======
 GITHUB_URL=$1
 to_github_uri GITHUB_URL
 assert_is_remote_git_repo $GITHUB_URL
@@ -13,6 +70,7 @@ if [ $# -gt 1 ] ; then
 fi
 
 ./catkin_patch_release.sh $GITHUB_URL $NEW_VERSION
+>>>>>>> c1393fe9d44e3e2f5a1cc1bcdb48fd6b346e75cb
 TMPDIR=$(cat $TOP/tmp.dir)
 cd $TMPDIR/gbp
 $TOP/update_debian.py . fuerte
