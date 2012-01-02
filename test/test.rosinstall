@@ -72,4 +72,8 @@
     local-name: rospack
     uri: http://kforge.ros.org/rosrelease/rospack
 
+- svn:
+    local-name: rx
+    uri: https://code.ros.org/svn/ros/stacks/rx/trunk
+
 
