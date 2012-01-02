@@ -7,11 +7,13 @@ TOP=$(cd `dirname $0` ; pwd)
 SRC=$1
 cd $SRC
 SRC=$(/bin/pwd)
+cd ..
 
 SCRATCHDIR=$2
 mkdir -p $SCRATCHDIR || /bin/true
 cd $SCRATCHDIR
 SCRATCHDIR=$(/bin/pwd) #abspath
+cd ..
 
 BUILD=$SCRATCHDIR/build
 mkdir -p $BUILD
