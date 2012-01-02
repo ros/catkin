@@ -10,7 +10,7 @@ set(ROS_LIBRARIES "")
 foreach(component ${ROS_FIND_COMPONENTS})
 
   find_package(${component} REQUIRED NO_MODULE
-    PATHS @CMAKE_INSTALL_PREFIX@/share/cmake
+    PATHS @CMAKE_INSTALL_PREFIX@/share/${component}/cmake
     )
 
   if(${component}_INCLUDE_DIRS)
