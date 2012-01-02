@@ -120,14 +120,14 @@ assert_is_gbp_repo ()
     if [ $NDEBTAGS -eq 0 ] ; then
         bailout "Repo $REPO doesn't seem to have any tags with 'debian' in them"
     else
-        okay "Yeah, there are $NDEBTAGS debian tags in there"
+        okay "There are $NDEBTAGS debian tags in there. Good."
     fi
     NUPSTREAM=$(git ls-remote --tags $REPO upstream/\* | wc -l)
     checking "Verifying that repo is a git-buildpackage repo"
     if [ $NUPSTREAM -eq 0 ] ; then
         bailout "Repo $REPO doesn't seem to have any tags with 'upstream' in them"
     else
-        okay "Yeah, there are $NUPSTREAM upstream branches in there"
+        okay "There are $NUPSTREAM upstream tags.  Good."
     fi
 }
 
