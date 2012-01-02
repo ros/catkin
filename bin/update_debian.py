@@ -183,6 +183,10 @@ def expand(fname, stack_yaml, source_dir, dest_dir, filetype=''):
 
 def find_deps(stack_yaml, rosdeb_db, distro):
     def update_deps(ubuntu_deps, dep, dep_def, distro):
+        print("dep=%s dep_def=%s" %(dep, dep_def))
+        if ' ' in dep_def:
+            raise RuntimeError("Corrupt rosdep with internal space: '%s', check your stack.yaml" % dep_def)
+        assert ' ' not in dep_def
         if type(dep_def) == str:
             deps = [x.strip() for x in dep_def.split(' ') if len(x.strip()) > 0]
             ubuntu_deps.add(*deps)

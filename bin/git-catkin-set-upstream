@@ -23,6 +23,16 @@ if [ $# -gt 1 ] ; then
 else
     UPSTREAM_TYPE=git
 fi
+case $UPSTREAM_TYPE in
+    git) ;;
+    svn) ;;
+    hg) ;;
+    *)
+        /bin/echo "What kind of repo type is $UPSTREAM_TYPE?"
+        exit 1
+        ;;
+esac
+
 /bin/echo "Upstream ${boldon}$UPSTREAM_REPO${boldoff} type: ${boldon}$UPSTREAM_TYPE${boldoff}"
 require_work_tree
 
@@ -35,8 +45,8 @@ fi
 
 if git show-ref refs/heads/catkin
 then
-    status "Checking out catkin_state branch"
-    git checkout catkin_state
+    status "Checking out catkin branch"
+    git checkout catkin
 else
     status "No catkin_state branch... initializing"
     git checkout --orphan catkin

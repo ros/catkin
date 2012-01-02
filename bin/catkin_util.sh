@@ -262,6 +262,7 @@ repo_clone ()
 
 repo_export ()
 {
+    set -x
     TYPE=$1
     REPO=$2
     BASEPATH=$3
@@ -274,7 +275,7 @@ repo_export ()
             gzip $BASEPATH.tar
             ;;
         svn)
-            svn export -o $BASEPATH
+            svn export $REPO $BASEPATH
             pushd $BASEPATH
             tar cvzf $BASEPATH.tar.gz .
             popd

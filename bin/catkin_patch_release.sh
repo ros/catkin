@@ -18,6 +18,9 @@ args:
       -n
          Don't really do anything, just show commands (not working)
 
+      -c
+         Do *not* commit/push tags to upstream
+
 example:
 
       $0 -i git@github.com:wg-debs/roscpp_core.git
@@ -27,7 +30,8 @@ EOF
 }
 
 EXPECT_GBP_REPO_IS_UNINITIALIZED=0
-while getopts "inv:" opt; do
+TAG_UPSTREAM=1
+while getopts "cinv:" opt; do
     case $opt in
         i)
             EXPECT_GBP_REPO_IS_UNINITIALIZED=1
@@ -42,6 +46,10 @@ while getopts "inv:" opt; do
             SUBSHELL="/bin/echo '>>>' "
             /bin/echo "Not actually running commands."
             ;;
+        c)
+            TAG_UPSTREAM=0
+            /bin/echo "I won't push/commit any tags to upstream"
+            ;;
         *)
             usage
             ;;
@@ -49,6 +57,10 @@ while getopts "inv:" opt; do
 done
 
 GBP_REPO=${!OPTIND}
+if [ -z "$GBP_REPO" ] ; then
+    usage
+fi
+
 to_github_uri GBP_REPO
 if [ $EXPECT_GBP_REPO_IS_UNINITIALIZED -eq 0 ] ; then
     assert_is_gbp_repo $GBP_REPO
@@ -110,16 +122,16 @@ case $UPSTREAM_TYPE in
     git)
         git add stack.yaml
         git commit -m "$COMMITMSG"
-        git tag -m "$TAGMSG" $NEW_VERSION
+        [ $TAG_UPSTREAM -eq 1 ] && $SUBSHELL git tag -m "$TAGMSG" $NEW_VERSION
         ;;
     hg)
         $SUBSHELL hg commit -m "$COMMITMSG"
-        $SUBSHELL hg tag -m "$TAGMSG" $NEW_VERSION
+        [ $TAG_UPSTREAM -eq 1 ] && $SUBSHELL hg tag -m "$TAGMSG" $NEW_VERSION
         ;;
     svn)
         $SUBSHELL svn commit -m "$COMMITMSG"
         TAGURL=$(dirname $UPSTREAM_REPO)/tags/$(basename $GBP_REPO .git)-$NEW_VERSION
-        $SUBSHELL svn cp $UPSTREAM_REPO $TAGURL -m "$TAGMSG"
+        [ $TAG_UPSTREAM -eq 1 ] && $SUBSHELL svn cp $UPSTREAM_REPO $TAGURL -m "$TAGMSG"
         ;;
 esac
 
@@ -221,7 +233,12 @@ cd $TMPDIR/upstream
 case $UPSTREAM_TYPE in
     git)
         status "Pushing upstream"
-        git push --tags
+        if [ $TAG_UPSTREAM -eq 1 ] ; then
+            git push --tags
+        else
+            git push
+        fi
+
         ;;
     hg)
         hg push
