@@ -19,7 +19,7 @@ foreach(f
     catkin_package
     em_expand
     find_program_required
-    install_cmake_infrastructure
+    #install_cmake_infrastructure
     install_cmake_config_version
     catkin_project
     catkin_workspace

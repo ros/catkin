@@ -1,7 +1,7 @@
 Catkin cmake macro reference
 ============================
 
-.. cmake:macro::  install_cmake_infrastructure(projectname [parameters])
+.. cmake:macro::  catkin_project(projectname [parameters])
 
    :param projectname: requires the same value as passed to cmake's ``project()``
    :param VERSION: the version in MM.NN.PP format
@@ -24,7 +24,7 @@ Catkin cmake macro reference
 
    ::
 
-     install_cmake_infrastructure(c
+     catkin_project(c
        VERSION 0.0.1
        INCLUDE_DIRS include
        LIBRARIES c-one c-two
