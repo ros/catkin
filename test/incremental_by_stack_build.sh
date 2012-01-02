@@ -35,7 +35,7 @@ doone () {
 
 for proj in catkin genmsg gencpp genpy genpybindings gentypelibxml \
     roscpp_core std_msgs common_msgs rospack ros \
-    nolangs catkin_test ros_comm ros_tutorials
+    ros_comm ros_tutorials
 do
     /bin/echo "======================= $proj"
     doone $proj
