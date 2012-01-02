@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import pprint, sys, os.path
+import pprint, sys, os
 
 # print("%s" % sys.argv)
 PREFIX = sys.argv[1]
@@ -54,6 +54,11 @@ sys.modules['setuptools'] = d
 sys.modules['distutils.core'] = d
 
 # print("execcing %s" % sys.argv[2])
+
+# be sure you're in the directory containing
+# setup.py so the sys.path manipulation works,
+# so the import of __version__ works
+os.chdir(os.path.dirname(os.path.abspath(sys.argv[2])))
 
 execfile(sys.argv[2])
 
