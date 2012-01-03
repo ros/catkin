@@ -14,6 +14,6 @@ catkin_project(catkin_test_nolangs
   VERSION 0.0.1
 )
 
-catkin_package(catkin_test_nolangs_exec)
+catkin_stack()
 
 

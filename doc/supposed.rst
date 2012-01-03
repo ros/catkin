@@ -117,6 +117,18 @@ dependency ordering between packages is defined, i.e. if ``proj1``
 refers to a target defined in ``proj2``, then ``proj1`` must come
 first in the ordering.
 
+.. rubric:: catkin_package()
+
+`Vestigial`.  Replace me with ``catkin_stack()``.
+
+.. rubric:: catkin_stack()  [optional]
+
+Reads the ``stack.yaml`` from the current directory and provides the
+stack's version number to cmake via cache variable `<stackname>`\
+``_VERSION``, where `<stackname>` is specified in the ``stack.yaml``
+itself.  This is only necessary if you actually use this.
+
+
 
 package
 -------
@@ -156,8 +168,13 @@ Start with ``project()``.  This is standard cmake.  Follow with
 ``find_package`` of whatever is necessary; for ``ROS``, you may use
 the aggregate ``find_package(ROS COMPONENTS ...)`` method, this will
 be more succinct than a bunch of individual ``find_package`` calls.
-You will want to ``include_directories(${ROS_INCLUDE_DIRS})`` where
-necessary and use ``ROS_LIBRARIES`` with cmake's
+*Yes*, you should specify ``catkin`` in this list of packages.  There
+may be users that do not build with catkin's macros but wish to use
+include/link flags for ROS libraries.  You may want to
+``find_package`` of stack-wide components up at the top level, and
+then find_package more specific components in the packages that use
+them.   You will want to ``include_directories(${ROS_INCLUDE_DIRS})``
+where necessary and use ``ROS_LIBRARIES`` with cmake's
 ``target_link_libraries()``.
 
 ``install`` your targets as necessary.  Libraries go in ``DESTINATION

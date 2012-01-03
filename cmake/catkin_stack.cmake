@@ -1,6 +1,11 @@
-function(catkin_package PKGNAME)
+function(catkin_package)
+  message("VESTIGIAL: catkin_package unused in ${CMAKE_CURRENT_SOURCE_DIR}, change to catkin_stack.")
+  catkin_stack()
+endfunction()
 
-  stamp(${PROJECT_SOURCE_DIR}/stack.yaml)
+function(catkin_stack)
+
+  stamp(${CMAKE_CURRENT_SOURCE_DIR}/stack.yaml)
 
   safe_execute_process(COMMAND
     ${catkin_EXTRAS_DIR}/stack_get.py

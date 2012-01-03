@@ -14,9 +14,8 @@ function(catkin_project PACKAGE_NAME)
   set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
   set(PACKAGE_NAME ${PACKAGE_NAME})
   if(NOT "${${PACKAGE}_VERSION}" STREQUAL "")
-    set(PACKAGE_VERSION ${${PACKAGE}_VERSION})
-  else()
-    set(PACKAGE_VERSION "0.0.0")
+    message(STATUS "VESTIGIAL: VERSION argument to catkin_project.")
+    message(STATUS "           Use stack's version via catkin_stack()")
   endif()
   set(PACKAGE_INCLUDE_DIRS ${PACKAGE_INCLUDE_DIRS})
   set(PACKAGE_DEPENDS ${PACKAGE_DEPENDS})
@@ -28,15 +27,15 @@ function(catkin_project PACKAGE_NAME)
     set(PACKAGE_PYTHONPATH ${PACKAGE_PYTHONPATH})
     set(${PACKAGE_NAME}_PYTHONPATH ${PACKAGE_PYTHONPATH} CACHE FILEPATH "python path")
   endif()
-  
-    #
+
+  #
   # Versions find_packageable from the buildspace
   #
   string(TOLOWER ${PACKAGE_NAME} package_lower)
   set(_cfgdir ${CMAKE_BINARY_DIR}/cmake/${package_lower})
   set(_cfgout ${_cfgdir}/${package_lower}-config.cmake)
   log(2 "Writing config to ${_cfgout}")
-  
+
   # in source
   set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
   set(PKG_LIB_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
@@ -47,8 +46,6 @@ function(catkin_project PACKAGE_NAME)
     ${CMAKE_CURRENT_BINARY_DIR}/bin)
   set(PKG_LOCATION "Source")
 
-
-  
   #put all extras into the cfg dir...
   foreach(extra ${PACKAGE_CFG_EXTRAS})
     assert_file_exists(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra}.in "Nonexistent extra")
@@ -77,7 +74,7 @@ function(catkin_project PACKAGE_NAME)
 
 
   #EAR: Why can't the buildspace config files be overridden from the ${PROJECT_NAME}_EXTRAS_DIR ?
-  
+
   # THIS IS IMPORTANT. CMAKE_PREFIX_PATH appears to be twitchy: just
   # spent hours figuring out that having /opt/ros/fuerte first is
   # necessary for this finding to work.  Very strange.  xxx_DIR
@@ -163,26 +160,4 @@ function(catkin_project PACKAGE_NAME)
     ${INSTALLABLE_CFG_EXTRAS}
     DESTINATION ${PROJECT_SHARE_INSTALL_PREFIX}/cmake
     )
-
-  #do not install libs.
-  # install libraries
-  #if(PACKAGE_LIBRARIES)
-  #  install(TARGETS ${PACKAGE_LIBRARIES}
-  #    LIBRARY DESTINATION lib
-  #    ARCHIVE DESTINATION lib
-  #    )
-  #endif()
-
-  # install headers, only works for one dir right now
-  #  if(PACKAGE_INCLUDE_DIRS)
-  #    if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_INCLUDE_DIRS})
-  #      install(DIRECTORY ${PACKAGE_INCLUDE_DIRS}/
-  # DESTINATION include
-  #        PATTERN .svn EXCLUDE
-  #        )
-  #    else()
-  #      message(WARNING "Include directory '${PACKAGE_INCLUDE_DIRS}' for ${PROJECT_NAME} not found")
-  #    endif()
-  #  endif()
-  #
 endfunction()
