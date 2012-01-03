@@ -35,7 +35,7 @@ macro(initialize_tests)
     # handle lingers in the test results directory), because CMake doesn't
     # seem to be able to do it.
     add_custom_target(clean-test-results
-                      COMMAND ${env_sh_path} ${PYTHON_EXECUTABLE} if ! rm -rf ${rosbuild_test_results_dir}\; then echo "WARNING: failed to remove test-results directory"\; fi)
+                      COMMAND if ! rm -rf ${rosbuild_test_results_dir}\; then echo "WARNING: failed to remove test-results directory"\; fi)
     # Make the tests target depend on clean-test-results, which will ensure
     # that test results are deleted before we try to build tests, and thus
     # before we try to run tests.
