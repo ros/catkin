@@ -10,7 +10,7 @@ add_executable(catkin_test_nolangs_exec
 install(TARGETS catkin_test_nolangs_exec
   RUNTIME DESTINATION bin)
 
-install_cmake_infrastructure(catkin_test_nolangs
+catkin_project(catkin_test_nolangs
   VERSION 0.0.1
 )
 
