@@ -1,13 +1,22 @@
+# Create a global test target that we hang per-project targets from
+if(NOT CATKIN_TEST_TARGET_CREATED)
+  set(CATKIN_TEST_TARGET_CREATED TRUE)
+  add_custom_target(test)
+endif()
+
 macro(append_project_cache CACHENAME)
   set(cachefile ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}.${CACHENAME})
   if(NOT ${PROJECT_NAME}_CACHE)
     file(WRITE ${cachefile} "#\n# This is ${cachefile}\n#\n")
-    set(${PROJECT_NAME}_CACHE TRUE)
+    set(${PROJECT_NAME}_CACHE TRUE PARENT_SCOPE)
     # TODO: find catkin somehow
-    set(runtests_path ${CMAKE_SOURCE_DIR}/catkin/scripts/runtests.py)
+    set(catkin_path ${CMAKE_SOURCE_DIR}/catkin)
+    # TODO: find rosunit somehow
+    set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit)
+    # One test target per project
     add_custom_target(${PROJECT_NAME}_run_tests
-                      COMMAND ${runtests_path} ${cachefile})
-    add_custom_target(test)
+                      COMMAND ${catkin_path}/scripts/runtests.py ${cachefile}
+                      COMMAND ${rosunit_path}/scripts/summarize_results.py --nodeps ${PROJECT_NAME})
     add_dependencies(test ${PROJECT_NAME}_run_tests)
   endif()
 
