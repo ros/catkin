@@ -1,13 +1,20 @@
-# Create a global test target that we hang per-project targets from
-if(NOT CATKIN_TEST_TARGET_CREATED)
-  set(CATKIN_TEST_TARGET_CREATED TRUE)
+if(NOT TARGET tests)
+  add_custom_target(tests)
+endif()
+if(NOT TARGET test)
   add_custom_target(test)
+  add_dependencies(test tests)
 endif()
 
-macro(append_project_cache CACHENAME)
+# This is a macro to ensure that ${PROJECT_NAME}_CACHE gets set in a higher
+# scope where we can check it later.
+macro(append_test_to_cache CACHENAME)
   set(cachefile ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}.${CACHENAME})
   if(NOT ${PROJECT_NAME}_CACHE)
     file(WRITE ${cachefile} "#\n# This is ${cachefile}\n#\n")
+    # Write out the directory that we'll use as CWD later when running
+    # tests
+    file(APPEND ${cachefile} "${PROJECT_SOURCE_DIR}\n")
     set(${PROJECT_NAME}_CACHE TRUE PARENT_SCOPE)
     # TODO: find catkin somehow
     set(catkin_path ${CMAKE_SOURCE_DIR}/catkin)
@@ -52,6 +59,30 @@ function(add_pyunit file)
   # Create a legal test name, in case the target name has slashes in it
   string(REPLACE "/" "_" _testname ${file})
   # We use rostest to call the executable to get process control, #1629
-  append_project_cache(catkin-tests "${rosunit_path}/bin/rosunit --name=${_testname} --time-limit=${_pyunit_TIMEOUT} -- ${_file_name} ${_covarg}")
+  append_test_to_cache(catkin-tests "${rosunit_path}/bin/rosunit --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg}")
 endfunction(add_pyunit)
 
+function(add_gtest exe)
+  # Look for optional TIMEOUT argument, #2645
+  parse_arguments(_gtest "TIMEOUT" "" ${ARGN})
+  if(NOT _gtest_TIMEOUT)
+    set(_gtest_TIMEOUT 60.0)
+  endif(NOT _gtest_TIMEOUT)
+
+  # Create the program, with basic + gtest build flags
+  find_package(GTest REQUIRED)
+  include_directories(${GTEST_INCLUDE_DIRS})
+  add_executable(${exe} EXCLUDE_FROM_ALL ${_gtest_DEFAULT_ARGS})
+  target_link_libraries(roslib_utest ${GTEST_LIBRARIES})
+  
+  # Make sure the executable is built before running tests
+  add_dependencies(tests ${exe})
+
+  # TODO: find rosunit somehow
+  set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit)
+  # Create a legal test name, in case the target name has slashes in it
+  string(REPLACE "/" "_" _testname ${exe})
+  get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
+  # We use rosunit to call the executable to get process control, #1629, #3112
+  append_test_to_cache(catkin-tests "${rosunit_path}/bin/rosunit --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe}")
+endfunction()
