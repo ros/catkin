@@ -103,8 +103,8 @@ function(add_gtest exe)
   find_package(GTest REQUIRED)
   include_directories(${GTEST_INCLUDE_DIRS})
   add_executable(${exe} EXCLUDE_FROM_ALL ${_gtest_DEFAULT_ARGS})
-  target_link_libraries(${exe} ${GTEST_LIBRARIES})
-  
+  target_link_libraries(${exe} ${GTEST_LIBRARIES} ${THREADS_LIBRARY})
+
   # Make sure the executable is built before running tests
   add_dependencies(tests ${exe})
 

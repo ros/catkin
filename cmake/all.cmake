@@ -31,6 +31,7 @@ foreach(f
     platform/lsb
     platform/ubuntu
     tools/rt
+    tools/threads
     tests
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
