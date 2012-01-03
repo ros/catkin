@@ -8,6 +8,12 @@ usage () {
 Usage: $0 [args] <gbp_repo>
 
 args:
+      -g gbp_repo
+         (writable) uri of gbp git repo
+         this can be just the name of the stack, it will get transformed
+         to git@github.com:wg-debs/[gbp_repo].git per git setting
+         'catkin.gbproot'
+
       -i
          the repo is new... don't be surprised that it contains no
          debian tags
@@ -31,11 +37,15 @@ EOF
 
 EXPECT_GBP_REPO_IS_UNINITIALIZED=0
 TAG_UPSTREAM=1
-while getopts "cinv:" opt; do
+while getopts "cinv:g:" opt; do
     case $opt in
         i)
             EXPECT_GBP_REPO_IS_UNINITIALIZED=1
             /bin/echo "Expecting a fresh gbp repo... not checking for debian/ tags"
+            ;;
+        g)
+            GBP_REPO=$OPTARG
+            /bin/echo "GBP repo via ${boldon}$GBP_REPO${boldoff}"
             ;;
         v)
             NEW_VERSION=$OPTARG
@@ -56,8 +66,7 @@ while getopts "cinv:" opt; do
     esac
 done
 
-GBP_REPO=${!OPTIND}
-if [ -z "$GBP_REPO" ] ; then
+if [ ${OPTIND} -le $# ] ; then
     usage
 fi
 

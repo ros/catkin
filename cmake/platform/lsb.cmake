@@ -23,6 +23,11 @@ if(LSB_RELEASE_EXECUTABLE)
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
+  string(TOUPPER ${LSB_DISTRIB_ID} v)
+  set(${v} TRUE CACHE BOOL "LSB Distribution")
+  message(STATUS "${v} is on.")
+
   string(TOUPPER ${LSB_DISTRIB_ID}_${LSB_CODENAME} v)
   set(${v} TRUE CACHE BOOL "LSB Distrib - codename tag")
+  message(STATUS "${v} is on.")
 endif()

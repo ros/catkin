@@ -30,6 +30,7 @@ foreach(f
     tools/sphinx
     platform/lsb
     platform/ubuntu
+    tools/rt
     tests
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
