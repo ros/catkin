@@ -7,6 +7,15 @@ set(ROS_FOUND TRUE)
 set(ROS_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
 set(ROS_LIBRARIES "")
 
+macro(list_push listname)
+  foreach(item ${ARGN})
+    list(FIND ${listname} ${item} _index)
+    if(_index EQUAL -1)
+      list(APPEND ${listname} ${item})
+    endif()
+  endforeach()
+endmacro()
+
 foreach(component ${ROS_FIND_COMPONENTS})
 
   find_package(${component} REQUIRED NO_MODULE
@@ -14,10 +23,8 @@ foreach(component ${ROS_FIND_COMPONENTS})
     @CMAKE_INSTALL_PREFIX@/share/${component}/cmake
     )
 
-  if(${component}_INCLUDE_DIRS)
-    list(APPEND ROS_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
-  endif()
-  list(APPEND ROS_LIBRARIES ${${component}_LIBRARIES})
+  list_push(ROS_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
+  list_push(ROS_LIBRARIES ${${component}_LIBRARIES})
 
 endforeach()
 
