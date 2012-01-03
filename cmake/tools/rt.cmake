@@ -31,14 +31,15 @@
 # message("CMAKE_SYSTEM_LIBRARY_PATH: ${CMAKE_SYSTEM_LIBRARY_PATH}")
 # message("CMAKE_VERSION=${CMAKE_VERSION}")
 
-if (${CMAKE_VERSION} VERSION_LESS 2.8.1)
-  # cmake later than 2.8.0 appears to have a better find_library
-  # that knows about the ABI of the compiler.  For lucid we just
-  # depend on the linker to find it for us.
-  set(RT_LIBRARY rt CACHE FILEPATH "Hacked find of rt for ubuntu lucid")
-else()
-  find_library(RT_LIBRARY rt)
-  assert_file_exists(${RT_LIBRARY} "RT Library")
+if(NOT APPLE)
+  if (${CMAKE_VERSION} VERSION_LESS 2.8.1)
+    # cmake later than 2.8.0 appears to have a better find_library
+    # that knows about the ABI of the compiler.  For lucid we just
+    # depend on the linker to find it for us.
+    set(RT_LIBRARY rt CACHE FILEPATH "Hacked find of rt for ubuntu lucid")
+  else()
+    find_library(RT_LIBRARY rt)
+    assert_file_exists(${RT_LIBRARY} "RT Library")
+  endif()
+  message(STATUS "RT_LIBRARY: ${RT_LIBRARY}")
 endif()
-message(STATUS "RT_LIBRARY: ${RT_LIBRARY}")
-
