@@ -7,27 +7,9 @@ macro(initialize_tests)
     add_dependencies(test tests)
   endif()
 
-  # We set the path variables both locally and in the parent scope so that
-  # we can use them here and below in the add_* functions.
-  # TODO: find catkin somehow
-  set(catkin_path ${CMAKE_SOURCE_DIR}/catkin PARENT_SCOPE)
-  set(catkin_path ${CMAKE_SOURCE_DIR}/catkin)
-
   # TODO: find rosunit somehow
   set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit PARENT_SCOPE)
   set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit)
-
-  set(env_sh_path ${CMAKE_BINARY_DIR}/env.sh PARENT_SCOPE)
-  set(env_sh_path ${CMAKE_BINARY_DIR}/env.sh)
-
-  # Record where we're going to put test results (#2003)
-  execute_process(COMMAND ${env_sh_path} ${PYTHON_EXECUTABLE} ${rosunit_path}/scripts/test_results_dir.py
-                  OUTPUT_VARIABLE rosbuild_test_results_dir
-                  RESULT_VARIABLE _test_results_dir_failed
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  if(_test_results_dir_failed)
-    message(FATAL_ERROR "Failed to invoke ${rosunit_path}/scripts/test_results_dir.py")
-  endif(_test_results_dir_failed)
 
   if(NOT TARGET clean-test-results)
     # Clean out previous test results before running tests.  Use bash
@@ -35,7 +17,9 @@ macro(initialize_tests)
     # handle lingers in the test results directory), because CMake doesn't
     # seem to be able to do it.
     add_custom_target(clean-test-results
-                      COMMAND if ! rm -rf ${rosbuild_test_results_dir}\; then echo "WARNING: failed to remove test-results directory"\; fi)
+      COMMAND /bin/rm -rf ${CMAKE_BINARY_DIR}/test_results
+      )
+
     # Make the tests target depend on clean-test-results, which will ensure
     # that test results are deleted before we try to build tests, and thus
     # before we try to run tests.
@@ -57,8 +41,10 @@ macro(append_test_to_cache CACHENAME)
     set(${PROJECT_NAME}_CACHE TRUE PARENT_SCOPE)
     # One test target per project
     add_custom_target(${PROJECT_NAME}_run_tests
-                      COMMAND ${env_sh_path} ${PYTHON_EXECUTABLE} ${catkin_path}/scripts/runtests.py ${cachefile}
-                      COMMAND ${env_sh_path} ${PYTHON_EXECUTABLE} ${rosunit_path}/scripts/summarize_results.py --nodeps ${PROJECT_NAME})
+      COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
+      ${catkin_EXTRAS_DIR}/test/runtests.py ${cachefile}
+      COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
+      ${rosunit_path}/scripts/summarize_results.py --nodeps ${PROJECT_NAME})
     add_dependencies(test ${PROJECT_NAME}_run_tests)
     add_dependencies(${PROJECT_NAME}_run_tests tests)
   endif()
