@@ -18,7 +18,7 @@ configure_file(ros-config.cmake.in
   @ONLY)
 
 configure_file(ros-config.buildspace.cmake.in
-  ${CMAKE_BINARY_DIR}/cmake/ROS/ros-config.cmake
+  ${CMAKE_BINARY_DIR}/cmake/ros/ros-config.cmake
   @ONLY)
 
 #EAR: share/<name>/cmake is our convention?
@@ -28,7 +28,7 @@ configure_file(ros-config.buildspace.cmake.in
 # <prefix>/(lib/<arch>|lib|share)/<name>*/(cmake|CMake)/  (U)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cmake
-  DESTINATION share/ROS/cmake)
+  DESTINATION share/ros/cmake)
 
 install(DIRECTORY cmake/
   DESTINATION share/catkin/cmake    #to be consistent, all catkin specific cmake should live under catkin.
