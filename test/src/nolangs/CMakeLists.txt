@@ -14,6 +14,5 @@ catkin_project(nolangs
   VERSION 0.0.1
 )
 
-catkin_package(nolangs)
 
 
