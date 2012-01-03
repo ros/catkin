@@ -10,7 +10,7 @@ add_executable(nolangs_exec
 install(TARGETS nolangs_exec
   RUNTIME DESTINATION bin)
 
-install_cmake_infrastructure(nolangs
+catkin_project(nolangs
   VERSION 0.0.1
 )
 
