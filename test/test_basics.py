@@ -5,7 +5,6 @@ from catkintest import *
 
 ubuntudist = platform.dist()[2]
 
-
 def setup():
     print "basics ***************************************************************\n"*8
     rosinstall(srcdir, 'test.rosinstall')

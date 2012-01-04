@@ -2,11 +2,10 @@
 
 TOP=$(cd `dirname $0` ; pwd)
 BUILD=$TOP/pkgbuild
+PREFIX=$1
 
-CMAKE="cmake -DCMAKE_INSTALL_PREFIX=/opt/ros/fuerte -DCMAKE_PREFIX_PATH=/opt/ros/fuerte -DCATKIN=YES -DCATKIN_LOG=2 -DCATKIN_DEB_SNAPSHOTS=YES -DCATKIN_PACKAGE_PREFIX=ros-fuerte-"
+CMAKE="cmake -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_PREFIX_PATH=$PREFIX -DCATKIN=YES -DCATKIN_LOG=2"
 DESTDIR=$TOP/DESTDIR
-CATKIN_DEB_SNAPSHOT_VERSION=$(date +%Y%m%d-%H%M%z)
-export CATKIN_DEB_SNAPSHOT_VERSION
 
 sudo dpkg -r ros-fuerte\* || /bin/true
 sudo rm -rf /opt/ros/fuerte/* || /bin/true
@@ -52,14 +51,17 @@ doone catkin
 doone genmsg
 doone gencpp
 doone genpy
+doone genpybindings
+doone gentypelibxml
+
 doone std_msgs
 doone common_msgs
+doone rospack
+doone ros
+
 doone roscpp_core
-doone ros_comm
 doone nolangs
 doone catkin_test
+doone ros_comm
+doone ros_tutorials
 
-for i in $TOP/src/ros-fuerte-*.changes
-do
-    dput ppa:straszheim/ros $i || /bin/true
-done
