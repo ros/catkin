@@ -93,6 +93,6 @@ endfunction()
 stamp(${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py)
 
 function(enable_python)
-  message(WARNING "CMAKE macro enable_python replaced by export_python_dirs")
+  message(WARNING "CMAKE macro enable_python replaced by catkin_export_python")
   catkin_export_python(${ARGN})
 endfunction()
