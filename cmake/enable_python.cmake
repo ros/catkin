@@ -28,18 +28,29 @@ function(enable_python pkg_name)
 
     stamp(${${pkg_name}_SOURCE_DIR}/setup.py)
 
-    execute_process(COMMAND
+    set(CMD
       ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
       ${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py
       ${pkg_name}
       ${${pkg_name}_SOURCE_DIR}/setup.py
       ${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake
+      )
+
+    # message("IN ${pkg_name}:  ${CMD}")
+    execute_process(COMMAND
+      ${CMD}
       RESULT_VARIABLE RES
       )
     if (RES)
       message(FATAL_ERROR "Attempt to interrogate setup.py of project ${pkg_name} returned ${RES}")
     endif()
     include(${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
+
+    foreach(pkg ${${pkg_name}_PACKAGES})
+      get_filename_component(name ${pkg} NAME)
+      execute_process(COMMAND /bin/ln -sf
+        ${CMAKE_CURRENT_SOURCE_DIR}/${pkg} ${CMAKE_BINARY_DIR}/lib/${name})
+    endforeach()
 
     foreach(script ${${pkg_name}_SCRIPTS})
       get_filename_component(name ${script} NAME)
@@ -50,7 +61,7 @@ function(enable_python pkg_name)
       endif()
       if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${name})
         message(STATUS "   Making toplevel symlink for python script ${name}")
-        execute_process(COMMAND /bin/ln -s
+        execute_process(COMMAND /bin/ln -sf
           ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_BINARY_DIR}/bin/${name})
       endif()
     endforeach()

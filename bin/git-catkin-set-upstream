@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh

@@ -229,7 +229,7 @@ github_api ()
 
 github_raw ()
 {
-    set -x
+    #set -x
     VARNAME=$1
     shift
     CALL=$1
@@ -246,7 +246,7 @@ repo_clone ()
     URL=$2
     DEST=$3
 
-    set -x
+    #set -x
     case $TYPE in
         git)
             git clone $2 $3
@@ -257,12 +257,12 @@ repo_clone ()
         svn)
             svn co -q $2 $3
     esac
-    set +x
+    #set +x
 }
 
 repo_export ()
 {
-    set -x
+    #set -x
     TYPE=$1
     REPO=$2
     BASEPATH=$3

@@ -27,6 +27,12 @@ args:
       -c
          Do *not* commit/push tags to upstream
 
+      -m
+         Merge the catkin branch ontop of master.
+         Prefer the stack.yaml in the master branch, don't look
+         for it in the upstream. This is useful for 3rd party
+         package maintenance.
+
 example:
 
       $0 -i git@github.com:wg-debs/roscpp_core.git
@@ -37,7 +43,9 @@ EOF
 
 EXPECT_GBP_REPO_IS_UNINITIALIZED=0
 TAG_UPSTREAM=1
-while getopts "cinv:g:" opt; do
+READ_UPSTREAM_STACK=1
+MERGE_CATKIN_BRANCH=0
+while getopts "cinmv:g:" opt; do
     case $opt in
         i)
             EXPECT_GBP_REPO_IS_UNINITIALIZED=1
@@ -58,7 +66,13 @@ while getopts "cinv:g:" opt; do
             ;;
         c)
             TAG_UPSTREAM=0
-            /bin/echo "I won't push/commit any tags to upstream"
+            /bin/echo "I won't push/commit any tags to upstream."
+            ;;
+        m)
+            READ_UPSTREAM_STACK=0
+            MERGE_CATKIN_BRANCH=1
+            /bin/echo "I will ignore the stack.yaml in upstream."
+            /bin/echo "I will merge the catkin orphan into the master branch before packaging."
             ;;
         *)
             usage
@@ -97,8 +111,14 @@ fi
 
 UPSTREAM_CLONE=$TMPDIR/upstream
 repo_clone $UPSTREAM_TYPE $UPSTREAM_REPO $UPSTREAM_CLONE
-read_stack_yaml $UPSTREAM_CLONE/stack.yaml
-/bin/echo "Upstream's stack.yaml has version ${boldon}$VERSION_FULL${reset}"
+if [ $READ_UPSTREAM_STACK -ne 0 ] ; then
+    read_stack_yaml $UPSTREAM_CLONE/stack.yaml
+    /bin/echo "Upstream's stack.yaml has version ${boldon}$VERSION_FULL${reset}"
+else
+    read_stack_yaml $GBP_CLONE/stack.yaml
+    cp $GBP_CLONE/stack.yaml $UPSTREAM_CLONE/stack.yaml
+    /bin/echo "GBP stack.yaml has version ${boldon}$VERSION_FULL${reset}"
+fi
 
 if [ $EXPECT_GBP_REPO_IS_UNINITIALIZED -ne 1 ] ; then
     get_latest_gbp_version $GBP_CLONE
@@ -115,6 +135,14 @@ if [ "$GBP_MAJOR.$GBP_MINOR.$GBP_PATCH" = "$VERSION_FULL" ] ; then
     if [ $ANS != 'y' ] ; then
         bailout "aborting at user's request"
     fi
+else
+    status "The new version will be ${boldon}$VERSION_FULL${reset}, read from the stack.yaml."
+    status "Is this ok? [y/N]"
+    read ANS
+    if [ $ANS != 'y' ] ; then
+        bailout "aborting at user's request"
+    fi
+    NEW_VERSION=$VERSION_FULL
 fi
 
 if [ -z "$NEW_VERSION" ] ; then
@@ -171,6 +199,14 @@ git checkout -b master origin/master
 status "Will now git-import-orig...  it doesn't matter what you enter as the source package name."
 git-import-orig -u $NEW_VERSION $TMPDIR/export.tar.gz
 
+if [ $MERGE_CATKIN_BRANCH -ne 0 ] ; then
+    status "Will now merge catkin branch into master."
+    git archive --format=tar catkin > $TMPDIR/catkin.tar
+    tar -xvf $TMPDIR/catkin.tar
+    git add .
+    git commit --allow-empty -m "Merging catkin directory."
+fi
+
 status "Upstream imported into new gbp repo and committed."
 status "Now you should update the debian files."
 status "The relevant repos are in $TMPDIR (also in file tmp.dir)"
@@ -198,36 +234,37 @@ UPSTREAM_REPO=$(git config -f catkin.conf catkin.upstream)
 UPSTREAM_TYPE=$(git config -f catkin.conf catkin.upstreamtype)
 git checkout master
 
-cd $TMPDIR/upstream
-case $UPSTREAM_TYPE in
-    git)
-        git log --color -p -n1
-        ;;
-    svn)
-        svn diff
-        ;;
-    hg)
-        # one for the tag, one for the commit
-        hg log -gp -l 2
-        ;;
-esac
+if [ $TAG_UPSTREAM -ne 0 ]; then
+    cd $TMPDIR/upstream
+    case $UPSTREAM_TYPE in
+        git)
+            git log --color -p -n1
+            ;;
+        svn)
+            svn diff
+            ;;
+        hg)
+            # one for the tag, one for the commit
+            hg log -gp -l 2
+            ;;
+    esac
 
-case $UPSTREAM_TYPE in
-    git)
-        THETAG=$(git for-each-ref --sort='-*authordate' refs/tags --count 1 --format='%(tag)')
-        prompt_continue "The latest tag on upstream is ${boldon}$THETAG${boldoff}. I'll show you."
-        git show $THETAG
-        ;;
-    hg)
-        /bin/echo "Current hg tags"
-        hg tags
-        ;;
-    svn)
-        /bin/echo "Latest upstream tag list:"
-        svn ls $(dirname $UPSTREAM_REPO)/tags
-        ;;
-esac
-
+    case $UPSTREAM_TYPE in
+        git)
+            THETAG=$(git for-each-ref --sort='-*authordate' refs/tags --count 1 --format='%(tag)')
+            prompt_continue "The latest tag on upstream is ${boldon}$THETAG${boldoff}. I'll show you."
+            git show $THETAG
+            ;;
+        hg)
+            /bin/echo "Current hg tags"
+            hg tags
+            ;;
+        svn)
+            /bin/echo "Latest upstream tag list:"
+            svn ls $(dirname $UPSTREAM_REPO)/tags
+            ;;
+    esac
+fi
 prompt_continue "Now the git log of the gbp repo"
 cd $TMPDIR/gbp
 git log --color -p || /bin/true # the pager only returns 0 if you go the bottom of the file.
@@ -236,24 +273,29 @@ prompt_continue "Okay to push both?"
 
 status "Pushing gbp"
 cd $TMPDIR/gbp
+
+git push --all
 git push --tags
 
-cd $TMPDIR/upstream
-case $UPSTREAM_TYPE in
-    git)
-        status "Pushing upstream"
-        if [ $TAG_UPSTREAM -eq 1 ] ; then
-            git push --tags
-        else
-            git push
-        fi
+if [ $TAG_UPSTREAM -ne 0 ]; then
+    cd $TMPDIR/upstream
+    case $UPSTREAM_TYPE in
+        git)
+            status "Pushing upstream"
+            if [ $TAG_UPSTREAM -eq 1 ] ; then
+                git push --tags
+            else
+                git push
+            fi
 
-        ;;
-    hg)
-        hg push
-        ;;
-    svn)
-        status "svn commit time... do it yourself."
-        ;;
-esac
-
+            ;;
+        hg)
+            hg push
+            ;;
+        svn)
+            status "svn commit time... do it yourself."
+            ;;
+    esac
+else
+    status "You requested to not tag upstream so not pushing to upstream."
+fi
