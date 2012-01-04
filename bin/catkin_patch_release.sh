@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
@@ -135,6 +135,14 @@ if [ "$GBP_MAJOR.$GBP_MINOR.$GBP_PATCH" = "$VERSION_FULL" ] ; then
     if [ $ANS != 'y' ] ; then
         bailout "aborting at user's request"
     fi
+else
+    status "The new version will be ${boldon}$VERSION_FULL${reset}, read from the stack.yaml."
+    status "Is this ok? [y/N]"
+    read ANS
+    if [ $ANS != 'y' ] ; then
+        bailout "aborting at user's request"
+    fi
+    NEW_VERSION=$VERSION_FULL
 fi
 
 if [ -z "$NEW_VERSION" ] ; then
@@ -226,36 +234,37 @@ UPSTREAM_REPO=$(git config -f catkin.conf catkin.upstream)
 UPSTREAM_TYPE=$(git config -f catkin.conf catkin.upstreamtype)
 git checkout master
 
-cd $TMPDIR/upstream
-case $UPSTREAM_TYPE in
-    git)
-        git log --color -p -n1
-        ;;
-    svn)
-        svn diff
-        ;;
-    hg)
-        # one for the tag, one for the commit
-        hg log -gp -l 2
-        ;;
-esac
+if [ $TAG_UPSTREAM -ne 0 ]; then
+    cd $TMPDIR/upstream
+    case $UPSTREAM_TYPE in
+        git)
+            git log --color -p -n1
+            ;;
+        svn)
+            svn diff
+            ;;
+        hg)
+            # one for the tag, one for the commit
+            hg log -gp -l 2
+            ;;
+    esac
 
-case $UPSTREAM_TYPE in
-    git)
-        THETAG=$(git for-each-ref --sort='-*authordate' refs/tags --count 1 --format='%(tag)')
-        prompt_continue "The latest tag on upstream is ${boldon}$THETAG${boldoff}. I'll show you."
-        git show $THETAG
-        ;;
-    hg)
-        /bin/echo "Current hg tags"
-        hg tags
-        ;;
-    svn)
-        /bin/echo "Latest upstream tag list:"
-        svn ls $(dirname $UPSTREAM_REPO)/tags
-        ;;
-esac
-
+    case $UPSTREAM_TYPE in
+        git)
+            THETAG=$(git for-each-ref --sort='-*authordate' refs/tags --count 1 --format='%(tag)')
+            prompt_continue "The latest tag on upstream is ${boldon}$THETAG${boldoff}. I'll show you."
+            git show $THETAG
+            ;;
+        hg)
+            /bin/echo "Current hg tags"
+            hg tags
+            ;;
+        svn)
+            /bin/echo "Latest upstream tag list:"
+            svn ls $(dirname $UPSTREAM_REPO)/tags
+            ;;
+    esac
+fi
 prompt_continue "Now the git log of the gbp repo"
 cd $TMPDIR/gbp
 git log --color -p || /bin/true # the pager only returns 0 if you go the bottom of the file.
@@ -264,24 +273,29 @@ prompt_continue "Okay to push both?"
 
 status "Pushing gbp"
 cd $TMPDIR/gbp
+
+git push --all
 git push --tags
 
-cd $TMPDIR/upstream
-case $UPSTREAM_TYPE in
-    git)
-        status "Pushing upstream"
-        if [ $TAG_UPSTREAM -eq 1 ] ; then
-            git push --tags
-        else
-            git push
-        fi
+if [ $TAG_UPSTREAM -ne 0 ]; then
+    cd $TMPDIR/upstream
+    case $UPSTREAM_TYPE in
+        git)
+            status "Pushing upstream"
+            if [ $TAG_UPSTREAM -eq 1 ] ; then
+                git push --tags
+            else
+                git push
+            fi
 
-        ;;
-    hg)
-        hg push
-        ;;
-    svn)
-        status "svn commit time... do it yourself."
-        ;;
-esac
-
+            ;;
+        hg)
+            hg push
+            ;;
+        svn)
+            status "svn commit time... do it yourself."
+            ;;
+    esac
+else
+    status "You requested to not tag upstream so not pushing to upstream."
+fi
