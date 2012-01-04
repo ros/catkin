@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
@@ -27,6 +27,12 @@ args:
       -c
          Do *not* commit/push tags to upstream
 
+      -m
+         Merge the catkin branch ontop of master.
+         Prefer the stack.yaml in the master branch, don't look
+         for it in the upstream. This is useful for 3rd party
+         package maintenance.
+
 example:
 
       $0 -i git@github.com:wg-debs/roscpp_core.git
@@ -37,7 +43,9 @@ EOF
 
 EXPECT_GBP_REPO_IS_UNINITIALIZED=0
 TAG_UPSTREAM=1
-while getopts "cinv:g:" opt; do
+READ_UPSTREAM_STACK=1
+MERGE_CATKIN_BRANCH=0
+while getopts "cinmv:g:" opt; do
     case $opt in
         i)
             EXPECT_GBP_REPO_IS_UNINITIALIZED=1
@@ -58,7 +66,13 @@ while getopts "cinv:g:" opt; do
             ;;
         c)
             TAG_UPSTREAM=0
-            /bin/echo "I won't push/commit any tags to upstream"
+            /bin/echo "I won't push/commit any tags to upstream."
+            ;;
+        m)
+            READ_UPSTREAM_STACK=0
+            MERGE_CATKIN_BRANCH=1
+            /bin/echo "I will ignore the stack.yaml in upstream."
+            /bin/echo "I will merge the catkin orphan into the master branch before packaging."
             ;;
         *)
             usage
@@ -97,8 +111,14 @@ fi
 
 UPSTREAM_CLONE=$TMPDIR/upstream
 repo_clone $UPSTREAM_TYPE $UPSTREAM_REPO $UPSTREAM_CLONE
-read_stack_yaml $UPSTREAM_CLONE/stack.yaml
-/bin/echo "Upstream's stack.yaml has version ${boldon}$VERSION_FULL${reset}"
+if [ $READ_UPSTREAM_STACK -ne 0 ] ; then
+    read_stack_yaml $UPSTREAM_CLONE/stack.yaml
+    /bin/echo "Upstream's stack.yaml has version ${boldon}$VERSION_FULL${reset}"
+else
+    read_stack_yaml $GBP_CLONE/stack.yaml
+    cp $GBP_CLONE/stack.yaml $UPSTREAM_CLONE/stack.yaml
+    /bin/echo "GBP stack.yaml has version ${boldon}$VERSION_FULL${reset}"
+fi
 
 if [ $EXPECT_GBP_REPO_IS_UNINITIALIZED -ne 1 ] ; then
     get_latest_gbp_version $GBP_CLONE
@@ -170,6 +190,14 @@ git checkout -b master origin/master
 # older gbp needs things zipped
 status "Will now git-import-orig...  it doesn't matter what you enter as the source package name."
 git-import-orig -u $NEW_VERSION $TMPDIR/export.tar.gz
+
+if [ $MERGE_CATKIN_BRANCH -ne 0 ] ; then
+    status "Will now merge catkin branch into master."
+    git archive --format=tar catkin > $TMPDIR/catkin.tar
+    tar -xvf $TMPDIR/catkin.tar
+    git add .
+    git commit --allow-empty -m "Merging catkin directory."
+fi
 
 status "Upstream imported into new gbp repo and committed."
 status "Now you should update the debian files."
