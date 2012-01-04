@@ -46,6 +46,12 @@ function(enable_python pkg_name)
     endif()
     include(${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
 
+    foreach(pkg ${${pkg_name}_PACKAGES})
+      get_filename_component(name ${pkg} NAME)
+      execute_process(COMMAND /bin/ln -s
+        ${CMAKE_CURRENT_SOURCE_DIR}/${pkg} ${CMAKE_BINARY_DIR}/lib/${name})
+    endforeach()
+
     foreach(script ${${pkg_name}_SCRIPTS})
       get_filename_component(name ${script} NAME)
       if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${script})
