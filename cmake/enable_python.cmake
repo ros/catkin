@@ -1,10 +1,30 @@
-function(enable_python pkg_name)
-  set(PACKAGE_NAME ${pkg_name})
-  if(${pkg_name}_PYTHONPATH)
-    set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${${pkg_name}_PYTHONPATH})
-  else()
-    set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/src/${pkg_name})
+# Give directories with python stuff as arguments (only relative directories)
+function(enable_python)
+  assert(PROJECT_NAME)
+
+  # Use PROJECT_NAME as pkg_name
+  set(pkg_name ${PROJECT_NAME})
+
+  # Default python dir is 'src'
+  if(NOT ARGN)
+    set(ARGN "src")
   endif()
+
+  # Prepend CMAKE_CURRENT_SOURCE_DIR to all relative python directories and create PYTHON_PATH
+  set(PACKAGE_PYTHONPATH "")
+  foreach(d ${ARGN})
+    if(d STREQUAL PROJECT_NAME)
+      message(WARNING "enable_python: Don't specify package name anymore")
+      set(d "src") #tmp hack: translate pkg name to 'src' to not break existing stuff
+    endif()
+    set(PYTHON_DIR_FULL ${CMAKE_CURRENT_SOURCE_DIR}/${d})
+    if(NOT IS_DIRECTORY ${PYTHON_DIR_FULL})
+      message(WARNING "enable_python: Python directory ${PYTHON_DIR_FULL} not found")
+    else()
+      list(APPEND PACKAGE_PYTHONPATH ${PYTHON_DIR_FULL})
+    endif()
+  endforeach()
+
 
   configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
     ${CMAKE_BINARY_DIR}/gen/py/${pkg_name}/__init__.py
