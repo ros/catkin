@@ -4,10 +4,10 @@ from __future__ import print_function
 import pprint, sys, os
 
 # print("%s" % sys.argv)
-PREFIX = sys.argv[1]
+STACKNAME = sys.argv[1]
 outfile = sys.argv[3]
 out = open(outfile, "w")
-#print("Interrogating setup.py for package %s into %s " % (PREFIX, outfile),
+#print("Interrogating setup.py for package %s into %s " % (STACKNAME, outfile),
 #      file=sys.stderr)
 
 def mysetup(*args, **kwargs):
@@ -15,16 +15,18 @@ def mysetup(*args, **kwargs):
     if 'version' not in kwargs:
         print("""
     *** Unable to find 'version' in setup.py of %s
-""" % PREFIX)
+""" % STACKNAME)
         raise RuntimeError("version not found in setup.py")
 
-    print(r'set(%s_VERSION "%s")' % (PREFIX, kwargs['version']), file=out)
-    print(r'set(%s_SCRIPTS "%s")' % (PREFIX,
+    print(r'set(%s_VERSION "%s")' % (STACKNAME, kwargs['version']), file=out)
+    print(r'set(%s_SCRIPTS "%s")' % (STACKNAME,
                                      ';'.join(kwargs.get('scripts', []))), file=out)
-    pkg_dir = kwargs.get('package_dir', {'':''})
-    allprefix=''
-    if '' in pkg_dir:
-        allprefix=pkg_dir['']
+
+    if 'package_dir' not in kwargs:
+        raise RuntimeError(r'package_dir not in setup.py', file=sys.stderr)
+
+    package_dir = kwargs['package_dir']
+    allprefix=package_dir.get('', None)
 
     pkgs = kwargs.get('packages', [])
     resolved_pkgs = []
@@ -32,18 +34,8 @@ def mysetup(*args, **kwargs):
         if allprefix:
             resolved_pkgs += [os.path.join(allprefix, pkg)]
         else:
-            resolved_pkgs += []
-    print(r'set(%s_PACKAGES "%s")' % (PREFIX, ';'.join(pkgs)), file=out)
-
-    if 'package_dir' not in kwargs:
-        print(r'package_dir not in setup.py', file=sys.stderr)
-        sys.exit(1)
-    if '' not in kwargs['package_dir'].keys():
-        print(r'Error: empty string not in package_dir: %s\n(not yet supported)' % kwargs['package_dir'],
-              file=sys.stderr)
-        sys.exit(1)
-
-    print(r'set(%s_PACKAGE_DIR "%s")' % (PREFIX, kwargs['package_dir']['']), file=out)
+            resolved_pkgs += [package_dir[pkg]]
+    print(r'set(%s_PACKAGES "%s")' % (STACKNAME, ';'.join(resolved_pkgs)), file=out)
 
 class Dummy: pass
 

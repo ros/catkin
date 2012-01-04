@@ -4,14 +4,18 @@ Catkin cmake macro reference
 .. cmake:macro::  catkin_project(projectname [parameters])
 
    :param projectname: requires the same value as passed to cmake's ``project()``
-   :param VERSION: the version in MM.NN.PP format
    :param INCLUDE_DIRS: source-relative path to C/C++ headers
    :param LIBRARIES: names of library targets
    :param MSG_DIRS: source-relative paths to directories containing messages
    :param PYTHONPATH: source-relative paths to directory containing
       static python code.  A "thunk" will be created to this (source)
       directory from the build directory if :cmake:macro:`enable_python` is called.
-
+   :param CFG_EXTRAS: Any extra cmake stuff that should be accessible
+      to users of the project.  This file should live in subdirectory
+      'cmake' and have extension ``.in``.  It will be expanded by cmake's
+      ``configure_file()`` and made available to clients in both the
+      install and build spaces: be sure it works both ways (by checking
+      ``proj_SOURCE_DIR``, which is not set in the install case)
    :outvar PROJECT_SHARE_INSTALL_PREFIX: set to
       ``CMAKE_INSTALL_PREFIX/share/${PROJECT_NAME}`` by default.  For
       use with cmake ``install()`` macro.
@@ -24,22 +28,44 @@ Catkin cmake macro reference
 
    ::
 
-     catkin_project(c
-       VERSION 0.0.1
+     catkin_project(proj
        INCLUDE_DIRS include
-       LIBRARIES c-one c-two
+       LIBRARIES proj-one proj-two
        MSG_DIRS msg
+       CFG_EXTRAS proj-extras.cmake
        )
 
 .. cmake:macro:: enable_python(projectname)
 
-   :param projectname: Name of project, requires same value as passed to cmake ``project()``
+   :param projectname: Name of project, requires same value as passed
+      to cmake ``project()``
 
    Creates forwarding python :term:`pkgutil` infrastructure that "points"
    from the part of the build directory that holds :term:`generated
    code` (python) back to the source directories that hold
    :term:`static code`.
 
+   In addition, this will provoke that the python distutils' file
+   ``setup.py`` is interrogated by catkin and used during
+   installation.  See :ref:`setup_dot_py_handling`.
+
+.. cmake:macro:: catkin_stack()
+
+   `Optional.  No parameters.`
+
+   Reads the :ref:`stack.yaml` from the
+   current source dir and makes the version number available to cmake
+   via ``stackname_VERSION``.
+
+.. cmake:macro:: catkin_workspace()
+
+   `No parameters.`
+
+   Called only in catkin's ``toplevel.cmake``, normally symlinked to
+   from the workspace level directory (which contains multiple
+   stacks).  This provokes the traversal of the stack directories
+   based on the dependencies specified in the ``Depends`` field of
+   their respective ``stack.yaml`` files.
 
 Documentation Macros
 ^^^^^^^^^^^^^^^^^^^^
@@ -93,3 +119,38 @@ Macros pulled in from project genmsg
 
 
 
+
+
+Testing macros
+^^^^^^^^^^^^^^
+
+.. cmake:macro:: initialize_tests()
+
+   Initialize.  Tests.
+
+.. cmake:macro:: append_test_to_cache(CACHENAME [args])
+
+   `Internal use.`
+
+   :param CACHENAME: Name of cache.
+   :param [args]:    Command to be appended to cache file.
+
+   Use this when you want to append to a file that is recreated at
+   each cmake run.  ``CACHENAME`` need not be globally unique.  File
+   will be located in the ``PROJECT_BINARY_DIR`` cmake files directory
+   (`CMakeFiles`) as ``${PROJECT_NAME}.${CACHENAME}``.
+
+.. cmake:macro:: add_pyunit(FILE)
+
+   :param FILE: name of pyunit test file
+
+   Add file to test list and run under `rosunit` at testing time.
+
+
+.. cmake:macro:: add_gtest(EXE FILES)
+
+   :param EXE: executable name
+   :param FILES: list of gtest .cpp files
+
+   Add an executable `EXE` build from `FILES` and link to gtest.  Run under
+   `rosunit` when test target is built.

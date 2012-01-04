@@ -17,4 +17,4 @@ foreach(subdir
   add_subdirectory(${subdir})
 endforeach()
 
-catkin_package(catkin_test)
+catkin_stack()

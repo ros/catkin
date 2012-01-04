@@ -52,10 +52,8 @@ install(PROGRAMS
   DESTINATION ${CMAKE_INSTALL_PREFIX}
   )
 
-catkin_package(catkin)
 enable_python(catkin)
 
-stamp(cmake/catkin_generate_debian.py)
 stamp(cmake/stack_get.py)
 
 sphinx(${CMAKE_CURRENT_SOURCE_DIR}/doc ${CMAKE_CURRENT_BINARY_DIR}/doc)
