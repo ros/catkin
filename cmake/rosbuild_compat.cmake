@@ -2,7 +2,10 @@
 #  used to thunk out to catkin, from rosbuild cmakelists files.
 #  For saving time during transition.
 #
-set(ENV{ROS_ROOT} ${CMAKE_SOURCE_DIR}/ros)
+
+#EAR: setting ENV is frowned upon, this has global scope ...
+#please use the env.sh script if you require ROS_ROOT to be set when running scripts
+#set(ENV{ROS_ROOT} ${CMAKE_SOURCE_DIR}/ros)
 
 cmake_policy(SET CMP0003 NEW)
 cmake_policy(SET CMP0011 NEW)
