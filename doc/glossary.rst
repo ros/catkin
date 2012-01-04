@@ -12,7 +12,7 @@ Glossary
    stack
         unit of installation.  These get made in to debs.
 
-   package 
+   package
         generally something "smaller" than a stack... but a package
         can be a stack.
 
@@ -21,16 +21,16 @@ Glossary
         ``CMakeLists.txt`` that calls CMake's ``project()`` macro.  These can next.
 
    generated code
-        Code generated during the build process, typically by a message code generator package.  
+        Code generated during the build process, typically by a message code generator package.
         May or may not require compilation.
 
    static code
-        Code typed in by a developer, contrast :term:`generated code`        
+        Code typed in by a developer, contrast :term:`generated code`
 
    config-mode infrastructure
         Files named ``<project>-config.cmake`` and
         ``<project>-config-version.cmake`` which are used by cmake's
-        ``find_package()`` in "config mode".  
+        ``find_package()`` in "config mode".
 
    pkgutil
         Nifty python package:
