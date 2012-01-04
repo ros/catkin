@@ -21,6 +21,8 @@ A typical stack will contain, at the top level::
   project1/
   project2/
 
+.. _stack.yaml:
+
 stack.yaml
 ^^^^^^^^^^
 
@@ -191,4 +193,7 @@ vestigial*).  The ``VERSION`` argument is vestigial.  The
 targets that will appear in the ``ROS_LIBRARIES`` of other projects
 that search for you via ``find_package``.  Currently this will break
 if the logical target names are not the same as the installed names.
+
+
+
 

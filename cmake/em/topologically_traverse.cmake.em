@@ -22,8 +22,7 @@ def read_control_file(source_dir, control_file):
     if 'ALL' not in enabled_projects and pkg_name not in enabled_projects:
         return
     pkgs[pkg_name] = p = Pkg(path=source_dir)
-    dd = dict(PackagePrefix='')
-    p.depends = em.expand(stackyaml.get('Depends', ''),**dd)
+    p.depends = stackyaml.get('Depends', '')
     if type(p.depends) == str:
         p.depends = set([x.strip() for x in p.depends.split(',') if len(x.strip()) > 0])
     else:
