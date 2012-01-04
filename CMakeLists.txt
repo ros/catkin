@@ -50,7 +50,7 @@ install(PROGRAMS
   DESTINATION ${CMAKE_INSTALL_PREFIX}
   )
 
-export_python_dirs(python)
+export_python(python)
 
 stamp(cmake/stack_get.py)
 

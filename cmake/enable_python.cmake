@@ -1,5 +1,5 @@
 # Give directories with python stuff as arguments (only relative directories)
-function(export_python_dirs)
+function(catkin_export_python)
   assert(PROJECT_NAME)
 
   # Use PROJECT_NAME as pkg_name
@@ -94,5 +94,5 @@ stamp(${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py)
 
 function(enable_python)
   message(WARNING "CMAKE macro enable_python replaced by export_python_dirs")
-  export_python_dirs(${ARGN})
+  catkin_export_python(${ARGN})
 endfunction()
