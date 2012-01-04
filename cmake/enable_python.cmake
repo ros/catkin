@@ -48,7 +48,7 @@ function(enable_python pkg_name)
 
     foreach(pkg ${${pkg_name}_PACKAGES})
       get_filename_component(name ${pkg} NAME)
-      execute_process(COMMAND /bin/ln -s
+      execute_process(COMMAND /bin/ln -sf
         ${CMAKE_CURRENT_SOURCE_DIR}/${pkg} ${CMAKE_BINARY_DIR}/lib/${name})
     endforeach()
 
@@ -61,7 +61,7 @@ function(enable_python pkg_name)
       endif()
       if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${name})
         message(STATUS "   Making toplevel symlink for python script ${name}")
-        execute_process(COMMAND /bin/ln -s
+        execute_process(COMMAND /bin/ln -sf
           ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_BINARY_DIR}/bin/${name})
       endif()
     endforeach()
