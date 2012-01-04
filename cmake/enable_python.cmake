@@ -28,12 +28,17 @@ function(enable_python pkg_name)
 
     stamp(${${pkg_name}_SOURCE_DIR}/setup.py)
 
-    execute_process(COMMAND
+    set(CMD
       ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
       ${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py
       ${pkg_name}
       ${${pkg_name}_SOURCE_DIR}/setup.py
       ${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake
+      )
+
+    # message("IN ${pkg_name}:  ${CMD}")
+    execute_process(COMMAND
+      ${CMD}
       RESULT_VARIABLE RES
       )
     if (RES)
