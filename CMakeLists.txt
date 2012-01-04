@@ -50,7 +50,7 @@ install(PROGRAMS
   DESTINATION ${CMAKE_INSTALL_PREFIX}
   )
 
-enable_python(python)
+export_python_dirs(python)
 
 stamp(cmake/stack_get.py)
 
