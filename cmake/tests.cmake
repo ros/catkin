@@ -12,12 +12,9 @@ macro(initialize_tests)
   set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit)
 
   if(NOT TARGET clean-test-results)
-    # Clean out previous test results before running tests.  Use bash
-    # conditional to ignore failures (most often happens when a stale NFS
-    # handle lingers in the test results directory), because CMake doesn't
-    # seem to be able to do it.
+    # Clean out previous test results before running tests.
     add_custom_target(clean-test-results
-      COMMAND /bin/rm -rf ${CMAKE_BINARY_DIR}/test_results
+      COMMAND cmake -E remove_directory ${CMAKE_BINARY_DIR}/test_results
       )
 
     # Make the tests target depend on clean-test-results, which will ensure
@@ -38,6 +35,7 @@ macro(append_test_to_cache CACHENAME)
     # Write out the directory that we'll use as CWD later when running
     # tests
     file(APPEND ${cachefile} "${PROJECT_SOURCE_DIR}\n")
+    set(${PROJECT_NAME}_CACHE TRUE)
     set(${PROJECT_NAME}_CACHE TRUE PARENT_SCOPE)
     # One test target per project
     add_custom_target(${PROJECT_NAME}_run_tests
@@ -55,39 +53,53 @@ macro(append_test_to_cache CACHENAME)
 endmacro()
 
 function(add_pyunit file)
+  # Check that we can find rosunit
+  find_program(rosunit_exe rosunit)
+  if(NOT rosunit_exe)
+    message(FATAL_ERROR "Can't find rosunit executable")
+  endif()
+
   # Look for optional TIMEOUT argument, #2645
   parse_arguments(_pyunit "TIMEOUT" "" ${ARGN})
   if(NOT _pyunit_TIMEOUT)
     set(_pyunit_TIMEOUT 60.0)
-  endif(NOT _pyunit_TIMEOUT)
+  endif()
 
   # Check that the file exists, #1621
   set(_file_name _file_name-NOTFOUND)
-  find_file(_file_name ${file} ${PROJECT_SOURCE_DIR})
+  find_file(_file_name ${file} 
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+            NO_DEFAULT_PATH)
   if(NOT _file_name)
     message(FATAL_ERROR "Can't find pyunit file \"${file}\"")
-  endif(NOT _file_name)
+  endif()
 
   # We look for ROS_TEST_COVERAGE=1
   # to indicate that coverage reports are being requested.
   if("$ENV{ROS_TEST_COVERAGE}" STREQUAL "1")
     set(_covarg "--cov")
-  else("$ENV{ROS_TEST_COVERAGE}" STREQUAL "1")
+  else()
     set(_covarg)
-  endif("$ENV{ROS_TEST_COVERAGE}" STREQUAL "1")
+  endif()
 
   # Create a legal test name, in case the target name has slashes in it
   string(REPLACE "/" "_" _testname ${file})
   # We use rostest to call the executable to get process control, #1629
-  append_test_to_cache(catkin-tests "${rosunit_path}/scripts/rosunit --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg}")
-endfunction(add_pyunit)
+  append_test_to_cache(catkin-tests "${rosunit_exe} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg}")
+endfunction()
 
 function(add_gtest exe)
+  # Check that we can find rosunit
+  find_program(rosunit_exe rosunit)
+  if(NOT rosunit_exe)
+    message(FATAL_ERROR "Can't find rosunit executable")
+  endif()
+
   # Look for optional TIMEOUT argument, #2645
   parse_arguments(_gtest "TIMEOUT" "" ${ARGN})
   if(NOT _gtest_TIMEOUT)
     set(_gtest_TIMEOUT 60.0)
-  endif(NOT _gtest_TIMEOUT)
+  endif()
 
   # Create the program, with basic + gtest build flags
   find_package(GTest REQUIRED)
@@ -102,5 +114,35 @@ function(add_gtest exe)
   string(REPLACE "/" "_" _testname ${exe})
   get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
   # We use rosunit to call the executable to get process control, #1629, #3112
-  append_test_to_cache(catkin-tests "${rosunit_path}/scripts/rosunit --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe}")
+  append_test_to_cache(catkin-tests "${rosunit_exe} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe}")
+endfunction()
+
+function(add_nosetests dir)
+  # Check that nosetests is installed.
+  find_program(nosetests_path nosetests)
+  if(NOT nosetests_path)
+    message(FATAL_ERROR "Can't find nosetests executable")
+  endif()
+
+  # Check that the directory exists
+  set(_dir_name _dir_name-NOTFOUND)
+  find_file(_dir_name ${dir} 
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+            NO_DEFAULT_PATH)
+  if(NOT _dir_name)
+    message(FATAL_ERROR "Can't find nosetests dir \"${dir}\"")
+  endif()
+
+  # We look for ROS_TEST_COVERAGE=1
+  # to indicate that coverage reports are being requested.
+  if("$ENV{ROS_TEST_COVERAGE}" STREQUAL "1")
+    set(_covarg "--with-coverage")
+  else()
+    set(_covarg)
+  endif()
+
+  set(output_dir_name ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME})
+  append_test_to_cache(catkin-tests "cmake -E make_directory ${output_dir_name}")
+  string(REPLACE "/" "." output_file_name ${dir})
+  append_test_to_cache(catkin-tests "${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg}")
 endfunction()
