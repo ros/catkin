@@ -66,6 +66,8 @@ function(catkin_export_python)
     endif()
     include(${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
 
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
     foreach(pkg ${${pkg_name}_PACKAGES})
       get_filename_component(name ${pkg} NAME)
       #prevent recursive sim links by checking first?
