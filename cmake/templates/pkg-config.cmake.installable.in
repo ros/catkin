@@ -8,10 +8,6 @@ if (NOT "X@PACKAGE_INCLUDE_DIRS@" STREQUAL "X")
   set(@PACKAGE_NAME@_INCLUDE_DIRS @PKG_INCLUDE_PREFIX@/include) #TODO FIX this.
 endif()
 
-if (@PACKAGE_NAME@_SOURCE_DIR)
-  set(@PACKAGE_NAME@_PYTHONPATH ${@PACKAGE_NAME@_SOURCE_DIR}/@PACKAGE_PYTHONPATH@)
-endif()
-
 foreach(lib @PACKAGE_LIBRARIES@)
   set(onelib "${lib}-NOTFOUND")
   find_library(onelib ${lib}

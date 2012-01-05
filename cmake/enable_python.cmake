@@ -1,10 +1,30 @@
-function(enable_python pkg_name)
-  set(PACKAGE_NAME ${pkg_name})
-  if(${pkg_name}_PYTHONPATH)
-    set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${${pkg_name}_PYTHONPATH})
-  else()
-    set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/src/${pkg_name})
+# Give directories with python stuff as arguments (only relative directories)
+function(catkin_export_python)
+  assert(PROJECT_NAME)
+
+  # Use PROJECT_NAME as pkg_name
+  set(pkg_name ${PROJECT_NAME})
+
+  # Default python dir is 'src'
+  if(NOT ARGN)
+    set(ARGN "src")
   endif()
+
+  # Prepend CMAKE_CURRENT_SOURCE_DIR to all relative python directories and create PYTHON_PATH
+  set(PACKAGE_PYTHONPATH "")
+  foreach(d ${ARGN})
+    if(d STREQUAL PROJECT_NAME)
+      message(WARNING "enable_python: Don't specify package name anymore")
+      set(d "src") #tmp hack: translate pkg name to 'src' to not break existing stuff
+    endif()
+    set(PYTHON_DIR_FULL ${CMAKE_CURRENT_SOURCE_DIR}/${d})
+    if(NOT IS_DIRECTORY ${PYTHON_DIR_FULL})
+      message(WARNING "enable_python: Python directory ${PYTHON_DIR_FULL} not found")
+    else()
+      list(APPEND PACKAGE_PYTHONPATH ${PYTHON_DIR_FULL})
+    endif()
+  endforeach()
+
 
   configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
     ${CMAKE_BINARY_DIR}/gen/py/${pkg_name}/__init__.py
@@ -28,18 +48,29 @@ function(enable_python pkg_name)
 
     stamp(${${pkg_name}_SOURCE_DIR}/setup.py)
 
-    execute_process(COMMAND
+    set(CMD
       ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
       ${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py
       ${pkg_name}
       ${${pkg_name}_SOURCE_DIR}/setup.py
       ${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake
+      )
+
+    # message("IN ${pkg_name}:  ${CMD}")
+    execute_process(COMMAND
+      ${CMD}
       RESULT_VARIABLE RES
       )
     if (RES)
       message(FATAL_ERROR "Attempt to interrogate setup.py of project ${pkg_name} returned ${RES}")
     endif()
     include(${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
+
+    foreach(pkg ${${pkg_name}_PACKAGES})
+      get_filename_component(name ${pkg} NAME)
+      execute_process(COMMAND /bin/ln -sf
+        ${CMAKE_CURRENT_SOURCE_DIR}/${pkg} ${CMAKE_BINARY_DIR}/lib/${name})
+    endforeach()
 
     foreach(script ${${pkg_name}_SCRIPTS})
       get_filename_component(name ${script} NAME)
@@ -50,7 +81,7 @@ function(enable_python pkg_name)
       endif()
       if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${name})
         message(STATUS "   Making toplevel symlink for python script ${name}")
-        execute_process(COMMAND /bin/ln -s
+        execute_process(COMMAND /bin/ln -sf
           ${CMAKE_CURRENT_SOURCE_DIR}/${script} ${CMAKE_BINARY_DIR}/bin/${name})
       endif()
     endforeach()
@@ -60,3 +91,8 @@ function(enable_python pkg_name)
 endfunction()
 
 stamp(${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py)
+
+function(enable_python)
+  message(WARNING "CMAKE macro enable_python replaced by catkin_export_python")
+  catkin_export_python(${ARGN})
+endfunction()

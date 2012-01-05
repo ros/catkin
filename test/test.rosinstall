@@ -66,11 +66,11 @@
 
 - hg:
     local-name: rospkg
-    uri: http://kforge.ros.org/rosrelease/rospkg
+    uri: https://kforge.ros.org/rosrelease/rospkg
 
 - hg:
     local-name: rospack
-    uri: http://kforge.ros.org/rosrelease/rospack
+    uri: https://kforge.ros.org/rosrelease/rospack
 
 - svn:
     local-name: rx

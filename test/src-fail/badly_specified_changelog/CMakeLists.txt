@@ -4,4 +4,3 @@ project(badly_specified_changelog)
 find_package(catkin)
 
 catkin_project(badly_specified_changelog)
-catkin_package(badly_specified_changelog)

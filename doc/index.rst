@@ -39,6 +39,7 @@ Contents
    :maxdepth: 1
 
    walkthrough
+   supposed
    current_goal
    layout
    macros
