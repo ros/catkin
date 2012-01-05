@@ -68,8 +68,13 @@ function(catkin_export_python)
 
     foreach(pkg ${${pkg_name}_PACKAGES})
       get_filename_component(name ${pkg} NAME)
-      execute_process(COMMAND /bin/ln -sf
-        ${CMAKE_CURRENT_SOURCE_DIR}/${pkg} ${CMAKE_BINARY_DIR}/lib/${name})
+      #prevent recursive sim links by checking first?
+      #TODO can this be done by using a different arg syntax to ln
+      #ln source/ target/ ?
+      if(NOT EXISTS ${CMAKE_BINARY_DIR}/lib/${name})
+        execute_process(COMMAND /bin/ln -sf
+          ${CMAKE_CURRENT_SOURCE_DIR}/${pkg} ${CMAKE_BINARY_DIR}/lib/${name})
+      endif()
     endforeach()
 
     foreach(script ${${pkg_name}_SCRIPTS})
