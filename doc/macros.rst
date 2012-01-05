@@ -9,7 +9,7 @@ Catkin cmake macro reference
    :param MSG_DIRS: source-relative paths to directories containing messages
    :param PYTHONPATH: source-relative paths to directory containing
       static python code.  A "thunk" will be created to this (source)
-      directory from the build directory if :cmake:macro:`enable_python` is called.
+      directory from the build directory if :cmake:macro:`catkin_export_python` is called.
    :param CFG_EXTRAS: Any extra cmake stuff that should be accessible
       to users of the project.  This file should live in subdirectory
       'cmake' and have extension ``.in``.  It will be expanded by cmake's
@@ -35,7 +35,7 @@ Catkin cmake macro reference
        CFG_EXTRAS proj-extras.cmake
        )
 
-.. cmake:macro:: enable_python(projectname)
+.. cmake:macro:: catkin_export_python(projectname)
 
    :param projectname: Name of project, requires same value as passed
       to cmake ``project()``
