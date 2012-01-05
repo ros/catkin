@@ -54,7 +54,7 @@ endmacro()
 
 function(add_pyunit file)
   # Check that we can find rosunit
-  find_program(rosunit_exe rosunit)
+  find_program(rosunit_exe rosunit PATHS ${CMAKE_BINARY_DIR}/bin)
   if(NOT rosunit_exe)
     message(FATAL_ERROR "Can't find rosunit executable")
   endif()
@@ -90,7 +90,7 @@ endfunction()
 
 function(add_gtest exe)
   # Check that we can find rosunit
-  find_program(rosunit_exe rosunit)
+  find_program(rosunit_exe rosunit PATHS ${CMAKE_BINARY_DIR}/bin)
   if(NOT rosunit_exe)
     message(FATAL_ERROR "Can't find rosunit executable")
   endif()
