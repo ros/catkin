@@ -17,9 +17,7 @@ Catkin cmake macro reference
       ``CMAKE_INSTALL_PREFIX/share/${PROJECT_NAME}`` by default.  For
       use with cmake ``install()`` macro.
 
-   Create buildspace :term:`config-mode infrastructure`.
-
-   This macro does a lot of other stuff.  Clean me up.
+   Create buildspace :term:`config-mode infrastructure`.  This allows
 
    .. rubric:: Example
 
@@ -151,3 +149,40 @@ Testing macros
 
    Add an executable `EXE` build from `FILES` and link to gtest.  Run under
    `rosunit` when test target is built.
+
+
+Convenience macros
+^^^^^^^^^^^^^^^^^^
+
+.. cmake:macro:: install_matching_to_share(globexpr)
+
+   :param globexpr: Glob expression (shell style)
+
+   For each file `F` in subdirectories of ``CMAKE_CURRENT_SOURCE_DIR``
+   that (recursively) match globbing expression `globexpr`, install
+   `F` to ``share/P/F``, where ``P`` is the name of the parent
+   directory of `F`
+
+   .. rubric:: Example
+
+   For a directory containing::
+
+     src/
+       CMakeLists.txt
+       foo/
+         bar.txt
+       shimmy/
+         baz/
+           bam.txt
+
+   A call to ``install_matching_to_share(b??.txt)`` in
+   ``src/CMakeLists.txt`` will create an installation of::
+
+     <CMAKE_INSTALL_PREFIX>/
+       share/
+         foo/
+           bar.txt
+         baz/
+           bam.txt
+
+
