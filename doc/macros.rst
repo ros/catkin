@@ -186,3 +186,16 @@ Convenience macros
            bam.txt
 
 
+.. cmake:macro:: catkin_add_env_hooks(buildspace_file installspace_file)
+
+   :param buildspace_file:  environment file (bourne-shell syntax)
+     to be expanded and added to build environment
+   :param installspace_file:  as above, but installation version
+
+   Find ``buildspace_file.in`` and expand.  Place where it will be
+   read by generated ``setup.sh`` and friends.
+
+   Similarly, install expanded ``installspace_file.in`` where it will
+   be read by the installed ``setup.sh`` and friends.
+
+

@@ -40,6 +40,7 @@ foreach(f
     catkin_project
     catkin_workspace
     catkin_export_python
+    catkin_add_env_hooks
     langs
     rosbuild_compat
     tools/doxygen
