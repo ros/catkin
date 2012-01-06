@@ -18,11 +18,6 @@ if (NOT "X@PACKAGE_INCLUDE_DIRS@" STREQUAL "X")
   CACHE FILEPATH "Includes for @PACKAGE_NAME@")
 endif()
 
-if (@PACKAGE_NAME@_SOURCE_DIR)
-  set(@PACKAGE_NAME@_PYTHONPATH ${@PACKAGE_NAME@_SOURCE_DIR}/@PACKAGE_PYTHONPATH@
-    CACHE FILEPATH "python path for @PACKAGE_NAME@")
-endif()
-
 foreach(lib @PACKAGE_LIBRARIES@)
   if (NOT TARGET ${lib})
     message(FATAL_ERROR "In project ${PROJECT_NAME} I'm looking for ${lib} via find_package.  The source for @PACKAGE_NAME@ is present in workspace, but ${lib} is not a target.  Did you find_package() this thing before the subdirectory containing its code is included?")

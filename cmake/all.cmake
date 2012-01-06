@@ -38,7 +38,7 @@ foreach(f
     catkin_stack
     catkin_project
     catkin_workspace
-    enable_python
+    catkin_export_python
     langs
     rosbuild_compat
     tools/doxygen

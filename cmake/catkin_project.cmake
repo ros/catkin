@@ -10,6 +10,10 @@ function(catkin_project PACKAGE_NAME)
     ""
     ${ARGN})
 
+  if (PACKAGE_PYTHONPATH)
+    message(WARNING "PYTHONPATH in catkin_project is deprecated. Please remove for pkg: ${PACKAGE_NAME}")
+  endif()
+
   log(2 "catkin_project ${PACKAGE_NAME} at version ${${PACKAGE_NAME}_VERSION} in @CMAKE_INSTALL_PREFIX@")
   set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
   set(PACKAGE_NAME ${PACKAGE_NAME})
@@ -23,10 +27,6 @@ function(catkin_project PACKAGE_NAME)
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
   set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/cmake)
   set(PACKAGE_MSG_DIRS ${PACKAGE_MSG_DIRS})
-  if (PACKAGE_PYTHONPATH)
-    set(PACKAGE_PYTHONPATH ${PACKAGE_PYTHONPATH})
-    set(${PACKAGE_NAME}_PYTHONPATH ${PACKAGE_PYTHONPATH} CACHE FILEPATH "python path")
-  endif()
 
   #
   # Versions find_packageable from the buildspace

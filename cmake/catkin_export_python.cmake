@@ -1,10 +1,25 @@
-function(enable_python pkg_name)
-  set(PACKAGE_NAME ${pkg_name})
-  if(${pkg_name}_PYTHONPATH)
-    set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${${pkg_name}_PYTHONPATH})
-  else()
-    set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/src/${pkg_name})
-  endif()
+# Give directories with python stuff as arguments (only relative directories)
+function(catkin_export_python)
+  assert(PROJECT_NAME)
+
+  # Use PROJECT_NAME as pkg_name
+  set(pkg_name ${PROJECT_NAME})
+
+  # Prepend CMAKE_CURRENT_SOURCE_DIR to all relative python directories and create PYTHON_PATH
+  set(PACKAGE_PYTHONPATH "")
+  foreach(d ${ARGN})
+    if(d STREQUAL PROJECT_NAME)
+      message(WARNING "catkin_export_python: Don't specify package name anymore")
+      set(d "src") #tmp hack: translate pkg name to 'src' to not break existing stuff
+    endif()
+    set(PYTHON_DIR_FULL ${CMAKE_CURRENT_SOURCE_DIR}/${d})
+    if(NOT IS_DIRECTORY ${PYTHON_DIR_FULL})
+      message(WARNING "catkin_export_python: Python directory ${PYTHON_DIR_FULL} not found")
+    else()
+      list(APPEND PACKAGE_PYTHONPATH ${PYTHON_DIR_FULL})
+    endif()
+  endforeach()
+
 
   configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
     ${CMAKE_BINARY_DIR}/gen/py/${pkg_name}/__init__.py
@@ -46,10 +61,17 @@ function(enable_python pkg_name)
     endif()
     include(${${pkg_name}_BINARY_DIR}/setup_py_interrogation.cmake)
 
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
     foreach(pkg ${${pkg_name}_PACKAGES})
       get_filename_component(name ${pkg} NAME)
-      execute_process(COMMAND /bin/ln -sf
-        ${CMAKE_CURRENT_SOURCE_DIR}/${pkg} ${CMAKE_BINARY_DIR}/lib/${name})
+      #prevent recursive sim links by checking first?
+      #TODO can this be done by using a different arg syntax to ln
+      #ln source/ target/ ?
+      if(NOT EXISTS ${CMAKE_BINARY_DIR}/lib/${name})
+        execute_process(COMMAND /bin/ln -sf
+          ${CMAKE_CURRENT_SOURCE_DIR}/${pkg} ${CMAKE_BINARY_DIR}/lib/${name})
+      endif()
     endforeach()
 
     foreach(script ${${pkg_name}_SCRIPTS})
@@ -71,3 +93,8 @@ function(enable_python pkg_name)
 endfunction()
 
 stamp(${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py)
+
+function(enable_python)
+  message(WARNING "CMAKE macro enable_python replaced by catkin_export_python")
+  catkin_export_python(${ARGN})
+endfunction()

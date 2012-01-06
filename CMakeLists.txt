@@ -7,9 +7,7 @@ set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
-catkin_project(catkin
-  PYTHONPATH python
-  )
+catkin_project(catkin)
 
 install_cmake_config_version(ROS 12.04)
 
@@ -52,7 +50,7 @@ install(PROGRAMS
   DESTINATION ${CMAKE_INSTALL_PREFIX}
   )
 
-enable_python(catkin)
+catkin_export_python(python)
 
 stamp(cmake/stack_get.py)
 
