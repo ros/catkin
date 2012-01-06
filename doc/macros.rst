@@ -7,9 +7,6 @@ Catkin cmake macro reference
    :param INCLUDE_DIRS: source-relative path to C/C++ headers
    :param LIBRARIES: names of library targets
    :param MSG_DIRS: source-relative paths to directories containing messages
-   :param PYTHONPATH: source-relative paths to directory containing
-      static python code.  A "thunk" will be created to this (source)
-      directory from the build directory if :cmake:macro:`catkin_export_python` is called.
    :param CFG_EXTRAS: Any extra cmake stuff that should be accessible
       to users of the project.  This file should live in subdirectory
       'cmake' and have extension ``.in``.  It will be expanded by cmake's
@@ -35,14 +32,14 @@ Catkin cmake macro reference
        CFG_EXTRAS proj-extras.cmake
        )
 
-.. cmake:macro:: catkin_export_python(projectname)
+.. cmake:macro:: catkin_export_python([dir1 dir2 ...])
 
-   :param projectname: Name of project, requires same value as passed
-      to cmake ``project()``
+   :param dirs: list of directories given relative to
+      CMAKE_CURRENT_SOURCE_DIR containing python code
 
    Creates forwarding python :term:`pkgutil` infrastructure that "points"
    from the part of the build directory that holds :term:`generated
-   code` (python) back to the source directories that hold
+   code` (python) back to the specified source directories that hold
    :term:`static code`.
 
    In addition, this will provoke that the python distutils' file
