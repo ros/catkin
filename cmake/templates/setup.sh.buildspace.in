@@ -3,7 +3,7 @@ export PATH=@CMAKE_BINARY_DIR@/bin:@catkin_SOURCE_DIR@/bin:$PATH
 export CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@
 export CATKIN_SOURCE_DIR=@CMAKE_SOURCE_DIR@
 
-for envfile in $CATKIN_BINARY_DIR/etc/catkin/env.d/*
+for envfile in $CATKIN_BINARY_DIR/etc/catkin/profile.d/*
 do
   . $envfile
 done

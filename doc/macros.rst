@@ -192,10 +192,16 @@ Convenience macros
      to be expanded and added to build environment
    :param installspace_file:  as above, but installation version
 
-   Find ``buildspace_file.in`` and expand.  Place where it will be
-   read by generated ``setup.sh`` and friends.
+   Find ``buildspace_file.in`` and expand to
+   ``CMAKE_BINARY_DIR/etc/catkin/profile.d/``, where it will be read
+   by generated ``setup.sh`` and friends.
 
-   Similarly, install expanded ``installspace_file.in`` where it will
-   be read by the installed ``setup.sh`` and friends.
+   Similarly, install expanded ``installspace_file.in`` to
+   ``CMAKE_INSTALL_PREFIX``/etc/catkin/profile.d, where it will be
+   read by the installed ``setup.sh`` and friends.
 
-
+   **NOTE** These files share a single directory... be carefult to
+   give the file a unique name.  Typically ``NNprojectname.sh`` is
+   used, where NN can define when something should be run (the files
+   are read in alphanumeric order) and ``projectname`` serves to
+   disambiguate in the event of collision.
