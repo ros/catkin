@@ -1,5 +1,6 @@
 macro(initialize_tests)
   if(NOT TARGET tests)
+    message("TODO: use rostest-check-results to verify that result files were generated")
     add_custom_target(tests)
   endif()
   if(NOT TARGET test)
@@ -14,7 +15,7 @@ macro(initialize_tests)
   if(NOT TARGET clean-test-results)
     # Clean out previous test results before running tests.
     add_custom_target(clean-test-results
-      COMMAND cmake -E remove_directory ${CMAKE_BINARY_DIR}/test_results
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/test_results
       )
 
     # Make the tests target depend on clean-test-results, which will ensure
@@ -142,7 +143,26 @@ function(add_nosetests dir)
   endif()
 
   set(output_dir_name ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME})
-  append_test_to_cache(catkin-tests "cmake -E make_directory ${output_dir_name}")
+  append_test_to_cache(catkin-tests "${CMAKE_COMMAND} -E make_directory ${output_dir_name}")
   string(REPLACE "/" "." output_file_name ${dir})
   append_test_to_cache(catkin-tests "${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg}")
+endfunction()
+
+function(add_rostest file)
+  # Check that we can find rostest
+  find_program(rostest_exe rostest PATHS ${CMAKE_BINARY_DIR}/bin)
+  if(NOT rostest_exe)
+    message(FATAL_ERROR "Can't find rostest executable")
+  endif()
+
+  # Check that the file exists, #1621
+  set(_file_name _file_name-NOTFOUND)
+  find_file(_file_name ${file} 
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+            NO_DEFAULT_PATH)
+  if(NOT _file_name)
+    message(FATAL_ERROR "Can't find rostest file \"${file}\"")
+  endif()
+
+  append_test_to_cache(catkin-tests "${rostest_exe} ${_file_name}")
 endfunction()
