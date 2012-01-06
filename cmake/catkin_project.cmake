@@ -109,14 +109,17 @@ function(catkin_project PACKAGE_NAME)
     DESTINATION lib/pkgconfig
     )
 
-  em_expand(${catkin_EXTRAS_DIR}/templates/pkg-config.pc.context.in
-    ${CMAKE_CURRENT_BINARY_DIR}/pkg-config.pc.context.py
-    ${catkin_EXTRAS_DIR}/em/manifest.xml.em
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/manifest.xml)
+  string(TOLOWER ${PROJECT_NAME} project_lower)
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/manifest.xml
-    DESTINATION share/${PACKAGE_NAME}
-    )
+  if (EXISTS manifest.xml.in)
+    configure_file(manifest.xml.in
+      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/manifest.xml.in
+      @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/manifest.xml
+      DESTINATION share/${project_lower}
+      )
+  endif()
+
   #
   #  Versions to be installed
   #
@@ -129,7 +132,6 @@ function(catkin_project PACKAGE_NAME)
       )
   endforeach()
 
-  string(TOLOWER ${PROJECT_NAME} project_lower)
   if(EXISTS ${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config.cmake.in)
     configure_file(${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config.cmake

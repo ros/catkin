@@ -5,11 +5,6 @@ function(catkin_export_python)
   # Use PROJECT_NAME as pkg_name
   set(pkg_name ${PROJECT_NAME})
 
-  # Default python dir is 'src'
-  if(NOT ARGN)
-    set(ARGN "src")
-  endif()
-
   # Prepend CMAKE_CURRENT_SOURCE_DIR to all relative python directories and create PYTHON_PATH
   set(PACKAGE_PYTHONPATH "")
   foreach(d ${ARGN})

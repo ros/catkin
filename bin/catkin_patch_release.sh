@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
@@ -91,8 +91,11 @@ fi
 GBP_CLONE=$TMPDIR/gbp
 git clone -b catkin $GBP_REPO $GBP_CLONE
 assert_nonempty $GBP_CLONE
-if [ -z "$NEW_VERSION" ] ; then
-    get_latest_gbp_version $GBP_CLONE
+
+if [ $EXPECT_GBP_REPO_IS_UNINITIALIZED -eq 0 ] ; then
+    if [ -z "$NEW_VERSION" ] ; then
+        get_latest_gbp_version $GBP_CLONE
+    fi
 fi
 cd $GBP_CLONE
 if [ ! -f catkin.conf ] ; then
@@ -201,6 +204,9 @@ git-import-orig -u $NEW_VERSION $TMPDIR/export.tar.gz
 
 if [ $MERGE_CATKIN_BRANCH -ne 0 ] ; then
     status "Will now merge catkin branch into master."
+    #this appears to not do anything ....
+    #git merge --no-commit -X theirs catkin
+    #git commit --allow-empty -m "Merging catkin directory."
     git archive --format=tar catkin > $TMPDIR/catkin.tar
     tar -xvf $TMPDIR/catkin.tar
     git add .

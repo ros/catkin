@@ -56,7 +56,7 @@ Evolving Documentation Snippets
    find_package
    standards
    glossary
-
+   release
 
 Design sketch
 -------------
