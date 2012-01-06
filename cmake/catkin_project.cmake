@@ -111,15 +111,6 @@ function(catkin_project PACKAGE_NAME)
 
   string(TOLOWER ${PROJECT_NAME} project_lower)
 
-  if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/manifest.xml.in)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/manifest.xml.in
-      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/manifest.xml
-      @ONLY)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/manifest.xml
-      DESTINATION share/${project_lower}
-      )
-  endif()
-
   #
   #  Versions to be installed
   #
