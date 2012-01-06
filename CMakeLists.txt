@@ -30,7 +30,7 @@ configure_file(ros-config.buildspace.cmake.in
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cmake
   DESTINATION share/ros/cmake)
 
-install(DIRECTORY cmake/m
+install(DIRECTORY cmake
   DESTINATION share/catkin/cmake    #to be consistent, all catkin specific cmake should live under catkin.
   USE_SOURCE_PERMISSIONS
   )
