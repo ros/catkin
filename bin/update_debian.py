@@ -190,7 +190,11 @@ def find_deps(stack_yaml, rosdeb_db, distro):
             deps = [x.strip() for x in dep_def.split(' ') if len(x.strip()) > 0]
             ubuntu_deps.add(*deps)
         elif type(dep_def) == dict:
-            update_deps(ubuntu_deps, dep, dep_def[distro], distro) #recurse
+            if distro in dep_def:
+                update_deps(ubuntu_deps, dep, dep_def[distro], distro) #recurse
+            elif 'apt' in dep_def:
+                if 'packages' in dep_def['apt']:
+                    ubuntu_deps.add(*dep_def['apt']['packages'])
         else:
             raise RuntimeError("Poorly formatted rosdep for %s (type is %s) which isnt dict or str" % (dep, type(dep_def)))
     deps = stack_yaml['Depends']
