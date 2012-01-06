@@ -19,7 +19,12 @@ Catkin cmake macro reference
 
    Create buildspace :term:`config-mode infrastructure`.
 
-   This macro does a lot of other stuff.  Clean me up.
+   If a project contains a file ``manifest.xml.in``, it will be
+   expanded with cmake's ``configure_file(... @ONLY)`` (e.g. so that
+   ``@CMAKE_INSTALL_PREFIX@`` is expanded) and installed to
+   ``share/projectname/``.  The expanded file can be found in
+   :term:`cmake current files directory` if you need to have a peek at
+   the expansion before they are installed.
 
    .. rubric:: Example
 
