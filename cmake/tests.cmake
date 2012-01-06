@@ -14,7 +14,7 @@ macro(initialize_tests)
   if(NOT TARGET clean-test-results)
     # Clean out previous test results before running tests.
     add_custom_target(clean-test-results
-      COMMAND cmake -E remove_directory ${CMAKE_BINARY_DIR}/test_results
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/test_results
       )
 
     # Make the tests target depend on clean-test-results, which will ensure
@@ -142,7 +142,7 @@ function(add_nosetests dir)
   endif()
 
   set(output_dir_name ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME})
-  append_test_to_cache(catkin-tests "cmake -E make_directory ${output_dir_name}")
+  append_test_to_cache(catkin-tests "${CMAKE_COMMAND} -E make_directory ${output_dir_name}")
   string(REPLACE "/" "." output_file_name ${dir})
   append_test_to_cache(catkin-tests "${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg}")
 endfunction()
