@@ -29,6 +29,11 @@ function(catkin_project PACKAGE_NAME)
   # set(PACKAGE_MSG_DIRS ${PACKAGE_MSG_DIRS})
 
   #
+  # Default executable output location to "private".
+  #
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin PARENT_SCOPE)
+
+  #
   # Versions find_packageable from the buildspace
   #
   string(TOLOWER ${PACKAGE_NAME} package_lower)
