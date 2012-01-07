@@ -61,9 +61,13 @@ function(add_pyunit file)
   endif()
 
   # Look for optional TIMEOUT argument, #2645
-  parse_arguments(_pyunit "TIMEOUT" "" ${ARGN})
+  parse_arguments(_pyunit "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(NOT _pyunit_TIMEOUT)
     set(_pyunit_TIMEOUT 60.0)
+  endif()
+  if(_pyunit_WORKING_DIRECTORY)
+    set(_chdir_prefix "bash -c \"cd ${_pyunit_WORKING_DIRECTORY} &&")
+    set(_chdir_suffix "\"")
   endif()
 
   # Check that the file exists, #1621
@@ -86,7 +90,7 @@ function(add_pyunit file)
   # Create a legal test name, in case the target name has slashes in it
   string(REPLACE "/" "_" _testname ${file})
   # We use rostest to call the executable to get process control, #1629
-  append_test_to_cache(catkin-tests "${rosunit_exe} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rosunit_exe} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg} ${_chdir_suffix}")
 endfunction()
 
 function(add_gtest exe)
@@ -97,9 +101,13 @@ function(add_gtest exe)
   endif()
 
   # Look for optional TIMEOUT argument, #2645
-  parse_arguments(_gtest "TIMEOUT" "" ${ARGN})
+  parse_arguments(_gtest "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(NOT _gtest_TIMEOUT)
     set(_gtest_TIMEOUT 60.0)
+  endif()
+  if(_gtest_WORKING_DIRECTORY)
+    set(_chdir_prefix "bash -c \"cd ${_gtest_WORKING_DIRECTORY} &&")
+    set(_chdir_suffix "\"")
   endif()
 
   # Create the program, with basic + gtest build flags
@@ -115,7 +123,7 @@ function(add_gtest exe)
   string(REPLACE "/" "_" _testname ${exe})
   get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
   # We use rosunit to call the executable to get process control, #1629, #3112
-  append_test_to_cache(catkin-tests "${rosunit_exe} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rosunit_exe} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe} ${_chdir_suffix}")
 endfunction()
 
 function(add_nosetests dir)
@@ -123,6 +131,12 @@ function(add_nosetests dir)
   find_program(nosetests_path nosetests)
   if(NOT nosetests_path)
     message(FATAL_ERROR "Can't find nosetests executable")
+  endif()
+
+  parse_arguments(_nose "WORKING_DIRECTORY" "" ${ARGN})
+  if(_nose_WORKING_DIRECTORY)
+    set(_chdir_prefix "bash -c \"cd ${_nose_WORKING_DIRECTORY} &&")
+    set(_chdir_suffix "\"")
   endif()
 
   # Check that the directory exists
@@ -145,7 +159,7 @@ function(add_nosetests dir)
   set(output_dir_name ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME})
   append_test_to_cache(catkin-tests "${CMAKE_COMMAND} -E make_directory ${output_dir_name}")
   string(REPLACE "/" "." output_file_name ${dir})
-  append_test_to_cache(catkin-tests "${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg} ${_chdir_suffix}")
 endfunction()
 
 function(add_rostest file)
@@ -153,6 +167,12 @@ function(add_rostest file)
   find_program(rostest_exe rostest PATHS ${CMAKE_BINARY_DIR}/bin)
   if(NOT rostest_exe)
     message(FATAL_ERROR "Can't find rostest executable")
+  endif()
+
+  parse_arguments(_rosunit "WORKING_DIRECTORY" "" ${ARGN})
+  if(_rosunit_WORKING_DIRECTORY)
+    set(_chdir_prefix "bash -c \"cd ${_rosunit_WORKING_DIRECTORY} &&")
+    set(_chdir_suffix "\"")
   endif()
 
   # Check that the file exists, #1621
@@ -164,5 +184,5 @@ function(add_rostest file)
     message(FATAL_ERROR "Can't find rostest file \"${file}\"")
   endif()
 
-  append_test_to_cache(catkin-tests "${rostest_exe} ${_file_name}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rostest_exe} ${_file_name} ${_chdir_suffix}")
 endfunction()

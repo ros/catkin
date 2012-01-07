@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import sys, subprocess, fileinput
+import sys, subprocess, fileinput, shlex
 
 
 def run(args):
@@ -18,7 +18,7 @@ def run(args):
               cwd = ls
           # Everything else is a command to exec
           else:
-              cmd = ls.split()
+              cmd = shlex.split(ls)
               print('-- runtests.py: %s'%(ls))
               p = subprocess.Popen(cmd, 
                                    stdout=subprocess.PIPE, 
