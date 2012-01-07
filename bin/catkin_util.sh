@@ -24,6 +24,12 @@ initializeANSI()
 
 initializeANSI
 
+find_workspace() {
+    VAR=$1
+    pushd .
+
+}
+
 maybe_continue () {
     DEFAULT=$1
     shift

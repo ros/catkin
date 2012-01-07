@@ -1,16 +1,17 @@
 #!/bin/bash
 
-WORKSPACE=$(cd `dirname $0`/../..; pwd)
+#
+# Possibly lousy assumption:  workspace is two directories up.
+#
+TOP=$(cd `dirname $0`; /bin/pwd)
+. $TOP/catkin_util.sh
 
 #SUBDIRECTORY_OK=1
 #. $(git --exec-path)/git-sh-setup
 
-echo $USAGE
+gc_help() {
 
-help ()
-{
-    cat <<EOF
-
+cat <<EOF
 Usage: git catkin [command] ..
 
 commands:
@@ -48,14 +49,43 @@ commands:
       hg  status
       svn status
 
-
-
 EOF
+}
 
+USAGE=$(gc_help)
+
+
+# set -x
+
+search_up ()
+{
+    FNAME=$1
+    DESTVAR=$2
+    if [ -n "$WORKSPACE" ] ; then
+        return 0
+    fi
+    if [ $# -gt 2 ] ; then
+        SEARCHDIR=$3
+    else
+        SEARCHDIR=$(/bin/pwd)
+    fi
+    while [ 1 ] ; do
+        /bin/echo "searchdir=$SEARCHDIR"
+        if [ -e $SEARCHDIR/$FNAME ] ; then
+            eval $DESTVAR=$SEARCHDIR
+            status "Workspace is ${boldon}${yellowf}$WORKSPACE${reset}"
+            return 0
+        fi
+        if [ $SEARCHDIR = "/" ] ; then
+            return 1
+        fi
+        SEARCHDIR=$(dirname $SEARCHDIR)
+    done
 }
 
 examine_workspace ()
 {
+    search_up .rosinstall WORKSPACE
     [ -z "$ALLDIRS" ] || return 0
     for gitdir in $WORKSPACE/*/.git
     do
@@ -81,35 +111,37 @@ foreach ()
     DIRS=${!TYPE}
     for d in $DIRS
     do
-        /bin/echo "===  $type: $(basename $d) ==="
+        /bin/echo "${boldon}===  $type: ${cyanf}$(basename $d)${whitef} ===${reset}"
         cd $d
         eval $JUSTECHO $*
     done
 }
 
-status () {
+gc_status () {
     foreach git git status
     foreach hg hg status
     foreach svn svn status
 }
 
-fetch () {
+gc_fetch () {
     foreach git git fetch --all
     foreach hg hg pull
     foreach svn svn update
 }
 
-pull () {
+gc_pull () {
     foreach git git pull
     foreach hg hg pull -u
+    foreach svn svn update
 }
 
-difforigin () {
+gc_difforigin () {
     foreach git git diff --stat origin/master
     foreach hg hg outgoing --stat
+    foreach svn svn diff
 }
 
-remotes () {
+gc_remotes () {
     foreach git git remote -v
     foreach hg hg paths
     foreach svn "svn info | grep URL"
@@ -124,5 +156,4 @@ else
     JUSTECHO=""
 fi
 
-eval $CMD $*
-
+eval gc_$CMD $*

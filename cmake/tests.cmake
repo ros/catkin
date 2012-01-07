@@ -9,8 +9,14 @@ macro(initialize_tests)
   endif()
 
   # TODO: find rosunit somehow
-  set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit PARENT_SCOPE)
-  set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit)
+  find_program(ROSUNIT_EXE rosunit
+    PATHS ${CMAKE_SOURCE_DIR}/ros/tools/rosunit/scripts
+    NO_DEFAULT_PATH)
+
+  # TODO: [tds] rosunit should define these macros, not us.  I guess.
+  find_program(ROSUNIT_SUMMARIZE_EXE summaraize_results.py
+    PATHS ${CMAKE_SOURCE_DIR}/ros/tools/rosunit/scripts
+    NO_DEFAULT_PATH)
 
   if(NOT TARGET clean-test-results)
     # Clean out previous test results before running tests.
@@ -43,7 +49,7 @@ macro(append_test_to_cache CACHENAME)
       COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
       ${catkin_EXTRAS_DIR}/test/runtests.py ${cachefile}
       COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
-      ${rosunit_path}/scripts/summarize_results.py --nodeps ${PROJECT_NAME})
+      ${ROSUNIT_SUMMARIZE_EXE} --nodeps ${PROJECT_NAME})
     add_dependencies(test ${PROJECT_NAME}_run_tests)
     add_dependencies(${PROJECT_NAME}_run_tests tests)
   endif()
@@ -54,11 +60,6 @@ macro(append_test_to_cache CACHENAME)
 endmacro()
 
 function(add_pyunit file)
-  # Check that we can find rosunit
-  find_program(rosunit_exe rosunit PATHS ${CMAKE_BINARY_DIR}/bin)
-  if(NOT rosunit_exe)
-    message(FATAL_ERROR "Can't find rosunit executable")
-  endif()
 
   # Look for optional TIMEOUT argument, #2645
   parse_arguments(_pyunit "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
@@ -72,8 +73,8 @@ function(add_pyunit file)
 
   # Check that the file exists, #1621
   set(_file_name _file_name-NOTFOUND)
-  find_file(_file_name ${file} 
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+  find_file(_file_name ${file}
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
             NO_DEFAULT_PATH)
   if(NOT _file_name)
     message(FATAL_ERROR "Can't find pyunit file \"${file}\"")
@@ -94,11 +95,6 @@ function(add_pyunit file)
 endfunction()
 
 function(add_gtest exe)
-  # Check that we can find rosunit
-  find_program(rosunit_exe rosunit PATHS ${CMAKE_BINARY_DIR}/bin)
-  if(NOT rosunit_exe)
-    message(FATAL_ERROR "Can't find rosunit executable")
-  endif()
 
   # Look for optional TIMEOUT argument, #2645
   parse_arguments(_gtest "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
@@ -141,8 +137,8 @@ function(add_nosetests dir)
 
   # Check that the directory exists
   set(_dir_name _dir_name-NOTFOUND)
-  find_file(_dir_name ${dir} 
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+  find_file(_dir_name ${dir}
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
             NO_DEFAULT_PATH)
   if(NOT _dir_name)
     message(FATAL_ERROR "Can't find nosetests dir \"${dir}\"")
@@ -177,8 +173,8 @@ function(add_rostest file)
 
   # Check that the file exists, #1621
   set(_file_name _file_name-NOTFOUND)
-  find_file(_file_name ${file} 
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+  find_file(_file_name ${file}
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
             NO_DEFAULT_PATH)
   if(NOT _file_name)
     message(FATAL_ERROR "Can't find rostest file \"${file}\"")
