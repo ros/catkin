@@ -208,9 +208,18 @@ latex_documents = [
 # If false, no module index is generated.
 #latex_use_modindex = True
 
-docprefix = os.path.join(os.environ['CATKIN_BINARY_DIR'], 'doc/html')
-intersphinx_mapping = dict(catkin=('../catkin', os.path.join(docprefix, 'catkin/objects.inv')),
-                           genmsg=('../genmsg', os.path.join(docprefix, 'genmsg/objects.inv')))
+projects = file(os.environ['CATKIN_BINARY_DIR'] + '/CMakeFiles/sphinx_projects.list').readlines()
+
+intersphinx_mapping = {}
+
+for proj in projects:
+    proj = proj.strip()
+    intersphinx_mapping[proj] = ('../'+proj,
+                                 os.path.join(os.environ['CATKIN_BINARY_DIR'],
+                                              'doc/html',
+                                              proj,
+                                              'objects.inv'))
+
 
 rst_epilog="""
 
