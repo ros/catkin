@@ -208,10 +208,9 @@ latex_documents = [
 # If false, no module index is generated.
 #latex_use_modindex = True
 
-catkin_docs_dir = '/ssd/catkin/test/build/doc/html'
-
-intersphinx_mapping = dict(catkin=('../catkin', catkin_docs_dir + '/catkin/objects.inv'),
-                           genmsg=('../genmsg', catkin_docs_dir + '/genmsg/objects.inv'))
+docprefix = os.path.join(os.environ['CATKIN_BINARY_DIR'], 'doc/html')
+intersphinx_mapping = dict(catkin=('../catkin', os.path.join(docprefix, 'catkin/objects.inv')),
+                           genmsg=('../genmsg', os.path.join(docprefix, 'genmsg/objects.inv')))
 
 rst_epilog="""
 

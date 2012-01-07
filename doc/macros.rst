@@ -48,9 +48,9 @@ Catkin cmake macro reference
 
    `Optional.  No parameters.`
 
-   Reads the :ref:`stack.yaml` from the
-   current source dir and makes the version number available to cmake
-   via ``stackname_VERSION``.
+   Reads the :ref:`stack.yaml` from the current source dir and makes
+   the version number available to cmake via ``stackname_VERSION``.
+   This is only necessary if you actually use this variable.
 
 .. cmake:macro:: catkin_workspace()
 
