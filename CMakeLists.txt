@@ -31,7 +31,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cma
   DESTINATION share/ros/cmake)
 
 install(DIRECTORY cmake
-  DESTINATION share/catkin/cmake    #to be consistent, all catkin specific cmake should live under catkin.
+  #to be consistent, all catkin specific cmake should live under catkin.
+  #NOTE the trailing slash here.  You need it.
+  DESTINATION share/catkin/
   USE_SOURCE_PERMISSIONS
   )
 
