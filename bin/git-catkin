@@ -47,6 +47,11 @@ commands:
       hg  status
       svn status
 
+   install ROSINSTALL_FILE
+
+      This updates the current directory with the given rosinstall yaml
+      file.     
+
 EOF
 }
 
@@ -100,7 +105,7 @@ examine_workspace ()
     ALLDIRS="$GITDIRS $SVNDIRS $HGDIRS"
 }
 
-foreach ()
+gc_foreach ()
 {
     examine_workspace
     type=${1}
@@ -116,33 +121,33 @@ foreach ()
 }
 
 gc_status () {
-    foreach git git status
-    foreach hg hg status
-    foreach svn svn status
+    gc_foreach git git status
+    gc_foreach hg hg status
+    gc_foreach svn svn status
 }
 
 gc_fetch () {
-    foreach git git fetch --all
-    foreach hg hg pull
-    foreach svn svn update
+    gc_foreach git git fetch --all
+    gc_foreach hg hg pull
+    gc_foreach svn svn update
 }
 
 gc_pull () {
-    foreach git git pull
-    foreach hg hg pull -u
-    foreach svn svn update
+    gc_foreach git git pull
+    gc_foreach hg hg pull -u
+    gc_foreach svn svn update
 }
 
 gc_difforigin () {
-    foreach git git diff --stat origin/master
-    foreach hg hg outgoing --stat
-    foreach svn svn diff
+    gc_foreach git git diff --stat origin/master
+    gc_foreach hg hg outgoing --stat
+    gc_foreach svn svn diff
 }
 
 gc_remotes () {
-    foreach git git remote -v
-    foreach hg hg paths
-    foreach svn "svn info | grep URL"
+    gc_foreach git git remote -v
+    gc_foreach hg hg paths
+    gc_foreach svn "svn info | grep URL"
 }
 
 ri_svn()
