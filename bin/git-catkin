@@ -36,6 +36,7 @@ commands:
 
       git pull
       hg  pull -u
+      svn update
 
    fetch
 
