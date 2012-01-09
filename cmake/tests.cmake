@@ -14,7 +14,7 @@ macro(initialize_tests)
     NO_DEFAULT_PATH)
 
   # TODO: [tds] rosunit should define these macros, not us.  I guess.
-  find_program(ROSUNIT_SUMMARIZE_EXE summaraize_results.py
+  find_program(ROSUNIT_SUMMARIZE_EXE summarize_results.py
     PATHS ${CMAKE_SOURCE_DIR}/ros/tools/rosunit/scripts
     NO_DEFAULT_PATH)
 
