@@ -97,7 +97,7 @@ examine_workspace ()
         if [ -e $dir/.git ] ; then
           GITDIRS="$GITDIRS $dir"
         elif [ -e $dir/.hg ] ; then
-          HGDIRS="$HGDIRS $dir)"
+          HGDIRS="$HGDIRS $dir"
         elif [ -e $dir/.svn ] ; then
           SVNDIRS="$SVNDIRS $dir"
         fi
