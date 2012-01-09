@@ -222,4 +222,10 @@ else
     JUSTECHO=""
 fi
 
-eval gc_$CMD $*
+if eval gc_$CMD $* ;then
+  exit 0
+else
+  status "try :"
+  status "${boldon}    git catkin help${reset}"
+  exit -1  
+fi
