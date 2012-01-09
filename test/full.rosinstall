@@ -29,6 +29,16 @@
     version: master
 
 - git:
+    uri: 'git://github.com/ros/genpybindings.git'
+    local-name: genpybindings
+    version: master
+
+- git:
+    uri: 'git://github.com/ros/gentypelibxml.git'
+    local-name: gentypelibxml
+    version: master
+
+- git:
     uri: 'git://github.com/ros/std_msgs.git'
     local-name: std_msgs
     version: master

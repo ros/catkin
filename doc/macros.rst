@@ -186,3 +186,27 @@ Convenience macros
            bam.txt
 
 
+.. cmake:macro:: catkin_add_env_hooks(buildspace_file installspace_file)
+
+   :param buildspace_file:  environment file (bourne-shell syntax)
+     to be expanded and added to build environment
+   :param installspace_file:  as above, but installation version
+
+   Find ``buildspace_file.in`` and expand to
+   ``CMAKE_BINARY_DIR/etc/catkin/profile.d/``, where it will be read
+   by generated ``setup.sh`` and friends.
+
+   Similarly, install expanded ``installspace_file.in`` to
+   ``CMAKE_INSTALL_PREFIX``/etc/catkin/profile.d, where it will be
+   read by the installed ``setup.sh`` and friends.
+
+   .. note:: Note the extra ".in" that must appear in the filename
+      that does not appear in the argument.
+
+   **NOTE** These files will share a single directory with other
+   packages that choose to install env hooks.  Be careful to give the
+   file a unique name.  Typically ``NNprojectname.sh`` is used, where
+   NN can define when something should be run (the files are read in
+   alphanumeric order) and ``projectname`` serves to disambiguate in
+   the event of collision.
+

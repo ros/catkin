@@ -1,7 +1,10 @@
-export ROS_ROOT=@CMAKE_SOURCE_DIR@/ros
 export PYTHONPATH=@CMAKE_BINARY_DIR@/gen/py:@CMAKE_BINARY_DIR@/lib:$PYTHONPATH
-export PATH=@CMAKE_BINARY_DIR@/bin:@catkin_SOURCE_DIR@/bin:@CMAKE_SOURCE_DIR@/ros/bin:$PATH
+export PATH=@CMAKE_BINARY_DIR@/bin:@catkin_SOURCE_DIR@/bin:$PATH
 export CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@
 export CATKIN_SOURCE_DIR=@CMAKE_SOURCE_DIR@
-export ROS_PACKAGE_PATH=@CMAKE_SOURCE_DIR@:$ROS_PACKAGE_PATH
-export ROS_TEST_RESULTS_DIR=@CMAKE_BINARY_DIR@/test_results
+
+for envfile in $CATKIN_BINARY_DIR/etc/catkin/profile.d/*
+do
+  . $envfile
+done
+

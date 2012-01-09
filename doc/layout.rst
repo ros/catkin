@@ -35,8 +35,19 @@ e.g. for project 'proj'::
 ::
 
   build/
+    env.sh
+    setup.sh
+    setup.bash
+    setup.zsh
+
     etc/
+      catkin/
+        profile.d/
+          00.catkin.buildspace.sh   # env hooks.  this one is a placeholder added by catkin.
+          10.ros.buildspace.sh      # e.g. the one from ROS
+
       packages.list           # mapping from pkg name to subdirectory of build/src dirs, see below
+
     gen/
       cpp/                    # All generated C++ headers go here.
         proj/
@@ -100,15 +111,15 @@ Post-installation
         xmlrpc_manager.h
 
     etc/
+      catkin/
+        profile.d/
+          00.catkin.sh
+          10.ros.sh
       ros/
         rosinstall.conf       # used by rosinstall to set ROS_PACKAGE_PATH
         langs/                # to determine which code generators are available.
           roscpp              # contains "C++"
           rospy               # contains "Python"
-        profile.d/
-          00_standard_settings.sh
-          10_pkg1_custom.sh
-          20_pkg2_custom.sh
         depends.yaml          # rosdep main database
         depends.d/
           00_something.yaml   # addons

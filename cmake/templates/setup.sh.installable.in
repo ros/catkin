@@ -18,3 +18,9 @@ ROS_ROOT=@CMAKE_INSTALL_PREFIX@
 export ROS_ROOT
 
 
+
+for envfile in @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/*
+do
+   . $envfile
+done
+

@@ -9,8 +9,14 @@ macro(initialize_tests)
   endif()
 
   # TODO: find rosunit somehow
-  set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit PARENT_SCOPE)
-  set(rosunit_path ${CMAKE_SOURCE_DIR}/ros/tools/rosunit)
+  find_program(ROSUNIT_EXE rosunit
+    PATHS ${CMAKE_SOURCE_DIR}/ros/tools/rosunit/scripts
+    NO_DEFAULT_PATH)
+
+  # TODO: [tds] rosunit should define these macros, not us.  I guess.
+  find_program(ROSUNIT_SUMMARIZE_EXE summarize_results.py
+    PATHS ${CMAKE_SOURCE_DIR}/ros/tools/rosunit/scripts
+    NO_DEFAULT_PATH)
 
   if(NOT TARGET clean-test-results)
     # Clean out previous test results before running tests.
@@ -43,7 +49,7 @@ macro(append_test_to_cache CACHENAME)
       COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
       ${catkin_EXTRAS_DIR}/test/runtests.py ${cachefile}
       COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
-      ${rosunit_path}/scripts/summarize_results.py --nodeps ${PROJECT_NAME})
+      ${ROSUNIT_SUMMARIZE_EXE} --nodeps ${PROJECT_NAME})
     add_dependencies(test ${PROJECT_NAME}_run_tests)
     add_dependencies(${PROJECT_NAME}_run_tests tests)
   endif()
@@ -54,22 +60,21 @@ macro(append_test_to_cache CACHENAME)
 endmacro()
 
 function(add_pyunit file)
-  # Check that we can find rosunit
-  find_program(rosunit_exe rosunit PATHS ${CMAKE_BINARY_DIR}/bin)
-  if(NOT rosunit_exe)
-    message(FATAL_ERROR "Can't find rosunit executable")
-  endif()
 
   # Look for optional TIMEOUT argument, #2645
-  parse_arguments(_pyunit "TIMEOUT" "" ${ARGN})
+  parse_arguments(_pyunit "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(NOT _pyunit_TIMEOUT)
     set(_pyunit_TIMEOUT 60.0)
+  endif()
+  if(_pyunit_WORKING_DIRECTORY)
+    set(_chdir_prefix "bash -c \"cd ${_pyunit_WORKING_DIRECTORY} &&")
+    set(_chdir_suffix "\"")
   endif()
 
   # Check that the file exists, #1621
   set(_file_name _file_name-NOTFOUND)
-  find_file(_file_name ${file} 
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+  find_file(_file_name ${file}
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
             NO_DEFAULT_PATH)
   if(NOT _file_name)
     message(FATAL_ERROR "Can't find pyunit file \"${file}\"")
@@ -86,20 +91,19 @@ function(add_pyunit file)
   # Create a legal test name, in case the target name has slashes in it
   string(REPLACE "/" "_" _testname ${file})
   # We use rostest to call the executable to get process control, #1629
-  append_test_to_cache(catkin-tests "${rosunit_exe} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rosunit_exe} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg} ${_chdir_suffix}")
 endfunction()
 
 function(add_gtest exe)
-  # Check that we can find rosunit
-  find_program(rosunit_exe rosunit PATHS ${CMAKE_BINARY_DIR}/bin)
-  if(NOT rosunit_exe)
-    message(FATAL_ERROR "Can't find rosunit executable")
-  endif()
 
   # Look for optional TIMEOUT argument, #2645
-  parse_arguments(_gtest "TIMEOUT" "" ${ARGN})
+  parse_arguments(_gtest "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(NOT _gtest_TIMEOUT)
     set(_gtest_TIMEOUT 60.0)
+  endif()
+  if(_gtest_WORKING_DIRECTORY)
+    set(_chdir_prefix "bash -c \"cd ${_gtest_WORKING_DIRECTORY} &&")
+    set(_chdir_suffix "\"")
   endif()
 
   # Create the program, with basic + gtest build flags
@@ -115,7 +119,7 @@ function(add_gtest exe)
   string(REPLACE "/" "_" _testname ${exe})
   get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
   # We use rosunit to call the executable to get process control, #1629, #3112
-  append_test_to_cache(catkin-tests "${rosunit_exe} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rosunit_exe} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe} ${_chdir_suffix}")
 endfunction()
 
 function(add_nosetests dir)
@@ -125,10 +129,16 @@ function(add_nosetests dir)
     message(FATAL_ERROR "Can't find nosetests executable")
   endif()
 
+  parse_arguments(_nose "WORKING_DIRECTORY" "" ${ARGN})
+  if(_nose_WORKING_DIRECTORY)
+    set(_chdir_prefix "bash -c \"cd ${_nose_WORKING_DIRECTORY} &&")
+    set(_chdir_suffix "\"")
+  endif()
+
   # Check that the directory exists
   set(_dir_name _dir_name-NOTFOUND)
-  find_file(_dir_name ${dir} 
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+  find_file(_dir_name ${dir}
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
             NO_DEFAULT_PATH)
   if(NOT _dir_name)
     message(FATAL_ERROR "Can't find nosetests dir \"${dir}\"")
@@ -145,7 +155,7 @@ function(add_nosetests dir)
   set(output_dir_name ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME})
   append_test_to_cache(catkin-tests "${CMAKE_COMMAND} -E make_directory ${output_dir_name}")
   string(REPLACE "/" "." output_file_name ${dir})
-  append_test_to_cache(catkin-tests "${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg} ${_chdir_suffix}")
 endfunction()
 
 function(add_rostest file)
@@ -155,14 +165,20 @@ function(add_rostest file)
     message(FATAL_ERROR "Can't find rostest executable")
   endif()
 
+  parse_arguments(_rosunit "WORKING_DIRECTORY" "" ${ARGN})
+  if(_rosunit_WORKING_DIRECTORY)
+    set(_chdir_prefix "bash -c \"cd ${_rosunit_WORKING_DIRECTORY} &&")
+    set(_chdir_suffix "\"")
+  endif()
+
   # Check that the file exists, #1621
   set(_file_name _file_name-NOTFOUND)
-  find_file(_file_name ${file} 
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR} 
+  find_file(_file_name ${file}
+            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
             NO_DEFAULT_PATH)
   if(NOT _file_name)
     message(FATAL_ERROR "Can't find rostest file \"${file}\"")
   endif()
 
-  append_test_to_cache(catkin-tests "${rostest_exe} ${_file_name}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rostest_exe} ${_file_name} ${_chdir_suffix}")
 endfunction()

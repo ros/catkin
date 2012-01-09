@@ -1,16 +1,15 @@
-#!/bin/bash
+#!/bin/bash -e
 
-WORKSPACE=$(cd `dirname $0`/../..; pwd)
+#
+# Possibly lousy assumption:  workspace is two directories up.
+#
+TOP=$(cd `dirname $0`; /bin/pwd)
+. $TOP/catkin_util.sh
 
-#SUBDIRECTORY_OK=1
-#. $(git --exec-path)/git-sh-setup
 
-echo $USAGE
+gc_help() {
 
-help ()
-{
-    cat <<EOF
-
+cat <<EOF
 Usage: git catkin [command] ..
 
 commands:
@@ -35,6 +34,7 @@ commands:
 
       git pull
       hg  pull -u
+      svn update
 
    fetch
 
@@ -48,31 +48,65 @@ commands:
       hg  status
       svn status
 
+   install ROSINSTALL_FILE
 
+      This updates the current directory with the given rosinstall yaml
+      file.     
 
 EOF
+}
 
+USAGE=$(gc_help)
+
+
+# set -x
+
+search_up ()
+{
+    FNAME=$1
+    DESTVAR=$2
+    if [ -n "$WORKSPACE" ] ; then
+        return 0
+    fi
+    if [ $# -gt 2 ] ; then
+        SEARCHDIR=$3
+    else
+        SEARCHDIR=$(/bin/pwd)
+    fi
+    while [ 1 ] ; do
+        /bin/echo "searchdir=$SEARCHDIR"
+        if [ -e $SEARCHDIR/$FNAME ] ; then
+            eval $DESTVAR=$SEARCHDIR
+            status "Workspace is ${boldon}${yellowf}$WORKSPACE${reset}"
+            return 0
+        fi
+        if [ $SEARCHDIR = "/" ] ; then
+            return 1
+        fi
+        SEARCHDIR=$(dirname $SEARCHDIR)
+    done
 }
 
 examine_workspace ()
 {
+    search_up .rosinstall WORKSPACE
     [ -z "$ALLDIRS" ] || return 0
-    for gitdir in $WORKSPACE/*/.git
+    for dir in $WORKSPACE/*
     do
-        GITDIRS="$GITDIRS $(dirname $gitdir)"
-    done
-    for svndir in $WORKSPACE/*/.svn
-    do
-        SVNDIRS="$SVNDIRS $(dirname $svndir)"
-    done
-    for hgdir in $WORKSPACE/*/.hg
-    do
-        HGDIRS="$HGDIRS $(dirname $hgdir)"
+      if [ -d $dir ] ; then
+        if [ -e $dir/.git ] ; then
+          GITDIRS="$GITDIRS $dir"
+        elif [ -e $dir/.hg ] ; then
+          HGDIRS="$HGDIRS $dir"
+        elif [ -e $dir/.svn ] ; then
+          SVNDIRS="$SVNDIRS $dir"
+        fi
+      fi
     done
     ALLDIRS="$GITDIRS $SVNDIRS $HGDIRS"
 }
 
-foreach ()
+gc_foreach ()
 {
     examine_workspace
     type=${1}
@@ -81,38 +115,103 @@ foreach ()
     DIRS=${!TYPE}
     for d in $DIRS
     do
-        /bin/echo "===  $type: $(basename $d) ==="
+        /bin/echo "${boldon}${whitef}===  ${greeni}$type: ${cyanf}$(basename $d)${whitef} ===${reset}"
         cd $d
         eval $JUSTECHO $*
     done
 }
 
-status () {
-    foreach git git status
-    foreach hg hg status
-    foreach svn svn status
+gc_status () {
+    gc_foreach git git status
+    gc_foreach hg hg status
+    gc_foreach svn svn status
 }
 
-fetch () {
-    foreach git git fetch --all
-    foreach hg hg pull
-    foreach svn svn update
+gc_fetch () {
+    gc_foreach git git fetch --all
+    gc_foreach hg hg pull
+    gc_foreach svn svn update
 }
 
-pull () {
-    foreach git git pull
-    foreach hg hg pull -u
+gc_pull () {
+    gc_foreach git git pull
+    gc_foreach hg hg pull -u
+    gc_foreach svn svn update
 }
 
-difforigin () {
-    foreach git git diff --stat origin/master
-    foreach hg hg outgoing --stat
+gc_difforigin () {
+    gc_foreach git git diff --stat origin/master
+    gc_foreach hg hg outgoing --stat
+    gc_foreach svn svn diff
 }
 
-remotes () {
-    foreach git git remote -v
-    foreach hg hg paths
-    foreach svn "svn info | grep URL"
+gc_remotes () {
+    gc_foreach git git remote -v
+    gc_foreach hg hg paths
+    gc_foreach svn "svn info | grep URL"
+}
+
+ri_svn()
+{
+    repo_uri=$1
+    local_name=$2
+    version=$3
+    if [ ! -e $local_name/.svn ] ; then
+      (set -x && svn checkout $repo_uri $local_name)
+    fi
+}
+
+ri_hg()
+{
+    repo_uri=$1
+    local_name=$2
+    version=$3
+    if [ ! -e $local_name/.hg ] ; then
+      (set -x && hg clone $repo_uri $local_name)
+    fi
+}
+
+ri_git()
+{
+    repo_uri=$1
+    local_name=$2
+    version=$3
+    if [ ! -e $local_name/.git ] ; then
+      (set -x && git clone $repo_uri $local_name)
+      (set -x && cd $local_name && git checkout $version)
+    fi
+}
+
+ri_foreach()
+{
+  ri=$($TOP/catkin_install_parse $1 $2 uri local-name version)
+  for i in $ri
+  do
+    arr=($(echo $i | tr "," "\n"))
+    repo_uri=${arr[0]}
+    local_name=${arr[1]}
+    version=${arr[2]}
+    status  "${boldon}${whitef}===  ${greeni}$2: ${cyanf}${local_name}${whitef} ===${reset}"
+    ri_$2 $repo_uri $local_name $version  
+  done
+  
+  if [ "$1" !=  ".rosinstall" ] ; then
+    cp $1 .rosinstall
+  fi
+}
+
+gc_install()
+{
+    if [ ! -e $1 ] ; then
+      status "Please supply a rosinstall style yaml file"
+      status "usage: git catkin install <rosinstal file>"
+      exit -1
+    fi
+    status "Will install workspace to ${cyanf}$(pwd)${reset}"
+    status "Using ${boldon}$1${reset}"
+    ri_foreach $1 git
+    ri_foreach $1 hg
+    ri_foreach $1 svn
 }
 
 CMD=$1
@@ -124,5 +223,10 @@ else
     JUSTECHO=""
 fi
 
-eval $CMD $*
-
+if eval gc_$CMD $* ;then
+  exit 0
+else
+  status "try :"
+  status "${boldon}    git catkin help${reset}"
+  exit -1  
+fi
