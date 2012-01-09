@@ -1,3 +1,13 @@
+3rd party releases
+------------------
+
+A prereq for these notes is that you have a recent version of catkin, and the
+catkin/bin folder is in your path::
+
+    git clone git://github.com/willowgarage/catkin.git /tmp/catkin
+    export PATH=/tmp/catkin/bin:$PATH
+
+
 3rd party release process
 -------------------------
 
