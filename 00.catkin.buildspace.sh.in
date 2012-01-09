@@ -1,5 +1,5 @@
 #
-#  Dummy buildspace file containing nothing of interest
+#  Set bin directory.
 #
 
-
+PATH=@catkin_SOURCE_DIR@/bin:$PATH

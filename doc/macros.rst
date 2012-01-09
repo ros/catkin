@@ -200,8 +200,13 @@ Convenience macros
    ``CMAKE_INSTALL_PREFIX``/etc/catkin/profile.d, where it will be
    read by the installed ``setup.sh`` and friends.
 
-   **NOTE** These files share a single directory... be carefult to
-   give the file a unique name.  Typically ``NNprojectname.sh`` is
-   used, where NN can define when something should be run (the files
-   are read in alphanumeric order) and ``projectname`` serves to
-   disambiguate in the event of collision.
+   .. note:: Note the extra ".in" that must appear in the filename
+      that does not appear in the argument.
+
+   **NOTE** These files will share a single directory with other
+   packages that choose to install env hooks.  Be careful to give the
+   file a unique name.  Typically ``NNprojectname.sh`` is used, where
+   NN can define when something should be run (the files are read in
+   alphanumeric order) and ``projectname`` serves to disambiguate in
+   the event of collision.
+
