@@ -178,7 +178,7 @@ ri_git()
 
 ri_foreach()
 {
-  ri=$($TOP/ri_parse.py $1 $2 uri local-name version)
+  ri=$($TOP/catkin_install_parse $1 $2 uri local-name version)
   for i in $ri
   do
     arr=($(echo $i | tr "," "\n"))
