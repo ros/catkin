@@ -8,15 +8,15 @@ the *fuerte* release.
 Code & tickets
 --------------
 
-See 'issues' links for tickets
+See 'issues' links for tickets.
 
-.. rubric:: Catkin
++---------------+------------------------------------------+
+|Catkin         |http://github.com/willowgarage/catkin     |
++---------------+------------------------------------------+
+|Catkinized ROS |http://github.com/ros                     |
+|Stacks         |                                          |
++---------------+------------------------------------------+
 
-http://github.com/willowgarage/catkin
-
-.. rubric:: Catkinized ROS stacks
-
-http://github.com/ros
 
 Contents
 --------
@@ -26,7 +26,6 @@ Contents
 
    walkthrough
    supposed
-   current_goal
    layout
    macros
    environment

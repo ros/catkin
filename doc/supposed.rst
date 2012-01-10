@@ -1,3 +1,6 @@
+Sketch of directory structure
+=============================
+
 How things ought to look, starting at the outermost level of the
 source directory and moving down through stacks and packages.
 

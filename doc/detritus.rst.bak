@@ -828,3 +828,65 @@ git-buildpackage:
 2011.12.13: https://www.evernote.com/shard/s148/sh/22c609f9-276d-430d-8ebd-5c566fe64872/9543665cf1dd862c27c6398fc8469593
 
 
+Current Goal
+------------
+
+to the right (towards the user)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* :term:`dry` build of ``ros_tutorials``, against a :term:`wet` built ``/opt/ros/fuerte``
+* successful ``roslaunch`` and ``rosrun`` of tutorials
+* then install ros_tutorials (dry: to PREFIX/stacks); rosruns/launches still work
+* rm the ros tutorials from PREFIX
+* a :term:`wet` build of ``ros_tutorials``.. same launches/runs work from buildspace
+* install to PREFIX, launches/runs still work.
+
+
+.. rubric:: Brian/Ken
+
+Userspace ros utilities
+
+
+.. rubric:: Troy
+
+ros_comm working under catkin, install of thunk-manifests to share/,
+env variables ``CATKIN_BUILD_DIR`` and ``CATKIN_SOURCE_DIR`` set from
+catkin in ``setup.sh``, whatever anybody needs.
+
+- manual updating of ``manifest.xml``: user custom changes
+  manifest.xml to use backticks that call pkg-config; sets manual
+  install of this manifest to ``PREFIX/share/<projname>``.
+
+
+to the left (towards the build farm)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. rubric:: Ethan and Tully
+
+* Get catkin and necessary 3rd party binary and source debs churning
+  on our build farm and posted to a deb repo.
+* Further investigate/design use of git-buildpackage for managing all
+  of this; explain the architecture, workflows, pros and cons.
+
+
+in the middle
+^^^^^^^^^^^^^
+
+.. rubric:: Morten
+
+Look for gotchas in actionlib and dynamic_reconfigure, get 'em going.
+
+Found: dynamic_reconfigure .cfg files import things from generated
+python messages, but only one type from driver_base
+
+Found: actionlib does some unnecessary calculations that introduce
+buildtime dependency loops.
+
+
+
+3rdparty status
+^^^^^^^^^^^^^^^
+
+PCL: Current thinking is to make ROS a cmake-time option.
+
+
