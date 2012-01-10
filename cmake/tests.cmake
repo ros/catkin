@@ -1,6 +1,7 @@
 macro(initialize_tests)
   if(NOT TARGET tests)
-    message("TODO: use rostest-check-results to verify that result files were generated")
+    message("TODO: figure out what to do about rosbuild testing macros that we
+    don't support yet: rosbuild_add_roslaunch_check, rosbuild_declare_test, rosbuild_count_cores, rosbuild_check_for_display, rosbuild_check_for_vm.  Also: labeled tests.")
     add_custom_target(tests)
   endif()
   if(NOT TARGET test)
