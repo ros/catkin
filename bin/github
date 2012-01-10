@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+TOP=$(cd `dirname $0`; /bin/pwd)
+. $TOP/catkin_util.sh
+
+github_api RESULT $*
+echo $RESULT
