@@ -1,3 +1,4 @@
+.. _find_package_internals:
 
 Internals of the generated find_package() infrastructure
 --------------------------------------------------------
@@ -9,7 +10,7 @@ directories and such that packages should use.
 There are a couple of modes of operation of find_package (see the
 CMake documentation), "module" mode and "config" mode.  "module" mode
 is the one that uses cmake scripts named ``Find****.cmake``.  "config"
-mode is the preferred mode, and it works differently.  
+mode is the preferred mode, and it works differently.
 
 One reason we find the 'config mode' superior is that is supports
 multiple simultaneous installed versions of packages.
@@ -25,16 +26,16 @@ be like this::
     set(PACKAGE_VERSION_COMPATIBLE TRUE)
     return()
   endif()
-  
+
   if("${PACKAGE_FIND_VERSION}" VERSION_EQUAL "9.9.9")
     set(PACKAGE_VERSION_EXACT True)
     set(PACKAGE_VERSION_COMPATIBLE True)
   endif()
-  
+
   if("${PACKAGE_FIND_VERSION}" VERSION_LESS "9.9.9")
     set(PACKAGE_VERSION_COMPATIBLE True)
   endif()
-  
+
 where `9.9.9` is replaced by the numeric version of the package.  The
 second file, ``t-config.cmake``, tells the client what the assorted
 includes/libs are for the package by setting variables
@@ -51,7 +52,7 @@ simultaneously, use ``find_package(ROS [XX.YY] COMPONENTS comp1 comp2)``, e.g.::
 
   find_package(ROS
                COMPONENTS
-               cpp_common rostime roscpp_traits 
+               cpp_common rostime roscpp_traits
                roscpp_serialization sensor_msgs)
   include_directories(${ROS_INCLUDE_DIRS})
 

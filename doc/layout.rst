@@ -1,6 +1,18 @@
 Pre- and Post-installation Disk Layout reference
 ================================================
 
+.. _toplevel_bin:
+
+The toplevel bin/ directory
+---------------------------
+
+This shouldn't contain very much... just "anointed" central binaries
+used by the entire distribution.  Most programs (like ROS nodes) will
+reside in each package's ``bin/`` directory.
+
+
+
+
 Pre-installation
 ----------------
 
@@ -161,7 +173,7 @@ Notes on individual files
 ``etc/packages.list``
 ^^^^^^^^^^^^^^^^^^^^^
 
-contains a mapping of package name to
+Contains a mapping of package name to
 path-to-the-package-relative-to-\ ``CATKIN_(BUILD|SOURCE)_DIR``, e.g.::
 
      XmlRpc ros_comm/utilities/xmlrpcpp

@@ -1,5 +1,5 @@
 3rd party releases
-------------------
+==================
 
 A prereq for these notes is that you have a recent version of catkin, and the
 catkin/bin folder is in your path::
@@ -12,7 +12,7 @@ catkin/bin folder is in your path::
 -------------------------
 
 Let's do flann. Setup a git repo::
-    
+
     mkdir flann
     (cd flann && git init)
 
@@ -21,7 +21,7 @@ Grab a tarball from somewhere::
     wget https://github.com/wg-debs/flann/tarball/upstream/1.7.1 -O flann-1.7.1.tar.gz
 
 Git import orig it::
-    
+
     cd flann
     git import-orig ../flann-1.7.1.tar.gz
 
@@ -31,7 +31,7 @@ Create a cakin orphan branch::
     git rm -rf .
     cat > catkin.conf <<EOF
     [catkin]
-        upstream =  https://github.com/wg-debs/flann/tarball/upstream/1.7.1 
+        upstream =  https://github.com/wg-debs/flann/tarball/upstream/1.7.1
         upstreamtype = manual
     EOF
     cat > stack.yaml <<EOF
@@ -47,7 +47,7 @@ Create a cakin orphan branch::
     Homepage: http://people.cs.ubc.ca/~mariusm/index.php/FLANN/FLANN
 
     Catkin-CopyrightType:  willowgarage
-    Catkin-DebRulesType: cmake 
+    Catkin-DebRulesType: cmake
     EOF
     git add catkin.conf stack.yaml
     git commit -m "Adding catkin.conf and stack.yaml"
@@ -62,7 +62,7 @@ Verify that it actually overlayed catkin onto the master branch. Now generate de
     update_debian.py . fuerte
 
 Test it locally::
-    
+
     git clean -dxf
     git checkout debian/ros_fuerte_1.7.1_oneiric
     git buildpackage -S -uc -us --git-ignore-branch
@@ -71,7 +71,7 @@ Build that package with pbuilder or something...
 
 Now push all branches and tags to a remote::
 
-    ##add an origin if you don't have one.    
+    ##add an origin if you don't have one.
     #git add remote origin git@github.com:ros/flann.git
     git push --all
     git push --tags

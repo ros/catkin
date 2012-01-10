@@ -28,6 +28,8 @@ Catkin cmake macro reference
        CFG_EXTRAS proj-extras.cmake
        )
 
+.. index:: setup.py
+
 .. cmake:macro:: catkin_export_python([dir1 dir2 ...])
 
    :param dirs: list of directories given relative to
