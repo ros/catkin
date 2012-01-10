@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+TOP=$(cd `dirname $0`; /bin/pwd)
+. $TOP/catkin_util.sh
+
+
+gcgbp_help() {
+
+cat <<EOF
+Usage: git catkin-gbp [command] ..
+  
+  Tools for managing a catkin style git buildpackage repo.
+
+commands:
+  
+  init PATH
+
+
+EOF
+}
+
+USAGE=$(gcgbp_help)
+
+CMD=$1
+shift
+if [ "$CMD" = '-n' ] ; then
+    JUSTECHO=/bin/echo
+    CMD=$1
+else
+    JUSTECHO=""
+fi
+
+if eval gcgbp_$CMD $* ;then
+  exit 0
+else
+  status "try :"
+  status "${boldon} git catkin-gbp help${reset}"
+  exit -1  
+fi
