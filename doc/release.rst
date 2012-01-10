@@ -1,5 +1,43 @@
+Release 
+-------
+
+Git will be abused by catkin to manage releases and packaging of
+projects.  Packaging, in the current context refers to the eventual
+creation of binary debians.
+
+There are a few use cases of packaging that it should handle with varying amounts manual labor.
+
+1. 3rdparty releases
+2. native Catkin releases
+3. Existing debian packages
+
+For 1 and 2, the packages that will be created by catkin and the build farm will
+be installed to a **FHS** that is determined by the ``CMAKE_INSTALL_PREFIX`` variable.  For
+ROS, this is ``/opt/ros/X`` where ``X`` is a ros distrubution.  This is the assumed case if you are
+making releases with catkin.  However, there should be no reason that debians can not be
+manufactured that install to ``/``.
+
+For 3, these packages are ingested using a dput of either source or binary debians and the build
+system will not change the package in any way. This form of release is highly discouraged except
+for libraries that are very stable.
+
+tools
+=====
+
+``git catkin-gbp`` is a set of tools that manage catkin specific git-buildpackage, *gbp*, repos.
+This is the packaging tool, and expects upstream to have created a release in some manner.
+
+A release of upstream means that you have incremented your version number, e.g. in the stack.yaml,
+and have created a tag, branch, tarball, or written down a revision on a napkin.
+
+``git catkin-gbp`` will take the release, and either create or update a release repository. It is from
+this repository that source debians will be generated, using git-buildpackage and a little trickery.
+
 3rd party releases
-------------------
+==================
+
+3rd party releases required the finest grain control over the process, and are good to examine
+in order to understand the catkin packaging mechanisms.
 
 A prereq for these notes is that you have a recent version of catkin, and the
 catkin/bin folder is in your path::
@@ -8,8 +46,8 @@ catkin/bin folder is in your path::
     export PATH=/tmp/catkin/bin:$PATH
 
 
-3rd party release process
--------------------------
+3rd party release example
++++++++++++++++++++++++++
 
 Let's do flann. Setup a git repo::
     
