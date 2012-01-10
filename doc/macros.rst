@@ -6,7 +6,6 @@ Catkin cmake macro reference
    :param projectname: requires the same value as passed to cmake's ``project()``
    :param INCLUDE_DIRS: source-relative path to C/C++ headers
    :param LIBRARIES: names of library targets
-   :param MSG_DIRS: source-relative paths to directories containing messages
    :param CFG_EXTRAS: Any extra cmake stuff that should be accessible
       to users of the project.  This file should live in subdirectory
       'cmake' and have extension ``.in``.  It will be expanded by cmake's
@@ -26,7 +25,6 @@ Catkin cmake macro reference
      catkin_project(proj
        INCLUDE_DIRS include
        LIBRARIES proj-one proj-two
-       MSG_DIRS msg
        CFG_EXTRAS proj-extras.cmake
        )
 
