@@ -1,6 +1,7 @@
 macro(initialize_tests)
   if(NOT TARGET tests)
-    message("TODO: use rostest-check-results to verify that result files were generated")
+    message("TODO: figure out what to do about rosbuild testing macros that we
+    don't support yet: rosbuild_add_roslaunch_check, rosbuild_declare_test, rosbuild_count_cores, rosbuild_check_for_display, rosbuild_check_for_vm.  Also: labeled tests.")
     add_custom_target(tests)
   endif()
   if(NOT TARGET test)
@@ -15,6 +16,9 @@ macro(initialize_tests)
 
   # TODO: [tds] rosunit should define these macros, not us.  I guess.
   find_program(ROSUNIT_SUMMARIZE_EXE summarize_results.py
+    PATHS ${CMAKE_SOURCE_DIR}/ros/tools/rosunit/scripts
+    NO_DEFAULT_PATH)
+  find_program(ROSUNIT_CHECK_TEST_RAN_EXE check_test_ran.py
     PATHS ${CMAKE_SOURCE_DIR}/ros/tools/rosunit/scripts
     NO_DEFAULT_PATH)
 
@@ -91,7 +95,8 @@ function(add_pyunit file)
   # Create a legal test name, in case the target name has slashes in it
   string(REPLACE "/" "_" _testname ${file})
   # We use rostest to call the executable to get process control, #1629
-  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rosunit_exe} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg} ${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${ROSUNIT_EXE} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg} ${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${ROSUNIT_CHECK_TEST_RAN_EXE} ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME}/TEST-${_testname}.xml")
 endfunction()
 
 function(add_gtest exe)
@@ -102,7 +107,7 @@ function(add_gtest exe)
     set(_gtest_TIMEOUT 60.0)
   endif()
   if(_gtest_WORKING_DIRECTORY)
-    set(_chdir_prefix "bash -c \"cd ${_gtest_WORKING_DIRECTORY} &&")
+    set(_chdir_prefix "bash -c \"cd ${_gtest_WORKING_DIRECTORY} && ")
     set(_chdir_suffix "\"")
   endif()
 
@@ -119,7 +124,8 @@ function(add_gtest exe)
   string(REPLACE "/" "_" _testname ${exe})
   get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
   # We use rosunit to call the executable to get process control, #1629, #3112
-  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rosunit_exe} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe} ${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix}${ROSUNIT_EXE} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe}${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${ROSUNIT_CHECK_TEST_RAN_EXE} ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME}/TEST-${_testname}.xml")
 endfunction()
 
 function(add_nosetests dir)
@@ -131,7 +137,7 @@ function(add_nosetests dir)
 
   parse_arguments(_nose "WORKING_DIRECTORY" "" ${ARGN})
   if(_nose_WORKING_DIRECTORY)
-    set(_chdir_prefix "bash -c \"cd ${_nose_WORKING_DIRECTORY} &&")
+    set(_chdir_prefix "bash -c \"cd ${_nose_WORKING_DIRECTORY} && ")
     set(_chdir_suffix "\"")
   endif()
 
@@ -155,7 +161,8 @@ function(add_nosetests dir)
   set(output_dir_name ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME})
   append_test_to_cache(catkin-tests "${CMAKE_COMMAND} -E make_directory ${output_dir_name}")
   string(REPLACE "/" "." output_file_name ${dir})
-  append_test_to_cache(catkin-tests "${_chdir_prefix} ${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg} ${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix}${nosetests_path} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg}${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${ROSUNIT_CHECK_TEST_RAN_EXE} ${output_dir_name}/${output_file_name}.xml")
 endfunction()
 
 function(add_rostest file)
@@ -167,7 +174,7 @@ function(add_rostest file)
 
   parse_arguments(_rosunit "WORKING_DIRECTORY" "" ${ARGN})
   if(_rosunit_WORKING_DIRECTORY)
-    set(_chdir_prefix "bash -c \"cd ${_rosunit_WORKING_DIRECTORY} &&")
+    set(_chdir_prefix "bash -c \"cd ${_rosunit_WORKING_DIRECTORY} && ")
     set(_chdir_suffix "\"")
   endif()
 
@@ -180,5 +187,5 @@ function(add_rostest file)
     message(FATAL_ERROR "Can't find rostest file \"${file}\"")
   endif()
 
-  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rostest_exe} ${_file_name} ${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix}${rostest_exe} ${_file_name}${_chdir_suffix}")
 endfunction()
