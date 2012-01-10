@@ -91,7 +91,7 @@ function(add_pyunit file)
   # Create a legal test name, in case the target name has slashes in it
   string(REPLACE "/" "_" _testname ${file})
   # We use rostest to call the executable to get process control, #1629
-  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rosunit_exe} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg} ${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${ROSUNIT_EXE} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg} ${_chdir_suffix}")
 endfunction()
 
 function(add_gtest exe)
@@ -119,7 +119,7 @@ function(add_gtest exe)
   string(REPLACE "/" "_" _testname ${exe})
   get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
   # We use rosunit to call the executable to get process control, #1629, #3112
-  append_test_to_cache(catkin-tests "${_chdir_prefix} ${rosunit_exe} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe} ${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix} ${ROSUNIT_EXE} --name=${_testname} --time-limit=${_gtest_TIMEOUT} --package=${PROJECT_NAME} ${_exe_path}/${exe} ${_chdir_suffix}")
 endfunction()
 
 function(add_nosetests dir)
