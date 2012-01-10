@@ -57,6 +57,8 @@ macro(find_sphinx)
   endif()
 endmacro()
 
+find_sphinx()
+
 ##
 # sphinx(<TARGET_NAME> <SOURCE_DIR> <BUILD_DIR> [PATH1 [ PATH2 [ PATH3 ]]])
 # TARGET_NAME -> The cmake target to create.
@@ -64,9 +66,16 @@ endmacro()
 # BUILD_DIR -> Where should sphinx put the result
 # PATH(s) -> paths to prepend to the PYTHONPATH for the execution of sphinx-build
 #
+set(SPHINX_LIST ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/sphinx_projects.list
+  CACHE INTERNAL "File containing master sphinx projects list"
+  )
+file(REMOVE ${SPHINX_LIST})
+
 macro(sphinx SOURCE_DIR BUILD_DIR)
   find_sphinx()
   if(SPHINX_BUILD)
+
+    file(APPEND ${SPHINX_LIST} "${PROJECT_NAME}\n")
 
     add_custom_target(${PROJECT_NAME}-sphinx)
     add_custom_command(TARGET ${PROJECT_NAME}-sphinx
@@ -89,4 +98,3 @@ macro(sphinx SOURCE_DIR BUILD_DIR)
   endif()
 endmacro()
 
-find_sphinx()

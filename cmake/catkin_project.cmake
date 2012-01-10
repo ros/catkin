@@ -26,7 +26,11 @@ function(catkin_project PACKAGE_NAME)
   set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
   set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/cmake)
-  # set(PACKAGE_MSG_DIRS ${PACKAGE_MSG_DIRS})
+  if (PACKAGE_MSG_DIRS)
+    message(STATUS "*********************************************************************")
+    message(STATUS "**** Vestigial MSG_DIRS argument to catkin_project in ${PACKAGE_NAME}")
+    message(STATUS "*********************************************************************")
+  endif()
 
   #
   # Default executable output location to "private".
@@ -44,7 +48,6 @@ function(catkin_project PACKAGE_NAME)
   # in source
   set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
   set(PKG_LIB_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
-  # set(PKG_MSG_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/msg)
   set(PKG_CMAKE_DIR ${_cfgdir})
   set(PKG_CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
   set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts
@@ -98,7 +101,6 @@ function(catkin_project PACKAGE_NAME)
   # installable
   set(PKG_INCLUDE_PREFIX ${CMAKE_INSTALL_PREFIX})
   set(PKG_LIB_PREFIX ${CMAKE_INSTALL_PREFIX})
-  # set(PKG_MSG_DIRS ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/msg)
   set(PKG_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/cmake)
   set(PKG_CMAKE_SRC_DIR ${PKG_CMAKE_DIR})
   set(PKG_BIN_DIRS ${CMAKE_INSTALL_PREFIX}/bin)

@@ -33,7 +33,6 @@ foreach(f
     wg_python
     em_expand
     find_program_required
-    #install_cmake_infrastructure
     install_matching_to_share
     install_cmake_config_version
     catkin_stack
@@ -43,12 +42,14 @@ foreach(f
     catkin_add_env_hooks
     langs
     rosbuild_compat
-    tools/doxygen
-    tools/sphinx
     platform/lsb
     platform/ubuntu
+    tools/doxygen
+    tools/sphinx
     tools/rt
     tools/threads
+    tools/gtest
+    tools/doxygen
     tests
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)

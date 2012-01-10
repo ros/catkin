@@ -14,7 +14,7 @@ which triggers catkin's topological sort via inspection of ``stack.yaml``.
 stack
 -----
 
-A typical stack will contain, at the top level::
+A typical "stack" will contain, at the top level::
 
   stack.yaml
   CMakeLists.txt
@@ -121,15 +121,11 @@ first in the ordering.
 
 .. rubric:: catkin_package()
 
-`Vestigial`.  Replace me with ``catkin_stack()``.
+`Vestigial`.  Replace me with :cmake:macro:`catkin_stack`.
 
 .. rubric:: catkin_stack()  [optional]
 
-Reads the ``stack.yaml`` from the current directory and provides the
-stack's version number to cmake via cache variable `<stackname>`\
-``_VERSION``, where `<stackname>` is specified in the ``stack.yaml``
-itself.  This is only necessary if you actually use this.
-
+See :cmake:macro:`catkin_stack`
 
 
 package

@@ -23,7 +23,6 @@ catkin_project(d
   VERSION 0.0.1
   INCLUDE_DIRS include
   LIBRARIES d
-  MSG_DIRS msg
   )
 
 enable_python(d)
