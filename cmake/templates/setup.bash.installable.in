@@ -1,0 +1,3 @@
+CATKIN_SHELL=bash
+. @CMAKE_BINARY_DIR@/setup.sh
+

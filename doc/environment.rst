@@ -46,9 +46,7 @@ the contents of these scripts must be interpretable by all members of
 the bourne shell family.  Be safe and ensure that ``/bin/dash`` is
 okay with them.
 
-
-
-
-
+**NOTE**: These environment hooks are only for variable settings.
+Shell aliases and functions
 
 

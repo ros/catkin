@@ -7,7 +7,8 @@ set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
-catkin_add_env_hooks(00.catkin.buildspace.sh 00.catkin.sh)
+catkin_add_env_hooks(00.catkin SHELLS all sh bash zsh)
+catkin_generic_hooks()
 
 catkin_project(catkin)
 
@@ -37,22 +38,6 @@ install(DIRECTORY cmake
   USE_SOURCE_PERMISSIONS
   )
 
-configure_file(cmake/templates/setup.sh.installable.in
-  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh)
-configure_file(cmake/templates/env.sh.installable.in
-  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
-
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.sh
-  cmake/templates/setup.bash
-  cmake/templates/setup.zsh
-  DESTINATION ${CMAKE_INSTALL_PREFIX}
-  )
-
-install(PROGRAMS
-  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh
-  DESTINATION ${CMAKE_INSTALL_PREFIX}
-  )
 
 catkin_export_python(python)
 

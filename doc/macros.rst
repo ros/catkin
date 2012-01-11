@@ -186,22 +186,27 @@ Convenience macros
            bam.txt
 
 
-.. cmake:macro:: catkin_add_env_hooks(buildspace_file installspace_file)
+.. cmake:macro:: catkin_add_env_hooks(fileprefix SHELLS shell1 shell2...)
 
-   :param buildspace_file:  environment file (bourne-shell syntax)
-     to be expanded and added to build environment
-   :param installspace_file:  as above, but installation version
+   :param fileprefix: prefix of environment file to be expanded and
+     added to build environment
+   :param SHELLS:  list of shells
 
-   Find ``buildspace_file.in`` and expand to
-   ``CMAKE_BINARY_DIR/etc/catkin/profile.d/``, where it will be read
-   by generated ``setup.sh`` and friends.
+   For each shell in ``SHELLS``, find file
+   ``<fileprefix>.buildspace.<shell>.in`` in the current directory and
+   expand to ``CMAKE_BINARY_DIR/etc/catkin/profile.d/``, where it will
+   be read by generated ``setup.<shell>``.
 
-   Similarly, install expanded ``installspace_file.in`` to
+   Similarly, install expanded ``<fileprefix>.<shell>.in`` to
    ``CMAKE_INSTALL_PREFIX``/etc/catkin/profile.d, where it will be
-   read by the installed ``setup.sh`` and friends.
+   read by the installed ``setup.<shell>`` and friends.
 
    .. note:: Note the extra ".in" that must appear in the filename
       that does not appear in the argument.
+
+   You my also specify ``all`` as a shell; this will be read by all
+   shells, before the shell-specific files are read.  Note that your
+   syntax had better be portable across all shells.
 
    **NOTE** These files will share a single directory with other
    packages that choose to install env hooks.  Be careful to give the

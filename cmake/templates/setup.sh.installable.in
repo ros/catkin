@@ -17,9 +17,11 @@ export ROS_PACKAGE_PATH
 ROS_ROOT=@CMAKE_INSTALL_PREFIX@
 export ROS_ROOT
 
+if [ -z "$CATKIN_SHELL" ] ; then
+   CATKIN_SHELL=sh
+fi
 
-
-for envfile in @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/*
+for envfile in @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/*.all @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/*.$CATKIN_SHELL
 do
    . $envfile
 done

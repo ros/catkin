@@ -2,8 +2,11 @@ export PYTHONPATH=@CMAKE_BINARY_DIR@/gen/py:@CMAKE_BINARY_DIR@/lib:$PYTHONPATH
 export PATH=@CMAKE_BINARY_DIR@/bin:@catkin_SOURCE_DIR@/bin:$PATH
 export CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@
 export CATKIN_SOURCE_DIR=@CMAKE_SOURCE_DIR@
+if [ -z "$CATKIN_SHELL" ] ; then
+   CATKIN_SHELL=sh
+fi
 
-for envfile in $CATKIN_BINARY_DIR/etc/catkin/profile.d/*
+for envfile in $CATKIN_BINARY_DIR/etc/catkin/profile.d/*.all $CATKIN_BINARY_DIR/etc/catkin/profile.d/*.$CATKIN_SHELL
 do
   . $envfile
 done
