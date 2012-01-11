@@ -60,6 +60,7 @@ function(catkin_generic_hooks)
   configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.buildspace.in
     ${CMAKE_BINARY_DIR}/env.sh)
 
+  message("TODO: Find another install location for *.*sh files.  They shouldn't go into CMAKE_INSTALL_PREFIX.")
   install(PROGRAMS
     ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh
     DESTINATION ${CMAKE_INSTALL_PREFIX}
