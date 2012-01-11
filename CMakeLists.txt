@@ -7,7 +7,7 @@ set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
-catkin_add_env_hooks(00.catkin SHELLS all sh bash zsh)
+add_subdirectory(env-hooks)
 catkin_generic_hooks()
 
 catkin_project(catkin)
