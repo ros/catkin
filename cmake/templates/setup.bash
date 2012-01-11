@@ -17,7 +17,3 @@ popd  > /dev/null
 
 . $SCRIPT_PATH/setup.sh
 
-pkgdir=`rospack find rosbash`
-if [ -e $pkgdir/rosbash ]; then
-  . $pkgdir/rosbash
-fi

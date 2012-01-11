@@ -8,6 +8,3 @@ SCRIPT_PATH="$(dirname $0)";
 
 . $SCRIPT_PATH/setup.sh
 
-if [ -e ${ROS_ROOT}/tools/rosbash/roszsh ]; then
-  . ${ROS_ROOT}/tools/rosbash/roszsh
-fi
