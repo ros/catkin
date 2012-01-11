@@ -51,7 +51,7 @@ commands:
    install ROSINSTALL_FILE
 
       This updates the current directory with the given rosinstall yaml
-      file.     
+      file.
 
 EOF
 }
@@ -63,6 +63,7 @@ USAGE=$(gc_help)
 
 search_up ()
 {
+    status "Looking (going upwards) for a file $1"
     FNAME=$1
     DESTVAR=$2
     if [ -n "$WORKSPACE" ] ; then
@@ -74,7 +75,6 @@ search_up ()
         SEARCHDIR=$(/bin/pwd)
     fi
     while [ 1 ] ; do
-        /bin/echo "searchdir=$SEARCHDIR"
         if [ -e $SEARCHDIR/$FNAME ] ; then
             eval $DESTVAR=$SEARCHDIR
             status "Workspace is ${boldon}${yellowf}$WORKSPACE${reset}"
@@ -90,7 +90,6 @@ search_up ()
 examine_workspace ()
 {
     search_up .rosinstall WORKSPACE
-    [ -z "$ALLDIRS" ] || return 0
     for dir in $WORKSPACE/*
     do
       if [ -d $dir ] ; then
@@ -109,6 +108,12 @@ examine_workspace ()
 gc_foreach ()
 {
     examine_workspace
+
+    if [ -z "$WORKSPACE" ] ; then
+        /bin/echo "Can't find a .rosinstall file in this or parent directories"
+        exit 1
+    fi
+
     type=${1}
     TYPE=$(echo $type | tr '[:lower:]' '[:upper:]')DIRS
     shift
@@ -192,9 +197,9 @@ ri_foreach()
     local_name=${arr[1]}
     version=${arr[2]}
     status  "${boldon}${whitef}===  ${greeni}$2: ${cyanf}${local_name}${whitef} ===${reset}"
-    ri_$2 $repo_uri $local_name $version  
+    ri_$2 $repo_uri $local_name $version
   done
-  
+
   if [ "$1" !=  ".rosinstall" ] ; then
     cp $1 .rosinstall
   fi
@@ -228,5 +233,5 @@ if eval gc_$CMD $* ;then
 else
   status "try :"
   status "${boldon}    git catkin help${reset}"
-  exit -1  
+  exit -1
 fi
