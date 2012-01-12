@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 2.8)
 cmake_policy(SET CMP0003 NEW)
 cmake_policy(SET CMP0011 NEW)
 
+include(${CMAKE_SOURCE_DIR}/workspace-config.cmake OPTIONAL)
+
 set(CATKIN YES)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/cmake)
 
