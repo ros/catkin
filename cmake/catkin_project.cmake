@@ -4,6 +4,8 @@ function(catkin_project PACKAGE_NAME)
       "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\n"
       "Did you forget to call project()?\n")
   endif()
+  set(Maintainer ${${CATKIN_CURRENT_STACK}_MAINTAINER})
+  message(STATUS "************** MAINTAINER ${CATKIN_CURRENT_STACK}_MAINTAINER ${Maintainer}")
 
   parse_arguments(PACKAGE
     "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH;DEPENDS"
