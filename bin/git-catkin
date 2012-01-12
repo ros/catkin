@@ -107,7 +107,10 @@ examine_workspace ()
 
 gc_foreach ()
 {
-    examine_workspace
+    #only do this once.
+    if [ -z "$ALLDIRS" ] ; then
+      examine_workspace
+    fi
 
     if [ -z "$WORKSPACE" ] ; then
         /bin/echo "Can't find a .rosinstall file in this or parent directories"
