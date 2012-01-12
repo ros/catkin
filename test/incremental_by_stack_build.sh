@@ -27,10 +27,10 @@ CMAKE="cmake -DCMAKE_INSTALL_PREFIX=$INSTALL -DCATKIN=YES -DCATKIN_LOG=2"
 
 doone () {
     pkg=$1
-    mkdir $BUILD/$pkg
+    mkdir -p $BUILD/$pkg
     cd $BUILD/$pkg
     $CMAKE $SRC/$proj
-    make VERBOSE=1
+    make VERBOSE=1 -j8
     make VERBOSE=1 install
     cd ..
 }

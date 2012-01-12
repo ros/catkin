@@ -17,6 +17,10 @@ export ROS_PACKAGE_PATH
 ROS_ROOT=@CMAKE_INSTALL_PREFIX@
 export ROS_ROOT
 
+echo "TODO: remove / reconsider LD_LIBRARY_PATH setting in catkin/cmakt/templates/setup.sh.installable.in"
+LD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
+
 if [ -z "$CATKIN_SHELL" ] ; then
    CATKIN_SHELL=sh
 fi
