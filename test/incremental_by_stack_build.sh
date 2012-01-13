@@ -30,14 +30,14 @@ doone () {
     mkdir -p $BUILD/$pkg
     cd $BUILD/$pkg
     $CMAKE $SRC/$proj
-    make VERBOSE=1 -j8
-    make VERBOSE=1 install
+    make -j8
+    make install
     cd ..
 }
 
 for proj in catkin rospkg rospack ros genmsg gencpp genpy genpybindings gentypelibxml roscpp_core std_msgs common_msgs ros_comm ros_tutorials
 do
-    /bin/echo "======================= $proj"
+    /bin/echo "\n\n\n======================= $proj ======================="
     doone $proj
 done
 
