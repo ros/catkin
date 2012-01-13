@@ -82,7 +82,8 @@ function(add_pyunit file)
   else()
     find_file(_file_name ${file}
               PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-              NO_DEFAULT_PATH)
+              NO_DEFAULT_PATH
+              NO_CMAKE_FIND_ROOT_PATH)  # for cross-compilation.  thanks jeremy.
     if(NOT _file_name)
       message(FATAL_ERROR "Can't find pyunit file \"${file}\"")
     endif()
@@ -151,7 +152,8 @@ function(add_nosetests dir)
   else()
     find_file(_dir_name ${dir}
               PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-              NO_DEFAULT_PATH)
+              NO_DEFAULT_PATH
+              NO_CMAKE_FIND_ROOT_PATH)  # for cross-compilation.  thanks jeremy.
     if(NOT _dir_name)
       message(FATAL_ERROR "Can't find nosetests dir \"${dir}\"")
     endif()
@@ -192,7 +194,8 @@ function(add_rostest file)
   else()
     find_file(_file_name ${file}
               PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-              NO_DEFAULT_PATH)
+              NO_DEFAULT_PATH
+              NO_CMAKE_FIND_ROOT_PATH)  # for cross-compilation.  thanks jeremy.
     if(NOT _file_name)
       message(FATAL_ERROR "Can't find rostest file \"${file}\"")
     endif()
