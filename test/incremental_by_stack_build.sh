@@ -23,21 +23,21 @@ mkdir -p $INSTALL
 
 #EAR: CMAKE_PREFIX_PATH appears to be ignored if passed as a cmake variable...
 export CMAKE_PREFIX_PATH=$INSTALL
-CMAKE="cmake -DCMAKE_INSTALL_PREFIX=$INSTALL -DCATKIN=YES -DCATKIN_LOG=2"
+CMAKE="cmake -DCMAKE_PREFIX_PATH=$INSTALL -DCMAKE_INSTALL_PREFIX=$INSTALL"
 
 doone () {
     pkg=$1
     mkdir -p $BUILD/$pkg
     cd $BUILD/$pkg
     $CMAKE $SRC/$proj
-    make VERBOSE=1 -j8
-    make VERBOSE=1 install
+    make -j8
+    make install
     cd ..
 }
 
 for proj in catkin rospkg rospack ros genmsg gencpp genpy genpybindings gentypelibxml roscpp_core std_msgs common_msgs ros_comm ros_tutorials
 do
-    /bin/echo "======================= $proj"
+    /bin/echo "\n\n\n======================= $proj ======================="
     doone $proj
 done
 
