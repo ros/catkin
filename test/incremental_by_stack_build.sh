@@ -23,7 +23,7 @@ mkdir -p $INSTALL
 
 #EAR: CMAKE_PREFIX_PATH appears to be ignored if passed as a cmake variable...
 export CMAKE_PREFIX_PATH=$INSTALL
-CMAKE="cmake -DCMAKE_INSTALL_PREFIX=$INSTALL -DCATKIN=YES -DCATKIN_LOG=2"
+CMAKE="cmake -DCMAKE_PREFIX_PATH=$INSTALL -DCMAKE_INSTALL_PREFIX=$INSTALL"
 
 doone () {
     pkg=$1
