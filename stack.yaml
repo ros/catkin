@@ -5,7 +5,7 @@ Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
 Vcs-Git: git://github.com/willowgarage/catkin.git
 
-Version: 0.2.1
+Version: 0.2.2
 
 Depends: cmake,
   python-setuptools,
