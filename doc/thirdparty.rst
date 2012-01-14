@@ -38,9 +38,18 @@ Create a cakin orphan branch::
     Catkin-ProjectName: flann
     Version: 1.7.1
 
-    Depends: libtbb-dev, libgtest-dev, python, python-numpy, libboost-all-dev, libboost-mpi-dev
+    Depends: cmake,
+        libtbb-dev,
+        libgtest-dev,
+        python,
+        python-numpy,
+        boost
 
-    Description: FLANN is a library for performing fast approximate nearest neighbor searches in high dimensional spaces. It contains a collection of algorithms we found to work best for nearest neighbor search and a system for automatically choosing the best algorithm and optimum parameters depending on the dataset.
+    Description: FLANN is a library for performing fast approximate nearest
+        neighbor searches in high dimensional spaces. It contains a collection
+        of algorithms we found to work best for nearest neighbor search and
+        a system for automatically choosing the best algorithm and
+        optimum parameters depending on the dataset.
 
     Author: Marius Muja <mariusm@cs.ubc.ca>
     Maintainer: Ethan Rublee <erublee@willowgarage.com>
