@@ -9,7 +9,7 @@ pyversion="%u.%u" % (v.major, v.minor)
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
 # this is the --install-layout=deb variety
-export PYTHONPATH=@(CMAKE_INSTALL_PREFIX)/lib/python@(pyversion)/dist-packages
+export PYTHONPATH=@(CMAKE_INSTALL_PREFIX)/lib/python@(pyversion)/@(PYTHON_PACKAGES_DIR)
 
 %:
 	dh  $@@
