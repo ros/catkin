@@ -51,23 +51,30 @@ function(catkin_generic_hooks)
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.installable.in
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
 
-    install(FILES
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.${shell}
-      DESTINATION ${CMAKE_INSTALL_PREFIX}
-      )
+    if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
+      install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.${shell}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        )
+    endif()
   endforeach()
 
   configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.buildspace.in
     ${CMAKE_BINARY_DIR}/env.sh)
-  install(PROGRAMS
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh
-    DESTINATION ${CMAKE_INSTALL_PREFIX}
+
+  if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
+    install(PROGRAMS
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh
+      DESTINATION ${CMAKE_INSTALL_PREFIX}
     )
+  endif()
 
   configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.installable.in
     ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/.rosinstall)
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/.rosinstall
-    DESTINATION ${CMAKE_INSTALL_PREFIX})
 
+  if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/.rosinstall
+      DESTINATION ${CMAKE_INSTALL_PREFIX})
+  endif()
 endfunction()
