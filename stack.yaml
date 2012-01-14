@@ -5,7 +5,7 @@ Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
 Vcs-Git: git://github.com/willowgarage/catkin.git
 
-Version: 0.1.24
+Version: 0.2.2
 
 Depends: cmake,
   python-setuptools,
@@ -16,5 +16,3 @@ Depends: cmake,
 Catkin-CopyrightType: willowgarage
 Catkin-DebRulesType: python_distutils
 
-Release-Pull: git://github.com/wg-debs/catkin.git
-Release-Push: git@github.com:wg-debs/catkin.git

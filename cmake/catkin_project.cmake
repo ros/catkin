@@ -4,6 +4,7 @@ function(catkin_project PACKAGE_NAME)
       "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\n"
       "Did you forget to call project()?\n")
   endif()
+  set(Maintainer ${${CATKIN_CURRENT_STACK}_MAINTAINER})
 
   parse_arguments(PACKAGE
     "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH;DEPENDS"
@@ -36,6 +37,9 @@ function(catkin_project PACKAGE_NAME)
   # Default executable output location to "private".
   #
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin PARENT_SCOPE)
+
+  # Add ROS_PACKAGE_NAME define
+  add_definitions(-DROS_PACKAGE_NAME=\"${PROJECT_NAME}\")
 
   #
   # Versions find_packageable from the buildspace

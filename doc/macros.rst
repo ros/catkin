@@ -8,7 +8,7 @@ Catkin cmake macro reference
    :param LIBRARIES: names of library targets
    :param CFG_EXTRAS: Any extra cmake stuff that should be accessible
       to users of the project.  This file should live in subdirectory
-      'cmake' and have extension ``.in``.  It will be expanded by cmake's
+      ``cmake`` and have extension ``.in``.  It will be expanded by cmake's
       ``configure_file()`` and made available to clients in both the
       install and build spaces: be sure it works both ways (by checking
       ``proj_SOURCE_DIR``, which is not set in the install case)
@@ -16,7 +16,10 @@ Catkin cmake macro reference
       ``CMAKE_INSTALL_PREFIX/share/${PROJECT_NAME}`` by default.  For
       use with cmake ``install()`` macro.
 
-   Create buildspace :term:`config-mode infrastructure`.  This allows
+   The argument ``DEPENDS`` is used when client code finds us via
+   ``find_package()``.  Projects listed in ``DEPENDS`` will in turn be
+   ``find_package``\ -ed and their ``INCLUDE_DIRS`` and ``LIBRARIES``
+   will be appended to ours.
 
    .. rubric:: Example
 
@@ -26,6 +29,7 @@ Catkin cmake macro reference
        INCLUDE_DIRS include
        LIBRARIES proj-one proj-two
        CFG_EXTRAS proj-extras.cmake
+       DEPENDS roscpp
        )
 
 .. index:: setup.py

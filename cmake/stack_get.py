@@ -3,7 +3,7 @@
 from __future__ import print_function
 import yaml, sys
 
-fields = ['Version']
+fields = ['Version', 'Maintainer']
 
 y = yaml.load(open(sys.argv[1]))
 
@@ -15,7 +15,5 @@ for k, v in y.items():
     if k in fields:
         print(r'set(%s_%s "%s" CACHE INTERNAL "" FORCE)' % (pkg, k.upper(), v), file=ofile)
 
-
-
-
+print(r'set(CATKIN_CURRENT_STACK %s CACHE INTERNAL "" FORCE)' %pkg, file=ofile)
 

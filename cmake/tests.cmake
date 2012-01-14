@@ -77,11 +77,16 @@ function(add_pyunit file)
 
   # Check that the file exists, #1621
   set(_file_name _file_name-NOTFOUND)
-  find_file(_file_name ${file}
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-            NO_DEFAULT_PATH)
-  if(NOT _file_name)
-    message(FATAL_ERROR "Can't find pyunit file \"${file}\"")
+  if(IS_ABSOLUTE ${file})
+    set(_file_name ${file})
+  else()
+    find_file(_file_name ${file}
+              PATHS ${CMAKE_CURRENT_SOURCE_DIR}
+              NO_DEFAULT_PATH
+              NO_CMAKE_FIND_ROOT_PATH)  # for cross-compilation.  thanks jeremy.
+    if(NOT _file_name)
+      message(FATAL_ERROR "Can't find pyunit file \"${file}\"")
+    endif()
   endif()
 
   # We look for ROS_TEST_COVERAGE=1
@@ -142,12 +147,16 @@ function(add_nosetests dir)
   endif()
 
   # Check that the directory exists
-  set(_dir_name _dir_name-NOTFOUND)
-  find_file(_dir_name ${dir}
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-            NO_DEFAULT_PATH)
-  if(NOT _dir_name)
-    message(FATAL_ERROR "Can't find nosetests dir \"${dir}\"")
+  if(IS_ABSOLUTE ${dir})
+    set(_dir_name ${dir})
+  else()
+    find_file(_dir_name ${dir}
+              PATHS ${CMAKE_CURRENT_SOURCE_DIR}
+              NO_DEFAULT_PATH
+              NO_CMAKE_FIND_ROOT_PATH)  # for cross-compilation.  thanks jeremy.
+    if(NOT _dir_name)
+      message(FATAL_ERROR "Can't find nosetests dir \"${dir}\"")
+    endif()
   endif()
 
   # We look for ROS_TEST_COVERAGE=1
@@ -180,12 +189,28 @@ function(add_rostest file)
 
   # Check that the file exists, #1621
   set(_file_name _file_name-NOTFOUND)
-  find_file(_file_name ${file}
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-            NO_DEFAULT_PATH)
-  if(NOT _file_name)
-    message(FATAL_ERROR "Can't find rostest file \"${file}\"")
+  if(IS_ABSOLUTE ${file})
+    set(_file_name ${file})
+  else()
+    find_file(_file_name ${file}
+              PATHS ${CMAKE_CURRENT_SOURCE_DIR}
+              NO_DEFAULT_PATH
+              NO_CMAKE_FIND_ROOT_PATH)  # for cross-compilation.  thanks jeremy.
+    if(NOT _file_name)
+      message(FATAL_ERROR "Can't find rostest file \"${file}\"")
+    endif()
   endif()
 
-  append_test_to_cache(catkin-tests "${_chdir_prefix}${rostest_exe} ${_file_name}${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix}${rostest_exe} --pkgdir=${PROJECT_SOURCE_DIR} --package=${PROJECT_NAME} ${_file_name}${_chdir_suffix}")
+endfunction()
+
+# Function to download data on the tests target
+function(download_test_data _url _filename _md5)
+  # Create a legal target name, in case the target name has slashes in it
+  string(REPLACE "/" "_" _testname download_data_${_filename})
+  add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/${_filename}
+                     COMMAND ${catkin_EXTRAS_DIR}/test/download_checkmd5.py ${_url} ${PROJECT_BINARY_DIR}/${_filename} ${_md5}
+                     VERBATIM)
+  add_custom_target(${_testname} DEPENDS ${PROJECT_BINARY_DIR}/${_filename})
+  add_dependencies(tests ${_testname})
 endfunction()

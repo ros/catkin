@@ -28,21 +28,14 @@ Changes is a bulleted list of changes.
 def parse_options():
     import argparse
     parser = argparse.ArgumentParser(description='Creates/updates a gpb from a catkin project.')
-    parser.add_argument('--repo_uri', dest='repo_uri',
-            help='Override the Release-Push field in the stack.yaml. A pushable git buildpackage repo uri.', default=None)
     parser.add_argument('--working', help='A scratch build path. Default: %(default)s',
-                        default='tmp-%u/' % os.getpid())
-    parser.add_argument(dest='upstream',
-            help='The location of your sources to create an upstream snap shot from.')
+                        default='.tmp/%u/' % os.getpid())
     parser.add_argument('--debian_inc', dest='debian_inc', help='Bump the changelog debian number. Please enter a monotonically increasing number from the last upload.', default=0)
     parser.add_argument(dest='rosdistro', help='The ros distro. electric, fuerte, galapagos')
-    parser.add_argument('--output', help='The result of source deb building will go here. For debuging purposes. Default: %(default)s', default='./sourcedeb-build')
     parser.add_argument('--distros', nargs='+',
             help='A list of debian distros. Default: %(default)s',
             default=['lucid', 'natty', 'oneiric'])
     parser.add_argument('--rosdep', help='Location of the remote rosdep database.', default='git://github.com/ros/rosdep_rules.git')
-    parser.add_argument('--push', dest='push', help='Push it to your remote repo?', action='store_true')
-    parser.add_argument('--first-release', dest='first_release', help='Is this your first release?', action='store_true')
     return parser.parse_args()
 
 
@@ -92,57 +85,26 @@ def generate_rosdep_db(working_dir, rosdep_remote, rosdistro):
         fn = os.path.join(subdir, 'rosdep.yaml')
         print('appending to rosdep db : %s' % fn)
         db.update(yaml.load(open(fn)))
-    #db = yaml.load(open(os.path.join(repo_path,'rosdep.yaml')))
-    #for x in os.path
     return db
-
-def novel_version(repo_path, version):
-    tags = call(repo_path, ['git', 'tag'], pipe=subprocess.PIPE)
-    if 'upstream/%s' % version in tags:
-        return False
-    return True
-
-def import_orig(repo_path, upstream_tarball, version):
-    if not novel_version(repo_path, version):
-        print('Warning: removing previous upstream version %(version)s!'
-                % locals(), file=sys.stderr)
-        call(repo_path, ['git', 'tag', '-d', 'upstream/%(version)s' % locals()])
-    upstream_tarball = os.path.abspath(upstream_tarball)
-    if len(call(repo_path, ['git', 'diff'], pipe=subprocess.PIPE)):
-        call(repo_path, ['git', 'commit', '-a', '-m', '"commit all..."'])
-    call(repo_path, ['git', 'import-orig', upstream_tarball])
 
 def make_working(working_dir):
     if not os.path.exists(working_dir):
         os.makedirs(working_dir)
 
-def exclude(filename):
-    if filename and filename[-1] == '~':
-        return True;
-    ignores = []
-    ignores += [x == os.path.basename(filename) for x in ('.svn', '.git', '.hg')]
-    ignores += [x == os.path.basename(os.path.dirname(filename)) for x in ('build',)]
-    return any(ignores)
-
-def make_tarball(upstream, tarball_name):
-    tarball = tarfile.open(name=tarball_name, mode='w:gz')
-    tarball.add(name=upstream, arcname=os.path.basename(upstream), recursive=True, exclude=exclude)
-    tarball.close()
-
 def sanitize_package_name(name):
     return name.replace('_', '-')
 
-def parse_stack_yaml(upstream, rosdistro, release_push=None, args=None):
-    yaml_path = os.path.join(upstream, 'stack.yaml')
+def parse_stack_yaml(args):
+    yaml_path = os.path.join('.', 'stack.yaml')
     stack_yaml = yaml.load(open(yaml_path))
 
     if 'Catkin-ChangelogType' not in stack_yaml:
         stack_yaml['Catkin-ChangelogType'] = ''
     stack_yaml['DebianInc'] = args.debian_inc
     stack_yaml['Package'] = sanitize_package_name(stack_yaml[name_key])
-    stack_yaml['ROS_DISTRO'] = rosdistro
-    stack_yaml['INSTALL_PREFIX'] = '/opt/ros/%s' % rosdistro
-    stack_yaml['PackagePrefix'] = 'ros-%s-' % rosdistro
+    stack_yaml['ROS_DISTRO'] = args.rosdistro
+    stack_yaml['INSTALL_PREFIX'] = '/opt/ros/%s' % args.rosdistro
+    stack_yaml['PackagePrefix'] = 'ros-%s-' % args.rosdistro
 
     deps = stack_yaml['Depends']
     if type(deps) == str:
@@ -254,49 +216,22 @@ def commit_debian(stack_yaml, repo_path):
 ''' % stack_yaml
     call(repo_path, ['git', 'commit', '-m', message])
 
-def gbp_sourcedebs(stack_yaml, repo_path, output):
-    tag_name = 'debian/ros_%(ROS_DISTRO)s_%(Version)s_%(Distribution)s' % stack_yaml
-    tag = '--git-debian-tag=%s' % tag_name
-    call(repo_path, ['git', 'buildpackage',
-        '-S', '--git-export-dir=%s' % output,
-        '--git-ignore-new', '--git-retag', '--git-tag', tag, '-uc', '-us'])
-    return tag_name
-
 def main(args):
     stamp = datetime.datetime.now(dateutil.tz.tzlocal())
-    stack_yaml = parse_stack_yaml(args.upstream, args.rosdistro, args.repo_uri, args=args)
-    pprint(stack_yaml)
-
-    #repo_base = os.path.splitext(os.path.basename(stack_yaml['Release-Push']))[0]
-    #repo_path = os.path.join(args.working, repo_base)
-
+    stack_yaml = parse_stack_yaml(args)
     make_working(args.working)
 
     rosdep_db = generate_rosdep_db(args.working, args.rosdep, args.rosdistro)
-    pprint(rosdep_db)
-    #update_repo(working_dir=args.working, repo_path=repo_path, repo_uri=stack_yaml['Release-Push'], first_release=args.first_release)
-
-#     if not args.debian_inc:
-#         tarball_name = '%(Package)s-%(Version)s.tar.gz' % stack_yaml
-#         tarball_name = os.path.join(args.working, tarball_name)
-#
-#
-#         print('Generating an upstream tarball --- %s' % tarball_name)
-#         make_tarball(args.upstream,
-#                      tarball_name)
-#
-#         import_orig(repo_path, tarball_name, stack_yaml['Version'])
+  
     tags = []
     for debian_distro in args.distros:
         generate_deb(stack_yaml, ".", stamp, debian_distro, rosdep_db)
         commit_debian(stack_yaml, ".")
-        #tags.append((gbp_sourcedebs(stack_yaml, repo_path, args.output)))
         tag_name = 'debian/ros_%(ROS_DISTRO)s_%(Version)s_%(Distribution)s' % stack_yaml
         print("tag: %s" % tag_name)
         call(".", ['git', 'tag', '-f', tag_name, '-m', 'Debian release %(Version)s' % stack_yaml])
 
     sys.exit(0)
-
-
+    
 if __name__ == "__main__":
     main(parse_options())

@@ -60,6 +60,14 @@ get_version_component ()
     VALUE=$(perl -e "\"$REV\" =~ $REGEX  && print \$$NUM")
 }
 
+get_upstream_version_component ()
+{
+    REGEX='/upstream\/(\d+)\.(\d+)\.(\d+)/'
+    NUM=$1
+    REV=$2
+    VALUE=$(perl -e "\"$REV\" =~ $REGEX  && print \$$NUM")
+}
+
 bailout ()  {
     /bin/echo "${redf}${boldon}$*${reset}"
     exit 1
@@ -93,6 +101,9 @@ read_stack_yaml ()
     VERSION_MINOR=$VALUE
     get_version_component 3 $VERSION_FULL
     VERSION_PATCH=$VALUE
+
+    PACKAGE_NAME=$(/bin/echo $TXT | perl -ne '/Catkin-ProjectName:\s+([^\s]+)/ && print $1')
+    
 }
 
 prompt_continue()
@@ -158,27 +169,25 @@ assert_nonempty ()
     fi
 }
 
-get_latest_gbp_version ()
+get_upstream_version_component ()
 {
-    REPO=$1
-    pushd $REPO
-    LASTTAG=$(git for-each-ref --sort='*authordate' --format='%(refname:short)' refs/tags/debian | tail -1)
-    /bin/echo "Last tag in gbp repo is ${boldon}$LASTTAG${reset}"
-    LASTREV=$(git show $LASTTAG:debian/changelog | head -1)
-    assert_nonempty $LASTREV
-    /bin/echo "Disassembling ${boldon}$LASTREV${reset}"
-    get_version_component 1 "$LASTREV"
+    REGEX='/upstream\/(\d+)\.(\d+)\.(\d+)/'
+    NUM=$1
+    REV=$2
+    VALUE=$(perl -e "\"$REV\" =~ $REGEX  && print \$$NUM")
+}
+
+
+extract_gbp_upstream_version ()
+{
+    LASTTAG=$1
+    get_upstream_version_component 1 "$LASTTAG"
     GBP_MAJOR=$VALUE
     assert_nonempty $GBP_MAJOR
-    get_version_component 2 "$LASTREV"
+    get_upstream_version_component 2 "$LASTTAG"
     GBP_MINOR=$VALUE
-    get_version_component 3 "$LASTREV"
+    get_upstream_version_component 3 "$LASTTAG"
     GBP_PATCH=$VALUE
-    get_version_component 4 "$LASTREV"
-    GBP_PACKAGE=$VALUE
-
-    /bin/echo "Got version components ${boldon}$GBP_MAJOR $GBP_MINOR $GBP_PATCH - $GBP_PACKAGE${reset}"
-    popd > /dev/null
 }
 
 to_github_uri ()
@@ -266,6 +275,7 @@ repo_clone ()
     #set +x
 }
 
+
 repo_export ()
 {
     #set -x
@@ -294,4 +304,18 @@ repo_export ()
             bailout "What kind of repo is $TYPE?"
             ;;
     esac
+}
+
+
+_track_all(){
+    for x in catkin upstream
+    do
+	if git branch | grep $x >/dev/null
+	then
+	    status "$(basename `pwd`) has branch $x."
+	elif git branch -r | grep origin/$x >/dev/null
+	then
+	    git branch --track $x origin/$x
+	fi
+    done
 }

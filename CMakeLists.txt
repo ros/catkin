@@ -8,6 +8,7 @@ set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
 add_subdirectory(env-hooks)
+add_subdirectory(bin)
 catkin_generic_hooks()
 
 catkin_project(catkin)

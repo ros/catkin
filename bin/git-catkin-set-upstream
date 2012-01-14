@@ -33,13 +33,13 @@ case $UPSTREAM_TYPE in
         ;;
 esac
 
-/bin/echo "Upstream ${boldon}$UPSTREAM_REPO${boldoff} type: ${boldon}$UPSTREAM_TYPE${boldoff}"
+echo "Upstream ${boldon}$UPSTREAM_REPO${boldoff} type: ${boldon}$UPSTREAM_TYPE${boldoff}"
 require_work_tree
 
-if ! git show-ref HEAD
+if ! git show-ref --heads
 then
     status "You're in a freshly initialized repo, no?"
-    maybe_continue y "Going to make an empty initial commit in $(/bin/pwd)"
+    maybe_continue y "Going to make an empty initial commit in $(pwd)"
     git commit -m "initial commit" --allow-empty
 fi
 
@@ -48,14 +48,12 @@ then
     status "Checking out catkin branch"
     git checkout catkin
 else
-    status "No catkin_state branch... initializing"
+    status "No catkin branch... initializing"
     git checkout --orphan catkin
-    rm .git/index
-    /bin/echo
-    /bin/echo "This is in order to create an 'orphan' branch."
-    maybe_continue y "${redf}${boldon}ABOUT TO GIT CLEAN in directory $(/bin/pwd).${reset}"
-    git clean -qdfx
+    git rm -rf --ignore-unmatch .
+    git commit --allow-empty -m "Initial catkin branch"
 fi
+
 git config -f catkin.conf catkin.upstream "$UPSTREAM_REPO"
 git config -f catkin.conf catkin.upstreamtype "$UPSTREAM_TYPE"
 

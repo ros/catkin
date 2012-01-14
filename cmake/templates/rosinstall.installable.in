@@ -1,0 +1,5 @@
+- other:
+    local-name: @CMAKE_INSTALL_PREFIX@/share/ros
+- other:
+    local-name: @CMAKE_INSTALL_PREFIX@/share
+
