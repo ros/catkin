@@ -1,10 +1,15 @@
+Native catkin projects
+----------------------
+
 Upstream
---------
+========
 
-Fix up your project and commit a release.
+Fix up your project and commit a release.  *Upstream* is the repository where
+your main development happens, and from which you would like to make packages.
+An upstream release means to mark your code with a version number.
 
-1. edit the stack.yaml Version, so that its the number that you want...
-   Semantic versions here, MAJOR.MINOR.PATCH
+1. edit the stack.yaml ``Version`` field, so that its the number that you want...
+   Semantic versions here, ``MAJOR.MINOR.PATCH``
 
 2. create a tag whose name exactly corresponds to your Version number, and is pointing to the commit you would like to release.
    Say my version is 0.1.1, in git i would do something like::
@@ -22,16 +27,21 @@ Fix up your project and commit a release.
     
      svn something or other
 
+env
+===
 
-Releasing for the first time.
------------------------------
+Make sure you have catkin in your bin. To enter an interactive shell with the right environment::
+  
+  /path/to/catkin/install/or/build/env.sh
 
 
+First Time Release
+==================
 
 Release Repo
-============
+++++++++++++
 
-We're using git to manage releases. Think of the git repo as a release staging ground.
+We're using git to manage releases. Think of the git repo as a release staging area.
 
 Create a release repo::
 
@@ -69,12 +79,12 @@ from your release repo::
 To test the debians try checking out a tag and using git-buildpackage to create
 a binary debian::
   
-  git checkout debian/ros_fuere_0.1.2_$(lsb_release -cs)
+  git checkout debian/ros_fuere_0.1.2_oneiric
   git clean -dxf
-  git buildpackage -uc -us
+  git buildpackage -uc -us --git-ignore-new --git-ignore-branch
 
 Push it Public
-==============
+++++++++++++++
 
 At this point you should add a remote and push::
 
@@ -84,7 +94,7 @@ At this point you should add a remote and push::
 
 
 Subsequent Releases
--------------------
+===================
 
 First clone your release repo (use a pushable uri for convenience)::
 
@@ -99,13 +109,23 @@ If you're happy with it, generate new debian tags::
 
   git catkin-generate-debian fuerte
 
-Test it::
+Test it locally.  First checkout a tag that you would like to build::
   
-  git checkout debian/ros_fuere_0.1.2_$(lsb_release -cs)
-  git clean -dxf
-  git buildpackage -uc -us
+  git checkout debian/ros_fuerte_0.1.2_oneiric
 
-Push it::
+Clean your repo **WARNING This will delete all uncommitted content from your local repo**::
+  
+  git clean -dxf
+
+Use git-buildpackage to build a binary debian::
+
+  git buildpackage -uc -us --git-ignore-new --git-ignore-branch
+
+Try installing it (needs sudo)::
+  
+  dpkg -i ../ros-fuerte-ecto*.deb
+
+If you're satisfied, push it::
   
   git push --all
   git push --tags
