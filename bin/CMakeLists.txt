@@ -1,0 +1,4 @@
+install(DIRECTORY ./
+  DESTINATION bin
+  USE_SOURCE_PERMISSIONS
+  )
