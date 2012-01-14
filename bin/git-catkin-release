@@ -4,36 +4,34 @@ TOP=$(cd `dirname $0`; /bin/pwd)
 . $TOP/catkin_util.sh
 
 
-gcgbp_help() {
+gcr_help() {
 
 cat <<EOF
-Usage: git catkin-gbp [command] ..
-  
-  Tools for managing a catkin style git buildpackage repo.
+Usage: git catkin-release [command] ..
+ 
+  Release catkin projects.
 
 commands:
   
-  init PATH
-
+  export
 
 EOF
 }
 
-USAGE=$(gcgbp_help)
+USAGE=$(gcr_help)
+
+gcr_export()
+{
+    
+}
 
 CMD=$1
 shift
-if [ "$CMD" = '-n' ] ; then
-    JUSTECHO=/bin/echo
-    CMD=$1
-else
-    JUSTECHO=""
-fi
 
-if eval gcgbp_$CMD $* ;then
+if eval gcr_$CMD $* ;then
   exit 0
 else
   status "try :"
-  status "${boldon} git catkin-gbp help${reset}"
+  status "${boldon} git catkin-release help${reset}"
   exit -1  
 fi

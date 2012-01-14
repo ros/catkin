@@ -1,0 +1,34 @@
+#!/bin/bash -e
+WORK=$(pwd)
+TOP=$(cd `dirname $0` ; pwd)
+. $TOP/catkin_util.sh
+
+
+_track_all
+
+if ! git show-ref refs/heads/catkin >/dev/null
+then
+    bailout "This does not appear to be a catkin release repo. Please initialize it first using:
+
+   git catkin-set-upstream <UPSTREAM_VCS_URL> <VCS_TYPE>"
+fi
+git checkout master
+
+LASTTAG=$(git for-each-ref --sort='*authordate' --format='%(refname:short)' refs/tags/upstream | tail -1)
+if [ "$LASTTAG" = "" ]
+then
+    bailout "There are is no upstream version imported into this repo. Try:
+
+  git catkin-import-upstream
+"
+else
+    status "The latest upstream tag in the release repo is ${boldon}$LASTTAG${reset}"
+    extract_gbp_upstream_version $LASTTAG
+    status "Upstream version is: ${boldon}$GBP_MAJOR.$GBP_MINOR.$GBP_PATCH${reset}"
+fi
+
+
+$TOP/catkin-generate-debian $@
+
+
+exit 0
