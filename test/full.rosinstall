@@ -76,4 +76,6 @@
     local-name: rx
     uri: https://code.ros.org/svn/ros/stacks/rx/trunk
 
-
+- hg:
+    local-name: actionlib
+    uri: https://kforge.ros.org/common/actionlib
