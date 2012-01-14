@@ -14,7 +14,7 @@ else()
   set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb" CACHE STRING "extra arguments to setuptools")
 endif()
 
-set(INSTALLED_PYTHONPATH ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_XDOTY}/site-packages
+set(INSTALLED_PYTHONPATH ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_XDOTY}/${PYTHON_PACKAGES_DIR}
   CACHE INTERNAL "This needs to be in pythonpath when setup.py install is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
 
 
