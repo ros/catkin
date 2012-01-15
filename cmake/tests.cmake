@@ -147,6 +147,7 @@ function(add_nosetests dir)
   endif()
 
   # Check that the directory exists
+  set(_dir_name _dir_name-NOTFOUND)
   if(IS_ABSOLUTE ${dir})
     set(_dir_name ${dir})
   else()
