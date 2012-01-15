@@ -69,7 +69,7 @@
 
 - svn:
     local-name: perception_pcl
-    uri: http://svn.pointclouds.org/ros/tags/perception_pcl_unstable-1.1.0
+    uri: http://svn.pointclouds.org/ros/tags/perception_pcl_unstable-1.1.2
 
 - svn:
     local-name: driver_common
