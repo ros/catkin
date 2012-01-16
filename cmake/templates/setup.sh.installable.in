@@ -1,9 +1,9 @@
 #
-# path segment PREFIX/lib/pythonX.Y/dist-packages in PYTHONPATH is calculated
+# path segment PREFIX/lib/pythonX.Y/[dist|site]-packages in PYTHONPATH is calculated
 # by us... this appears to be what setuptools does under --install-layout=deb
 #
 
-PYTHONPATH=@CMAKE_INSTALL_PREFIX@/lib/python@PYTHON_VERSION_XDOTY@/dist-packages:$PYTHONPATH
+PYTHONPATH=@CMAKE_INSTALL_PREFIX@/lib/python@PYTHON_VERSION_XDOTY@/@PYTHON_PACKAGES_DIR@:$PYTHONPATH
 export PYTHONPATH
 
 PATH=@CMAKE_INSTALL_PREFIX@/bin:$PATH
