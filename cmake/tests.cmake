@@ -71,7 +71,7 @@ function(add_pyunit file)
     set(_pyunit_TIMEOUT 60.0)
   endif()
   if(_pyunit_WORKING_DIRECTORY)
-    set(_chdir_prefix "bash -c \"cd ${_pyunit_WORKING_DIRECTORY} &&")
+    set(_chdir_prefix "bash -c \"cd ${_pyunit_WORKING_DIRECTORY} && ")
     set(_chdir_suffix "\"")
   endif()
 
@@ -100,7 +100,7 @@ function(add_pyunit file)
   # Create a legal test name, in case the target name has slashes in it
   string(REPLACE "/" "_" _testname ${file})
   # We use rostest to call the executable to get process control, #1629
-  append_test_to_cache(catkin-tests "${_chdir_prefix} ${ROSUNIT_EXE} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg} ${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${_chdir_prefix}${ROSUNIT_EXE} --name=${_testname} --time-limit=${_pyunit_TIMEOUT} --package=${PROJECT_NAME} -- ${_file_name} ${_covarg}${_chdir_suffix}")
   append_test_to_cache(catkin-tests "${ROSUNIT_CHECK_TEST_RAN_EXE} ${CMAKE_BINARY_DIR}/test_results/${PROJECT_NAME}/TEST-${_testname}.xml")
 endfunction()
 
@@ -147,6 +147,7 @@ function(add_nosetests dir)
   endif()
 
   # Check that the directory exists
+  set(_dir_name _dir_name-NOTFOUND)
   if(IS_ABSOLUTE ${dir})
     set(_dir_name ${dir})
   else()
