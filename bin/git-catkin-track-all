@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+WORK=$(pwd)
+TOP=$(cd `dirname $0` ; pwd)
+. $TOP/catkin_util.sh
+
+LONG_USAGE=$(/bin/echo <<EOF
+usage: git catkin-track-all
+EOF
+)
+USAGE=$LONG_USAGE
+
+. "$(git --exec-path)/git-sh-setup"
+
+require_work_tree
+
+_track_all
+exit 0
