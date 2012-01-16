@@ -131,8 +131,24 @@ If you're satisfied, push it::
   git push --tags
 
 
+tips and tricks
+===============
 
+This will create a rosinstall file for all repos in a github org::
 
+  github_org_to_install()
+  {
+    for x in $(github orgs/$1/repos ssh_url+)
+    do
+    y=$(basename $x)
+    echo "- git:
+      uri: '$x'
+      local-name: release-${y%.git}
+      version: master
+    "
+    done
+  }
 
-
-
+Call like::
+  
+  github_org_to_install wg-debs
