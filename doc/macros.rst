@@ -219,3 +219,11 @@ Convenience macros
    alphanumeric order) and ``projectname`` serves to disambiguate in
    the event of collision.
 
+
+.. cmake:macro:: stamp(filepath)
+
+   :param filepath:  file name
+
+   Use ``configure_file`` to generate a file ``filepath.stamp`` hidden
+   somewhere in the build tree.  This will cause cmake to rebuild its
+   cache when ``filepath`` is modified.
