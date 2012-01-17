@@ -1,3 +1,5 @@
+.. _envfiles:
+
 Environment files
 =================
 

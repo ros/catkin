@@ -31,9 +31,8 @@ An upstream release means to mark your code with a version number.
 Environment
 ===========
 
-Make sure you have catkin in your bin. To enter an interactive shell with the right environment::
-
-  /path/to/catkin/install/or/build/env.sh
+Make sure you have catkin in your ``PATH``: source an :ref:`envfiles`
+as appropriate.
 
 
 First Time Release
@@ -97,39 +96,153 @@ At this point you should add a remote and push::
 Subsequent Releases
 ===================
 
-First clone your release repo (use a pushable uri for convenience)::
+Choose a temporary directory somewhere in a quiet place, free from
+distractions, where you can think.  We'll use ``STACK`` to represent
+the stack being released.
 
-  git clone git@github.com:ethanrublee/ecto-release.git
-  cd ecto-release
+* First verify that catkin's git utilities are in your path::
 
-Import a new version of upstream::
+    % which git-catkin
+    /home/catkin/test/src/catkin/bin/git-catkin
 
-  git catkin-import-upstream
+  If they aren't, source your :ref:`envfiles` as appropriate.
 
-If you're happy with it, generate new debian tags::
+* Clone your :term:`gbp repository` (use a pushable uri for
+  convenience)::
 
-  git catkin-generate-debian fuerte
+    % git clone git@github.com:wg-debs/STACK.git
+    % cd STACK
 
-Test it locally.  First checkout a tag that you would like to build::
+  You should see tags for upstream source and debian releases::
 
-  git checkout debian/ros_fuerte_0.1.2_oneiric
+    % git tag
+    upstream/0.1.18
+    upstream/0.1.19
+    ...
+    debian/ros_fuerte_0.2.2_lucid
+    debian/ros_fuerte_0.2.2_natty
+    debian/ros_fuerte_0.2.2_oneiric
 
-Clean your repo **WARNING This will delete all uncommitted content from your local repo**::
+  There may be a great many of these.  You'll see that there are three upstream branches::
 
-  git clean -dxf
+    % git branch -r
+    origin/HEAD -> origin/master
+    origin/catkin
+    origin/master
+    origin/upstream
 
-Use git-buildpackage to build a binary debian::
+  Since you are about to import upstream source, you can verify what will be imported::
 
-  git buildpackage -uc -us --git-ignore-new --git-ignore-branch
+    % git show origin/catkin:catkin.conf
+    [catkin]
+            upstream = git@github.com:willowgarage/catkin.git
+            upstreamtype = git
 
-Try installing it (needs sudo)::
+  (this is essentially catting the file ``catkin.conf`` from the
+  origin's `catkin` branch.
 
-  dpkg -i ../ros-fuerte-ecto*.deb
+* Import a new version of upstream.
+  The upstream source will be retrieved from source control and
+  imported in to this gbp repository. You'll be prompted to verify the
+  upstream version::
 
-If you're satisfied, push it::
+    % git catkin-import-upstream
+    STACK has branch catkin.
+    Branch upstream set up to track remote branch upstream from origin.
+    + git checkout catkin
+    Switched to branch 'catkin'
+    upstream repo: git@github.com:willowgarage/STACK.git
+    upstream type: git
+    Verifying a couple of things about the upstream git repo
+    Verifying that git@github.com:willowgarage/STACK.git is a git repo...
+    Yup, with 1 heads.
+    Verifying that git@github.com:willowgarage/STACK.git is not a git-buildpackage repo
+    Yup, no upstream branches.
+    Cloning into ...
 
-  git push --all
-  git push --tags
+      ...
+
+    What is the upstream version? [0.2.4]
+
+      ...
+
+* Now generate new debian tags::
+
+    % git catkin-generate-debian fuerte
+    catkin has branch catkin.
+    catkin has branch upstream.
+    M	debian/changelog
+    Already on 'master'
+    Your branch is ahead of 'origin/master' by 2 commits.
+    The latest upstream tag in the release repo is upstream/0.2.4
+    Upstream version is: 0.2.4
+    + cd .tmp/25332/ && git clone git://github.com/ros/rosdep_rules.git
+    Cloning into rosdep_rules...
+    remote: Counting objects: 106, done.
+    remote: Compressing objects: 100% (49/49), done.
+    remote: Total 106 (delta 18), reused 94 (delta 7)
+    Receiving objects: 100% (106/106), 11.05 KiB, done.
+    Resolving deltas: 100% (18/18), done.
+
+    ...
+
+    [master d3cc805] + Creating debian mods for distro: oneiric, rosdistro: fuerte, upstream version: 0.2.4
+     1 files changed, 1 insertions(+), 1 deletions(-)
+    tag: debian/ros_fuerte_0.2.4_oneiric
+    + cd . && git tag -f debian/ros_fuerte_0.2.4_oneiric -m Debian release 0.2.4
+    Updated tag 'debian/ros_fuerte_0.2.4_oneiric' (was 0000000)
+
+
+* Test it locally.  First checkout a tag that you would like to build::
+
+    git checkout debian/ros_fuerte_0.1.2_oneiric
+
+* Clean your checkout... there may be temporary files or directories
+  laying around from previous steps. **This will delete all
+  uncommitted content from your local repo**::
+
+    % git clean -dxf
+    Removing .tmp/
+
+* Use git-buildpackage to build a binary debian.
+  This command will generate a lot of output.  You may see a lot of
+  errors about `dir-or-file-in-opt`, which is okay::
+
+    % git buildpackage -uc -us --git-ignore-new --git-ignore-branch
+    dh  clean
+       dh_testdir
+       dh_auto_clean
+    	python2.6 setup.py clean -a
+    running clean
+    'build/lib.linux-x86_64-2.6' does not exist -- can't clean it
+    ...
+    E: ros-fuerte-STACK: dir-or-file-in-opt opt/ros/fuerte/share/STACK/
+    ...
+    Finished running lintian.
+
+* A deb should have been produced in the parent directory.  Try
+  installing it (needs sudo)::
+
+    % ls ../*.deb
+    ../ros-fuerte-STACK_0.2.4-0oneiric_amd64.deb
+    dpkg -i ../ros-fuerte-STACK_0.2.4-0oneiric_amd64.deb
+
+* If you're satisfied, push::
+
+    % git remote -v
+    origin	git@github.com:wg-debs/STACK.git (fetch)
+    origin	git@github.com:wg-debs/STACK.git (push)
+    % git push --tags
+    Counting objects: 4, done.
+    Delta compression using up to 8 threads.
+    Compressing objects: 100% (4/4), done.
+    Writing objects: 100% (4/4), 664 bytes, done.
+    Total 4 (delta 0), reused 0 (delta 0)
+    To git@github.com:wg-debs/STACK.git
+     * [new tag]         debian/ros_fuerte_0.2.4_lucid -> debian/ros_fuerte_0.2.4_lucid
+     * [new tag]         debian/ros_fuerte_0.2.4_natty -> debian/ros_fuerte_0.2.4_natty
+     * [new tag]         debian/ros_fuerte_0.2.4_oneiric -> debian/ros_fuerte_0.2.4_oneiric
+     * [new tag]         upstream/0.2.4 -> upstream/0.2.4
 
 
 tips and tricks

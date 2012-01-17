@@ -6,11 +6,15 @@
 @{
 from sys import version_info as v
 pyversion="%u.%u" % (v[0], v[1])
+import platform
 }
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
 # this is the --install-layout=deb variety
-export PYTHONPATH=@(INSTALL_PREFIX)/lib/python@(pyversion)/@(PYTHON_PACKAGES_DIR)
+
+# elsewhere there is a PYTHON_PACKAGES_DIR defined.  We shouldn't
+# need this here:  this file is only for debian.
+export PYTHONPATH=@(INSTALL_PREFIX)/lib/python@(pyversion)/dist-packages
 %:
 	dh  $@@
 
