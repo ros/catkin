@@ -137,7 +137,7 @@ function(add_nosetests dir)
   # Check that nosetests is installed.
   find_program(nosetests_path nosetests)
   if(NOT nosetests_path)
-    message(FATAL_ERROR "Can't find nosetests executable")
+    message(FATAL_ERROR "Can't find nosetests executable... try installing package 'python-nose'")
   endif()
 
   parse_arguments(_nose "WORKING_DIRECTORY" "" ${ARGN})
