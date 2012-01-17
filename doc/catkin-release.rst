@@ -17,7 +17,7 @@ An upstream release means to mark your code with a version number.
    version is 0.1.1, in git i would do something like::
 
     git commit -m "Awesome 0.1.1 release"
-    git tag 0.1.1
+    git tag -a $(catkin-version) -m "Releasing $(catkin-version)"
     git push --tags
 
    In hg::
