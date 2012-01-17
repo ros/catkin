@@ -1,5 +1,5 @@
-Native catkin projects
-----------------------
+"Native" catkin projects
+------------------------
 
 Upstream
 ========
@@ -8,30 +8,31 @@ Fix up your project and commit a release.  *Upstream* is the repository where
 your main development happens, and from which you would like to make packages.
 An upstream release means to mark your code with a version number.
 
-1. edit the stack.yaml ``Version`` field, so that its the number that you want...
-   Semantic versions here, ``MAJOR.MINOR.PATCH``
+1. Ensure that :ref:`stack.yaml`\ 's ``Version`` field is correct, and
+   meaningful: ``MAJOR.MINOR.PATCH``.  Specify all three numbers,
+   including trailing zeros.
 
-2. create a tag whose name exactly corresponds to your Version number, and is pointing to the commit you would like to release.
-   Say my version is 0.1.1, in git i would do something like::
-    
+2. Create a tag whose name exactly corresponds to your Version number,
+   and is pointing to the commit you would like to release.  Say my
+   version is 0.1.1, in git i would do something like::
+
     git commit -m "Awesome 0.1.1 release"
     git tag 0.1.1
-    git push
     git push --tags
 
    In hg::
-    
+
      hg something or other
-    
+
    In svn::
-    
+
      svn something or other
 
-env
-===
+Environment
+===========
 
 Make sure you have catkin in your bin. To enter an interactive shell with the right environment::
-  
+
   /path/to/catkin/install/or/build/env.sh
 
 
@@ -59,13 +60,13 @@ catkin.conf, you will see the upstream url and VCS type.
 
 Let's get back to master branch if we're happy. This isn't strictly necessary,
 but it helps me think.  master is the main branch from which debian's are created::
-    
+
   git checkout master
 
 Now that we have a catkin release repo, we can import from upstream::
 
   git catkin-import-upstream
-  
+
 This will clone the upstream, do a vcs export, and import it in the gbp repo.
 It will look for a tag in in your upstream repo that corresponds to the Version if the
 stack.yaml.
@@ -78,7 +79,7 @@ from your release repo::
 
 To test the debians try checking out a tag and using git-buildpackage to create
 a binary debian::
-  
+
   git checkout debian/ros_fuere_0.1.2_oneiric
   git clean -dxf
   git buildpackage -uc -us --git-ignore-new --git-ignore-branch
@@ -100,7 +101,7 @@ First clone your release repo (use a pushable uri for convenience)::
 
   git clone git@github.com:ethanrublee/ecto-release.git
   cd ecto-release
-  
+
 Import a new version of upstream::
 
   git catkin-import-upstream
@@ -110,11 +111,11 @@ If you're happy with it, generate new debian tags::
   git catkin-generate-debian fuerte
 
 Test it locally.  First checkout a tag that you would like to build::
-  
+
   git checkout debian/ros_fuerte_0.1.2_oneiric
 
 Clean your repo **WARNING This will delete all uncommitted content from your local repo**::
-  
+
   git clean -dxf
 
 Use git-buildpackage to build a binary debian::
@@ -122,11 +123,11 @@ Use git-buildpackage to build a binary debian::
   git buildpackage -uc -us --git-ignore-new --git-ignore-branch
 
 Try installing it (needs sudo)::
-  
+
   dpkg -i ../ros-fuerte-ecto*.deb
 
 If you're satisfied, push it::
-  
+
   git push --all
   git push --tags
 
@@ -150,5 +151,5 @@ This will create a rosinstall file for all repos in a github org::
   }
 
 Call like::
-  
+
   github_org_to_install wg-debs
