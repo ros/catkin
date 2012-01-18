@@ -232,6 +232,11 @@ the stack being released.
     % git remote -v
     origin	git@github.com:wg-debs/STACK.git (fetch)
     origin	git@github.com:wg-debs/STACK.git (push)
+    % git push --all
+    Total 0 (delta 0), reused 0 (delta 0)
+    To git@github.com:wg-debs/STACK.git
+    9793abc..987ceab  master -> master
+    123d5d9..340fc7c  upstream -> upstream
     % git push --tags
     Counting objects: 4, done.
     Delta compression using up to 8 threads.
@@ -266,3 +271,21 @@ This will create a rosinstall file for all repos in a github org::
 Call like::
 
   github_org_to_install wg-debs
+  
+Version tools, for upstream releases::
+    
+    bump_minor()
+    {
+       git pull
+       which=minor
+       old_version=$(catkin-version)
+       echo "old version: $old_version"
+       catkin-bump-version $which
+       version=$(catkin-version)
+       echo "new version: $version"
+       git commit stack.yaml -m "Bumping $which version $old_version ~> $version"
+       git tag -a $version -m "$which release, $version"
+       git push
+       git push --tags
+    }
+    
