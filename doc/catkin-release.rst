@@ -1,5 +1,10 @@
 "Native" catkin projects
 ------------------------
+Environment
+===========
+
+Make sure you have catkin in your ``PATH``: source an :ref:`envfiles`
+as appropriate.
 
 Upstream
 ========
@@ -16,8 +21,10 @@ An upstream release means to mark your code with a version number.
    and is pointing to the commit you would like to release.  Say my
    version is 0.1.1, in git i would do something like::
 
-    git commit -m "Awesome 0.1.1 release"
+    catkin-bump-version patch
+    git commit -m "$(catkin-version), minor release" stack.yaml
     git tag -a $(catkin-version) -m "Releasing $(catkin-version)"
+    git push
     git push --tags
 
    In hg::
@@ -26,14 +33,7 @@ An upstream release means to mark your code with a version number.
 
    In svn::
 
-     svn something or other
-
-Environment
-===========
-
-Make sure you have catkin in your ``PATH``: source an :ref:`envfiles`
-as appropriate.
-
+     svn copy https://example.com/trunk https://example.com/tags/$(catkin-version) -m "Tagging a new release $(catkin-version)"
 
 First Time Release
 ==================
@@ -53,6 +53,11 @@ We need to tell the catkin tools how to get our upstream soureces.  This is done
 using an orphan branch called catkin. The convenience command for this is::
 
   git catkin-set-upstream git://github.com/plasmodic/ecto.git git
+
+For an ``svn`` repo, you should set the upstream to the tag or branch url::
+
+  git catkin-set-upstream https://code.ros.org/svn/ros-pkg/stacks/common_msgs/tags/common_msgs-1.6.2 svn
+
 
 You should now be on an orphaned branch in your repo called catkin.  If you look at
 catkin.conf, you will see the upstream url and VCS type.
@@ -140,6 +145,10 @@ the stack being released.
 
   (this is essentially catting the file ``catkin.conf`` from the
   origin's `catkin` branch.
+  
+  For ``svn`` it is important to update this to point to the new release tag.::
+      
+      git catkin-set-upstream https://code.ros.org/svn/ros-pkg/stacks/common_msgs/tags/common_msgs-1.6.2 svn
 
 * Import a new version of upstream.
   The upstream source will be retrieved from source control and
