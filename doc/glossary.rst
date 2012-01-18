@@ -5,7 +5,7 @@ Glossary
 
    catkin.conf
         A file that lives on a special orphan branch `catkin` in a
-        :term:`gbp repository` which contains catkin meta-information (like
+        :term:`GBP repository` which contains catkin meta-information (like
         upstream repository location and type) used when making releases with
         catkin.
 
@@ -36,7 +36,7 @@ Glossary
         Code generated during the build process, typically by a message code generator package.
         May or may not require compilation.
 
-   gbp repository
+   GBP repository
         A ``git-buildpackage`` repository.  Contains released
         upstream source and the associated debian build files sufficient
         to assemble binary and source debs.  Catkin-controlled repositories

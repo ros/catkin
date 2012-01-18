@@ -1,25 +1,38 @@
-"Native" catkin projects
-------------------------
+Creating debian packages for "Native" catkin projects
+-----------------------------------------------------
+
 Environment
 ===========
 
-Make sure you have catkin in your ``PATH``: source an :ref:`envfiles`
-as appropriate.
+First verify that catkin's ``git`` utilities are in your path::
 
-Upstream
-========
+    % which git-catkin
+    /home/catkin/test/src/catkin/bin/git-catkin
 
-Fix up your project and commit a release.  *Upstream* is the repository where
-your main development happens, and from which you would like to make packages.
-An upstream release means to mark your code with a version number.
+If they aren't, source your :ref:`environment setup files <envfiles>` as appropriate.
+
+Create your upstream release
+============================
+
+Fix up your project and commit a release.  *Upstream* is the
+repository where your main development happens, and from which you
+would like to make packages.  An upstream release means *to mark your
+code with a version number*.
+
+These instructions will walk you through creating a sample release.
+For the sake of these instructions, we'll call our sample project
+"foo".
 
 1. Ensure that :ref:`stack.yaml`\ 's ``Version`` field is correct, and
    meaningful: ``MAJOR.MINOR.PATCH``.  Specify all three numbers,
-   including trailing zeros.
+   including trailing zeros.  Remember to commit your change.
 
-2. Create a tag whose name exactly corresponds to your Version number,
-   and is pointing to the commit you would like to release.  Say my
-   version is 0.1.1, in git i would do something like::
+2. Create a tag whose name exactly corresponds to your ``Version`` number,
+   and is pointing to the commit you would like to release.  If your
+   version number is 0.1.1, depending on your version-control tool you
+   would do something like:
+
+   ``git``::
 
     catkin-bump-version patch
     git commit -m "$(catkin-version), minor release" stack.yaml
@@ -27,32 +40,43 @@ An upstream release means to mark your code with a version number.
     git push
     git push --tags
 
-   In hg::
+   ``hg``::
 
      hg something or other
 
-   In svn::
+   ``svn`` (``https://path/to/foo/branch`` is where the code is being developed, e.g. ``trunk``)::
 
-     svn copy https://example.com/trunk https://example.com/tags/$(catkin-version) -m "Tagging a new release $(catkin-version)"
+     svn cp -m "Releasing 0.1.1" https://path/to/foo/branch https://path/to/tags/foo-0.1.1
 
-First Time Release
-==================
+First- time release
+===================
 
-Release Repo
-++++++++++++
+Create the GBP repository
++++++++++++++++++++++++++
 
-We're using git to manage releases. Think of the git repo as a release staging area.
+We're going to create a :term:`git-buildpackage (GBP) repository <GBP
+repository>` using ``git`` and ``git-buildpackage``.
+``git-buildpackage`` is a popular tool for creating and managing
+debian packages using git repositories.  Think of the GBP repository
+as a *release staging area*.
 
-Create a release repo::
+Create a new GBP repository for your release
+(*reminder: "foo" is our example project name*)::
 
-  mkdir ecto-release
-  cd ecto-release
+  mkdir foo-release
+  cd foo-release
   git init .
 
-We need to tell the catkin tools how to get our upstream soureces.  This is done
-using an orphan branch called catkin. The convenience command for this is::
+We need to tell the catkin tools how to get our upstream code using
+the ``catkin-set-upstream`` command.  The command is called with the
+upstream URL and VCS type (e.g. ``git``, ``svn``, ``hg``)::
 
-  git catkin-set-upstream git://github.com/plasmodic/ecto.git git
+  git catkin-set-upstream git://github.com/fooproject/foo.git git
+
+You should now be on an orphaned branch in your repository, called
+``catkin``, which was created by the ``catkin-set-upstream`` command.
+If you look at ``catkin.conf``, you will see the upstream URL and VCS
+type.
 
 For an ``svn`` repo, you should set the upstream to the tag or branch url::
 
@@ -62,38 +86,57 @@ For an ``svn`` repo, you should set the upstream to the tag or branch url::
 You should now be on an orphaned branch in your repo called catkin.  If you look at
 catkin.conf, you will see the upstream url and VCS type.
 
-Let's get back to master branch if we're happy. This isn't strictly necessary,
-but it helps me think.  master is the main branch from which debian's are created::
+Now, let's get back to ``master`` branch if everything looks
+good::
 
   git checkout master
 
-Now that we have a catkin release repo, we can import from upstream::
+This isn't strictly necessary, but it helps show how things are
+configured. ``master`` is the main branch from which debian packages
+are created.
+
+Now that we have a catkin release repository, we can import from
+upstream using the ``catkin-import-upstream`` command::
 
   git catkin-import-upstream
 
-This will clone the upstream, do a vcs export, and import it in the gbp repo.
-It will look for a tag in in your upstream repo that corresponds to the Version if the
-stack.yaml.
+This will export the upstream repository and import it in GBP
+repository.  It will look for a tag in in your upstream repo that
+corresponds to the ``Version`` in the ``stack.yaml``.
 
-Now comes the debian generation...  This step creates/updates a debian folder and
-creates tags that can easily be parsed and used for creating source or binary debians
-from your release repo::
+Creating the debian package
++++++++++++++++++++++++++++
+
+We will now use the ``catkin-generate-debian`` command to create our
+debian package configuration files.  This command creates/updates a
+``debian/`` folder.  It also creates git tags that are used for
+creating source and binary debians from your GBP repository.  We're
+going to run this command with the ``fuerte`` argument to setup a
+release for the ``fuerte`` distribution::
 
   git catkin-generate-debian fuerte
 
-To test the debians try checking out a tag and using git-buildpackage to create
-a binary debian::
+To test the debians try checking out a tag and using ``git
+buildpackage`` to create a binary debian.  In our example, we released
+version ``0.1.1`` and created a debian package for ``fuerte``.  This
+means the tag for the Ubuntu Oneiric platform is
+``debian/ros_fuerte_0.1.1_oneiric`` tag.  To build a debian package
+for this platform::
 
-  git checkout debian/ros_fuere_0.1.2_oneiric
+  git checkout debian/ros_fuerte_0.1.1_oneiric
   git clean -dxf
   git buildpackage -uc -us --git-ignore-new --git-ignore-branch
 
-Push it Public
+Push it public
 ++++++++++++++
 
-At this point you should add a remote and push::
+Now it's time to save your work and make it public.  Use git to add a
+``remote`` repository for your GBP repository.  This remote repository
+should be public (e.g. on GitHub).  ``push`` your data to the remote
+repository to make it public. Remember to substitute the correct
+URL/username for your project::
 
-  git add remote origin git@github.com:ethanrublee/ecto-release.git
+  git add remote origin git@github.com:username/foo-release.git
   git push --all
   git push --tags
 
@@ -105,55 +148,53 @@ Choose a temporary directory somewhere in a quiet place, free from
 distractions, where you can think.  We'll use ``STACK`` to represent
 the stack being released.
 
-* First verify that catkin's git utilities are in your path::
+Clone your git-buildpackage release repository
+++++++++++++++++++++++++++++++++++++++++++++++
 
-    % which git-catkin
-    /home/catkin/test/src/catkin/bin/git-catkin
+Clone your :term:`GBP repository` (use a pushable URI for convenience)::
 
-  If they aren't, source your :ref:`envfiles` as appropriate.
+  git clone git@github.com:wg-debs/STACK.git
+  cd STACK
 
-* Clone your :term:`gbp repository` (use a pushable uri for
-  convenience)::
+You should see tags for upstream source and debian releases::
 
-    % git clone git@github.com:wg-debs/STACK.git
-    % cd STACK
+  % git tag
+  upstream/0.1.18
+  upstream/0.1.19
+  ...
+  debian/ros_fuerte_0.2.2_lucid
+  debian/ros_fuerte_0.2.2_natty
+  debian/ros_fuerte_0.2.2_oneiric
 
-  You should see tags for upstream source and debian releases::
+There may be a great many of these.  You'll see that there are three upstream branches::
 
-    % git tag
-    upstream/0.1.18
-    upstream/0.1.19
-    ...
-    debian/ros_fuerte_0.2.2_lucid
-    debian/ros_fuerte_0.2.2_natty
-    debian/ros_fuerte_0.2.2_oneiric
+  % git branch -r
+  origin/HEAD -> origin/master
+  origin/catkin
+  origin/master
+  origin/upstream
 
-  There may be a great many of these.  You'll see that there are three upstream branches::
+Since you are about to import ``upstream`` source, you can verify what will be imported::
 
-    % git branch -r
-    origin/HEAD -> origin/master
-    origin/catkin
-    origin/master
-    origin/upstream
+  % git show origin/catkin:catkin.conf
+  [catkin]
+          upstream = git@github.com:willowgarage/catkin.git
+          upstreamtype = git
 
-  Since you are about to import upstream source, you can verify what will be imported::
+This is essentially catting the file ``catkin.conf`` from the
+origin's `catkin` branch.
 
-    % git show origin/catkin:catkin.conf
-    [catkin]
-            upstream = git@github.com:willowgarage/catkin.git
-            upstreamtype = git
-
-  (this is essentially catting the file ``catkin.conf`` from the
-  origin's `catkin` branch.
   
-  For ``svn`` it is important to update this to point to the new release tag.::
+For ``svn`` it is important to update this to point to the new release tag.::
       
-      git catkin-set-upstream https://code.ros.org/svn/ros-pkg/stacks/common_msgs/tags/common_msgs-1.6.2 svn
+   git catkin-set-upstream https://code.ros.org/svn/ros-pkg/stacks/common_msgs/tags/common_msgs-1.6.2 svn
 
-* Import a new version of upstream.
-  The upstream source will be retrieved from source control and
-  imported in to this gbp repository. You'll be prompted to verify the
-  upstream version::
+Import a new version of upstream
+++++++++++++++++++++++++++++++++
+
+The upstream source will be retrieved from source control and imported
+in to this :term:`GBP repository`. You'll be prompted to verify the
+upstream version::
 
     % git catkin-import-upstream
     STACK has branch catkin.
