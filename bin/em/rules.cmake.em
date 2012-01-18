@@ -9,7 +9,7 @@
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
-
+export CMAKE_PREFIX_PATH=@(INSTALL_PREFIX)
 %:
 	dh  $@@
 
