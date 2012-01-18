@@ -138,7 +138,7 @@ should be public (e.g. on GitHub).  ``push`` your data to the remote
 repository to make it public. Remember to substitute the correct
 URL/username for your project::
 
-  git add remote origin git@github.com:project/STACK-release.git
+  git remote add origin git@github.com:project/STACK-release.git
   git push --all
   git push --tags
 
@@ -263,7 +263,9 @@ Example output::
 
 Now we need to verify that your tag got created locally.  
 
-First, ``checkout`` a tag that you would like to build::
+First, ``checkout`` a tag that you would like to build. Make sure you
+checkout the tag that matches the platform you are on.  In this
+example, we checkout for Ubuntu Oneiric::
 
     git checkout debian/ros_fuerte_0.1.2_oneiric
 
