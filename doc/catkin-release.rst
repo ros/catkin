@@ -20,8 +20,7 @@ would like to make packages.  An upstream release means *to mark your
 code with a version number*.
 
 These instructions will walk you through creating a sample release.
-For the sake of these instructions, we'll call our sample project
-"foo".
+We'll use ``STACK`` to represent the stack being released.
 
 1. Ensure that :ref:`stack.yaml`\ 's ``Version`` field is correct, and
    meaningful: ``MAJOR.MINOR.PATCH``.  Specify all three numbers,
@@ -34,9 +33,8 @@ For the sake of these instructions, we'll call our sample project
 
    ``git``::
 
-    catkin-bump-version patch
-    git commit -m "$(catkin-version), minor release" stack.yaml
-    git tag -a $(catkin-version) -m "Releasing $(catkin-version)"
+    git commit -m "0.1.1, minor release" stack.yaml
+    git tag -a 0.1.1 -m "Releasing 0.1.1"
     git push
     git push --tags
 
@@ -44,9 +42,9 @@ For the sake of these instructions, we'll call our sample project
 
      hg something or other
 
-   ``svn`` (``https://path/to/foo/branch`` is where the code is being developed, e.g. ``trunk``)::
+   ``svn`` (``https://path/to/STACK/branch`` is where the code is being developed, e.g. ``trunk``)::
 
-     svn cp -m "Releasing 0.1.1" https://path/to/foo/branch https://path/to/tags/foo-0.1.1
+     svn cp -m "Releasing 0.1.1" https://path/to/STACK/branch https://path/to/tags/STACK-0.1.1
 
 First- time release
 ===================
@@ -61,30 +59,28 @@ debian packages using git repositories.  Think of the GBP repository
 as a *release staging area*.
 
 Create a new GBP repository for your release
-(*reminder: "foo" is our example project name*)::
+(*reminder: "STACK" should be replaced with your stack's name*)::
 
-  mkdir foo-release
-  cd foo-release
+  mkdir STACK-release
+  cd STACK-release
   git init .
 
 We need to tell the catkin tools how to get our upstream code using
 the ``catkin-set-upstream`` command.  The command is called with the
 upstream URL and VCS type (e.g. ``git``, ``svn``, ``hg``)::
 
-  git catkin-set-upstream git://github.com/fooproject/foo.git git
+  ``git``::
+
+    git catkin-set-upstream git://github.com/someproject/STACK.git git
+
+  ``svn`` (set to the release tag URL)::
+
+    git catkin-set-upstream https://path/to/STACK/tag/STACK-0.1.1 svn
 
 You should now be on an orphaned branch in your repository, called
 ``catkin``, which was created by the ``catkin-set-upstream`` command.
 If you look at ``catkin.conf``, you will see the upstream URL and VCS
 type.
-
-For an ``svn`` repo, you should set the upstream to the tag or branch url::
-
-  git catkin-set-upstream https://code.ros.org/svn/ros-pkg/stacks/common_msgs/tags/common_msgs-1.6.2 svn
-
-
-You should now be on an orphaned branch in your repo called catkin.  If you look at
-catkin.conf, you will see the upstream url and VCS type.
 
 Now, let's get back to ``master`` branch if everything looks
 good::
@@ -101,8 +97,13 @@ upstream using the ``catkin-import-upstream`` command::
   git catkin-import-upstream
 
 This will export the upstream repository and import it in GBP
-repository.  It will look for a tag in in your upstream repo that
+repository.  
+
+``git``: it will look for a tag in in your upstream repo that
 corresponds to the ``Version`` in the ``stack.yaml``.
+
+``svn``: it will export the upstream URL that you provided.  Please
+make sure this is the exact code corresponding to ``Version``.
 
 Creating the debian package
 +++++++++++++++++++++++++++
@@ -136,7 +137,7 @@ should be public (e.g. on GitHub).  ``push`` your data to the remote
 repository to make it public. Remember to substitute the correct
 URL/username for your project::
 
-  git add remote origin git@github.com:username/foo-release.git
+  git add remote origin git@github.com:username/STACK-release.git
   git push --all
   git push --tags
 
@@ -145,11 +146,10 @@ Subsequent Releases
 ===================
 
 Choose a temporary directory somewhere in a quiet place, free from
-distractions, where you can think.  We'll use ``STACK`` to represent
-the stack being released.
+distractions, where you can think.  
 
-Clone your git-buildpackage release repository
-++++++++++++++++++++++++++++++++++++++++++++++
+Clone your GBP repository
++++++++++++++++++++++++++
 
 Clone your :term:`GBP repository` (use a pushable URI for convenience)::
 
