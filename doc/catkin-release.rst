@@ -176,7 +176,7 @@ upstream branches::
   origin/master
   origin/upstream
 
-Since you are about to import ``upstream`` source, you can verify what
+Since you are about to import upstream source, you can verify what
 will be imported::
 
   % git show origin/catkin:catkin.conf
@@ -198,9 +198,14 @@ For ``svn`` it is important to update this to point to the new release tag::
 Import a new version of upstream
 ++++++++++++++++++++++++++++++++
 
-The upstream source will be retrieved from source control and imported
-in to this :term:`GBP repository`. You'll be prompted to verify the
-upstream version::
+Now you need to resync with your upstream source using
+``catkin-import-upstream``.  The upstream source will be retrieved
+from source control and imported in to this :term:`GBP
+repository`. You'll be prompted to verify the upstream version::
+
+  git catkin-import-upstream
+    
+Example output::
 
     % git catkin-import-upstream
     STACK has branch catkin.
@@ -292,7 +297,7 @@ A deb should have been produced in the parent directory.  Try installing it (req
 
     % ls ../*.deb
     ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
-    dpkg -i ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
+    % dpkg -i ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
 
 If this worked and you're satisfied, your ready to ``push`` your packaging to the public::
 
