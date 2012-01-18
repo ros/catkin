@@ -67,7 +67,7 @@ Create a new GBP repository for your release
 
 We need to tell the catkin tools how to get our upstream code using
 the ``catkin-set-upstream`` command.  The command is called with the
-upstream URL and VCS type (e.g. ``git``, ``svn``, ``hg``)::
+upstream URL and VCS type (e.g. ``git``, ``svn``, ``hg``):
 
   ``git``::
 
@@ -97,13 +97,14 @@ upstream using the ``catkin-import-upstream`` command::
   git catkin-import-upstream
 
 This will export the upstream repository and import it in GBP
-repository.  
+repository.  The exact behavior depends on your version control tool:
 
-``git``: it will look for a tag in in your upstream repo that
-corresponds to the ``Version`` in the ``stack.yaml``.
+ - ``git``: catkin will look for a tag in in your upstream repo that
+   corresponds to the ``Version`` in the ``stack.yaml``.
 
-``svn``: it will export the upstream URL that you provided.  Please
-make sure this is the exact code corresponding to ``Version``.
+ - ``svn``: catkin will export the upstream URL that you provided.
+   Please make sure this is the exact code corresponding to
+   ``Version``.
 
 Creating the debian package
 +++++++++++++++++++++++++++
@@ -137,7 +138,7 @@ should be public (e.g. on GitHub).  ``push`` your data to the remote
 repository to make it public. Remember to substitute the correct
 URL/username for your project::
 
-  git add remote origin git@github.com:username/STACK-release.git
+  git add remote origin git@github.com:project/STACK-release.git
   git push --all
   git push --tags
 
@@ -146,14 +147,14 @@ Subsequent Releases
 ===================
 
 Choose a temporary directory somewhere in a quiet place, free from
-distractions, where you can think.  
+distractions.  
 
 Clone your GBP repository
 +++++++++++++++++++++++++
 
 Clone your :term:`GBP repository` (use a pushable URI for convenience)::
 
-  git clone git@github.com:wg-debs/STACK.git
+  git clone git@github.com:project/STACK-release.git
   cd STACK
 
 You should see tags for upstream source and debian releases::
@@ -166,7 +167,8 @@ You should see tags for upstream source and debian releases::
   debian/ros_fuerte_0.2.2_natty
   debian/ros_fuerte_0.2.2_oneiric
 
-There may be a great many of these.  You'll see that there are three upstream branches::
+There may be a great many of these.  You'll see that there are three
+upstream branches::
 
   % git branch -r
   origin/HEAD -> origin/master
@@ -174,20 +176,24 @@ There may be a great many of these.  You'll see that there are three upstream br
   origin/master
   origin/upstream
 
-Since you are about to import ``upstream`` source, you can verify what will be imported::
+Since you are about to import ``upstream`` source, you can verify what
+will be imported::
 
   % git show origin/catkin:catkin.conf
   [catkin]
-          upstream = git@github.com:willowgarage/catkin.git
+          upstream = git@github.com:project/STACK.git
           upstreamtype = git
 
 This is essentially catting the file ``catkin.conf`` from the
-origin's `catkin` branch.
+origin's ``catkin`` branch.
 
   
-For ``svn`` it is important to update this to point to the new release tag.::
+SVN: update your upstream URL
++++++++++++++++++++++++++++++
+
+For ``svn`` it is important to update this to point to the new release tag::
       
-   git catkin-set-upstream https://code.ros.org/svn/ros-pkg/stacks/common_msgs/tags/common_msgs-1.6.2 svn
+   git catkin-set-upstream https://path/to/STACK/tags/STACK-0.1.1 svn
 
 Import a new version of upstream
 ++++++++++++++++++++++++++++++++
@@ -201,12 +207,12 @@ upstream version::
     Branch upstream set up to track remote branch upstream from origin.
     + git checkout catkin
     Switched to branch 'catkin'
-    upstream repo: git@github.com:willowgarage/STACK.git
+    upstream repo: git@github.com:project/STACK.git
     upstream type: git
     Verifying a couple of things about the upstream git repo
-    Verifying that git@github.com:willowgarage/STACK.git is a git repo...
+    Verifying that git@github.com:project/STACK.git is a git repo...
     Yup, with 1 heads.
-    Verifying that git@github.com:willowgarage/STACK.git is not a git-buildpackage repo
+    Verifying that git@github.com:project/STACK.git is not a git-buildpackage repo
     Yup, no upstream branches.
     Cloning into ...
 
@@ -216,16 +222,23 @@ upstream version::
 
       ...
 
-* Now generate new debian tags::
+Create the debian packaging
++++++++++++++++++++++++++++
 
+Now we need to generate git tags for our release using the ``catkin-generate-debian`` command, which is called with the name of the ROS distribution codename. In this example, we are going to release to the ``fuerte`` ROS distribution::
+
+ git catkin-generate-debian fuerte
+
+Example output::
+    
     % git catkin-generate-debian fuerte
     catkin has branch catkin.
     catkin has branch upstream.
     M	debian/changelog
     Already on 'master'
     Your branch is ahead of 'origin/master' by 2 commits.
-    The latest upstream tag in the release repo is upstream/0.2.4
-    Upstream version is: 0.2.4
+    The latest upstream tag in the release repo is upstream/0.1.1
+    Upstream version is: 0.1.1
     + cd .tmp/25332/ && git clone git://github.com/ros/rosdep_rules.git
     Cloning into rosdep_rules...
     remote: Counting objects: 106, done.
@@ -236,27 +249,32 @@ upstream version::
 
     ...
 
-    [master d3cc805] + Creating debian mods for distro: oneiric, rosdistro: fuerte, upstream version: 0.2.4
+    [master d3cc805] + Creating debian mods for distro: oneiric, rosdistro: fuerte, upstream version: 0.1.1
      1 files changed, 1 insertions(+), 1 deletions(-)
-    tag: debian/ros_fuerte_0.2.4_oneiric
-    + cd . && git tag -f debian/ros_fuerte_0.2.4_oneiric -m Debian release 0.2.4
-    Updated tag 'debian/ros_fuerte_0.2.4_oneiric' (was 0000000)
+    tag: debian/ros_fuerte_0.1.1_oneiric
+    + cd . && git tag -f debian/ros_fuerte_0.1.1_oneiric -m Debian release 0.1.1
+    Updated tag 'debian/ros_fuerte_0.1.1_oneiric' (was 0000000)
 
 
-* Test it locally.  First checkout a tag that you would like to build::
+Now we need to verify that your tag got created locally.  
+
+First, ``checkout`` a tag that you would like to build::
 
     git checkout debian/ros_fuerte_0.1.2_oneiric
 
-* Clean your checkout... there may be temporary files or directories
-  laying around from previous steps. **This will delete all
-  uncommitted content from your local repo**::
+Next, ``clean`` your checkout. **This will delete all uncommitted content
+from your local repo**. There may be temporary files or directories
+laying around from previous steps that have to be removed. ::
 
-    % git clean -dxf
-    Removing .tmp/
+    git clean -dxf
 
-* Use git-buildpackage to build a binary debian.
-  This command will generate a lot of output.  You may see a lot of
-  errors about `dir-or-file-in-opt`, which is okay::
+Use ``git buildpackage`` to build a binary debian. This command will
+generate a lot of output.  You may see a lot of errors about
+"dir-or-file-in-opt", which is okay::
+
+  git buildpackage -uc -us --git-ignore-new --git-ignore-branch
+    
+Example output::
 
     % git buildpackage -uc -us --git-ignore-new --git-ignore-branch
     dh  clean
@@ -270,21 +288,25 @@ upstream version::
     ...
     Finished running lintian.
 
-* A deb should have been produced in the parent directory.  Try
-  installing it (needs sudo)::
+A deb should have been produced in the parent directory.  Try installing it (requires ``sudo`` permission)::
 
     % ls ../*.deb
-    ../ros-fuerte-STACK_0.2.4-0oneiric_amd64.deb
-    dpkg -i ../ros-fuerte-STACK_0.2.4-0oneiric_amd64.deb
+    ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
+    dpkg -i ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
 
-* If you're satisfied, push::
+If this worked and you're satisfied, your ready to ``push`` your packaging to the public::
+
+    git push --all
+    git push --tags
+    
+Example output::
 
     % git remote -v
-    origin	git@github.com:wg-debs/STACK.git (fetch)
-    origin	git@github.com:wg-debs/STACK.git (push)
+    origin	git@github.com:project/STACK-release.git (fetch)
+    origin	git@github.com:project/STACK-release.git (push)
     % git push --all
     Total 0 (delta 0), reused 0 (delta 0)
-    To git@github.com:wg-debs/STACK.git
+    To git@github.com:project/STACK-release.git
     9793abc..987ceab  master -> master
     123d5d9..340fc7c  upstream -> upstream
     % git push --tags
@@ -293,11 +315,11 @@ upstream version::
     Compressing objects: 100% (4/4), done.
     Writing objects: 100% (4/4), 664 bytes, done.
     Total 4 (delta 0), reused 0 (delta 0)
-    To git@github.com:wg-debs/STACK.git
-     * [new tag]         debian/ros_fuerte_0.2.4_lucid -> debian/ros_fuerte_0.2.4_lucid
-     * [new tag]         debian/ros_fuerte_0.2.4_natty -> debian/ros_fuerte_0.2.4_natty
-     * [new tag]         debian/ros_fuerte_0.2.4_oneiric -> debian/ros_fuerte_0.2.4_oneiric
-     * [new tag]         upstream/0.2.4 -> upstream/0.2.4
+    To git@github.com:project/STACK-release.git
+     * [new tag]         debian/ros_fuerte_0.1.1_lucid -> debian/ros_fuerte_0.1.1_lucid
+     * [new tag]         debian/ros_fuerte_0.1.1_natty -> debian/ros_fuerte_0.1.1_natty
+     * [new tag]         debian/ros_fuerte_0.1.1_oneiric -> debian/ros_fuerte_0.1.1_oneiric
+     * [new tag]         upstream/0.1.1 -> upstream/0.1.1
 
 
 tips and tricks
