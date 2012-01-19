@@ -3,7 +3,7 @@
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
 
-LONG_USAGE=$(/bin/echo <<EOF
+LONG_USAGE=$(/bin/cat <<EOF
 usage: git catkin set-upstream <upstream-repo> <upstream-repo-type>
 
 Creates (if necessary) an orphan branch "catkin" in the current gbp repo and sets
@@ -19,7 +19,8 @@ USAGE=$LONG_USAGE
 
 UPSTREAM_REPO=$1
 if [ $# -lt 2 ] ; then
-    USAGE
+    echo $USAGE
+    exit 1
 fi
 
 UPSTREAM_TYPE=$2
