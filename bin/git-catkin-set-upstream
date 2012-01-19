@@ -18,11 +18,12 @@ USAGE=$LONG_USAGE
 . "$(git --exec-path)/git-sh-setup"
 
 UPSTREAM_REPO=$1
-if [ $# -gt 1 ] ; then
-    UPSTREAM_TYPE=$2
-else
-    UPSTREAM_TYPE=git
+if [ $# -lt 2 ] ; then
+    USAGE
 fi
+
+UPSTREAM_TYPE=$2
+
 case $UPSTREAM_TYPE in
     git) ;;
     svn) ;;
@@ -49,8 +50,9 @@ then
     git checkout catkin
 else
     status "No catkin branch... initializing"
-    git checkout --orphan catkin
-    git rm -rf --ignore-unmatch .
+    git symbolic-ref HEAD refs/heads/catkin
+    rm .git/index
+    git clean -fdx
     git commit --allow-empty -m "Initial catkin branch"
 fi
 

@@ -147,14 +147,14 @@ Subsequent Releases
 ===================
 
 Choose a temporary directory somewhere in a quiet place, free from
-distractions.  
+distractions.
 
 Clone your GBP repository
 +++++++++++++++++++++++++
 
 Clone your :term:`GBP repository` (use a pushable URI for convenience)::
 
-  git clone git@github.com:project/STACK-release.git
+  git clone git@github.com:wg-debs/STACK.git
   cd STACK
 
 You should see tags for upstream source and debian releases::
@@ -187,12 +187,12 @@ will be imported::
 This is essentially catting the file ``catkin.conf`` from the
 origin's ``catkin`` branch.
 
-  
+
 SVN: update your upstream URL
 +++++++++++++++++++++++++++++
 
 For ``svn`` it is important to update this to point to the new release tag::
-      
+
    git catkin-set-upstream https://path/to/STACK/tags/STACK-0.1.1 svn
 
 Import a new version of upstream
@@ -204,7 +204,7 @@ from source control and imported in to this :term:`GBP
 repository`. You'll be prompted to verify the upstream version::
 
   git catkin-import-upstream
-    
+
 Example output::
 
     % git catkin-import-upstream
@@ -235,7 +235,7 @@ Now we need to generate git tags for our release using the ``catkin-generate-deb
  git catkin-generate-debian fuerte
 
 Example output::
-    
+
     % git catkin-generate-debian fuerte
     catkin has branch catkin.
     catkin has branch upstream.
@@ -261,7 +261,7 @@ Example output::
     Updated tag 'debian/ros_fuerte_0.1.1_oneiric' (was 0000000)
 
 
-Now we need to verify that your tag got created locally.  
+Now we need to verify that your tag got created locally.
 
 First, ``checkout`` a tag that you would like to build. Make sure you
 checkout the tag that matches the platform you are on.  In this
@@ -280,7 +280,7 @@ generate a lot of output.  You may see a lot of errors about
 "dir-or-file-in-opt", which is okay::
 
   git buildpackage -uc -us --git-ignore-new --git-ignore-branch
-    
+
 Example output::
 
     % git buildpackage -uc -us --git-ignore-new --git-ignore-branch
@@ -305,7 +305,7 @@ If this worked and you're satisfied, your ready to ``push`` your packaging to th
 
     git push --all
     git push --tags
-    
+
 Example output::
 
     % git remote -v
@@ -350,9 +350,9 @@ This will create a rosinstall file for all repos in a github org::
 Call like::
 
   github_org_to_install wg-debs
-  
+
 Version tools, for upstream releases::
-    
+
     bump_minor()
     {
        git pull
@@ -367,4 +367,4 @@ Version tools, for upstream releases::
        git push
        git push --tags
     }
-    
+
