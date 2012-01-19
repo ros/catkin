@@ -12,7 +12,7 @@
 
 - svn:
     local-name: laser_pipeline
-    uri: https://code.ros.org/svn/ros-pkg/stacks/laser_pipeline/tags/laser_pipeline-1.4.2
+    uri: https://code.ros.org/svn/ros-pkg/stacks/laser_pipeline/tags/laser_pipeline-1.4.3
 
 - hg:
     local-name: pluginlib
