@@ -50,8 +50,9 @@ then
     git checkout catkin
 else
     status "No catkin branch... initializing"
-    git checkout --orphan catkin
-    git rm -rf --ignore-unmatch .
+    git symbolic-ref HEAD refs/heads/catkin
+    rm .git/index
+    git clean -fdx
     git commit --allow-empty -m "Initial catkin branch"
 fi
 

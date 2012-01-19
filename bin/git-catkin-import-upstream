@@ -46,7 +46,7 @@ status "Upstream's name is ${boldon}$PACKAGE_NAME${reset}"
 TARBALL_PREFIX=$TMPDIR/$PACKAGE_NAME-$VERSION_FULL
 TARBALL=$TARBALL_PREFIX.tar.gz
 (
-    #set -x
+    # set -x
     cd $UPSTREAM_CLONE
     repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $VERSION_FULL
 )
@@ -66,7 +66,7 @@ else
 	bailout "Version discrepency:
     The upstream version, $VERSION_FULL, must be greater than the previous
     release version, $GBP_MAJOR.$GBP_MINOR.$GBP_PATCH.
-    
+
     Upstream must rerelease or you must fix your release repo.
 "
     fi
@@ -79,16 +79,17 @@ fi
     #clone the working dir into the temp dir for convenience.
     TWORK=$TMPDIR/release_$PACKAGE_NAME
     git clone -l $WORK $TWORK
-    
+
     cd $TWORK
-    
+
     _track_all
 
     if ! git branch | grep upstream
     then
 	status "${boldon}No upstream${reset}... creating an initial upstream branch."
-	git checkout --orphan upstream
-	git rm -rf .
+	git symbolic-ref HEAD refs/heads upstream
+        rm .git/index
+        git clean -dfx
 	git commit --allow-empty -m "Initial upstream branch"
     fi
 

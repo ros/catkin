@@ -103,7 +103,7 @@ read_stack_yaml ()
     VERSION_PATCH=$VALUE
 
     PACKAGE_NAME=$(/bin/echo $TXT | perl -ne '/Catkin-ProjectName:\s+([^\s]+)/ && print $1')
-    
+
 }
 
 prompt_continue()
@@ -287,7 +287,9 @@ repo_export ()
 
     case $TYPE in
         git)
-            git archive -o $BASEPATH.tar $VERSION
+            if ! git archive -o $BASEPATH.tar $VERSION ; then
+                bailout "unable to archive tag ${yellowf}$VERSION${reset}.  Did you tag the upstream correctly?"
+            fi
             gzip $BASEPATH.tar
             ;;
         svn)
