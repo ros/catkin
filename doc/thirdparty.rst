@@ -80,7 +80,7 @@ Test it locally::
 
 Now push all branches and tags to a remote::
 
-    git add remote origin git@github.com:ros/flann.git
+    git remote add origin git@github.com:ros/flann.git
     git push --all
     git push --tags
 
