@@ -1,17 +1,18 @@
 from pkgutil import extend_path
 import sys, os
-__extended_path = "@PACKAGE_PYTHONPATH@"
-sys.path += [__extended_path]
+__extended_path = "@PACKAGE_PYTHONPATH@".split(";")
+for p in __extended_path:
+    sys.path += [p]
+
 __path__ = extend_path(__path__, __name__)
 
 import os.path
-src_init_file = os.path.join(__extended_path, __name__ + '.py')
-if os.path.isfile(src_init_file):
-    execfile(src_init_file)
-else:
-    src_init_file = os.path.join(__extended_path, __name__, '__init__.py')
+
+for p in __extended_path:
+    src_init_file = os.path.join(p, __name__ + '.py')
     if os.path.isfile(src_init_file):
         execfile(src_init_file)
-
-
-
+    else:
+        src_init_file = os.path.join(p, __name__, '__init__.py')
+        if os.path.isfile(src_init_file):
+            execfile(src_init_file)
