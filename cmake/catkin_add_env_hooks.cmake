@@ -77,4 +77,13 @@ function(catkin_generic_hooks)
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/.rosinstall
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
+
+  configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.sh.installable.in
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/rosinstall.sh)
+
+  if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/rosinstall.sh
+      DESTINATION ${CMAKE_INSTALL_PREFIX})
+  endif()
 endfunction()
