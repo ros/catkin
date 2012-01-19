@@ -18,11 +18,12 @@ USAGE=$LONG_USAGE
 . "$(git --exec-path)/git-sh-setup"
 
 UPSTREAM_REPO=$1
-if [ $# -gt 1 ] ; then
-    UPSTREAM_TYPE=$2
-else
-    UPSTREAM_TYPE=git
+if [ $# -lt 2 ] ; then
+    USAGE
 fi
+
+UPSTREAM_TYPE=$2
+
 case $UPSTREAM_TYPE in
     git) ;;
     svn) ;;
