@@ -17,7 +17,7 @@ def buildable_graph_from_stacks(wd):
     exists = os.path.exists
     graph = {}
 
-    for f in [ join(f, 'stack.yaml') for f in os.listdir(wd) if exists(join(f, 'stack.yaml'))]:
+    for f in [ join(join(wd, f), 'stack.yaml') for f in os.listdir(wd) if exists(join(join(wd, f), 'stack.yaml'))]:
         graph.update(parse_stack(f))
 
     ourpackages = [package for package in graph.keys()]
@@ -58,7 +58,12 @@ def topological_sort(graph):
 
 
 if __name__ == "__main__":
-    import argp
-    graph = buildable_graph_from_stacks('.')
+    parser = argparse.ArgumentParser(description='Creates a topologically sorted list by build dependency from a directory full of catkin projects.')
+    parser.add_argument('working_dir', nargs='?', help='Toplevel workspace.')
+    args = parser.parse_args()
+    wd = '.'
+    if args.working_dir:
+        wd = args.working_dir
+    graph = buildable_graph_from_stacks(wd)
     jobs = topological_sort(graph)
     print '\n'.join(jobs)
