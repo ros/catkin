@@ -205,7 +205,10 @@ repository`. You'll be prompted to verify the upstream version::
 
   git catkin-import-upstream
 
-Example output::
+
+..
+
+  Example output::
 
     % git catkin-import-upstream
     STACK has branch catkin.
@@ -232,9 +235,11 @@ Create the debian packaging
 
 Now we need to generate git tags for our release using the ``catkin-generate-debian`` command, which is called with the name of the ROS distribution codename. In this example, we are going to release to the ``fuerte`` ROS distribution::
 
- git catkin-generate-debian fuerte
+  git catkin-generate-debian fuerte
 
-Example output::
+..
+
+  Example output::
 
     % git catkin-generate-debian fuerte
     catkin has branch catkin.
@@ -281,7 +286,9 @@ generate a lot of output.  You may see a lot of errors about
 
   git buildpackage -uc -us --git-ignore-new
 
-Example output::
+..
+
+  Example output::
 
     % git buildpackage -uc -us --git-ignore-new
     dh  clean
@@ -306,7 +313,9 @@ If this worked and you're satisfied, your ready to ``push`` your packaging to th
     git push --all
     git push --tags
 
-Example output::
+..
+
+  Example output::
 
     % git remote -v
     origin	git@github.com:project/STACK-release.git (fetch)
