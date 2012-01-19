@@ -46,7 +46,7 @@ status "Upstream's name is ${boldon}$PACKAGE_NAME${reset}"
 TARBALL_PREFIX=$TMPDIR/$PACKAGE_NAME-$VERSION_FULL
 TARBALL=$TARBALL_PREFIX.tar.gz
 (
-    #set -x
+    # set -x
     cd $UPSTREAM_CLONE
     repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $VERSION_FULL
 )
