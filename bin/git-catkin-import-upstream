@@ -94,6 +94,9 @@ fi
     fi
 
     git checkout -f master
+    if ! which git-import-orig ; then
+        bailout "can't find git-import-orig... did you install git-buildpackage?"
+    fi
     ( set -x; git import-orig $TARBALL )
     git push --all
     git push --tags

@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
@@ -62,7 +62,5 @@ git config -f catkin.conf catkin.upstreamtype "$UPSTREAM_TYPE"
 
 git add catkin.conf
 git commit -m "catkin branch update by git-catkin-set-upstream"
-
-status "You may inspect catkin.conf and \"git push --all\" when ready"
 
 exit 0
