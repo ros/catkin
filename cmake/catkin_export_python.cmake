@@ -20,6 +20,8 @@ function(catkin_export_python)
     endif()
   endforeach()
 
+  # Put in parent scope so we can check if catkin_export_python have been called already
+  set(PACKAGE_PYTHONPATH ${PACKAGE_PYTHONPATH} PARENT_SCOPE)
 
   configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
     ${CMAKE_BINARY_DIR}/gen/py/${pkg_name}/__init__.py
