@@ -22,3 +22,6 @@ override_dh_auto_configure:
 		-DCMAKE_INSTALL_PREFIX="@(INSTALL_PREFIX)" \
 		-DCMAKE_PREFIX_PATH="@(INSTALL_PREFIX)"
 
+override_dh_auto_test:
+	echo -- Running tests. Even if one of them fails the build is not canceled.
+	dh_auto_test || true
