@@ -286,7 +286,7 @@ Ubuntu Oneiric::
 
 It may complain about ``detached HEAD``, this would be a good time to
 `Check Your Head
-<http://upload.wikimedia.org/wikipedia/en/d/d1/Beastieboys_checkyourhead.jpg>`.
+<http://upload.wikimedia.org/wikipedia/en/d/d1/Beastieboys_checkyourhead.jpg>`_.
 Next, ``clean`` your checkout. **This will delete all uncommitted
 content from your local repo**. There may be temporary files or
 directories laying around from previous steps that have to be
