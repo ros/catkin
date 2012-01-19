@@ -65,7 +65,7 @@
 - hg:
     local-name: bond_core
     uri: https://kforge.ros.org/common/bondcore
-    version: bond_core-1.6.1
+    version: bond_core-1.6.3
 
 - svn:
     local-name: perception_pcl
