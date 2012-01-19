@@ -1,5 +1,5 @@
 Catkin-ProjectName: catkin
-Description: Willow Garage low level build system macros and infrastructure.
+Description: Willow Garage low-level build system macros and infrastructure.
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard
 Maintainer: Troy Straszheim <straszheim@willowgarage.com>
 Homepage: http://www.ros.org
@@ -14,5 +14,5 @@ Depends: cmake,
   python-yaml
 
 Catkin-CopyrightType: willowgarage
-Catkin-DebRulesType: python_distutils
+Catkin-DebRulesType: cmake
 
