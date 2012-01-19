@@ -9,7 +9,6 @@ export PYTHONPATH
 PATH=@CMAKE_INSTALL_PREFIX@/bin:$PATH
 export PATH
 
-echo "TODO: remove / reconsider LD_LIBRARY_PATH setting in catkin/cmakt/templates/setup.sh.installable.in"
 LD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 
