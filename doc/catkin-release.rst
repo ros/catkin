@@ -279,11 +279,11 @@ Use ``git buildpackage`` to build a binary debian. This command will
 generate a lot of output.  You may see a lot of errors about
 "dir-or-file-in-opt", which is okay::
 
-  git buildpackage -uc -us --git-ignore-new --git-ignore-branch
+  git buildpackage -uc -us --git-ignore-new
 
 Example output::
 
-    % git buildpackage -uc -us --git-ignore-new --git-ignore-branch
+    % git buildpackage -uc -us --git-ignore-new
     dh  clean
        dh_testdir
        dh_auto_clean
