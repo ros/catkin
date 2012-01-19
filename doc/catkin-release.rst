@@ -99,12 +99,12 @@ upstream using the ``catkin-import-upstream`` command::
 This will export the upstream repository and import it in GBP
 repository.  The exact behavior depends on your version control tool:
 
- - ``git``: catkin will look for a tag in in your upstream repo that
-   corresponds to the ``Version`` in the ``stack.yaml``.
+- ``git``: catkin will look for a tag in in your upstream repo that
+  corresponds to the ``Version`` in the ``stack.yaml``.
 
- - ``svn``: catkin will export the upstream URL that you provided.
-   Please make sure this is the exact code corresponding to
-   ``Version``.
+- ``svn``: catkin will export the upstream URL that you provided.
+  Please make sure this is the exact code corresponding to
+  ``Version``.
 
 Creating the debian package
 +++++++++++++++++++++++++++
