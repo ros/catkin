@@ -74,7 +74,6 @@ fi
 
 
 (
-    set -x
     set -e
     #clone the working dir into the temp dir for convenience.
     TWORK=$TMPDIR/release_$PACKAGE_NAME
