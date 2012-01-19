@@ -266,19 +266,34 @@ Now we need to generate git tags for our release using the ``catkin-generate-deb
     Updated tag 'debian/ros_fuerte_0.1.1_oneiric' (was 0000000)
 
 
-Now we need to verify that your tag got created locally.
+Now we need to verify that your tag got created locally.  Git tag will show them::
 
-First, ``checkout`` a tag that you would like to build. Make sure you
-checkout the tag that matches the platform you are on.  In this
-example, we checkout for Ubuntu Oneiric::
+  % git tag
+  debian/ros_fuerte_1.7.3_lucid
+  debian/ros_fuerte_1.7.3_natty
+  debian/ros_fuerte_1.7.3_oneiric
+  debian/ros_fuerte_1.7.4_lucid
+  debian/ros_fuerte_1.7.4_natty
+  debian/ros_fuerte_1.7.4_oneiric
+  upstream/1.7.3
+  upstream/1.7.4
+
+``checkout`` one of the new tags.  Make sure you checkout the tag that
+matches the platform you are on.  In this example, we checkout for
+Ubuntu Oneiric::
 
     git checkout debian/ros_fuerte_0.1.2_oneiric
 
-Next, ``clean`` your checkout. **This will delete all uncommitted content
-from your local repo**. There may be temporary files or directories
-laying around from previous steps that have to be removed. ::
+It may complain about ``detached HEAD``, this would be a good time to
+`Check Your Head
+<http://upload.wikimedia.org/wikipedia/en/d/d1/Beastieboys_checkyourhead.jpg>`.
+Next, ``clean`` your checkout. **This will delete all uncommitted
+content from your local repo**. There may be temporary files or
+directories laying around from previous steps that have to be
+removed. ::
 
-    git clean -dxf
+  % git clean -dxf
+  Removing .tmp/
 
 Use ``git buildpackage`` to build a binary debian. This command will
 generate a lot of output.  You may see a lot of errors about
@@ -286,29 +301,27 @@ generate a lot of output.  You may see a lot of errors about
 
   git buildpackage -uc -us --git-ignore-new
 
-..
+But this may fail if you haven't installed the system dependencies locally::
 
-  Example output::
+  dpkg-buildpackage: host architecture amd64
+  dpkg-checkbuilddeps: Unmet build dependencies: libboost1.46-all-dev ros-fuerte-rospack ros-fuerte-catkin ros-fuerte-rospkg
+  dpkg-buildpackage: warning: Build dependencies/conflicts unsatisfied; aborting.
+  dpkg-buildpackage: warning: (Use -d flag to override.)
+  debuild: fatal error at line 1340:
+  dpkg-buildpackage -rfakeroot -D -us -uc -i -I failed
+  debuild -i -I returned 29
+  Couldn't run 'debuild -i -I -uc -us'
 
-    % git buildpackage -uc -us --git-ignore-new
-    dh  clean
-       dh_testdir
-       dh_auto_clean
-    	python2.6 setup.py clean -a
-    running clean
-    'build/lib.linux-x86_64-2.6' does not exist -- can't clean it
-    ...
-    E: ros-fuerte-STACK: dir-or-file-in-opt opt/ros/fuerte/share/STACK/
-    ...
-    Finished running lintian.
-
-A deb should have been produced in the parent directory.  Try installing it (requires ``sudo`` permission)::
+Which isn't a complete catastrophe.  Cheer up.  If it succeeded, a deb
+should have been produced in the parent directory.  Try installing it
+(requires ``sudo`` permission)::
 
     % ls ../*.deb
     ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
     % dpkg -i ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
 
-If this worked and you're satisfied, your ready to ``push`` your packaging to the public::
+If this worked and you're satisfied, or if you are just feeling lucky,
+``push`` your packaging to the public::
 
     git push --all
     git push --tags

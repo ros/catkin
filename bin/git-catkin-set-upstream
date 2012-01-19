@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 TOP=$(cd `dirname $0` ; /bin/pwd)
 . $TOP/catkin_util.sh
@@ -44,9 +44,9 @@ then
     git commit -m "initial commit" --allow-empty
 fi
 
-if git show-ref refs/heads/catkin
+if git show-branch origin/catkin
 then
-    status "Checking out catkin branch"
+    status "Found remote branch catkin, checking out."
     git checkout catkin
 else
     status "No catkin branch... initializing"
