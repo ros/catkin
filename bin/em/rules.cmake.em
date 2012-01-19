@@ -8,8 +8,9 @@
 
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
-export DH_OPTIONS=-v
+export DH_OPTIONS=-v --buildsystem=cmake
 export CMAKE_PREFIX_PATH=@(INSTALL_PREFIX)
+
 %:
 	dh  $@@
 
@@ -18,7 +19,7 @@ export CMAKE_PREFIX_PATH=@(INSTALL_PREFIX)
 #  ROS packages to build under rosmake and catkin
 #
 override_dh_auto_configure:
-	dh_auto_configure -Scmake -- \
+	dh_auto_configure -- \
 		-DCMAKE_INSTALL_PREFIX="@(INSTALL_PREFIX)" \
 		-DCMAKE_PREFIX_PATH="@(INSTALL_PREFIX)"
 

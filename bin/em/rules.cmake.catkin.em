@@ -4,13 +4,15 @@
 # rules file for rosbuild-compatibility
 #
 export DH_VERBOSE=1
-export DH_OPTIONS=-v
+export DH_OPTIONS=-v --buildsystem=cmake
+export CMAKE_PREFIX_PATH=@(INSTALL_PREFIX)
+
 
 %:
 	dh  $@@
 
 override_dh_auto_configure:
-	dh_auto_configure -Scmake -- \
+	dh_auto_configure -- \
 		-DCATKIN=YES \
 		-DCMAKE_INSTALL_PREFIX="@(INSTALL_PREFIX)" \
 		-DCMAKE_PREFIX_PATH="@(INSTALL_PREFIX)"
