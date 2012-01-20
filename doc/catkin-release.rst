@@ -278,77 +278,79 @@ Now we need to verify that your tag got created locally.  Git tag will show them
   upstream/1.7.3
   upstream/1.7.4
 
-``checkout`` one of the new tags.  Make sure you checkout the tag that
-matches the platform you are on.  In this example, we checkout for
-Ubuntu Oneiric::
+.. note:: **Optional**
 
-    git checkout debian/ros_fuerte_0.1.2_oneiric
+  You may test the package building process if you have the package's
+  system dependencies installed.  ``checkout`` one of the `new` tags
+  corresponding to the version you are releasing and matching the ubuntu
+  version of your local host.  In this example, we checkout for Ubuntu
+  Oneiric::
 
-It may complain about ``detached HEAD``, this would be a good time to
-`Check Your Head
-<http://upload.wikimedia.org/wikipedia/en/d/d1/Beastieboys_checkyourhead.jpg>`_.
-Next, ``clean`` your checkout. **This will delete all uncommitted
-content from your local repo**. There may be temporary files or
-directories laying around from previous steps that have to be
-removed. ::
+      git checkout debian/ros_fuerte_1.7.4_oneiric
 
-  % git clean -dxf
-  Removing .tmp/
+  It may complain about ``detached HEAD``, this would be a good time to
+  `Check Your Head
+  <http://upload.wikimedia.org/wikipedia/en/d/d1/Beastieboys_checkyourhead.jpg>`_.
+  Next, ``clean`` your checkout. **This will delete all uncommitted
+  content from your local repo**. There may be temporary files or
+  directories laying around from previous steps that have to be
+  removed. ::
 
-Use ``git buildpackage`` to build a binary debian. This command will
-generate a lot of output.  You may see a lot of errors about
-"dir-or-file-in-opt", which is okay::
+    % git clean -dxf
+    Removing .tmp/
 
-  git buildpackage -uc -us --git-ignore-new
+  Use ``git buildpackage`` to build a binary debian. This command will
+  generate a lot of output.  You may see a lot of errors about
+  "dir-or-file-in-opt", which is okay::
 
-But this may fail if you haven't installed the system dependencies locally::
+    git buildpackage -uc -us --git-ignore-new
 
-  dpkg-buildpackage: host architecture amd64
-  dpkg-checkbuilddeps: Unmet build dependencies: libboost1.46-all-dev ros-fuerte-rospack ros-fuerte-catkin ros-fuerte-rospkg
-  dpkg-buildpackage: warning: Build dependencies/conflicts unsatisfied; aborting.
-  dpkg-buildpackage: warning: (Use -d flag to override.)
-  debuild: fatal error at line 1340:
-  dpkg-buildpackage -rfakeroot -D -us -uc -i -I failed
-  debuild -i -I returned 29
-  Couldn't run 'debuild -i -I -uc -us'
+  But this may fail if you haven't installed the system dependencies locally::
 
-Which isn't a complete catastrophe.  Cheer up.  If it succeeded, a deb
-should have been produced in the parent directory.  Try installing it
-(requires ``sudo`` permission)::
+    dpkg-buildpackage: host architecture amd64
+    dpkg-checkbuilddeps: Unmet build dependencies: libboost1.46-all-dev ros-fuerte-rospack ros-fuerte-catkin ros-fuerte-rospkg
+    dpkg-buildpackage: warning: Build dependencies/conflicts unsatisfied; aborting.
+    dpkg-buildpackage: warning: (Use -d flag to override.)
+    debuild: fatal error at line 1340:
+    dpkg-buildpackage -rfakeroot -D -us -uc -i -I failed
+    debuild -i -I returned 29
+    Couldn't run 'debuild -i -I -uc -us'
 
-    % ls ../*.deb
-    ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
-    % dpkg -i ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
+  Which isn't a complete catastrophe.  Cheer up.  If it succeeded, a deb
+  should have been produced in the parent directory.  Try installing it
+  (requires ``sudo`` permission)::
+
+      % ls ../*.deb
+      ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
+      % dpkg -i ../ros-fuerte-STACK_0.1.1-0oneiric_amd64.deb
 
 If this worked and you're satisfied, or if you are just feeling lucky,
 ``push`` your packaging to the public::
 
-    git push --all
-    git push --tags
+  git push --all
+  git push --tags
 
-..
+Example output::
 
-  Example output::
-
-    % git remote -v
-    origin	git@github.com:project/STACK-release.git (fetch)
-    origin	git@github.com:project/STACK-release.git (push)
-    % git push --all
-    Total 0 (delta 0), reused 0 (delta 0)
-    To git@github.com:project/STACK-release.git
-    9793abc..987ceab  master -> master
-    123d5d9..340fc7c  upstream -> upstream
-    % git push --tags
-    Counting objects: 4, done.
-    Delta compression using up to 8 threads.
-    Compressing objects: 100% (4/4), done.
-    Writing objects: 100% (4/4), 664 bytes, done.
-    Total 4 (delta 0), reused 0 (delta 0)
-    To git@github.com:project/STACK-release.git
-     * [new tag]         debian/ros_fuerte_0.1.1_lucid -> debian/ros_fuerte_0.1.1_lucid
-     * [new tag]         debian/ros_fuerte_0.1.1_natty -> debian/ros_fuerte_0.1.1_natty
-     * [new tag]         debian/ros_fuerte_0.1.1_oneiric -> debian/ros_fuerte_0.1.1_oneiric
-     * [new tag]         upstream/0.1.1 -> upstream/0.1.1
+  % git remote -v
+  origin	git@github.com:project/STACK-release.git (fetch)
+  origin	git@github.com:project/STACK-release.git (push)
+  % git push --all
+  Total 0 (delta 0), reused 0 (delta 0)
+  To git@github.com:project/STACK-release.git
+  9793abc..987ceab  master -> master
+  123d5d9..340fc7c  upstream -> upstream
+  % git push --tags
+  Counting objects: 4, done.
+  Delta compression using up to 8 threads.
+  Compressing objects: 100% (4/4), done.
+  Writing objects: 100% (4/4), 664 bytes, done.
+  Total 4 (delta 0), reused 0 (delta 0)
+  To git@github.com:project/STACK-release.git
+   * [new tag]         debian/ros_fuerte_0.1.1_lucid -> debian/ros_fuerte_0.1.1_lucid
+   * [new tag]         debian/ros_fuerte_0.1.1_natty -> debian/ros_fuerte_0.1.1_natty
+   * [new tag]         debian/ros_fuerte_0.1.1_oneiric -> debian/ros_fuerte_0.1.1_oneiric
+   * [new tag]         upstream/0.1.1 -> upstream/0.1.1
 
 
 tips and tricks

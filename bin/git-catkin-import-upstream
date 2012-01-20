@@ -101,4 +101,6 @@ fi
     git push --tags
 )
 
+status "I'm happy.  You should be too."
+
 exit 0
