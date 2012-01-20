@@ -1,9 +1,0 @@
-#
-# path segment PREFIX/lib/pythonX.Y/[dist|site]-packages in PYTHONPATH is calculated
-# by us... this appears to be what setuptools does under --install-layout=deb
-#
-if [ -f @CMAKE_INSTALL_PREFIX@/setup.sh ]; then
-  . @CMAKE_INSTALL_PREFIX@/setup.sh
-else
-  echo "Error: couldn't load @CMAKE_INSTALL_PREFIX@/setup.sh"
-fi
