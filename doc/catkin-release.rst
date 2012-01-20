@@ -392,3 +392,10 @@ Version tools, for upstream releases::
        git push --tags
     }
 
+Build of workspace::
+
+    cd /tmp/ws
+    git caktin install /path/to/catkin/test/release_repos.yaml
+    catkin-build-debs-of-workspace
+
+    
