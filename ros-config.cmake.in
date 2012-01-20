@@ -2,8 +2,15 @@ set(CMAKE_PREFIX_PATH @CMAKE_INSTALL_PREFIX@:${CMAKE_PREFIX_PATH})
 
 set(ROS_FOUND TRUE)
 
-set(ROS_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
-set(ROS_LIBRARIES "")
+#don't overwrite ROS_* if we're recursive
+if(NOT _ROS_FIND_ OR _ROS_FIND_ EQUAL 0)
+  set(ROS_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
+  set(ROS_LIBRARIES "")
+  set(_ROS_FIND_ 0)
+endif()
+
+#recursive counter increment
+MATH( EXPR _ROS_FIND_ "${_ROS_FIND_} + 1" )
 
 macro(list_push listname)
   foreach(item ${ARGN})
@@ -31,3 +38,5 @@ foreach(component ${ROS_FIND_COMPONENTS})
 
 endforeach()
 
+#recursive counter decrement
+MATH( EXPR _ROS_FIND_ "${_ROS_FIND_} - 1" )
