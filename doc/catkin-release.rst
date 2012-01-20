@@ -392,3 +392,12 @@ Version tools, for upstream releases::
        git push --tags
     }
 
+Build of workspace::
+
+    mkdir /tmp/ws
+    cd /tmp/ws
+    wget https://raw.github.com/willowgarage/catkin/master/test/release_repos.yaml
+    git catkin install release_repos.yaml
+    catkin-build-debs-of-workspace
+
+    

@@ -1,0 +1,42 @@
+#!/bin/bash -ex
+
+which catkin-topological-order
+work=`pwd`
+
+distro=$(lsb_release -cs)
+mkdir -p /tmp/all_debs
+mkdir -p /tmp/deb
+
+results=$(mktemp -d -p /tmp/all_debs)
+post_install=$(tempfile -p post)
+
+#this is a post source deb build step
+cat >$post_install<<EOF
+#!/bin/bash -ex
+dsc=\$(echo \${GBP_CHANGES_FILE%_source.changes}.dsc)                                                           
+
+debdir=\$(mktemp -d -p /tmp/deb)
+cd \$debdir 
+dpkg-source -x \$dsc                                                                                            
+cd \$debdir/*
+                                                                                                            
+dpkg-buildpackage -rfakeroot -uc -b                                                                              
+sudo dpkg -i \$debdir/*.deb                                                                                   
+                                                                                        
+mv \$debdir/* $results/ 
+EOF
+
+chmod +x $post_install
+
+for x in $(catkin-topological-order)
+do
+    (
+	cd $work/$x 
+	git catkin-track-all
+	git clean -dxf
+	latest_release=git tag -l "debian/*$distro" | tail -1
+	git checkout $latest_release
+	git buildpackage -S -uc -us --git-ignore-new --git-postbuild=$post_install
+	git clean -dxf
+    )
+done
