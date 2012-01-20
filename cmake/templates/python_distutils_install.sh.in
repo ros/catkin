@@ -1,5 +1,7 @@
 #!/bin/sh -x
 
+
+
 if [ -n "$DESTDIR" ] ; then
     case $DESTDIR in
         /*) # ok
@@ -16,7 +18,9 @@ cd @INSTALL_CMD_WORKING_DIRECTORY@
 
 # todo --install-layout=deb per platform
 /usr/bin/env \
-    PYTHONPATH=@PACKAGE_PYTHONPATH@:@INSTALLED_PYTHONPATH@:@CMAKE_BINARY_DIR@/gen/py @PYTHON_EXECUTABLE@ \
+    PYTHONPATH=@PACKAGE_PYTHONPATH@:@INSTALLED_PYTHONPATH@:@CMAKE_BINARY_DIR@/gen/py \
+    CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@ \
+    @PYTHON_EXECUTABLE@ \
     @CMAKE_CURRENT_SOURCE_DIR@/setup.py \
     install \
     $DESTDIR_ARG \
