@@ -127,7 +127,7 @@ for this platform::
 
   git checkout debian/ros_fuerte_0.1.1_oneiric
   git clean -dxf
-  git buildpackage -uc -us --git-ignore-new --git-ignore-branch
+  git buildpackage -uc -us --git-ignore-branch --git-ignore-new   # on lucid, omit --git-ignore-new
 
 Push it public
 ++++++++++++++
@@ -303,7 +303,7 @@ Now we need to verify that your tag got created locally.  Git tag will show them
   generate a lot of output.  You may see a lot of errors about
   "dir-or-file-in-opt", which is okay::
 
-    git buildpackage -uc -us --git-ignore-new
+    git buildpackage -uc -us --git-ignore-new  # on lucid omit --git-ignore-new
 
   But this may fail if you haven't installed the system dependencies locally::
 
