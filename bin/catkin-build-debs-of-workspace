@@ -34,7 +34,7 @@ do
 	cd $work/$x 
 	git catkin-track-all
 	git clean -dxf
-	latest_release=git tag -l "debian/*$distro" | tail -1
+  latest_release=$(git tag -l "debian/*$distro" | tail -1)
 	git checkout $latest_release
 	git buildpackage -S -uc -us --git-ignore-new --git-postbuild=$post_install
 	git clean -dxf
