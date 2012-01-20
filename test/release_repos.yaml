@@ -41,10 +41,15 @@
   
 - git:
     uri: 'git@github.com:wg-debs/rospkg.git'
-    local-name: rospack
+    local-name: rospkg
     version: master
   
 - git:
     uri: 'git@github.com:wg-debs/ros_comm.git'
     local-name: ros_comm
+    version: master
+  
+- git:
+    uri: 'git@github.com:wg-debs/langs.git'
+    local-name: langs
     version: master
