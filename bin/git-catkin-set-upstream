@@ -52,7 +52,7 @@ then
 else
     status "No catkin branch... initializing"
     git symbolic-ref HEAD refs/heads/catkin
-    rm .git/index
+    rm -f .git/index
     git clean -fdx
     git commit --allow-empty -m "Initial catkin branch"
 fi
