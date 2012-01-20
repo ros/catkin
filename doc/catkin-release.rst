@@ -394,8 +394,10 @@ Version tools, for upstream releases::
 
 Build of workspace::
 
+    mkdir /tmp/ws
     cd /tmp/ws
-    git caktin install /path/to/catkin/test/release_repos.yaml
+    wget https://raw.github.com/willowgarage/catkin/master/test/release_repos.yaml
+    git catkin install release_repos.yaml
     catkin-build-debs-of-workspace
 
     

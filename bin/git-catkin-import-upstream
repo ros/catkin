@@ -85,11 +85,11 @@ fi
 
     if ! git branch | grep upstream
     then
-	status "${boldon}No upstream${reset}... creating an initial upstream branch."
-	git symbolic-ref HEAD refs/heads upstream
-        rm .git/index
+        status "${boldon}No upstream${reset}... creating an initial upstream branch."
+        git symbolic-ref HEAD refs/heads/upstream
+        rm -f .git/index
         git clean -dfx
-	git commit --allow-empty -m "Initial upstream branch"
+        git commit --allow-empty -m "Initial upstream branch"
     fi
 
     git checkout -f master
