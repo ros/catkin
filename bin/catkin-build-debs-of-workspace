@@ -25,13 +25,16 @@ do
 	debdir=$(mktemp -d -p /tmp/deb)
 	cd $debdir
 	dpkg-source -x $dsc
-	cd $debdir/*
+	cd $debdir/*/
 	builddeps=$(dpkg-checkbuilddeps)
 	if [ "$builddeps" != "" ]
 	then
 	    sudo apt-get install $builddeps
 	fi
-
+	version=$(dpkg-parsechangelog -n1 | grep Version\: | awk '{print $2}')
+	new_version=$version~$(date +%Y%m%d-%H%M%z)
+	debchange -v $new_version 'Time stamping'
+	cat debian/changelog
 	dpkg-buildpackage -rfakeroot -uc -b
 	sudo dpkg -i $debdir/*.deb
 
