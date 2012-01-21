@@ -1,17 +1,17 @@
 #!/bin/bash -e
+TOP=$(dirname $0)
+echo $TOP
 work=`pwd`
 
-#check if ordering tool exists
-which catkin-topological-order
-
 distro=$(lsb_release -cs)
-mkdir -p /tmp/all_debs
+
 mkdir -p /tmp/deb
 
-results=/tmp/all_debs
-echo -- build order $(catkin-topological-order)
+results=`pwd`
+order=$($TOP/catkin-topological-order)
+echo -- build order $order
 
-for x in $(catkin-topological-order)
+for x in $order
 do
     (
 	set -e
