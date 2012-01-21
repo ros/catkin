@@ -1,40 +1,46 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 TOP=$(dirname $0)
 echo $TOP
 work=`pwd`
 
 distro=$(lsb_release -cs)
 
-mkdir -p /tmp/deb
-
 results=`pwd`
 order=$($TOP/catkin-topological-order)
-echo -- build order $order
 
 for x in $order
 do
     (
-	set -e
+	set -ex
 	cd $work/$x
 	git catkin-track-all
 	git clean -dxf
+
 	latest_release=$(git tag -l "debian/*$distro" | tail -1)
 	git checkout $latest_release
+
 	git buildpackage -S -uc -us --git-ignore-new
+
 	git clean -dxf
 	dsc=$(ls $work/*.dsc -tr | tail -1)
-	echo "source dep created $dsc"
-	debdir=$(mktemp -d -p /tmp/deb)
-	cd $debdir
+
+	cd $work
 	dpkg-source -x $dsc
-	cd $debdir/*/
+	deb_dir=$(ls $work -tr | tail -1)
+	cd $deb_dir
 
-	builddeps=$(dpkg-checkbuilddeps)
-	if [ "$builddeps" != "" ]
+
+	#attempt to apt-get install all unmet build dependencies
+	#DOH TODO there has got to be a better way to do this:
+	if ! dpkg-checkbuilddeps 2> unmet
 	then
-	    sudo apt-get install $builddeps
+	    x=$(cat unmet)
+	    remove=${x%:*} #we want to remove dpkg-checkbuilddeps: Unmet build dependencies
+	    dependencies=${x#$remove:}
+	    sudo apt-get install -y $dependencies
 	fi
-
+	rm unmet
+  
 	version=$(dpkg-parsechangelog -n1 | grep Version\: | awk '{print $2}')
 	new_version=$version~$(date +%Y%m%d-%H%M%z)
 	debchange -v $new_version 'Time stamping'
