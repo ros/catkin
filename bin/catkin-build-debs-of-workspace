@@ -1,11 +1,7 @@
 #!/bin/bash -ex
 TOP=$(dirname $0)
-echo $TOP
 work=`pwd`
-
 distro=$(lsb_release -cs)
-
-results=`pwd`
 order=$($TOP/catkin-topological-order)
 
 for x in $order
@@ -47,8 +43,6 @@ do
 	cat debian/changelog
 
 	dpkg-buildpackage -rfakeroot -uc -b
-	sudo dpkg -i $debdir/*.deb
-
-	mv $debdir/* $results/
+	sudo dpkg -i $(ls -tr $work/*.deb | tail -1)
     )
 done
