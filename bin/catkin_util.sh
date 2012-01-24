@@ -262,15 +262,16 @@ repo_clone ()
     DEST=$3
 
     #set -x
+    mkdir -p $DEST
     case $TYPE in
         git)
-            git clone $2 $3
+            git clone $URL $DEST
             ;;
         hg)
-            hg clone -q $2 $3
+            hg clone -q $URL $DEST
             ;;
         svn)
-            svn co -q $2 $3
+            svn co -q $URL $DEST
     esac
     #set +x
 }
