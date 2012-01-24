@@ -42,7 +42,7 @@ read_stack_yaml $UPSTREAM_CLONE/stack.yaml
 status "Upstream's stack.yaml has version ${boldon}$VERSION_FULL${reset}"
 status "Upstream's name is ${boldon}$PACKAGE_NAME${reset}"
 
-
+PACKAGE_NAME=$(/bin/echo $PACKAGE_NAME | tr _ -)
 TARBALL_PREFIX=$TMPDIR/$PACKAGE_NAME-$VERSION_FULL
 TARBALL=$TARBALL_PREFIX.tar.gz
 (
@@ -71,7 +71,6 @@ else
 "
     fi
 fi
-
 
 (
     set -e
