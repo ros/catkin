@@ -11,6 +11,7 @@ import sys
 from pprint import pprint
 import tarfile
 import yaml
+import re
 
 name_key = 'Catkin-ProjectName'
 
@@ -112,6 +113,18 @@ def parse_stack_yaml(args):
     else:
         stack_yaml['Depends'] = set(deps)
 
+    maintainer_form = 'maintainer name <maintainer email>'
+    if 'Maintainer' not in stack_yaml:
+        print('You must have a Maintainer key in your stack.yaml.' +
+              '\nValue should be:\n' +
+              '\t%s'%maintainer_form, file=sys.stderr)
+        sys.exit(1)
+    if not re.search(r'.* <.+>', stack_yaml['Maintainer']):
+        print('You have a malformed Maintainer field in your stack.yaml.' +
+              '\nYours is:\n\t%s' % stack_yaml['Maintainer'] + 
+              '\nIt should be of the form:\n' +
+              '\t%s'%maintainer_form, file=sys.stderr)
+        sys.exit(1)
     return stack_yaml
 
 def template_dir():
