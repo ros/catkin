@@ -40,7 +40,8 @@ We'll use ``STACK`` to represent the stack being released.
 
    ``hg``::
 
-     hg something or other
+     hg tag 0.1.1
+     hg push
 
    ``svn`` (``https://path/to/STACK/branch`` is where the code is being developed, e.g. ``trunk``)::
 
@@ -157,36 +158,38 @@ Clone your :term:`GBP repository` (use a pushable URI for convenience)::
   git clone git@github.com:wg-debs/STACK.git
   cd STACK
 
-You should see tags for upstream source and debian releases::
+.. note:: **Optional**
 
-  % git tag
-  upstream/0.1.18
-  upstream/0.1.19
-  ...
-  debian/ros_fuerte_0.2.2_lucid
-  debian/ros_fuerte_0.2.2_natty
-  debian/ros_fuerte_0.2.2_oneiric
-
-There may be a great many of these.  You'll see that there are three
-upstream branches::
-
-  % git branch -r
-  origin/HEAD -> origin/master
-  origin/catkin
-  origin/master
-  origin/upstream
-
-Since you are about to import upstream source, you can verify what
-will be imported::
-
-  % git show origin/catkin:catkin.conf
-  [catkin]
-          upstream = git@github.com:project/STACK.git
-          upstreamtype = git
-
-This is essentially catting the file ``catkin.conf`` from the
-origin's ``catkin`` branch.
-
+  After you clone, you may want to inspect your repository to get familiar with how things work and to check that everything looks good. You should see tags for upstream source and debian releases::
+  
+    % git tag
+    upstream/0.1.18
+    upstream/0.1.19
+    ...
+    debian/ros_fuerte_0.2.2_lucid
+    debian/ros_fuerte_0.2.2_natty
+    debian/ros_fuerte_0.2.2_oneiric
+  
+  There may be a great many of these.  You'll see that there are three
+  upstream branches::
+  
+    % git branch -r
+    origin/HEAD -> origin/master
+    origin/catkin
+    origin/master
+    origin/upstream
+  
+  Since you are about to import upstream source, you can verify what
+  will be imported::
+  
+    % git show origin/catkin:catkin.conf
+    [catkin]
+            upstream = git@github.com:project/STACK.git
+            upstreamtype = git
+  
+  This is essentially catting the file ``catkin.conf`` from the
+  origin's ``catkin`` branch.
+  
 
 SVN: update your upstream URL
 +++++++++++++++++++++++++++++
@@ -330,28 +333,30 @@ If this worked and you're satisfied, or if you are just feeling lucky,
   git push --all
   git push --tags
 
-Example output::
+.. 
 
-  % git remote -v
-  origin	git@github.com:project/STACK-release.git (fetch)
-  origin	git@github.com:project/STACK-release.git (push)
-  % git push --all
-  Total 0 (delta 0), reused 0 (delta 0)
-  To git@github.com:project/STACK-release.git
-  9793abc..987ceab  master -> master
-  123d5d9..340fc7c  upstream -> upstream
-  % git push --tags
-  Counting objects: 4, done.
-  Delta compression using up to 8 threads.
-  Compressing objects: 100% (4/4), done.
-  Writing objects: 100% (4/4), 664 bytes, done.
-  Total 4 (delta 0), reused 0 (delta 0)
-  To git@github.com:project/STACK-release.git
-   * [new tag]         debian/ros_fuerte_0.1.1_lucid -> debian/ros_fuerte_0.1.1_lucid
-   * [new tag]         debian/ros_fuerte_0.1.1_natty -> debian/ros_fuerte_0.1.1_natty
-   * [new tag]         debian/ros_fuerte_0.1.1_oneiric -> debian/ros_fuerte_0.1.1_oneiric
-   * [new tag]         upstream/0.1.1 -> upstream/0.1.1
-
+  Example output::
+  
+    % git remote -v
+    origin	git@github.com:project/STACK-release.git (fetch)
+    origin	git@github.com:project/STACK-release.git (push)
+    % git push --all
+    Total 0 (delta 0), reused 0 (delta 0)
+    To git@github.com:project/STACK-release.git
+    9793abc..987ceab  master -> master
+    123d5d9..340fc7c  upstream -> upstream
+    % git push --tags
+    Counting objects: 4, done.
+    Delta compression using up to 8 threads.
+    Compressing objects: 100% (4/4), done.
+    Writing objects: 100% (4/4), 664 bytes, done.
+    Total 4 (delta 0), reused 0 (delta 0)
+    To git@github.com:project/STACK-release.git
+     * [new tag]         debian/ros_fuerte_0.1.1_lucid -> debian/ros_fuerte_0.1.1_lucid
+     * [new tag]         debian/ros_fuerte_0.1.1_natty -> debian/ros_fuerte_0.1.1_natty
+     * [new tag]         debian/ros_fuerte_0.1.1_oneiric -> debian/ros_fuerte_0.1.1_oneiric
+     * [new tag]         upstream/0.1.1 -> upstream/0.1.1
+   
 
 tips and tricks
 ===============
