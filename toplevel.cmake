@@ -22,7 +22,4 @@ else()
   find_package(catkin)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${catkin_EXTRAS_DIR}/Modules)
-
 catkin_workspace()
-
