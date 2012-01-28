@@ -10,7 +10,10 @@ name_key = 'Catkin-ProjectName'
 
 def parse_stack(yaml_file):
     stack = yaml.load(open(yaml_file))
-    return {stack[name_key]:set([dep.strip() for dep in stack['Depends'].split(',')])}
+    return {stack[name_key]:dict(deps=set([dep.strip() for dep in stack['Depends'].split(',')]),
+                                 dir=os.path.dirname(yaml_file)
+                                 )
+            }
 
 def buildable_graph_from_stacks(wd):
     join = os.path.join
@@ -26,10 +29,10 @@ def buildable_graph_from_stacks(wd):
     ourpackages = [package for package in graph.keys()]
     graph_we_can_build = {}
 
-    for key, deps in graph.iteritems():
-        graph_we_can_build[key] = deps.intersection(ourpackages)
+    for key, value in graph.iteritems():
+        graph_we_can_build[key] = value['deps'].intersection(ourpackages)
     
-    return graph_we_can_build
+    return (graph_we_can_build,graph)
 
 def topological_sort(graph):
     '''
@@ -70,16 +73,20 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Creates a topologically sorted list by build dependency from a directory full of catkin projects.')
     parser.add_argument('working_dir', nargs='?', help='Toplevel workspace.')
     parser.add_argument('--top', help='The top of the graph.')
+    parser.add_argument('--dirs', help='Emit directories, not Catkin-ProjectNames', action='store_true')
     parser.add_argument('--action', default='upstream',choices=('upstream','downstream'))
     args = parser.parse_args()
     wd = '.'
     if args.working_dir:
         wd = args.working_dir
 
-    graph = buildable_graph_from_stacks(wd)
-    
+    graph,stacks = buildable_graph_from_stacks(wd)
+
     if args.top:
         deps(graph,args.top, args.action)
     else:
         jobs = topological_sort(graph)
-        print '\n'.join(jobs)
+        if args.dirs:
+            print '\n'.join([stacks[x]['dir'] for x in jobs])
+        else:
+            print '\n'.join(jobs)
