@@ -13,9 +13,6 @@ export DH_OPTIONS=-v
 %:
 	dh  $@@
 
-override_dh_auto_configure:
-	dh_auto_configure -Scmake -- \
-		-DCMAKE_INSTALL_PREFIX="@(CMAKE_INSTALL_PREFIX)" \
-		-DCMAKE_PREFIX_PATH="@(CMAKE_PREFIX_PATH)" \
-		-DCATKIN_PACKAGE_PREFIX="@(CATKIN_PACKAGE_PREFIX)" \
-		-DCATKIN=YES
+override_dh_auto_test:
+	echo -- Running tests. Even if one of them fails the build is not canceled.
+	dh_auto_test || true
