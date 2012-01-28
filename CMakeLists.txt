@@ -7,6 +7,8 @@ set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
+list(APPEND CMAKE_MODULE_PATH ${catkin_EXTRAS_DIR}/Modules)
+
 add_subdirectory(env-hooks)
 add_subdirectory(bin)
 catkin_generic_hooks()
@@ -39,7 +41,11 @@ install(DIRECTORY cmake
   USE_SOURCE_PERMISSIONS
   )
 
-
+#HACK so that eigen can be found if catkin is in the
+#workspace... this is very bad that catkin knows about eigen...
+file(COPY cmake/Modules/eigen-config.cmake
+  DESTINATION ${CMAKE_BINARY_DIR}/cmake
+)
 catkin_export_python(python)
 
 stamp(cmake/stack_get.py)

@@ -9,8 +9,9 @@ export PYTHONPATH
 PATH=@CMAKE_INSTALL_PREFIX@/bin:$PATH
 export PATH
 
-#this is so that find_package works well...
-CMAKE_PREFIX_PATH=@CMAKE_INSTALL_PREFIX@
+#the first  path: to have custom cmake modules inside Modules (e.g. Eigen)
+#the second path: this is so that find_package works well...
+CMAKE_PREFIX_PATH=@CMAKE_INSTALL_PREFIX@/share/catkin/cmake/Modules:@CMAKE_INSTALL_PREFIX@:$CMAKE_PREFIX_PATH
 export CMAKE_PREFIX_PATH
 
 LD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/lib:$LD_LIBRARY_PATH
