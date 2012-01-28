@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+import yaml, os, sys, argparse
+
+parser = argparse.ArgumentParser(description='Parse a stack.yaml')
+parser.add_argument('stack_yaml', help='The path to the stack.yaml to parse')
+parser.add_argument('key', help='The key to extract.')
+args = parser.parse_args()
+
+stack = args.stack_yaml
+key = args.key
+if os.path.exists(stack):
+  stack_yaml = yaml.load(open(stack))
+else:
+  print >>sys.stderr, '%(stack)s does not exist!'%locals()
+  sys.exit(1)
+
+if key == 'Depends':
+  stack_yaml['Depends'] = '\n'.join(sorted(
+      [x.rstrip().strip()
+       for x in stack_yaml.get('Depends','').split(',')
+       ]
+      ))
+
+try:
+  print stack_yaml[key]
+except KeyError as e:
+  available_keys = '\n\t'.join(sorted(stack_yaml.keys()))
+  print >>sys.stderr, '%(key)s can not be found in %(stack)s\nAvailable keys are:\n\t%(available_keys)s'%locals()
