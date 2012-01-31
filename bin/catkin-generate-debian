@@ -117,7 +117,7 @@ def parse_stack_yaml(args):
 
     #allow override of these values
     stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else '/opt/ros/%s' % args.rosdistro
-    stack_yaml['PackagePrefix'] = args.package_prefix if args.package_prefix != None else 'ros-%s-' % args.rosdistro
+    stack_yaml['PackagePrefix'] = args.package_prefix if args.package_prefix != None else 'ros_%s_' % args.rosdistro
 
     deps = stack_yaml['Depends']
     if type(deps) == str:
