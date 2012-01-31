@@ -19,7 +19,6 @@ name_key = 'Catkin-ProjectName'
 The Debian binary package file names conform to the following convention:
 <foo>_<VersionNumber>-<DebianRevisionNumber>_<DebianArchitecture>.deb
 
-PackagePrefix is a ROS mangling, ros-electric-,ros-fuerte-,ros-X- etc...
 Distribution is an ubuntu distro
 Version is the upstream version
 DebianInc is some number that is incremental for package maintenance
@@ -36,8 +35,6 @@ def parse_options():
                         default=0)
     parser.add_argument('--install_prefix', dest='install_prefix',
                         help='The full prefix ...')
-    parser.add_argument('--package_prefix', dest='package_prefix',
-                        help='The package prefix ...')
     parser.add_argument('--distros', nargs='+',
                         help='A list of debian distros. Default: %(default)s',
                         default=['lucid', 'oneiric'])
@@ -112,12 +109,17 @@ def parse_stack_yaml(args):
         stack_yaml['Catkin-ChangelogType'] = ''
 
     stack_yaml['DebianInc'] = args.debian_inc
-    stack_yaml['Package'] = sanitize_package_name(stack_yaml[name_key])
+    if 'Package' in stack_yaml:
+        if stack_yaml['Package'] != sanitize_package_name(stack_yaml['Package']):
+            print ("Package: tag is not a valid debian package string. Aka, no underscores!")
+            sys.exit(1)
+    else:
+        stack_yaml['Package'] = sanitize_package_name("ros-%s-%s"%(args.rosdistro, stack_yaml[name_key]))
+
     stack_yaml['ROS_DISTRO'] = args.rosdistro
 
     #allow override of these values
     stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else '/opt/ros/%s' % args.rosdistro
-    stack_yaml['PackagePrefix'] = args.package_prefix if args.package_prefix != None else 'ros_%s_' % args.rosdistro
 
     deps = stack_yaml['Depends']
     if type(deps) == str:
@@ -252,7 +254,7 @@ def main(args):
     for debian_distro in args.distros:
         generate_deb(stack_yaml, ".", stamp, debian_distro, rosdep_db)
         commit_debian(stack_yaml, ".")
-        tag_name = 'debian/%(PackagePrefix)s%(Version)s_%(Distribution)s' % stack_yaml
+        tag_name = 'debian/%(Package)s_%(Version)s_%(Distribution)s' % stack_yaml
         print("tag: %s" % tag_name)
         call(".", ['git', 'tag', '-f', tag_name, '-m', 'Debian release %(Version)s' % stack_yaml])
 
