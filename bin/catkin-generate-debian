@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from __future__ import print_function
 from subprocess import Popen, CalledProcessError
 import datetime
@@ -31,12 +30,22 @@ def parse_options():
     parser = argparse.ArgumentParser(description='Creates/updates a gpb from a catkin project.')
     parser.add_argument('--working', help='A scratch build path. Default: %(default)s',
                         default='.tmp/%u/' % os.getpid())
-    parser.add_argument('--debian_inc', dest='debian_inc', help='Bump the changelog debian number. Please enter a monotonically increasing number from the last upload.', default=0)
-    parser.add_argument(dest='rosdistro', help='The ros distro. electric, fuerte, galapagos')
+    parser.add_argument('--debian_inc', dest='debian_inc',
+                        help='Bump the changelog debian number.'+
+                        ' Please enter a monotonically increasing number from the last upload.',
+                        default=0)
+    parser.add_argument('--install_prefix', dest='install_prefix',
+                        help='The full prefix ...')
+    parser.add_argument('--package_prefix', dest='package_prefix',
+                        help='The package prefix ...')
     parser.add_argument('--distros', nargs='+',
-            help='A list of debian distros. Default: %(default)s',
-            default=['lucid', 'natty', 'oneiric'])
+                        help='A list of debian distros. Default: %(default)s',
+                        default=['lucid', 'oneiric'])
+
+    #ros specific stuff.
+    parser.add_argument('rosdistro', help='The ros distro. electric, fuerte, galapagos')
     parser.add_argument('--rosdep', help='Location of the remote rosdep database.', default='git://github.com/ros/rosdep_rules.git')
+
     return parser.parse_args()
 
 
@@ -101,11 +110,14 @@ def parse_stack_yaml(args):
 
     if 'Catkin-ChangelogType' not in stack_yaml:
         stack_yaml['Catkin-ChangelogType'] = ''
+
     stack_yaml['DebianInc'] = args.debian_inc
     stack_yaml['Package'] = sanitize_package_name(stack_yaml[name_key])
     stack_yaml['ROS_DISTRO'] = args.rosdistro
-    stack_yaml['INSTALL_PREFIX'] = '/opt/ros/%s' % args.rosdistro
-    stack_yaml['PackagePrefix'] = 'ros-%s-' % args.rosdistro
+
+    #allow override of these values
+    stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else '/opt/ros/%s' % args.rosdistro
+    stack_yaml['PackagePrefix'] = args.package_prefix if args.package_prefix != None else 'ros-%s-' % args.rosdistro
 
     deps = stack_yaml['Depends']
     if type(deps) == str:
@@ -121,7 +133,7 @@ def parse_stack_yaml(args):
         sys.exit(1)
     if not re.search(r'.* <.+>', stack_yaml['Maintainer']):
         print('You have a malformed Maintainer field in your stack.yaml.' +
-              '\nYours is:\n\t%s' % stack_yaml['Maintainer'] + 
+              '\nYours is:\n\t%s' % stack_yaml['Maintainer'] +
               '\nIt should be of the form:\n' +
               '\t%s'%maintainer_form, file=sys.stderr)
         sys.exit(1)
@@ -235,16 +247,16 @@ def main(args):
     make_working(args.working)
 
     rosdep_db = generate_rosdep_db(args.working, args.rosdep, args.rosdistro)
-  
+
     tags = []
     for debian_distro in args.distros:
         generate_deb(stack_yaml, ".", stamp, debian_distro, rosdep_db)
         commit_debian(stack_yaml, ".")
-        tag_name = 'debian/ros_%(ROS_DISTRO)s_%(Version)s_%(Distribution)s' % stack_yaml
+        tag_name = 'debian/%(PackagePrefix)s%(Version)s_%(Distribution)s' % stack_yaml
         print("tag: %s" % tag_name)
         call(".", ['git', 'tag', '-f', tag_name, '-m', 'Debian release %(Version)s' % stack_yaml])
 
     sys.exit(0)
-    
+
 if __name__ == "__main__":
     main(parse_options())
