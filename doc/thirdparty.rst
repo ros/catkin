@@ -61,6 +61,10 @@ Create a cakin orphan branch::
     git add catkin.conf stack.yaml
     git commit -m "Adding catkin.conf and stack.yaml"
 
+If you want to pick a specific package name add a "Package" key to stack.yaml with the 
+debian package name you want as the output. The default value is "ros-%(rosdistro)s-%(Catkin-PackageName)s
+Also supported is INSTALL_PREFIX as a key, to set the install prefix.  Default: /opt/ros/%(rosdistro)s/
+
 Merge the catkin branch::
 
     git checkout master
