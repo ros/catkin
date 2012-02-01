@@ -40,7 +40,7 @@ def parse_options():
                         default=['lucid', 'oneiric'])
 
     #ros specific stuff.
-    parser.add_argument('rosdistro', help='The ros distro. electric, fuerte, galapagos')
+    parser.add_argument('rosdistro', help='The ros distro. electric, fuerte, groovy')
     parser.add_argument('--rosdep', help='Location of the remote rosdep database.', default='git://github.com/ros/rosdep_rules.git')
 
     return parser.parse_args()
