@@ -123,10 +123,10 @@ To test the debians try checking out a tag and using ``git
 buildpackage`` to create a binary debian.  In our example, we released
 version ``0.1.1`` and created a debian package for ``fuerte``.  This
 means the tag for the Ubuntu Oneiric platform is
-``debian/ros_fuerte_0.1.1_oneiric`` tag.  To build a debian package
+``debian/ros-fuerte-STACK-0.1.1_oneiric`` tag.  To build a debian package
 for this platform::
 
-  git checkout debian/ros_fuerte_0.1.1_oneiric
+  git checkout debian/ros-fuerte-STACK-0.1.1_oneiric
   git clean -dxf
   git buildpackage -uc -us --git-ignore-branch --git-ignore-new   # on lucid, omit --git-ignore-new
 
@@ -166,9 +166,8 @@ Clone your :term:`GBP repository` (use a pushable URI for convenience)::
     upstream/0.1.18
     upstream/0.1.19
     ...
-    debian/ros_fuerte_0.2.2_lucid
-    debian/ros_fuerte_0.2.2_natty
-    debian/ros_fuerte_0.2.2_oneiric
+    debian/ros-fuerte-STACK-0.2.2_lucid
+    debian/ros-fuerte-STACK-0.2.2_oneiric
   
   There may be a great many of these.  You'll see that there are three
   upstream branches::
@@ -247,7 +246,7 @@ Now we need to generate git tags for our release using the ``catkin-generate-deb
     % git catkin-generate-debian fuerte
     catkin has branch catkin.
     catkin has branch upstream.
-    M	debian/changelog
+    M    debian/changelog
     Already on 'master'
     Your branch is ahead of 'origin/master' by 2 commits.
     The latest upstream tag in the release repo is upstream/0.1.1
@@ -264,20 +263,18 @@ Now we need to generate git tags for our release using the ``catkin-generate-deb
 
     [master d3cc805] + Creating debian mods for distro: oneiric, rosdistro: fuerte, upstream version: 0.1.1
      1 files changed, 1 insertions(+), 1 deletions(-)
-    tag: debian/ros_fuerte_0.1.1_oneiric
-    + cd . && git tag -f debian/ros_fuerte_0.1.1_oneiric -m Debian release 0.1.1
-    Updated tag 'debian/ros_fuerte_0.1.1_oneiric' (was 0000000)
+    tag: debian/ros-fuerte-STACK-0.1.1_oneiric
+    + cd . && git tag -f debian/ros-fuerte-STACK-0.1.1_oneiric -m Debian release 0.1.1
+    Updated tag 'debian/ros-fuerte-STACK-0.1.1_oneiric' (was 0000000)
 
 
 Now we need to verify that your tag got created locally.  Git tag will show them::
 
   % git tag
-  debian/ros_fuerte_1.7.3_lucid
-  debian/ros_fuerte_1.7.3_natty
-  debian/ros_fuerte_1.7.3_oneiric
-  debian/ros_fuerte_1.7.4_lucid
-  debian/ros_fuerte_1.7.4_natty
-  debian/ros_fuerte_1.7.4_oneiric
+  debian/ros-fuerte-STACK-1.7.3_lucid
+  debian/ros-fuerte-STACK-1.7.3_oneiric
+  debian/ros-fuerte-STACK-1.7.4_lucid
+  debian/ros-fuerte-STACK-1.7.4_oneiric
   upstream/1.7.3
   upstream/1.7.4
 
@@ -289,7 +286,7 @@ Now we need to verify that your tag got created locally.  Git tag will show them
   version of your local host.  In this example, we checkout for Ubuntu
   Oneiric::
 
-      git checkout debian/ros_fuerte_1.7.4_oneiric
+      git checkout debian/ros-fuerte-STACK-1.7.4_oneiric
 
   It may complain about ``detached HEAD``, this would be a good time to
   `Check Your Head
@@ -346,15 +343,14 @@ If this worked and you're satisfied, or if you are just feeling lucky,
     9793abc..987ceab  master -> master
     123d5d9..340fc7c  upstream -> upstream
     % git push --tags
-    Counting objects: 4, done.
-    Delta compression using up to 8 threads.
-    Compressing objects: 100% (4/4), done.
-    Writing objects: 100% (4/4), 664 bytes, done.
-    Total 4 (delta 0), reused 0 (delta 0)
+    Counting objects: 3, done.
+    Delta compression using up to 6 threads.
+    Compressing objects: 100% (3/3), done.
+    Writing objects: 100% (3/3), 498 bytes, done.
+    Total 3 (delta 0), reused 0 (delta 0)
     To git@github.com:project/STACK-release.git
-     * [new tag]         debian/ros_fuerte_0.1.1_lucid -> debian/ros_fuerte_0.1.1_lucid
-     * [new tag]         debian/ros_fuerte_0.1.1_natty -> debian/ros_fuerte_0.1.1_natty
-     * [new tag]         debian/ros_fuerte_0.1.1_oneiric -> debian/ros_fuerte_0.1.1_oneiric
+     * [new tag]         debian/ros-fuerte-STACK-0.1.1_lucid -> debian/ros-fuerte-STACK-0.1.1_lucid
+     * [new tag]         debian/ros-fuerte-STACK-0.1.1_oneiric -> debian/ros-fuerte-STACK-0.1.1_oneiric
      * [new tag]         upstream/0.1.1 -> upstream/0.1.1
    
 
