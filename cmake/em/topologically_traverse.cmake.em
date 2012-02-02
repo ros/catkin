@@ -63,16 +63,20 @@ for stackyamlfilename in stackyamls:
     if os.path.basename(os.path.dirname(stackyamlfilename)).startswith('.'):
         continue
     read_control_file(os.path.dirname(stackyamlfilename), stackyamlfilename)
-all_deps = reduce(set.union, [p.depends for p in pkgs.values()])
+if pkgs:
+    all_deps = reduce(set.union, [p.depends for p in pkgs.values()])
+else:
+    all_deps = set()
 
 unknown_deps = all_deps - set(pkgs)
 
 #remove unknown dependencies from the list
 for p in pkgs.values():
-  p.depends = set(p.depends) - set(unknown_deps)
+    p.depends = set(p.depends) - set(unknown_deps)
 
-del pkgs['catkin']
-remove_deps(pkgs, 'catkin')
+if 'catkin' in pkgs:
+    del pkgs['catkin']
+    remove_deps(pkgs, 'catkin')
 
 langs = [name for name,p in pkgs.items() if p.genlang]
 
