@@ -49,7 +49,7 @@ macro(catkin_doxygen TARGET_NAME SEARCH_DIRS)
 
   string(REPLACE ";" " " doc_sources "${doc_sources}")
 
-  configure_file(Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+  configure_file(${catkin_EXTRAS_DIR}/templates/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
 
   add_custom_target(${TARGET_NAME}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
