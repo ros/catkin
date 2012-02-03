@@ -49,7 +49,6 @@ foreach(f
     tools/rt
     tools/threads
     tools/gtest
-    tools/doxygen
     tests
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)

@@ -37,6 +37,12 @@ if (DOXYGEN_EXECUTABLE)
   set(DOXYGEN_FOUND TRUE CACHE BOOL "Doxygen found")
 endif()
 
+GET_TARGET_PROPERTY(doxygen_catkin_property doxygen "catkin")
+if (doxygen_catkin_property)
+else()
+  add_custom_target(doxygen COMMENT "doxygen found")
+  set_target_properties(doxygen PROPERTIES "catkin" "found")
+endif()
 
 macro(catkin_doxygen TARGET_NAME SEARCH_DIRS)
   #doxygen based docs
@@ -59,6 +65,7 @@ macro(catkin_doxygen TARGET_NAME SEARCH_DIRS)
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-  add_dependencies(doc ${TARGET_NAME})
+  add_dependencies(doxygen ${TARGET_NAME})
+
 endmacro()
 
