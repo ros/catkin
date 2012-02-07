@@ -41,6 +41,7 @@ foreach(f
     catkin_export_python
     catkin_add_env_hooks
     langs
+    libraries
     rosbuild_compat
     platform/lsb
     platform/ubuntu
