@@ -1,5 +1,6 @@
 - other:
     local-name: @CMAKE_INSTALL_PREFIX@/share/ros
+    setup-file: @CMAKE_INSTALL_PREFIX@
 - other:
     local-name: @CMAKE_INSTALL_PREFIX@/share
 
