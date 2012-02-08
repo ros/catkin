@@ -4,8 +4,9 @@ from distutils.core import setup
 
 setup(name='catkin',
       version= "0.0.0",
-      packages=['catkin'],
-      package_dir = {'':'python'},
+      packages=['catkin', 'catkin.sphinx'],
+      package_dir = {'catkin':'python/catkin',
+                     'catkin.sphinx': 'python/catkin/sphinx'},
       scripts = [],
       author = "Troy Straszheim, Morten Kjaergaard", 
       author_email = "straszheim@willowgarage.com",
