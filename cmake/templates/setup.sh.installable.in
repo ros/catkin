@@ -29,7 +29,7 @@ if [ -z "$CATKIN_SHELL" ] ; then
    CATKIN_SHELL=sh
 fi
 
-for envfile in @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/*.all @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/*.$CATKIN_SHELL
+for envfile in `ls @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/*.all @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/*.$CATKIN_SHELL 2>/dev/null`
 do
    . $envfile
 done

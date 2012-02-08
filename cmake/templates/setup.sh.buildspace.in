@@ -6,7 +6,7 @@ if [ -z "$CATKIN_SHELL" ] ; then
    CATKIN_SHELL=sh
 fi
 
-for envfile in $CATKIN_BINARY_DIR/etc/catkin/profile.d/*.all $CATKIN_BINARY_DIR/etc/catkin/profile.d/*.$CATKIN_SHELL
+for envfile in `ls $CATKIN_BINARY_DIR/etc/catkin/profile.d/*.all $CATKIN_BINARY_DIR/etc/catkin/profile.d/*.$CATKIN_SHELL 2>/dev/null`
 do
   . $envfile
 done
