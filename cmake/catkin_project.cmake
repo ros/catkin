@@ -22,6 +22,10 @@ function(catkin_project PACKAGE_NAME)
     message(STATUS "VESTIGIAL: VERSION argument to catkin_project.")
     message(STATUS "           Use stack's version via catkin_stack()")
   endif()
+  # ${${CATKIN_CURRENT_STACK}_VERSION} is set by the most recent call to
+  # catkin_stack(), which sets CATKIN_CURRENT_STACK and then parses the
+  # stack.yaml, making each field into a CMake cache variable.
+  set(PACKAGE_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
   set(PACKAGE_INCLUDE_DIRS ${PACKAGE_INCLUDE_DIRS})
   set(PACKAGE_DEPENDS ${PACKAGE_DEPENDS})
   set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
