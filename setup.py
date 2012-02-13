@@ -4,8 +4,10 @@ from distutils.core import setup
 
 setup(name='catkin',
       version= "0.0.0",
-      packages=['catkin'],
-      package_dir = {'':'python'},
+      packages=['catkin', 'catkin.sphinx'],
+      package_dir = {'catkin':'python/catkin',
+                     'catkin.sphinx': 'python/catkin/sphinx',
+                     },
       scripts = [],
       author = "Troy Straszheim, Morten Kjaergaard", 
       author_email = "straszheim@willowgarage.com",
@@ -15,7 +17,7 @@ setup(name='catkin',
       classifiers = [
         "Programming Language :: Python", 
         "License :: OSI Approved :: BSD License" ],
-      description = "ROS msg/srv generation", 
+      description = "Catkin cmake library", 
       long_description = """\
 Build system stuff
 """,

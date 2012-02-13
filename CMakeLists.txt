@@ -13,6 +13,7 @@ add_subdirectory(env-hooks)
 add_subdirectory(bin)
 catkin_generic_hooks()
 
+catkin_stack()
 catkin_project(catkin)
 
 install_cmake_config_version(ROS 12.04)
@@ -46,7 +47,7 @@ install(DIRECTORY cmake
 file(COPY cmake/Modules/eigen-config.cmake
   DESTINATION ${CMAKE_BINARY_DIR}/cmake
 )
-catkin_export_python(python)
+catkin_export_python()
 
 stamp(cmake/stack_get.py)
 

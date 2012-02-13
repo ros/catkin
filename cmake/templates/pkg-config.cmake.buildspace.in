@@ -12,7 +12,7 @@ if (NOT "X@PACKAGE_INCLUDE_DIRS@" STREQUAL "X")
       set(include @PKG_INCLUDE_PREFIX@/${idir})
     else()
       message(FATAL_ERROR "@PACKAGE_NAME@ specified ${idir} as an include dir, but I can't find it.
-Its does not exist, as an absolute directory or in @PKG_INCLUDE_PREFIX@/${idir}
+It does not exist, as an absolute directory or in @PKG_INCLUDE_PREFIX@/${idir}
 Tell @Maintainer@ to fix it."
              )
     endif()

@@ -24,6 +24,11 @@
     version: master
 
 - git:
+    uri: 'git://github.com/ros/genlisp.git'
+    local-name: genlisp
+    version: master
+
+- git:
     uri: 'git://github.com/ros/genpy.git'
     local-name: genpy
     version: master
