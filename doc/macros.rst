@@ -50,15 +50,11 @@ Catkin cmake macro reference
 
 .. cmake:macro:: catkin_stack()
 
-   `Required for all stacks.  No parameters.`
+   `Optional.  No parameters.`
 
    Reads the :ref:`stack.yaml` from the current source dir and makes
-   the version number available to cmake via ``stackname_VERSION``;
-   does the same for other fields in the `stack.yaml`.  Also sets
-   ``CATKIN_CURRENT_STACK``.  You must call `catkin_stack()` once
-   in each stack's CMakeLists.txt, before any calls to `catkin_project()`,
-   to ensure that auto-generated pkg-config and CMake files get correct
-   version information.
+   the version number available to cmake via ``stackname_VERSION``.
+   This is only necessary if you actually use this variable.
 
 .. cmake:macro:: catkin_workspace()
 
