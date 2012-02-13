@@ -3,4 +3,6 @@
     setup-file: @CMAKE_INSTALL_PREFIX@/setup.sh
 - other:
     local-name: @CMAKE_INSTALL_PREFIX@/share
+- other:
+    local-name: @CMAKE_INSTALL_PREFIX@/stacks
 
