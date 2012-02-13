@@ -60,7 +60,7 @@ endmacro()
 find_sphinx()
 
 ##
-# sphinx(<TARGET_NAME> <SOURCE_DIR> <BUILD_DIR> [PATH1 [ PATH2 [ PATH3 ]]])
+# catkin_sphinx(<TARGET_NAME> <SOURCE_DIR> <BUILD_DIR> [PATH1 [ PATH2 [ PATH3 ]]])
 # TARGET_NAME -> The cmake target to create.
 # SOURCE_DIR -> Where the conf.py is
 # BUILD_DIR -> Where should sphinx put the result
@@ -71,7 +71,7 @@ set(SPHINX_LIST ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/sphinx_projects.list
   )
 file(REMOVE ${SPHINX_LIST})
 
-macro(sphinx SOURCE_DIR BUILD_DIR)
+macro(catkin_sphinx SOURCE_DIR BUILD_DIR)
   find_sphinx()
   if(SPHINX_BUILD)
 

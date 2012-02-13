@@ -69,7 +69,7 @@ Catkin cmake macro reference
 Documentation Macros
 ^^^^^^^^^^^^^^^^^^^^
 
-.. cmake:macro:: sphinx(SOURCEDIR BUILDDIR)
+.. cmake:macro:: catkin_sphinx(SOURCEDIR BUILDDIR)
 
    :param SOURCEDIR:  Directory containing sphinx .rst documentation source code
    :param BUILDDIR:   Directory to contain generated html
@@ -81,7 +81,7 @@ Documentation Macros
 
    :outvar SPHINX_BUILD: Path to ``sphinx-build`` binary.
 
-   Finds sphinx binary.  You don't need this... called automatically by :cmake:macro:`sphinx()`
+   Finds sphinx binary.  You don't need this... called automatically by :cmake:macro:`catkin_sphinx()`
 
 .. cmake:data:: CATKIN_DOCS_DEPLOY_DESTINATION
 
