@@ -49,13 +49,19 @@ def topo_packages_generators_first(pkgs):
         for name, p in pkgs.items():
             if not p.depends:
                 return (name,p)
-        return None
+        return (None, None)
 
+    topo_pkgs = []
     while len(pkgs) > 0:
         (name,p) = next_pkg()
+        if name is None:
+            # in case of a circular dependency pass the list of remaining packages
+            topo_pkgs.append([None, ', '.join(pkgs.keys())])
+            break
         del pkgs[name]
         remove_deps(pkgs, name)
-        yield (name,p)
+        topo_pkgs.append([name,p])
+    return topo_pkgs
 
 stackyamls = glob.glob(os.path.join(source_root_dir, '*', 'stack.yaml'))
 # print >>sys.stderr, "stackyamls=", stackyamls
@@ -89,7 +95,15 @@ message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set(CATKIN_GENLANGS @(' '.join(langs)))
 
 @[for name,pkg in topo_pkgs]
+@[if not name]
+message(FATAL_ERROR "Circular dependency in subset of packages:\n@pkg")
+@[end if]
+@[end for]
+
+@[for name,pkg in topo_pkgs]
+@[if name]
 message(STATUS "+++ @name")
 stamp(@(pkg.path)/stack.yaml)
 add_subdirectory(@(pkg.path))
+@[end if]
 @[end for]
