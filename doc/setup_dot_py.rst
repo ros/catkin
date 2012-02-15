@@ -3,7 +3,7 @@
 Handling of ``setup.py``
 ------------------------
 
-Used in build and installation.  Here be dragons.
+Used in build and installation.
 
 Any scripts listed in ``scripts`` will be symlinked to from
 :ref:`toplevel_bin`

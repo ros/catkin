@@ -60,11 +60,9 @@ endmacro()
 find_sphinx()
 
 ##
-# catkin_sphinx(<TARGET_NAME> <SOURCE_DIR> <BUILD_DIR> [PATH1 [ PATH2 [ PATH3 ]]])
-# TARGET_NAME -> The cmake target to create.
+# catkin_sphinx(<SOURCE_DIR> <BUILD_DIR>)
 # SOURCE_DIR -> Where the conf.py is
 # BUILD_DIR -> Where should sphinx put the result
-# PATH(s) -> paths to prepend to the PYTHONPATH for the execution of sphinx-build
 #
 set(SPHINX_LIST ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/sphinx_projects.list
   CACHE INTERNAL "File containing master sphinx projects list"

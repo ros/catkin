@@ -2,8 +2,9 @@ Catkin
 ======
 
 `Catkin <http://en.wikipedia.org/wiki/Catkin>`_ is a collection of
-cmake macros and associated code used to build some parts of ROS as of
-the *fuerte* release.
+cmake macros and associated code used to build some parts of
+`ROS <http://www.ros.org>`_ as of the
+`Fuerte <http://ros.org/wiki/fuerte>`_ release.
 
 Code & tickets
 --------------
@@ -109,7 +110,7 @@ Main trickery
 .. rubric:: Dependency ordering of stacks
 
 During the cmake run the main source directory is scanned for stacks
-to build.  Actually cmake doesnt care if it is a stack or a package;
+to build.  Actually cmake does not care if it is a stack or a package;
 it cares that the directory has something there that indicates that
 it is buildable, and what its dependencies are... that, is :ref:`stack.yaml`.  Catkin
 topologically sorts this and reads the files in order.

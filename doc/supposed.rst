@@ -4,7 +4,7 @@ Sketch of directory structure
 How things ought to look, starting at the outermost level of the
 source directory and moving down through stacks and packages.
 
-workspace
+Workspace
 ---------
 
 This is a directory containing multiple stacks, e.g. one constructed
@@ -14,7 +14,7 @@ by ``rosinstall``.  This directory must contain a symlink::
 
 which triggers catkin's topological sort via inspection of ``stack.yaml``.
 
-stack
+Stack
 -----
 
 A typical "stack" will contain, at the top level::
@@ -31,7 +31,7 @@ stack.yaml
 
 Used by catkin's dependency-sorting to determine what order to
 traverse cmake projects in (when in a catkin workspace) and by
-packaging utilities whne making debians.
+packaging utilities when making debians.
 
 Example::
 
@@ -93,7 +93,10 @@ The basic case (``ros_comm``)::
 
   cmake_minimum_required(VERSION 2.8)
 
-  # optional find_package
+  # find_package(catkin REQUIRED)
+  # catkin_stack(ros_comm)
+
+  # optional find_package(... [REQUIRED])
 
   foreach(subdir
       cpp_common
@@ -105,26 +108,31 @@ The basic case (``ros_comm``)::
   endforeach()
 
 
+.. rubric:: cmake_minimum_required
+
 The leading ``cmake_minimum_required`` is standard cmake.  Not
 necessary when building in a workspace (as the first CMakeLists.txt
 has already been read), but necessary when building e.g. in a
 packaging context.
 
+.. rubric:: catkin_stack [optional]
+
+Find the catkin package first and then call :cmake:macro:`catkin_stack`.
+This is only necessary if you need the variables exported by catkin_stack.
+
+.. rubric:: find_package [optional]
+
 The ``# optional find_package`` line is for anything that is common to
-all subprojects.  This is standard cmake.
+all subprojects and not handled by catkin_stack.  Consider using
+`REQUIRED <standards.html#find-package-required>`_ whenever possible.
+This is standard cmake.
+
+.. rubric:: add_subdirectory
 
 Then ``add_subdirectory(P)`` for each package ``P``.  Here the
-dependency ordering between packages is defined, i.e. if ``proj1``
-refers to a target defined in ``proj2``, then ``proj1`` must come
+dependency ordering between packages is defined, i.e. if ``proj2``
+refers to a target defined in ``proj1``, then ``proj1`` must come
 first in the ordering.
-
-.. rubric:: catkin_package()
-
-`Vestigial`.  Replace me with :cmake:macro:`catkin_stack`.
-
-.. rubric:: catkin_stack()  [optional]
-
-See :cmake:macro:`catkin_stack`
 
 
 package
@@ -134,19 +142,27 @@ Each package (as added by ``add_subdirectory`` in the stack) Will
 contain a ``CMakeLists.txt``.  Basic case::
 
   project(rostime)
-  find_package(ROS COMPONENTS catkin cpp_common)
 
-  include_directories(include)
+  find_package(ROS REQUIRED COMPONENTS catkin cpp_common)
   include_directories(${ROS_INCLUDE_DIRS})
 
-  find_package(Boost COMPONENTS date_time thread)
+  find_package(Boost REQUIRED COMPONENTS date_time thread)
 
-  add_library(rostime SHARED
-    src/time.cpp src/rate.cpp src/duration.cpp)
+  include_directories(include)
 
-  target_link_libraries(rostime ${Boost_LIBRARIES} ${ROS_LIBRARIES})
+  set(${PROJECT_NAME}_SRCS
+    src/duration.cpp
+    src/rate.cpp
+    src/time.cpp
+  )
 
-  install(TARGETS rostime
+  add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRCS})
+
+  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${ROS_LIBRARIES})
+
+  # optional catkin_export_python()
+
+  install(TARGETS ${PROJECT_NAME}
     DESTINATION lib
     )
 
@@ -154,41 +170,71 @@ contain a ``CMakeLists.txt``.  Basic case::
     DESTINATION include
     )
 
-  catkin_project(rostime
-    VERSION 0.0.0
+  catkin_project(${PROJECT_NAME}
     INCLUDE_DIRS include
-    LIBRARIES rostime
+    LIBRARIES ${PROJECT_NAME}
     )
 
 
-Start with ``project()``.  This is standard cmake.  Follow with
-``find_package`` of whatever is necessary; for ``ROS``, you may use
-the aggregate ``find_package(ROS COMPONENTS ...)`` method, this will
-be more succinct than a bunch of individual ``find_package`` calls.
+.. rubric:: project
+
+This is standard cmake.
+
+.. rubric:: find_package [optional]
+
+``find_package`` of whatever is necessary.  This is standard cmake.
+Consider using `REQUIRED <standards.html#find-package-required>`_
+whenever possible.
+For ``ROS``, you may use the aggregate
+``find_package(ROS COMPONENTS ...)`` method, this will be more
+succinct than a bunch of individual ``find_package`` calls.
+
 *Yes*, you should specify ``catkin`` in this list of packages.  There
 may be users that do not build with catkin's macros but wish to use
 include/link flags for ROS libraries.  You may want to
 ``find_package`` of stack-wide components up at the top level, and
 then find_package more specific components in the packages that use
-them.   You will want to ``include_directories(${ROS_INCLUDE_DIRS})``
-where necessary and use ``ROS_LIBRARIES`` with cmake's
-``target_link_libraries()``.
+them.
+
+You will want to ``include_directories(${ROS_INCLUDE_DIRS})``
+and other folders where necessary.
+
+.. rubric:: source files
+
+Add all source files to a list.  For better readability one file per
+line with `alphabetic order <standards.html#keep-lists-sorted>`_.
+
+.. rubric:: add_library
+
+Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
+project name.  This is standard cmake.  Explicitly use ``SHARED`` for
+building a shared library.
+
+.. rubric:: target_link_libraries
+
+Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
+project name.  This is standard cmake.  Explicitly link against all
+necessary libraries, i.e. ``ROS_LIBRARIES``.
+
+.. rubric:: catkin_export_python
+
+Call :cmake:macro:`catkin_export_python` if the project contains
+Python code which should installed.
+
+.. rubric:: install
 
 ``install`` your targets as necessary.  Libraries go in ``DESTINATION
 lib``, include directories in ``DESTINATION include``, and "private"
 stuff in ``share/${PROJECT_NAME}/``, i.e. private binaries thereunder
 in ``bin/``... whatever turns out to be compatible with rosbuild.
 
-``catkin_project`` creates the cmake stuff necessary for
-``find_package`` to work (i.e. to be *found* by others that call
-``find_package``.  The first argument is the project name (*may be
-vestigial*).  The ``VERSION`` argument is vestigial.  The
-``INCLUDE_DIRS`` argument is the ``CMAKE_CURRENT_SOURCE_DIR``
--relative path to any C++ includes.  ``LIBRARIES`` are the names of
-targets that will appear in the ``ROS_LIBRARIES`` of other projects
-that search for you via ``find_package``.  Currently this will break
-if the logical target names are not the same as the installed names.
+.. rubric:: catkin_project
 
+:cmake:macro:`catkin_project` defines information dependent projects
+(i.e. include directories, libraries to link against and depending 
+projects).
+
+The ``VERSION`` argument is vestigial.
 
 
 
