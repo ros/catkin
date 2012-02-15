@@ -51,6 +51,4 @@ catkin_export_python()
 
 stamp(cmake/stack_get.py)
 
-catkin_sphinx(${CMAKE_CURRENT_SOURCE_DIR}/doc ${CMAKE_CURRENT_BINARY_DIR}/doc)
-
 install(FILES stack.yaml DESTINATION share/catkin)
