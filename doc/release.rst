@@ -15,7 +15,7 @@ There are a few use cases of packaging that it should handle with varying amount
 For 1 and 2, the packages that will be created by catkin and the build
 farm will be installed to a :term:`FHS` that is determined by the
 ``CMAKE_INSTALL_PREFIX`` variable.  For ROS, this is
-``/opt/ros/DISTRO`` where ``DISTRO`` is a ros distrubution.  This is
+``/opt/ros/DISTRO`` where ``DISTRO`` is a ros distribution.  This is
 the assumed case if you are making releases with catkin.  However,
 there should be no reason that debians can not be manufactured that
 install to ``/``.

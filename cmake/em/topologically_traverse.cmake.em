@@ -103,6 +103,7 @@ message(FATAL_ERROR "Circular dependency in subset of packages:\n@pkg")
 @[for name,pkg in topo_pkgs]
 @[if name]
 message(STATUS "+++ @name")
+set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
 stamp(@(pkg.path)/stack.yaml)
 add_subdirectory(@(pkg.path))
 @[end if]

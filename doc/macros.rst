@@ -3,23 +3,35 @@ Catkin cmake macro reference
 
 .. cmake:macro::  catkin_project(projectname [parameters])
 
-   :param projectname: requires the same value as passed to cmake's ``project()``
-   :param INCLUDE_DIRS: source-relative path to C/C++ headers
-   :param LIBRARIES: names of library targets
+   It creates the cmake stuff necessary for ``find_package`` to work
+   (i.e. to be *found* by others that call ``find_package``) and
+   provide information about include directories, libraries,
+   further dependencies and cmake variables for dependent projects.
+
+   :param projectname: requires the same value as passed to cmake's
+      ``project()`` (*may be vestigial*)
+   :param INCLUDE_DIRS: ``CMAKE_CURRENT_SOURCE_DIR``-relative path to
+      C/C++ includes
+   :param LIBRARIES: names of library targets that will appear in the
+      ``ROS_LIBRARIES`` of other projects that search for you via
+      ``find_package``.  Currently this will break if the logical
+      target names are not the same as the installed names.
+   :param DEPENDS: The argument ``DEPENDS`` is used when client code
+      finds us via ``find_package()``.  Each project listed will in
+      turn be ``find_package``\ -ed and their ``INCLUDE_DIRS`` and
+      ``LIBRARIES`` will be appended to ours.  Only catkin projects
+      should be used where we can ensure that they are
+      *find_packagable* and *package_configurable*.
    :param CFG_EXTRAS: Any extra cmake stuff that should be accessible
       to users of the project.  This file should live in subdirectory
-      ``cmake`` and have extension ``.in``.  It will be expanded by cmake's
-      ``configure_file()`` and made available to clients in both the
-      install and build spaces: be sure it works both ways (by checking
-      ``proj_SOURCE_DIR``, which is not set in the install case)
+      ``cmake`` and have extension ``.in``.  It will be expanded by
+      cmake's ``configure_file()`` and made available to clients in
+      both the install and build spaces: be sure it works both ways
+      (by checking ``proj_SOURCE_DIR``, which is not set in the
+      install case)
    :outvar PROJECT_SHARE_INSTALL_PREFIX: set to
       ``CMAKE_INSTALL_PREFIX/share/${PROJECT_NAME}`` by default.  For
       use with cmake ``install()`` macro.
-
-   The argument ``DEPENDS`` is used when client code finds us via
-   ``find_package()``.  Projects listed in ``DEPENDS`` will in turn be
-   ``find_package``\ -ed and their ``INCLUDE_DIRS`` and ``LIBRARIES``
-   will be appended to ours.
 
    .. rubric:: Example
 
@@ -28,8 +40,8 @@ Catkin cmake macro reference
      catkin_project(proj
        INCLUDE_DIRS include
        LIBRARIES proj-one proj-two
-       CFG_EXTRAS proj-extras.cmake
        DEPENDS roscpp
+       CFG_EXTRAS proj-extras.cmake
        )
 
 .. index:: setup.py
@@ -97,33 +109,6 @@ Documentation Macros
    directly to cmake)
 
 
-Macros pulled in from project genmsg
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-*These docs should move to genmsg*
-
-.. cmake:macro:: generate_messages([parameters])
-
-   :param optional DEPENDENCIES: names of projects that the messages in this
-      package depend on.
-
-   :param optional LANGS: generate messages for these languages.
-      This will fail if you specify messages that catkin doesn't know
-      about.  More appropriate use: to prevent generation for certain
-      languages.
-
-   This is actually defined in package ``genmsg``, should be documented there.
-
-
-.. cmake:macro:: add_message_files(...)
-
-   :param path DIRECTORY: source-relative path to directory containing messages
-   :param list FILES: paths to files relative to ``DIRECTORY`` parameter
-
-
-
-
-
 Testing macros
 ^^^^^^^^^^^^^^
 
@@ -150,10 +135,12 @@ Testing macros
    Add file to test list and run under `rosunit` at testing time.
 
 
-.. cmake:macro:: add_gtest(EXE FILES)
+.. cmake:macro:: add_gtest(EXE FILES [parameters])
 
    :param EXE: executable name
    :param FILES: list of gtest .cpp files
+   :param TIMEOUT: The timeout in seconds (defaults to 60s)
+   :param WORKING_DIRECTORY: The working directory
 
    Add an executable `EXE` build from `FILES` and link to gtest.  Run under
    `rosunit` when test target is built.
