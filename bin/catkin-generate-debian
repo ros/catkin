@@ -240,7 +240,7 @@ def main(args):
             print("tag: %s" % tag_name)
             call(".", ['git', 'tag', '-f', tag_name, '-m', 'Debian release %(Version)s' % stack_yaml])
     except rosdep2.catkin_support.ValidationFailed as e:
-        print(e.args[0], sys.stderr)
+        print(e.args[0], file=sys.stderr)
         sys.exit(1)
     except (KeyError, rosdep2.ResolutionError) as e:
         if isinstance(e, KeyError):
@@ -253,7 +253,7 @@ If [%(rosdep_key)s] is catkin project, make sure it has been added to the gbpdis
 
 If [%(rosdep_key)s] is a system dependency, make sure there is a rosdep.yaml entry
 for it in your sources.
-"""%locals(), sys.stderr)
+"""%locals(), file=sys.stderr)
         sys.exit(1)
     sys.exit(0)
 
