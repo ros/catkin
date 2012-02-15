@@ -1,4 +1,8 @@
 function(catkin_project PACKAGE_NAME)
+  # catkin_stack() is required first, #78
+  if(NOT CATKIN_CURRENT_STACK)
+    message(FATAL_ERROR "catkin_project(): CATKIN_CURRENT_STACK is unset.  You must call catkin_stack() in the directory containing stack.yaml before you can call catkin_project() in that directory or any of its children.")
+  endif()
   if (NOT PROJECT_NAME STREQUAL PACKAGE_NAME)
     message(FATAL_ERROR "catkin_project called for project (PROJECT_NAME=${PROJECT_NAME}) "
       "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\n"
