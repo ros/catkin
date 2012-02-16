@@ -26,4 +26,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-find_package(GTest)
+find_package(GTest QUIET)
