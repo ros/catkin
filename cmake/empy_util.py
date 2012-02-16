@@ -7,7 +7,7 @@ def aslist(x):
 def asdict(x):
     dict = {}
     for str in aslist(x):
-        pair = str.split(":")
+        pair = str.split("@")
         dict[pair[0]] = pair[1]
 
     return dict
