@@ -22,10 +22,6 @@ function(catkin_project PACKAGE_NAME)
   log(2 "catkin_project ${PACKAGE_NAME} at version ${${PACKAGE_NAME}_VERSION} in @CMAKE_INSTALL_PREFIX@")
   set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
   set(PACKAGE_NAME ${PACKAGE_NAME})
-  if(NOT "${${PACKAGE}_VERSION}" STREQUAL "")
-    message(STATUS "VESTIGIAL: VERSION argument to catkin_project.")
-    message(STATUS "           Use stack's version via catkin_stack()")
-  endif()
   # ${${CATKIN_CURRENT_STACK}_VERSION} is set by the most recent call to
   # catkin_stack(), which sets CATKIN_CURRENT_STACK and then parses the
   # stack.yaml, making each field into a CMake cache variable.
