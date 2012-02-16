@@ -9,11 +9,6 @@
     version: master
 
 - git:
-    uri: 'git://github.com/ros/rosdep_rules.git'
-    local-name: rosdep_rules
-    version: master
-
-- git:
     uri: 'git://github.com/ros/genmsg.git'
     local-name: genmsg
     version: master

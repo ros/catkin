@@ -27,7 +27,7 @@ endfunction()
 function(catkin_add_env_hooks ARG_PATH)
 
   parse_arguments(ARG
-    "SHELLS;EXTRAS" ""
+    "SHELLS" ""
     ${ARGN})
 
   foreach(shell ${ARG_SHELLS})

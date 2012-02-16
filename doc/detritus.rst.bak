@@ -9,7 +9,7 @@ workflow
 --------
 
 PREFIX will be /opt/ros/fuerte/  (thereunder, (include|lib|share)), but practice
-with temp directories whereever.
+with temp directories wherever.
 
 cmake will find the packagename-config.cmake stuff via
 CMAKE_PREFIX_PATH, which must contain the installdir above (see docs
@@ -47,7 +47,7 @@ manually.
 lang-generic case:
 ------------------
 find_package(genmsg)
-generate_msgs(... LANGS ${ROS_GENLANGS}) <= comes from genmsg, uses LANGS argument to find available lanaguages
+generate_msgs(... LANGS ${ROS_GENLANGS}) <= comes from genmsg, uses LANGS argument to find available languages
 
 * generate code for these messages
 * install this generated code in a normal cmakeish way (make install)
@@ -65,7 +65,7 @@ packages that contain messages will be dependent on genmsg and genX for x in ROS
 
 standard stack .debs will contain generated messages for langs in ROS_GENLANGS
 
-optional packagess for other langs would be ros-DISTRO-STACK-LANG e.g. ros-fuerte-common-msgs-haskell.deb
+optional packages for other langs would be ros-DISTRO-STACK-LANG e.g. ros-fuerte-common-msgs-haskell.deb
 
 scenarios
 ---------
@@ -94,7 +94,7 @@ Times when you have to think about dependencies:
 
 * Making debian binary packages ``.deb``
 
-  * Everything you build against must be listedn in ``Build-Depends``
+  * Everything you build against must be listed in ``Build-Depends``
     in control file and (therefore) also installable via dpkg.
 
 * Building
@@ -401,7 +401,7 @@ workflow
 --------
 
 PREFIX will be /opt/ros/fuerte/  (thereunder, (include|lib|share)), but practice
-with temp directories whereever.
+with temp directories wherever.
 
 cmake will find the packagename-config.cmake stuff via
 CMAKE_PREFIX_PATH, which must contain the installdir above (see docs

@@ -1,19 +1,32 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from subprocess import Popen, CalledProcessError
+
 import datetime
 import dateutil.tz
 import em
 import os
+import re
+import optparse
 import subprocess
 import sys
-from pprint import pprint
 import tarfile
-import yaml
-import re
+
+from pprint import pprint
+from subprocess import Popen, CalledProcessError
+
+try:
+    import yaml
+except ImportError:
+    print("Please install python-yaml", file=sys.stderr)
+    sys.exit(1)
+
+try:
+    import rosdep2.catkin_support
+except ImportError:
+    print("Please pip install -U rosdep", file=sys.stderr)
+    sys.exit(2)
 
 name_key = 'Catkin-ProjectName'
-
 
 '''
 The Debian binary package file names conform to the following convention:
@@ -41,10 +54,7 @@ def parse_options():
 
     #ros specific stuff.
     parser.add_argument('rosdistro', help='The ros distro. electric, fuerte, groovy')
-    parser.add_argument('--rosdep', help='Location of the remote rosdep database.', default='git://github.com/ros/rosdep_rules.git')
-
     return parser.parse_args()
-
 
 def call(working_dir, command, pipe=None):
     print('+ cd %s && ' % working_dir + ' '.join(command))
@@ -77,22 +87,8 @@ def update_repo(working_dir, repo_path, repo_uri, first_release):
     command = ['git', 'config', '--add', 'remote.origin.push', '+refs/tags/*:refs/tags/*']
     call(repo_path, command)
 
-def generate_rosdep_db(working_dir, rosdep_remote, rosdistro):
-    basename = os.path.splitext(os.path.basename(rosdep_remote))[0]
-    repo_path = os.path.join(working_dir, basename)
-    db = dict()
-    if check_local_repo_exists(repo_path):
-        call(repo_path, ('git', 'pull'))
-    else:
-        call(working_dir, ('git', 'clone', rosdep_remote))
-    for subdir, dirs, files in os.walk(repo_path):
-        if '.git' in subdir: continue
-        if not rosdistro in subdir and subdir not in repo_path:continue
-        if 'rosdep.yaml' not in files: continue
-        fn = os.path.join(subdir, 'rosdep.yaml')
-        print('appending to rosdep db : %s' % fn)
-        db.update(yaml.load(open(fn)))
-    return db
+def generate_rosdep_db(working_dir, rosdistro):
+    return rosdep2.catkin_support.get_catkin_view(rosdistro)
 
 def make_working(working_dir):
     if not os.path.exists(working_dir):
@@ -170,42 +166,25 @@ def expand(fname, stack_yaml, source_dir, dest_dir, filetype=''):
     if fname == 'rules':
         os.chmod(ofilename, 0755)
 
-def find_deps(stack_yaml, rosdeb_db, distro):
-    def update_deps(ubuntu_deps, dep, dep_def, distro):
-        if ' ' in dep_def:
-            raise RuntimeError("Corrupt rosdep with internal space: '%s', check your stack.yaml" % dep_def)
+def find_deps(stack_yaml, apt_installer, rosdistro, debian_distro):
+    os_name = 'ubuntu'
 
-        if type(dep_def) == str:
-            deps = [x.strip() for x in dep_def.split(' ') if len(x.strip()) > 0]
-            ubuntu_deps.add(*deps)
-        elif type(dep_def) == dict:
-            if distro in dep_def:
-                update_deps(ubuntu_deps, dep, dep_def[distro], distro) #recurse
-            elif 'apt' in dep_def:
-                if 'packages' in dep_def['apt']:
-                    ubuntu_deps.add(*dep_def['apt']['packages'])
-        else:
-            raise RuntimeError("Poorly formatted rosdep for %s (type is %s) which isnt dict or str" % (dep, type(dep_def)))
     deps = stack_yaml['Depends']
+
+    rosdep_view = rosdep2.catkin_support.get_catkin_view(rosdistro, os_name, debian_distro)
+    
     ubuntu_deps = set()
     for dep in deps:
-        if dep not in rosdeb_db.keys():
-            print("I can't find a rosdep for : %s\nAdding verbatim as an Ubuntu package name." % dep, file=sys.stderr)
-            ubuntu_deps.add(dep)
-        else:
-            dep_def = rosdeb_db[dep]
-            if 'ubuntu' in dep_def:
-                update_deps(ubuntu_deps, dep, dep_def['ubuntu'], distro)
-            else:
-                print("I cant find an ubuntu rosdep for : %s" % dep, file=sys.stderr)
-                print("I did find:", dep_def, file=sys.stderr)
+        resolved = rosdep2.catkin_support.resolve_for_apt(dep, rosdep_view, apt_installer, os_name, debian_distro)
+        ubuntu_deps.update(resolved)
 
-    print(stack_yaml[name_key], "has the following dependencies for ubuntu %s" % distro)
+    print(stack_yaml[name_key], "has the following dependencies for ubuntu %s" % debian_distro)
     pprint(ubuntu_deps)
     return list(ubuntu_deps)
 
-def generate_deb(stack_yaml, repo_path, stamp, debian_distro, rosdep_db):
-    depends = find_deps(stack_yaml, rosdep_db, debian_distro)
+def generate_deb(stack_yaml, repo_path, stamp, rosdistro, debian_distro):
+    apt_installer = rosdep2.catkin_support.get_apt_installer()
+    depends = find_deps(stack_yaml, apt_installer, rosdistro, debian_distro)
     stack_yaml['DebDepends'] = depends
     stack_yaml['Distribution'] = debian_distro
     stack_yaml['Date'] = stamp.strftime('%a, %d %b %Y %T %z')
@@ -248,16 +227,34 @@ def main(args):
     stack_yaml = parse_stack_yaml(args)
     make_working(args.working)
 
-    rosdep_db = generate_rosdep_db(args.working, args.rosdep, args.rosdistro)
+    debian_distros = args.distros
+    if not debian_distros:
+        debian_distros = rosdep2.catkin_support.get_ubuntu_targets()
 
     tags = []
-    for debian_distro in args.distros:
-        generate_deb(stack_yaml, ".", stamp, debian_distro, rosdep_db)
-        commit_debian(stack_yaml, ".")
-        tag_name = 'debian/%(Package)s_%(Version)s_%(Distribution)s' % stack_yaml
-        print("tag: %s" % tag_name)
-        call(".", ['git', 'tag', '-f', tag_name, '-m', 'Debian release %(Version)s' % stack_yaml])
+    try:
+        for debian_distro in debian_distros:
+            generate_deb(stack_yaml, ".", stamp, args.rosdistro, debian_distro)
+            commit_debian(stack_yaml, ".")
+            tag_name = 'debian/%(Package)s_%(Version)s_%(Distribution)s' % stack_yaml
+            print("tag: %s" % tag_name)
+            call(".", ['git', 'tag', '-f', tag_name, '-m', 'Debian release %(Version)s' % stack_yaml])
+    except rosdep2.catkin_support.ValidationFailed as e:
+        print(e.args[0], file=sys.stderr)
+        sys.exit(1)
+    except (KeyError, rosdep2.ResolutionError) as e:
+        if isinstance(e, KeyError):
+            rosdep_key = str(e)
+        else:
+            rosdep_key = e.rosdep_key
+        print("""Cannot resolve dependency [%(rosdep_key)s].
 
+If [%(rosdep_key)s] is catkin project, make sure it has been added to the gbpdistro file.
+
+If [%(rosdep_key)s] is a system dependency, make sure there is a rosdep.yaml entry
+for it in your sources.
+"""%locals(), file=sys.stderr)
+        sys.exit(1)
     sys.exit(0)
 
 if __name__ == "__main__":

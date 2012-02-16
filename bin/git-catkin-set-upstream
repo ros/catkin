@@ -19,7 +19,7 @@ USAGE=$LONG_USAGE
 
 UPSTREAM_REPO=$1
 if [ $# -lt 2 ] ; then
-    echo $USAGE
+    echo "${USAGE}"
     exit 1
 fi
 

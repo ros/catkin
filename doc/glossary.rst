@@ -23,7 +23,7 @@ Glossary
         ``find_package()`` in "config mode".
 
    dry
-        a (package/stack/whatever) not yet converted to catkin/FHS build & install.
+        a package/stack/whatever not yet converted to catkin/FHS build & install.
 
    Environment files
         The `setup.sh`, `setup.zsh` and `setup.bash` files generated and
@@ -51,8 +51,8 @@ Glossary
         http://docs.python.org/library/pkgutil.html
 
    project
-        CMake's notion of buildable subdirectory: it contains a
-        ``CMakeLists.txt`` that calls CMake's ``project()`` macro.  These can next.
+        CMake's notion of a buildable subdirectory: it contains a
+        ``CMakeLists.txt`` that calls CMake's ``project()`` macro.
 
    stack
         unit of installation.  These get made in to debs.
@@ -61,6 +61,6 @@ Glossary
         Code typed in by a developer, contrast :term:`generated code`
 
    wet
-        a (package/stack/whatever) stack already converted to catkin/FHS build & install.
+        a package/stack/whatever already converted to catkin/FHS build & install.
 
 

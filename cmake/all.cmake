@@ -46,7 +46,6 @@ foreach(f
     platform/lsb
     platform/ubuntu
     tools/doxygen
-    tools/sphinx
     tools/rt
     tools/threads
     tools/gtest

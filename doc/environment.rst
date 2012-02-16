@@ -34,8 +34,8 @@ development environment.
              ``.zshrc``.  Understand what your shell does when it is
              invoked both interactively and non-interactively.  The
              simpler mechanism is simply to 'source' the appropriate
-             ``setup`` file, provided you are satisified with the
-             irreversable changes that these files make to your
+             ``setup`` file, provided you are satisfied with the
+             irreversible changes that these files make to your
              current environment.  All depends on your workflow.
 
 .. rubric:: Environment hooks

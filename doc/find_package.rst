@@ -4,7 +4,7 @@ Internals of the generated find_package() infrastructure
 --------------------------------------------------------
 
 CMake's ``find_package`` is the preferred method for packages to
-communciate to CMake (and thereby to catkin) the libraries, include
+communicate to CMake (and thereby to catkin) the libraries, include
 directories and such that packages should use.
 
 There are a couple of modes of operation of find_package (see the
@@ -48,10 +48,10 @@ Finding ROS by component (recommended method)
 ---------------------------------------------
 
 If you want to specify a dependency on several ROS components
-simultaneously, use ``find_package(ROS [XX.YY] COMPONENTS comp1 comp2)``, e.g.::
+simultaneously, use
+``find_package(ROS [XX.YY] REQUIRED COMPONENTS comp1 comp2)``, e.g.::
 
-  find_package(ROS
-               COMPONENTS
+  find_package(ROS REQUIRED COMPONENTS
                cpp_common rostime roscpp_traits
                roscpp_serialization sensor_msgs)
   include_directories(${ROS_INCLUDE_DIRS})
