@@ -1,7 +1,7 @@
 function(catkin_stack)
   # Related to #78.
   if(CATKIN_CURRENT_STACK)
-    message("Warning: catkin_stack(): CATKIN_CURRENT_STACK is already set (to: ${CATKIN_CURRENT_STACK}).  This should not be the case.")
+    message("Warning: catkin_stack(): in ${CMAKE_CURRENT_LIST_FILE}, CATKIN_CURRENT_STACK is already set (to: ${CATKIN_CURRENT_STACK}).  This should not be the case.")
   endif()
 
   stamp(${CMAKE_CURRENT_SOURCE_DIR}/stack.yaml)

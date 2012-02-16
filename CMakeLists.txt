@@ -13,6 +13,9 @@ add_subdirectory(env-hooks)
 add_subdirectory(bin)
 catkin_generic_hooks()
 
+# We undefine CATKIN_CURRENT_STACK here to avoid a spurious warning when
+# CATKIN_CURRENT_STACK is already set in the cache from a previous build.
+set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
 catkin_stack()
 catkin_project(catkin)
 
