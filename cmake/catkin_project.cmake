@@ -80,7 +80,7 @@ function(catkin_project PACKAGE_NAME)
     set(PACKAGE_RELATIVE_PATH ".")
   endif()
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/etc)
-  safe_execute_process(COMMAND ${catkin_EXTRAS_DIR}/update_index.py
+  safe_execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/update_index.py
     ${CMAKE_BINARY_DIR}/etc/packages.list
     "${PACKAGE_NAME}"
     "${PACKAGE_RELATIVE_PATH}"

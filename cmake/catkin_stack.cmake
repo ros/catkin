@@ -6,7 +6,7 @@ function(catkin_stack)
 
   stamp(${CMAKE_CURRENT_SOURCE_DIR}/stack.yaml)
 
-  safe_execute_process(COMMAND
+  safe_execute_process(COMMAND ${PYTHON_EXECUTABLE}
     ${catkin_EXTRAS_DIR}/stack_get.py
     ${PROJECT_SOURCE_DIR}/stack.yaml
     ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/stack.cmake
