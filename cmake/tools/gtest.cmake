@@ -27,3 +27,6 @@
 #
 
 find_package(GTest QUIET)
+if(NOT GTEST_FOUND)
+  message("-- Warning: GTest not found; C++ tests will fail to build.")
+endif()
