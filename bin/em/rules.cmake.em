@@ -31,3 +31,6 @@ override_dh_auto_configure:
 override_dh_auto_test:
 	echo -- Running tests. Even if one of them fails the build is not canceled.
 	dh_auto_test || true
+
+override_dh_shlibdeps:
+	dh_shlibdeps -l$(CURDIR)/debian/@(Package)/@(INSTALL_PREFIX)/lib/
