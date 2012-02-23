@@ -1,18 +1,35 @@
+# keep symbol table as clean as possible by deleting all unnecessary symbols
+
 from pkgutil import extend_path
-import sys, os
+import sys
+
 __extended_path = "@PACKAGE_PYTHONPATH@".split(";")
 for p in __extended_path:
     sys.path += [p]
+del sys
 
 __path__ = extend_path(__path__, __name__)
+del extend_path
 
-import os.path
+from os import path
 
+__execfiles = []
 for p in __extended_path:
-    src_init_file = os.path.join(p, __name__ + '.py')
-    if os.path.isfile(src_init_file):
-        execfile(src_init_file)
+    src_init_file = path.join(p, __name__ + '.py')
+    if path.isfile(src_init_file):
+        #execfile(src_init_file, globals(), locals())
+        __execfiles.append(src_init_file)
     else:
-        src_init_file = os.path.join(p, __name__, '__init__.py')
-        if os.path.isfile(src_init_file):
-            execfile(src_init_file)
+        src_init_file = path.join(p, __name__, '__init__.py')
+        if path.isfile(src_init_file):
+            __execfiles.append(src_init_file)
+            #execfile(src_init_file, globals(), locals())
+del __extended_path
+del p
+del path
+del src_init_file
+
+for __execfile in __execfiles:
+    execfile(__execfile)
+del __execfile
+del __execfiles
