@@ -50,7 +50,8 @@ install(DIRECTORY cmake
 file(COPY cmake/Modules/eigen-config.cmake
   DESTINATION ${CMAKE_BINARY_DIR}/cmake
 )
-catkin_export_python()
+
+catkin_python_setup()
 
 stamp(cmake/stack_get.py)
 

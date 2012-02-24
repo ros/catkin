@@ -38,7 +38,7 @@ foreach(f
     catkin_stack
     catkin_project
     catkin_workspace
-    catkin_export_python
+    catkin_python_setup
     catkin_add_env_hooks
     langs
     libraries
