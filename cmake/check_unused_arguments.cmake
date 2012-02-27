@@ -1,0 +1,5 @@
+function(check_unused_arguments ARG_NAME ARG_UNUSED)
+  if(ARG_UNUSED)
+    message(WARNING "${ARG_NAME} called with unused arguments: ${ARG_UNUSED}")
+  endif()
+endfunction()

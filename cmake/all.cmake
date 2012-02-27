@@ -24,6 +24,7 @@ configure_file(${catkin_EXTRAS_DIR}/templates/catkin-context.in
   )
 
 foreach(f
+    check_unused_arguments
     python
     empy
     stamp

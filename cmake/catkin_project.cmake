@@ -11,9 +11,11 @@ function(catkin_project PACKAGE_NAME)
   set(Maintainer ${${CATKIN_CURRENT_STACK}_MAINTAINER})
 
   parse_arguments(PACKAGE
-    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;MSG_DIRS;PYTHONPATH;DEPENDS"
+    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;PYTHONPATH;DEPENDS"
     ""
     ${ARGN})
+
+  check_unused_arguments("catkin_project" "${PACKAGE_DEFAULT_ARGS}")
 
   if (PACKAGE_PYTHONPATH)
     message(WARNING "PYTHONPATH in catkin_project is deprecated. Please remove for pkg: ${PACKAGE_NAME}")
@@ -31,11 +33,6 @@ function(catkin_project PACKAGE_NAME)
   set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
   set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
   set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/cmake)
-  if (PACKAGE_MSG_DIRS)
-    message(STATUS "*********************************************************************")
-    message(STATUS "**** Vestigial MSG_DIRS argument to catkin_project in ${PACKAGE_NAME}")
-    message(STATUS "*********************************************************************")
-  endif()
 
   #
   # Default executable output location to "private".
