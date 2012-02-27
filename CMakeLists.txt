@@ -19,8 +19,6 @@ set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
 catkin_stack()
 catkin_project(catkin)
 
-install_cmake_config_version(ROS 12.04)
-
 configure_file(ros-config.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ros-config.cmake
   @ONLY)
