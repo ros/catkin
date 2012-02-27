@@ -1,5 +1,6 @@
 # optionally give relative path to setup.py file
 function(catkin_python_setup)
+  check_unused_arguments("catkin_python_setup" "${ARGN}")
 
   assert(PROJECT_NAME)
 

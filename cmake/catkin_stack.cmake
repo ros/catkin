@@ -1,4 +1,5 @@
 function(catkin_stack)
+  check_unused_arguments("catkin_stack" "${ARGN}")
   # Related to #78.
   if(CATKIN_CURRENT_STACK)
     message("Warning: catkin_stack(): in ${CMAKE_CURRENT_LIST_FILE}, CATKIN_CURRENT_STACK is already set (to: ${CATKIN_CURRENT_STACK}).  This should not be the case.")
