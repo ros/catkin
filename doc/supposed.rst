@@ -163,7 +163,9 @@ contain a ``CMakeLists.txt``.  Basic case::
   # optional catkin_export_python()
 
   install(TARGETS ${PROJECT_NAME}
-    DESTINATION lib
+    RUNTIME DESTINATION bin
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
     )
 
   install(DIRECTORY include/
