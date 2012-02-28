@@ -50,13 +50,9 @@ function(catkin_python_setup)
       )
 
     # message("IN ${pkg_name}:  ${CMD}")
-    execute_process(COMMAND
+    safe_execute_process(COMMAND
       ${CMD}
-      RESULT_VARIABLE RES
       )
-    if (RES)
-      message(FATAL_ERROR "Attempt to interrogate ${SETUP_PY_FILE} of project ${pkg_name} returned ${RES}")
-    endif()
     include(${${pkg_name}_BINARY_DIR}/${PATH_TO_SETUP_PY}setup_py_interrogation.cmake)
 
     if(${pkg_name}_PACKAGES)
