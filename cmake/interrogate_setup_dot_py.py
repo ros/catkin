@@ -58,7 +58,7 @@ def mysetup(*args, **kwargs):
             resolved_pkgs += [package_dir[pkg]]
 
     print(r'set(%s_PACKAGES "%s")' % (STACKNAME, ';'.join(pkgs)), file=out)
-    print(r'set(%s_PACKAGE_DIRS "%s")' % (STACKNAME, ';'.join(resolved_pkgs)), file=out)
+    print(r'set(%s_PACKAGE_DIRS "%s")' % (STACKNAME, ';'.join(resolved_pkgs).replace("\\","/")), file=out)
 
 class Dummy: pass
 
