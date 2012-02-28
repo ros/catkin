@@ -7,7 +7,11 @@ if (CATKIN_ALL_INCLUDED)
 endif()
 set(CATKIN_ALL_INCLUDED)
 
-set(CATKIN_ENV ${CMAKE_BINARY_DIR}/env.sh CACHE INTERNAL "catkin env")
+if(WIN32 AND NOT CYGWIN)
+  set(CATKIN_ENV ${CMAKE_BINARY_DIR}/env.bat CACHE INTERNAL "catkin env")
+else()
+  set(CATKIN_ENV ${CMAKE_BINARY_DIR}/env.sh CACHE INTERNAL "catkin env")
+endif()
 if(catkin_BINARY_DIR)
   set(CATKIN_CONTEXT_FILE ${catkin_BINARY_DIR}/catkin-context.py
     CACHE INTERNAL "catkin context file")
