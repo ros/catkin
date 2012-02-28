@@ -48,9 +48,6 @@ function(catkin_generic_hooks)
     configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.installable.in
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.${shell})
 
-    configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.installable.in
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
-
     if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
       install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.${shell}
@@ -59,8 +56,18 @@ function(catkin_generic_hooks)
     endif()
   endforeach()
 
+  configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.installable.in
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
+
   configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.buildspace.in
     ${CMAKE_BINARY_DIR}/env.sh)
+
+  # TODO: windows .bat versions, currently only for buildspace
+  configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.buildspace.in
+    ${CMAKE_BINARY_DIR}/setup.bat)
+
+  configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.buildspace.in
+    ${CMAKE_BINARY_DIR}/env.bat)
 
   if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
     install(PROGRAMS

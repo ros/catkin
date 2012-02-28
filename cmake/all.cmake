@@ -15,9 +15,15 @@ if(catkin_BINARY_DIR)
 else()
   set(CATKIN_CONTEXT_FILE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/catkin-context.py
     CACHE INTERNAL "catkin context file")
-  set(CATKIN_ENV ${catkin_INSTALL_PREFIX}/env.sh
-    CACHE INTERNAL "catkin env")
-  message(STATUS "Shell environment is defined in catkin installation at ${catkin_INSTALL_PREFIX}/env.sh")
+  if(WIN32 AND NOT CYGWIN)
+    set(CATKIN_ENV ${catkin_INSTALL_PREFIX}/env.bat
+      CACHE INTERNAL "catkin env")
+    message(STATUS "Shell environment is defined in catkin installation at ${catkin_INSTALL_PREFIX}/env.bat")
+  else()
+    set(CATKIN_ENV ${catkin_INSTALL_PREFIX}/env.sh
+      CACHE INTERNAL "catkin env")
+    message(STATUS "Shell environment is defined in catkin installation at ${catkin_INSTALL_PREFIX}/env.sh")
+  endif()
 endif()
 configure_file(${catkin_EXTRAS_DIR}/templates/catkin-context.in
   ${CATKIN_CONTEXT_FILE}
