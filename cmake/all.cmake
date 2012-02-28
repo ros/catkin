@@ -31,7 +31,6 @@ foreach(f
     set_once
     safe_execute_process
     parse_arguments
-    wg_python
     em_expand
     find_program_required
     install_matching_to_share
