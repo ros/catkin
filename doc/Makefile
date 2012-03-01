@@ -130,6 +130,10 @@ doctest:
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
 upload: html
-	scp -r _build/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/api/catkin/
-	scp -r _build/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/fuerte/api/catkin/
+	# set write permission for group so that everybody can overwrite existing files on the webserver
+	chmod -R g+w _build/html/
+	# set sticky-bit for group on folders so that the group "www" is kept when overwriting existing files on the webserver
+	find _build/html/ -type d | xargs chmod g+s
+	#scp -pr _build/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/api/catkin
+	scp -pr _build/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/fuerte/api/catkin
 
