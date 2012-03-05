@@ -4,6 +4,12 @@ function(catkin_python_setup)
 
   assert(PROJECT_NAME)
 
+  # mark that catkin_python_setup() was called in order to disable installation of gen/py stuff in generate_messages()
+  set(${PROJECT_NAME}_CATKIN_PYTHON_SETUP TRUE PARENT_SCOPE)
+  if(${PROJECT_NAME}_GENERATE_MESSAGES)
+    message(FATAL_ERROR "generate_messages() must be called after catkin_python_setup() in project ${PROJECT_NAME}")
+  endif()
+
   # Use PROJECT_NAME as pkg_name
   set(pkg_name ${PROJECT_NAME})
 
@@ -36,7 +42,6 @@ function(catkin_python_setup)
     configure_file(${catkin_EXTRAS_DIR}/templates/safe_execute_install.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
 
-    install(CODE "message(COMMAND = ${CMD})")
     install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
 
     stamp(${${pkg_name}_SOURCE_DIR}/${SETUP_PY_FILE})
