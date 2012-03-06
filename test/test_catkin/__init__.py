@@ -25,8 +25,8 @@ def test_tiny():
     diskprefix = builddir + cmake_install_prefix
     cmake(CMAKE_INSTALL_PREFIX = diskprefix,
           srcdir=srcdir + '/catkin')
-    succeed(["/usr/bin/make", "VERBOSE=1"], cwd=builddir)
-    succeed(["/usr/bin/make", "VERBOSE=1", "install"], cwd=builddir)
+    succeed(["make", "VERBOSE=1"], cwd=builddir)
+    succeed(["make", "VERBOSE=1", "install"], cwd=builddir)
 
     assert_exists(diskprefix,
                   "env.sh",
@@ -38,11 +38,11 @@ def test_tiny():
           CMAKE_PREFIX_PATH=diskprefix,
           srcdir=pwd+'/src-fail/badly_specified_changelog',
           CATKIN='YES')
-    succeed(['/usr/bin/make', 'VERBOSE=1', 'help'], cwd=builddir)
+    succeed(['make', 'VERBOSE=1', 'help'], cwd=builddir)
 
     succeed(["/bin/rm", "CMakeCache.txt"], cwd=builddir)
     cmake(CATKIN_ENABLE_DEBBUILDING="TRUE",
           CMAKE_PREFIX_PATH=diskprefix,
           srcdir=pwd+'/src/nolangs')
-    succeed(['/usr/bin/make', 'VERBOSE=1', 'help'], cwd=builddir)
+    succeed(['make', 'VERBOSE=1', 'help'], cwd=builddir)
 

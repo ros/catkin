@@ -15,7 +15,7 @@ destdir='DESTDIR'
 cmake_install_prefix='/CMAKE_INSTALL_PREFIX'
 diskprefix="%s/%s/%s" % (builddir, destdir, cmake_install_prefix)
 pyinstall='lib/python%u.%u/dist-packages' % (v[0], v[1])
-make=['/usr/bin/make', 'VERBOSE=1']
+make=['make', 'VERBOSE=1']
 
 def run(args, **kwargs):
     print "run:", args
@@ -78,7 +78,7 @@ def cmake(**kwargs):
 
     if not isdir(this_builddir):
         os.makedirs(this_builddir)
-    cmd = ["/usr/bin/cmake", this_srcdir] + args
+    cmd = ["cmake", this_srcdir] + args
     o = expect(cmd, cwd=this_builddir)
     if (expect == succeed):
         assert isfile(this_builddir + "/CMakeCache.txt")
