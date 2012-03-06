@@ -98,6 +98,8 @@ The basic case (``ros_comm``)::
 
   # optional find_package(... [REQUIRED])
 
+  # optional catkin_python_setup()
+
   foreach(subdir
       cpp_common
       rostime
@@ -126,6 +128,11 @@ The ``# optional find_package`` line is for anything that is common to
 all subprojects and not handled by catkin_stack.  Consider using
 `REQUIRED <standards.html#find-package-required>`_ whenever possible.
 This is standard cmake.
+
+.. rubric:: catkin_python_setup
+
+Call :cmake:macro:`catkin_python_setup` if the project contains a 
+setup.py / Python code which should installed.
 
 .. rubric:: add_subdirectory
 
@@ -160,10 +167,10 @@ contain a ``CMakeLists.txt``.  Basic case::
 
   target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${ROS_LIBRARIES})
 
-  # optional catkin_export_python()
-
   install(TARGETS ${PROJECT_NAME}
-    DESTINATION lib
+    RUNTIME DESTINATION bin
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
     )
 
   install(DIRECTORY include/
@@ -215,11 +222,6 @@ building a shared library.
 Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
 project name.  This is standard cmake.  Explicitly link against all
 necessary libraries, i.e. ``ROS_LIBRARIES``.
-
-.. rubric:: catkin_export_python
-
-Call :cmake:macro:`catkin_export_python` if the project contains
-Python code which should installed.
 
 .. rubric:: install
 

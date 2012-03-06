@@ -12,8 +12,7 @@ option(BUILD_SHARED_LIBS "Build dynamically-linked binaries" ON)
 
 if (BUILD_SHARED_LIBS)
   add_definitions(-DROS_BUILD_SHARED_LIBS=1)
-  message(STATUS "BUILD_SHARED_LIBS is on.")
 else()
-  message(STATUS "BUILD_STATIC_LIBS is on.")
+  message(STATUS "BUILD_STATIC_LIBS is off.")
 endif()
 
