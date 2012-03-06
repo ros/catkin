@@ -7,7 +7,8 @@ from os.path import *
 import os
 import shutil
 
-pwd = os.getcwd()
+pwd = os.path.dirname(os.path.dirname(__file__))
+os.chdir(pwd)
 print "pwd=", pwd
 srcdir = os.path.join(pwd, 'src')
 builddir = os.path.join(pwd, 'build')
