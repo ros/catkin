@@ -5,6 +5,10 @@ project(catkin)
 set(catkin_EXTRAS_DIR_VALUE ${catkin_SOURCE_DIR}/cmake)
 set(catkin_EXTRAS_DIR ${catkin_EXTRAS_DIR_VALUE} CACHE FILEPATH "catkin extras")
 
+configure_file(cmake/tests.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/tests.cmake
+  @ONLY)
+
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
 list(APPEND CMAKE_MODULE_PATH ${catkin_EXTRAS_DIR}/Modules)
@@ -25,10 +29,6 @@ configure_file(ros-config.cmake.in
 
 configure_file(ros-config.buildspace.cmake.in
   ${CMAKE_BINARY_DIR}/cmake/ros/ros-config.cmake
-  @ONLY)
-
-configure_file(cmake/tests.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/tests.cmake
   @ONLY)
 
 #EAR: share/<name>/cmake is our convention?
