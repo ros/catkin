@@ -48,11 +48,14 @@ foreach(f
     tools/rt
     tools/threads
     tools/gtest
-    tests
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
 endforeach()
-
+if(catkin_SOURCE_DIR)
+  include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/tests.cmake)
+else()
+  include(${catkin_EXTRAS_DIR}/tests.cmake)
+endif()
 #
 # These get generated no matter what.
 #

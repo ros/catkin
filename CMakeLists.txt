@@ -27,6 +27,10 @@ configure_file(ros-config.buildspace.cmake.in
   ${CMAKE_BINARY_DIR}/cmake/ros/ros-config.cmake
   @ONLY)
 
+configure_file(cmake/tests.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/tests.cmake
+  @ONLY)
+
 #EAR: share/<name>/cmake is our convention?
 #according to the man page of cmake, find_package searches:
 # <prefix>/(lib/<arch>|lib|share)/cmake/<name>*/          (U)
@@ -42,6 +46,9 @@ install(DIRECTORY cmake
   DESTINATION share/catkin/
   USE_SOURCE_PERMISSIONS
   )
+install(FILES
+       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/tests.cmake
+       DESTINATION share/catkin/cmake/)
 
 #HACK so that eigen can be found if catkin is in the
 #workspace... this is very bad that catkin knows about eigen...
