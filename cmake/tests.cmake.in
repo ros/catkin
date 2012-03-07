@@ -1,14 +1,13 @@
 function(catkin_initialize_tests)
   if(ENV{CATKIN_TEST_RESULTS_DIR})
-    set(CATKIN_TEST_RESULTS_DIR $ENV{CATKIN_TEST_RESULTS_DIR})
+    message("Taking test results directory from CATKIN_TEST_RESULTS_DIR")
+    set(CATKIN_TEST_RESULTS_DIR $ENV{CATKIN_TEST_RESULTS_DIR} CACHE INTERNAL "")
   elseif(ENV{ROS_TEST_RESULTS_DIR})
     message(WARNING "Taking test results directory from ROS_TEST_RESULTS_DIR; you should use CATKIN_TEST_RESULTS_DIR instead")
-    set(CATKIN_TEST_RESULTS_DIR $ENV{ROS_TEST_RESULTS_DIR})
+    set(CATKIN_TEST_RESULTS_DIR $ENV{ROS_TEST_RESULTS_DIR} CACHE INTERNAL "")
   else()
-    set(CATKIN_TEST_RESULTS_DIR ${CMAKE_BINARY_DIR}/test_results)
+    set(CATKIN_TEST_RESULTS_DIR ${CMAKE_BINARY_DIR}/test_results CACHE INTERNAL "")
   endif()
-
-  set(CATKIN_TEST_RESULTS_DIR ${CATKIN_TEST_RESULTS_DIR} PARENT_SCOPE)
 
   if(NOT TARGET tests)
     add_custom_target(tests)
@@ -77,7 +76,6 @@ function(download_test_data _url _filename _md5)
 endfunction()
 
 function(add_gtest exe)
-
   # Look for optional TIMEOUT argument, #2645
   parse_arguments(_gtest "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(_gtest_TIMEOUT)
