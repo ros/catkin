@@ -10,6 +10,22 @@ out = open(outfile, "w")
 #print("Interrogating setup.py for package %s into %s " % (STACKNAME, outfile),
 #      file=sys.stderr)
 
+def samefile(path1, path2):
+    """
+    This is a cross-platform implementation for posixpath's 
+    os.path.samefile. 
+    """
+    try:
+        result = os.path.samefile(path1, path2)
+    except AttributeError: 
+        # This is a rather naive implementation.
+        # It will break except in the simplest of cases
+        # but suffices for catkin on windows.
+        result = os.path.normcase(os.path.normpath(path1)) == \
+                 os.path.normcase(os.path.normpath(path2))
+    return result
+        
+    
 def mysetup(*args, **kwargs):
     global out
     if 'version' not in kwargs:
@@ -44,7 +60,7 @@ def mysetup(*args, **kwargs):
             top_level_dir = package_dir[top_level]
             expected_dir = os.path.join(top_level_dir, os.path.join(*splits[1:]))
             actual_dir = package_dir[pkg]
-            if not os.path.samefile(expected_dir, actual_dir):
+            if not samefile(expected_dir, actual_dir):
                 raise RuntimeError("catkin_export_python does not support setup.py files that combine across multiple directories")
 
     # If checks pass, remove all submodules
