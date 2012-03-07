@@ -4,7 +4,7 @@ Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard, Brian 
 Maintainer: Brian Gerkey <gerkey@willowgarage.com>
 Homepage: http://www.ros.org
 
-Version: 0.3.21
+Version: 0.3.22
 
 Depends: cmake,
   python-setuptools,
