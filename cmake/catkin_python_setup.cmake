@@ -86,7 +86,7 @@ function(catkin_python_setup)
    Script ${name} as listed in ${SETUP_PY_FILE} of ${pkg_name} doesn't exist!!!
 ")
       endif()
-      message(STATUS "   Making toplevel forward script for python script ${name}")
+      #message(STATUS "   Making toplevel forward script for python script ${name}")
       set(PYTHON_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/${script})
       configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
         ${CMAKE_BINARY_DIR}/bin/${name}
