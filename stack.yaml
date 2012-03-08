@@ -10,7 +10,9 @@ Depends: cmake,
   python-setuptools,
   python-empy,
   python-argparse,
-  python-yaml
+  python-yaml,
+  python-nose,
+  gtest
 
 Catkin-CopyrightType: willowgarage
 Catkin-DebRulesType: cmake
