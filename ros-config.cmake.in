@@ -28,10 +28,22 @@ foreach(component ${ROS_FIND_COMPONENTS})
     message(FATAL_ERROR "*\n*\n*  ROS isn't a package.  Don't find_package() it.\n*\n*")
   endif()
 
-  find_package(${comp} REQUIRED NO_MODULE
-    PATHS
-    @CMAKE_INSTALL_PREFIX@/share/${component}/cmake
-    )
+  if(ROS_FIND_REQUIRED)
+    find_package(${comp} REQUIRED NO_MODULE
+      PATHS
+      @CMAKE_INSTALL_PREFIX@/share/${component}/cmake
+      )
+  elseif(ROS_FIND_QUIETLY)
+    find_package(${comp} QUIET NO_MODULE
+      PATHS
+      @CMAKE_INSTALL_PREFIX@/share/${component}/cmake
+      )
+  else()
+    find_package(${comp} NO_MODULE
+      PATHS
+      @CMAKE_INSTALL_PREFIX@/share/${component}/cmake
+      )
+  endif()
 
   list_push(ROS_INCLUDE_DIRS ${${comp}_INCLUDE_DIRS})
   list_push(ROS_LIBRARIES ${${comp}_LIBRARIES})
