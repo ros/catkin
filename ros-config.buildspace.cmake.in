@@ -11,8 +11,6 @@ macro(list_push listname)
   endforeach()
 endmacro()
 
-list_push(ROS_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
-
 foreach(component ${ROS_FIND_COMPONENTS})
 
   string(TOLOWER "${component}" comp)
@@ -25,8 +23,11 @@ foreach(component ${ROS_FIND_COMPONENTS})
     @CMAKE_INSTALL_PREFIX@/share/${component}/cmake
     )
 
-  list_push(ROS_INCLUDE_DIRS ${${comp}_INCLUDE_DIRS})
+  list_push(_ROS_INCLUDE_DIRS ${${comp}_INCLUDE_DIRS})
   list_push(ROS_LIBRARIES ${${comp}_LIBRARIES})
 
 
 endforeach()
+
+set(ROS_INCLUDE_DIRS ${_ROS_INCLUDE_DIRS})
+list(APPEND ROS_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
