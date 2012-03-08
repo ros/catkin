@@ -43,8 +43,6 @@ NAME="check_test_ran.py"
 import os
 import sys
 
-import rospkg
-
 def usage():
     print("""Usage:
 \t%s test-file.xml
