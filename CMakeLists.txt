@@ -11,8 +11,6 @@ configure_file(cmake/tests.cmake.in
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
-list(APPEND CMAKE_MODULE_PATH ${catkin_EXTRAS_DIR}/Modules)
-
 add_subdirectory(env-hooks)
 add_subdirectory(bin)
 catkin_generic_hooks()
