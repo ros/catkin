@@ -30,5 +30,3 @@ endforeach()
 foreach(extra @PACKAGE_CFG_EXTRAS@)
   include(@PKG_CMAKE_DIR@/${extra})
 endforeach()
-
-set(@PACKAGE_NAME@_MSG_INCLUDE_DIRS @PKG_MSG_DIRS@)
