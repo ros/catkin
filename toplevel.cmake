@@ -18,6 +18,7 @@ if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/catkin)
   set(CATKIN_BUILD_PROJECTS "ALL" CACHE STRING
     "List of projects to build, or ALL for all.  Use to completely exclude certain projects from cmake traversal.")
   add_subdirectory(catkin)
+  list(APPEND CMAKE_MODULE_PATH ${catkin_EXTRAS_DIR}/Modules)
 else()
   find_package(catkin)
 endif()
