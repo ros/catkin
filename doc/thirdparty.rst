@@ -89,3 +89,126 @@ Now push all branches and tags to a remote::
     git push --tags
 
 If you are working with an existing repo, either run ``gbp-clone`` or make sure to fetch all branches.
+
+Subsequent Releases
+===================
+
+Choose a temporary directory somewhere in a quiet place, free from
+distractions.
+
+Clone your GBP repository
++++++++++++++++++++++++++
+
+Clone your :term:`GBP repository` (use a pushable URI for convenience)::
+
+  git clone git@github.com:wg-debs/STACK-release.git
+  cd STACK-release
+
+.. note:: **Optional**
+
+  After you clone, you may want to inspect your repository to get familiar with how things work and to check that everything looks good. You should see tags for upstream source and debian releases::
+  
+    % git tag
+    upstream/0.1.18
+    upstream/0.1.19
+    ...
+    debian/ros-fuerte-STACK-0.2.2_lucid
+    debian/ros-fuerte-STACK-0.2.2_oneiric
+  
+  There may be a great many of these.  You'll see that there are three
+  upstream branches::
+  
+    % git branch -r
+    origin/HEAD -> origin/master
+    origin/catkin
+    origin/master
+    origin/upstream
+  
+  Since you are about to import upstream source, you can verify what
+  will be imported::
+  
+    % git show origin/catkin:catkin.conf
+    [catkin]
+            upstream = git@github.com:project/STACK.git
+            upstreamtype = git
+  
+  This is essentially catting the file ``catkin.conf`` from the
+  origin's ``catkin`` branch.
+  
+
+Create a tarball of the new updated code
+++++++++++++++++++++++++++++++++++++++++
+
+For ``svn`` use ``svn export`` to remove the ``.svn`` folders.::
+
+  tar -cf foo.tgz foo
+
+Put that tarball somewhere (not in the git folder).
+
+Import a new version of upstream
+++++++++++++++++++++++++++++++++
+
+You need to import the tarball::
+
+  git checkout master
+  git import-orig _path_to_your_tarball
+
+For some reason, I have to do ``git checkout master`` in the first place (to initialize something in git ...).
+
+..
+
+  Example output::
+
+    What is the upstream version? [] 2.3.9
+    gbp:info: Importing '/home/vrabaud/opencv.tgz' to branch 'upstream'...
+    gbp:info: Source package is ros-fuerte-opencv2
+    gbp:info: Upstream version is 2.3.9
+    gbp:info: Merging to 'master'
+    Removing 3rdparty/CMakeLists.txt
+    Removing 3rdparty/ffmpeg/CMakeLists.txt
+    Removing 3rdparty/libtiff/tif_apple.c
+    Removing 3rdparty/libtiff/tif_config.h
+    Removing 3rdparty/libtiff/tiffconf.h
+    Removing 3rdparty/zlib/.cvsignore
+    Auto-merging 3rdparty/zlib/zconf.h.cmakein
+    Removing android/CMakeCache.android.initial.cmake
+    Auto-merging apps/haartraining/CMakeLists.txt
+    Removing cmake/templates/opencv.pc.cmake.in
+    Auto-merging doc/tutorials/core/mat_the_basic_image_container/mat_the_basic_image_container.rst
+    Removing modules/traincascade/CMakeLists.txt
+    Auto-merging samples/cpp/openni_capture.cpp
+    Removing samples/gpu/optical_flow.cpp
+    Merge made by recursive.
+    gbp:info: Successfully imported version 2.3.9 of /home/vrabaud/opencv.tgz
+
+Update the stack.yaml
++++++++++++++++++++++
+
+Switch to the catkin branch and modify whatever you want in there (at least the stack.yaml, but patches too maybe)::
+
+  git checkout catkin
+
+Create the debian packaging
++++++++++++++++++++++++++++
+
+Now you can relax and repeat the instructions from above.::
+
+    git checkout master
+    git merge -X theirs catkin
+
+Verify that it actually overlayed catkin onto the master branch.
+
+Now generate debian files::
+
+    catkin-generate-debian fuerte
+
+Test it locally::
+
+    git clean -dxf
+    git checkout debian/ros_fuerte_1.7.1_oneiric
+    git buildpackage -uc -us --git-ignore-branch --git-ignore-new  # on lucid, omit --git-ignore-new
+
+If that worked, push all branches and tags to the already existing remote::
+
+    git push --all
+    git push --tags
