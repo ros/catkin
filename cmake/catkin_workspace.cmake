@@ -12,6 +12,9 @@ function(catkin_workspace)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+  # libraries.cmake
+  configure_shared_library_build_settings()
+
   em_expand(
     ${catkin_EXTRAS_DIR}/templates/topologically_traverse.py.in
     ${CMAKE_CURRENT_BINARY_DIR}/topologically_traverse.py
