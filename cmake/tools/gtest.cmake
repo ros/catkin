@@ -27,12 +27,15 @@
 #
 
 find_package(GTest QUIET)
+set(GTEST_FOUND ${GTEST_FOUND} CACHE INTERNAL "")
 if(NOT GTEST_FOUND)
   message(WARNING "GTest not found; C++ tests will fail to build.")
 else()
+  message(STATUS "Found gtest: gtests will be built.")
   set(GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS} CACHE INTERNAL "")
   set(GTEST_LIBRARIES ${GTEST_LIBRARIES} CACHE INTERNAL "")
   set(GTEST_MAIN_LIBRARIES ${GTEST_MAIN_LIBRARIES} CACHE INTERNAL "")
   set(GTEST_BOTH_LIBRARIES ${GTEST_BOTH_LIBRARIES} CACHE INTERNAL "")
   set(GTEST_FOUND ${GTEST_FOUND} CACHE INTERNAL "")
 endif()
+
