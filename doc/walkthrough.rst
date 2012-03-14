@@ -3,6 +3,14 @@ How to build
 
 .. highlight:: catkin-sh
 
+Install the bootstrap dependencies (cmake, pip package manager, rosinstall, rospkg):
+
+ 1. Install CMake
+ 2. Install ROS bootstrap tools::
+
+    % sudo easy_install -U pip
+    % sudo pip install -U rospkg rosinstall rosdep
+  
 Pick a temp directory::
 
   % cd /tmp
@@ -23,6 +31,8 @@ Rosinstall it.  You don't want it built, use ``-n``, like this::
   Add that to the bottom of your ~/.bashrc to set it up every time.
 
   If you are not using bash please see http://www.ros.org/wiki/rosinstall/NonBashShells
+
+*Don't use the setup.bash/sh file that rosinstall generates.  Catkin will generate one for you later*.
 
 There will be lots of output.  Currently you need a toplevel
 ``CMakeLists.txt``, make a symlink to ``catkin/toplevel.cmake``::
