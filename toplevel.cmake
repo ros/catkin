@@ -15,8 +15,10 @@ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/catkin)
   message(STATUS "+++ catkin")
-  set(CATKIN_BUILD_PROJECTS "ALL" CACHE STRING
-    "List of projects to build, or ALL for all.  Use to completely exclude certain projects from cmake traversal.")
+  set(CATKIN_BUILD_STACKS "ALL" CACHE STRING
+    "List of ';' separated stacks to build, or ALL for all.")
+  set(CATKIN_BLACKLIST_STACKS "NONE" CACHE STRING
+    "List of ';' separated stacks to completely exclude from cmake traversal.")
   add_subdirectory(catkin)
 else()
   find_package(catkin)
