@@ -24,7 +24,7 @@ bt = with_setup(startbuild, endbuild)
 
 @bt
 def test_tiny():
-    out = cmake(CATKIN_BUILD_PROJECTS='nolangs',
+    out = cmake(CATKIN_BUILD_STACKS='nolangs',
                 CMAKE_INSTALL_PREFIX=cmake_install_prefix,
                 CATKIN_DPKG_BUILDPACKAGE_FLAGS='-d;-S;-us;-uc')
     assert exists(builddir + "/nolangs")
@@ -86,7 +86,7 @@ def test_noproject():
         shutil.rmtree(mybuild)
     os.makedirs(mybuild)
     INST = pwd + "/build/INST"
-    out = cmake(CATKIN_BUILD_PROJECTS='catkin',
+    out = cmake(CATKIN_BUILD_STACKS='catkin',
                 CMAKE_INSTALL_PREFIX=INST,
                 cwd=mybuild)
     out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
@@ -108,7 +108,7 @@ def test_strangelanguage():
         shutil.rmtree(mybuild)
     os.makedirs(mybuild)
     INST = pwd + "/build/TLINST"
-    out = cmake(CATKIN_BUILD_PROJECTS='catkin;genmsg;gentypelibxml;std_msgs',
+    out = cmake(CATKIN_BUILD_STACKS='catkin;genmsg;gentypelibxml;std_msgs',
                 CMAKE_INSTALL_PREFIX=INST,
                 cwd=mybuild)
     out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
@@ -124,7 +124,7 @@ def test_strangelanguage_installed():
         shutil.rmtree(mybuild)
     os.makedirs(mybuild)
     INST = pwd + "/build/TLINST"
-    out = cmake(CATKIN_BUILD_PROJECTS='catkin;genmsg;gentypelibxml',
+    out = cmake(CATKIN_BUILD_STACKS='catkin;genmsg;gentypelibxml',
                 CMAKE_INSTALL_PREFIX=INST,
                 cwd=mybuild)
     out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
@@ -155,7 +155,7 @@ def test_common_msgs_against_installed():
     INST = pwd + "/INST/cmsgs-inst"
     if isdir(INST):
         shutil.rmtree(INST)
-    out = cmake(CATKIN_BUILD_PROJECTS='catkin;genmsg;genpy;gencpp;gentypelibxml;genpybindings;std_msgs;roscpp_core',
+    out = cmake(CATKIN_BUILD_STACKS='catkin;genmsg;genpy;gencpp;gentypelibxml;genpybindings;std_msgs;roscpp_core',
                 CMAKE_INSTALL_PREFIX=INST,
                 cwd=mybuild)
     out = succeed(["/usr/bin/make", "install"], cwd=mybuild)
