@@ -5,8 +5,14 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/python_version
 
 set(PYTHON_VERSION_XDOTY ${PYTHON_VERSION_XDOTY} CACHE STRING "python version")
 
-# this should actually be for anything non-dist-packages
+#This should be resolved automatically one day...
+option(NON_DEB_LAYOUT "ON for non deb python packages layout" OFF)
+
 if(APPLE)
+  set(NON_DEB_LAYOUT ON)
+endif()
+
+if(NON_DEB_LAYOUT)
   set(PYTHON_PACKAGES_DIR site-packages CACHE STRING "dist-packages or site-packages")
   set(SETUPTOOLS_ARG_EXTRA "" CACHE STRING "extra arguments to setuptools")
 else()
