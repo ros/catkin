@@ -19,7 +19,9 @@ def read_control_file(source_dir, control_file):
 
     pkg_name = stackyaml[PKG_NAME_FIELD]
     # print >>sys.stderr, "pkg_name=<%s>" % pkg_name
-    if 'ALL' not in enabled_projects and pkg_name not in enabled_projects:
+    if 'ALL' not in enabled_stacks and pkg_name not in enabled_stacks:
+        return
+    if pkg_name in blacklisted_stacks:
         return
     pkgs[pkg_name] = p = Pkg(path=source_dir.replace("\\","/"))
     p.depends = stackyaml.get('Depends', '')
