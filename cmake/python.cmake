@@ -5,13 +5,19 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/python_version
 
 set(PYTHON_VERSION_XDOTY ${PYTHON_VERSION_XDOTY} CACHE STRING "python version")
 
-# this should actually be for anything non-dist-packages
+#This should be resolved automatically one day...
+option(SETUPTOOLS_DEB_LAYOUT "ON for debian style python packages layout" ON)
+
 if(APPLE)
-  set(PYTHON_PACKAGES_DIR site-packages CACHE STRING "dist-packages or site-packages")
-  set(SETUPTOOLS_ARG_EXTRA "" CACHE STRING "extra arguments to setuptools")
-else()
+  set(SETUPTOOLS_DEB_LAYOUT OFF)
+endif()
+
+if(SETUPTOOLS_DEB_LAYOUT)
   set(PYTHON_PACKAGES_DIR dist-packages CACHE STRING "dist-packages or site-packages")
   set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb" CACHE STRING "extra arguments to setuptools")
+else()
+  set(PYTHON_PACKAGES_DIR site-packages CACHE STRING "dist-packages or site-packages")
+  set(SETUPTOOLS_ARG_EXTRA "" CACHE STRING "extra arguments to setuptools")
 endif()
 
 set(INSTALLED_PYTHONPATH ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_XDOTY}/${PYTHON_PACKAGES_DIR}
