@@ -8,6 +8,9 @@ Catkin cmake macro reference
    provide information about include directories, libraries,
    further dependencies and cmake variables for dependent projects.
 
+   Best practice is to call this macro early in your CMakeLists.txt,
+   immediately after calling ``project()``.
+
    :param projectname: requires the same value as passed to cmake's
       ``project()`` (*may be vestigial*)
    :param INCLUDE_DIRS: ``CMAKE_CURRENT_SOURCE_DIR``-relative path to
