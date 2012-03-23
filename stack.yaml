@@ -2,9 +2,9 @@ Catkin-ProjectName: catkin
 Description: Willow Garage low-level build system macros and infrastructure.
 Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard, Brian Gerkey
 Maintainer: Brian Gerkey <gerkey@willowgarage.com>
-Homepage: http://www.ros.org
+Homepage: http://www.ros.org/wiki/catkin
 
-Version: 0.3.25
+Version: 0.3.26
 
 Depends: cmake,
   python-setuptools,
