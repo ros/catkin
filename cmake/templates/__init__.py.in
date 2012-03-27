@@ -31,5 +31,6 @@ del src_init_file
 
 for __execfile in __execfiles:
     execfile(__execfile)
-del __execfile
+if __execfiles:
+    del __execfile
 del __execfiles
