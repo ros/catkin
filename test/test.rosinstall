@@ -50,10 +50,6 @@
     local-name: common_msgs
 
 - hg:
-    local-name: rospkg
-    uri: https://kforge.ros.org/rosrelease/rospkg
-
-- hg:
     local-name: rospack
     uri: https://kforge.ros.org/rosrelease/rospack
 
