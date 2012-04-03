@@ -51,17 +51,18 @@ def mysetup(*args, **kwargs):
     # work with submodules.  In the common case, this does not matter
     # as the submodule is within the containing module.  We verify
     # this assumption, and if it passes, we remove submodule packages.
-    for pkg in pkgs:
-        splits = pkg.split('.')
-        # hack: ignore write-combining setup.py files for msg and srv
-        # files
-        if len(splits) > 1 and splits[1] not in ['msg', 'srv']: 
-            top_level = splits[0]
-            top_level_dir = package_dir[top_level]
-            expected_dir = os.path.join(top_level_dir, os.path.join(*splits[1:]))
-            actual_dir = package_dir[pkg]
-            if not samefile(expected_dir, actual_dir):
-                raise RuntimeError("catkin_export_python does not support setup.py files that combine across multiple directories")
+    if not allprefix:
+        for pkg in pkgs:
+            splits = pkg.split('.')
+            # hack: ignore write-combining setup.py files for msg and srv
+            # files
+            if len(splits) > 1 and splits[1] not in ['msg', 'srv']: 
+                top_level = splits[0]
+                top_level_dir = package_dir[top_level]
+                expected_dir = os.path.join(top_level_dir, os.path.join(*splits[1:]))
+                actual_dir = package_dir[pkg]
+                if not samefile(expected_dir, actual_dir):
+                    raise RuntimeError("catkin_export_python does not support setup.py files that combine across multiple directories")
 
     # If checks pass, remove all submodules
     pkgs = [p for p in pkgs if '.' not in p]
