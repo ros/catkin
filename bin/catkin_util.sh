@@ -104,7 +104,7 @@ read_stack_yaml ()
 
     PACKAGE_NAME=$(/bin/echo $TXT | perl -ne '/Catkin-ProjectName:\s+([^\s]+)/ && print $1')
 
-    CHECKOUT_TAG=$(/bin/echo $TXT | perl -ne '/Tag:\s+([^\s]+)/ && print $1')
+    CHECKOUT_TAG=$(/bin/echo $TXT | perl -ne '/Release-Tag:\s+([^\s]+)/ && print $1')
 }
 
 prompt_continue()

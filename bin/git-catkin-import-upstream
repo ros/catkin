@@ -38,8 +38,7 @@ fi
 
 UPSTREAM_CLONE=$TMPDIR/upstream
 repo_clone $UPSTREAM_TYPE $UPSTREAM_REPO $UPSTREAM_CLONE
-if [ -e $UPSTREAM_CLONE/stack.yaml ]
-then
+if [ -f $UPSTREAM_CLONE/stack.yaml ]; then
     read_stack_yaml $UPSTREAM_CLONE/stack.yaml
 else
     read_stack_yaml stack.yaml
@@ -54,13 +53,12 @@ TARBALL=$TARBALL_PREFIX.tar.gz
 (
     # set -x
     cd $UPSTREAM_CLONE
-    if [ "$CHECKOUT_TAG" != "" ]
-    then
-	status "Cloning tag $CHECKOUT_TAG"
-	repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $CHECKOUT_TAG
+    if [ -n "$CHECKOUT_TAG" ]; then
+      status "Cloning tag $CHECKOUT_TAG"
+      repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $CHECKOUT_TAG
     else
-	status "Cloning tag $VERSION_FULL"
-	repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $VERSION_FULL
+      status "Cloning tag $VERSION_FULL"
+      repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $VERSION_FULL
     fi
     exit
 )
@@ -77,7 +75,7 @@ else
     extract_gbp_upstream_version $LASTTAG
     if dpkg --compare-versions $VERSION_FULL le $GBP_MAJOR.$GBP_MINOR.$GBP_PATCH
     then
-	bailout "Version discrepency:
+      bailout "Version discrepency:
     The upstream version, $VERSION_FULL, must be greater than the previous
     release version, $GBP_MAJOR.$GBP_MINOR.$GBP_PATCH.
 
