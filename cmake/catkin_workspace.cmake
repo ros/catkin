@@ -12,6 +12,20 @@ function(catkin_workspace)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+  # This is convenient when the platform has no 'system' path (e.g. windows).
+  set(CATKIN_ROSDEPS_PATH "" CACHE STRING "Semi-colon separated list of root directories to search for rosdeps.") 
+  foreach(path ${CATKIN_ROSDEPS_PATH})
+    message(STATUS "Rosdep root search path added: ${path}")
+    # Help cmake's find_file and find_library
+    if (CMAKE_PREFIX_PATH)
+      set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${path}")
+    else() 
+      set(CMAKE_PREFIX_PATH "${path}")
+    endif()
+    # CMAKE_PREFIX_PATH doesn't add it to the compile search path for includes.
+    include_directories(${path}/include)
+  endforeach()
+
   # libraries.cmake
   configure_shared_library_build_settings()
 
