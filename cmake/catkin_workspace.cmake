@@ -17,11 +17,7 @@ function(catkin_workspace)
   foreach(path ${CATKIN_ROSDEPS_PATH})
     message(STATUS "Rosdep root search path added: ${path}")
     # Help cmake's find_file and find_library
-    if (CMAKE_PREFIX_PATH)
-      set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${path}")
-    else() 
-      set(CMAKE_PREFIX_PATH "${path}")
-    endif()
+    list(APPEND CMAKE_PREFIX_PATH ${path})
     # CMAKE_PREFIX_PATH doesn't add it to the compile search path for includes.
     include_directories(${path}/include)
   endforeach()
