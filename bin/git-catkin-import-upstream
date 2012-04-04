@@ -38,7 +38,13 @@ fi
 
 UPSTREAM_CLONE=$TMPDIR/upstream
 repo_clone $UPSTREAM_TYPE $UPSTREAM_REPO $UPSTREAM_CLONE
-read_stack_yaml $UPSTREAM_CLONE/stack.yaml
+if [ -e $UPSTREAM_CLONE/stack.yaml ]
+then
+    read_stack_yaml $UPSTREAM_CLONE/stack.yaml
+else
+    read_stack_yaml stack.yaml
+fi
+
 status "Upstream's stack.yaml has version ${boldon}$VERSION_FULL${reset}"
 status "Upstream's name is ${boldon}$PACKAGE_NAME${reset}"
 
@@ -48,7 +54,15 @@ TARBALL=$TARBALL_PREFIX.tar.gz
 (
     # set -x
     cd $UPSTREAM_CLONE
-    repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $VERSION_FULL
+    if [ "$CHECKOUT_TAG" != "" ]
+    then
+	status "Cloning tag $CHECKOUT_TAG"
+	repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $CHECKOUT_TAG
+    else
+	status "Cloning tag $VERSION_FULL"
+	repo_export $UPSTREAM_TYPE $UPSTREAM_CLONE $TARBALL_PREFIX $VERSION_FULL
+    fi
+    exit
 )
 
 LASTTAG=$(git for-each-ref --sort='*authordate' --format='%(refname:short)' refs/tags/upstream | tail -1)
