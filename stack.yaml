@@ -4,7 +4,7 @@ Author: Troy Straszheim <straszheim@willowgarage.com>, Morten Kjaergaard, Brian 
 Maintainer: Brian Gerkey <gerkey@willowgarage.com>
 Homepage: http://www.ros.org/wiki/catkin
 
-Version: 0.3.26
+Version: 0.3.27
 
 Depends: cmake,
   python-setuptools,
