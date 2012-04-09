@@ -39,12 +39,11 @@ if (BUILD_SHARED_LIBS)
       _add_library(${ARGV0} ${ARGN})
       if( ${FIND_POS} EQUAL -1 )
         # It is not imported, add our custom copy rule
-        add_custom_target(copy_dll_${ARGV0} ALL
-                 #cmake -E copy_if_different ${ARGV0}.dll ${CMAKE_BINARY_DIR}/bin # Doesn't handle dll*
-                 cp *dll* ${CMAKE_BINARY_DIR}/bin
-                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/bin
+        add_custom_command(TARGET ${ARGV0} POST_BUILD
+                 #cmake -E copy_if_different ${ARGV0}.dll ${CMAKE_BINARY_DIR}/bin # Doesn't handle regexp, i.e. dll*
+                 COMMAND if exist "${PROJECT_BINARY_DIR}/bin/${ARGV0}.dll" ( cp bin/*dll* ${CMAKE_BINARY_DIR}/bin )
+                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                  )
-        add_dependencies(copy_dll_${ARGV0} ${ARGV0})
       endif()
     endfunction()
   endif(MSVC)
