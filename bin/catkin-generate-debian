@@ -50,7 +50,7 @@ def parse_options():
                         help='The full prefix ...')
     parser.add_argument('--distros', nargs='+',
                         help='A list of debian distros. Default: %(default)s',
-                        default=['lucid', 'oneiric'])
+                        default=['lucid', 'oneiric', 'precise'])
 
     #ros specific stuff.
     parser.add_argument('rosdistro', help='The ros distro. electric, fuerte, groovy')
