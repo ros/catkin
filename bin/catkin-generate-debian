@@ -50,7 +50,7 @@ def parse_options():
                         help='The full prefix ...')
     parser.add_argument('--distros', nargs='+',
                         help='A list of debian distros. Default: %(default)s',
-                        default=['lucid', 'oneiric', 'precise'])
+                        default=[])
 
     #ros specific stuff.
     parser.add_argument('rosdistro', help='The ros distro. electric, fuerte, groovy')
@@ -229,7 +229,7 @@ def main(args):
 
     debian_distros = args.distros
     if not debian_distros:
-        debian_distros = rosdep2.catkin_support.get_ubuntu_targets()
+        debian_distros = rosdep2.catkin_support.get_ubuntu_targets(args.rosdistro)
 
     tags = []
     try:
