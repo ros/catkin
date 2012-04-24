@@ -62,13 +62,14 @@ function(catkin_generic_hooks)
   configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.buildspace.in
     ${CMAKE_BINARY_DIR}/env.sh)
 
-  # TODO: windows .bat versions, currently only for buildspace
-  configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.buildspace.in
-    ${CMAKE_BINARY_DIR}/setup.bat)
-
-  configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.buildspace.in
-    ${CMAKE_BINARY_DIR}/env.bat)
-
+  if(MSVC)
+    # TODO: windows .bat versions, currently only for buildspace
+    configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.buildspace.in
+      ${CMAKE_BINARY_DIR}/setup.bat)
+    configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.buildspace.in
+      ${CMAKE_BINARY_DIR}/env.bat)
+  endif(MSVC)
+  
   if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
     install(PROGRAMS
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh
