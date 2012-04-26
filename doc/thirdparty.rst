@@ -66,7 +66,8 @@ debian package name you want as the output. The default value is "ros-%(rosdistr
 Also supported is INSTALL_PREFIX as a key, to set the install prefix.  Default: /opt/ros/%(rosdistro)s/
 
 For Precise and above, you need to do the following too (from
-http://raphaelhertzog.com/2010/11/18/4-tips-to-maintain-a-3-0-quilt-debian-source-package-in-a-vcs/):
+http://raphaelhertzog.com/2010/11/18/4-tips-to-maintain-a-3-0-quilt-debian-source-package-in-a-vcs/ or 
+2011-09-23 http://wiki.debian.org/qa.debian.org/FTBFS):
 
 ::
 
