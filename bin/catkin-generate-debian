@@ -110,12 +110,19 @@ def parse_stack_yaml(args):
             print ("Package: tag is not a valid debian package string. Aka, no underscores!")
             sys.exit(1)
     else:
-        stack_yaml['Package'] = sanitize_package_name("ros-%s-%s"%(args.rosdistro, stack_yaml[name_key]))
+        if args.rosdistro == 'backports':
+            stack_yaml['Package'] = sanitize_package_name("%s"%(stack_yaml[name_key]))
+        else:
+            stack_yaml['Package'] = sanitize_package_name("ros-%s-%s"%(args.rosdistro, stack_yaml[name_key]))
 
     stack_yaml['ROS_DISTRO'] = args.rosdistro
 
     #allow override of these values
-    stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else '/opt/ros/%s' % args.rosdistro
+    if args.rosdistro == 'backports':
+        stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else ''
+    else:
+        stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else '/opt/ros/%s' % args.rosdistro
+    
 
     deps = stack_yaml['Depends']
     if type(deps) == str:
