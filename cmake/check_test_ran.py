@@ -48,7 +48,7 @@ def usage():
 \t%s test-file.xml
 """%(NAME), file=sys.stderr)
     print(sys.argv)
-    sys.exit(os.EX_USAGE)
+    sys.exit(getattr(os, 'EX_USAGE', 1))
 
 def check_main():
     if len(sys.argv) < 2:
