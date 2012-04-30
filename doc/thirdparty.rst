@@ -65,6 +65,22 @@ If you want to pick a specific package name add a "Package" key to stack.yaml wi
 debian package name you want as the output. The default value is "ros-%(rosdistro)s-%(Catkin-PackageName)s
 Also supported is INSTALL_PREFIX as a key, to set the install prefix.  Default: /opt/ros/%(rosdistro)s/
 
+For Precise and above, you need to do the following too (from
+http://raphaelhertzog.com/2010/11/18/4-tips-to-maintain-a-3-0-quilt-debian-source-package-in-a-vcs/ or 
+2011-09-23 http://wiki.debian.org/qa.debian.org/FTBFS):
+
+::
+
+    $ echo "single-debian-patch" >> debian/source/local-options
+    $ cat >debian/source/patch-header <<END
+    This patch contains all the Debian-specific
+    changes mixed together. To review them
+    separately, please inspect the VCS history
+    at http://git.debian.org/?=collab-maint/foo.git
+
+    END
+
+
 Merge the catkin branch::
 
     git checkout master
