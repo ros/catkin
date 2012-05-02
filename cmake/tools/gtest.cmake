@@ -26,10 +26,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
+if (CATKIN_GTEST_SRC_FOUND)
+  return()
+endif()
+
 find_package(GTest QUIET)
 set(GTEST_FOUND ${GTEST_FOUND} CACHE INTERNAL "")
 if(NOT GTEST_FOUND)
-  message(WARNING "GTest not found; C++ tests will fail to build.")
+  if (EXISTS "/usr/src/gtest")
+    # for now, this would only work on Ubuntu
+    add_subdirectory("/usr/src/gtest/" ${CMAKE_BINARY_DIR}/gtest)
+    set(CATKIN_GTEST_SRC_FOUND TRUE)
+  else()
+    message(WARNING "GTest not found; C++ tests will fail to build.")
+  endif()
 else()
   message(STATUS "Found gtest: gtests will be built.")
   set(GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS} CACHE INTERNAL "")
@@ -38,4 +48,3 @@ else()
   set(GTEST_BOTH_LIBRARIES ${GTEST_BOTH_LIBRARIES} CACHE INTERNAL "")
   set(GTEST_FOUND ${GTEST_FOUND} CACHE INTERNAL "")
 endif()
-
