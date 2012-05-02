@@ -119,7 +119,7 @@ def parse_stack_yaml(args):
 
     #allow override of these values
     if args.rosdistro == 'backports':
-        stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else ''
+        stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else '/usr'
     else:
         stack_yaml['INSTALL_PREFIX'] = args.install_prefix if args.install_prefix != None else '/opt/ros/%s' % args.rosdistro
     
