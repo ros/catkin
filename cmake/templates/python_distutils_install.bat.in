@@ -1,0 +1,3 @@
+@echo off
+
+echo "Python distutils install : on windows this is still just an empty stub that needs feeding."
