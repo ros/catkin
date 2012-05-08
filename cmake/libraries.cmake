@@ -44,6 +44,17 @@ if (BUILD_SHARED_LIBS)
                  COMMAND if exist "${PROJECT_BINARY_DIR}/bin/${ARGV0}.dll" ( cp bin/*dll* ${CMAKE_BINARY_DIR}/bin )
                  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                  )
+        # Quite likely, linux guys hacking packages will not think to set the runtime destination to bin
+        # for dll's and this will create a huge headache in porting. Just do it here for now.
+        # From cmake docs - 'Installing a target with EXCLUDE_FROM_ALL set to true has undefined behavior.'
+        get_target_property(${ARGV0}_EXCLUDE_FROM_INSTALL ${ARGV0} EXCLUDE_FROM_ALL)
+        if ( NOT ${${ARGV0}_EXCLUDE_FROM_INSTALL} )  
+            install(TARGETS ${ARGV0}
+                    RUNTIME DESTINATION bin
+                    ARCHIVE DESTINATION lib
+                    LIBRARY DESTINATION lib 
+            )
+        endif()
       endif()
     endfunction()
   endif(MSVC)
