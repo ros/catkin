@@ -32,13 +32,22 @@ function(catkin_python_setup)
   if(EXISTS ${${pkg_name}_SOURCE_DIR}/${SETUP_PY_FILE})
     assert(INSTALLED_PYTHONPATH)
     set(INSTALL_CMD_WORKING_DIRECTORY ${${pkg_name}_SOURCE_DIR})
-    set(INSTALL_SCRIPT
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/python_distutils_install.sh)
-
-    configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.sh.in
-      ${INSTALL_SCRIPT}
-      @ONLY)
-
+    if(MSVC)
+      # Need to convert install prefix to native path for python setuptools --prefix (its fussy about \'s)
+      file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX} PYTHON_INSTALL_PREFIX)
+      set(INSTALL_SCRIPT
+        ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/python_distutils_install.bat)
+      configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.bat.in
+        ${INSTALL_SCRIPT}
+        @ONLY)
+    else()
+      set(INSTALL_SCRIPT
+        ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/python_distutils_install.sh)
+      configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.sh.in
+        ${INSTALL_SCRIPT}
+        @ONLY)
+    endif()
+    
     configure_file(${catkin_EXTRAS_DIR}/templates/safe_execute_install.cmake.in
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
 

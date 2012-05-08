@@ -1,0 +1,32 @@
+@echo off
+
+set CATKIN_SHELL=bat
+
+REM path segment PREFIX/lib/pythonX.Y/[dist|site]-packages in PYTHONPATH is calculated
+REM by us... this appears to be what setuptools does under --install-layout=deb
+set PYTHONPATH=@CMAKE_INSTALL_PREFIX@/lib/@PYTHON_PACKAGES_DIR@;%PYTHONPATH%
+set PATH=@CMAKE_INSTALL_PREFIX@/bin;%PATH%
+set CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@
+set CATKIN_SOURCE_DIR=@CMAKE_SOURCE_DIR@
+
+REM the first  path: to have custom cmake modules inside Modules (e.g. Eigen)
+REM the second path: this is so that find_package works well...
+set CMAKE_PREFIX_PATH=@CMAKE_INSTALL_PREFIX@/share/catkin/cmake/Modules:@CMAKE_INSTALL_PREFIX@:%CMAKE_PREFIX_PATH%
+
+set PKG_CONFIG_PATH=@CMAKE_INSTALL_PREFIX@/lib/pkgconfig:%PKG_CONFIG_PATH%
+
+set ROSDEPS_ROOT=@ROSDEPS_ROOT@
+if DEFINED ROSDEPS_ROOT set PATH=%ROSDEPS_ROOT%/bin;%ROSDEPS_ROOT%/lib;%PATH%
+
+REM These are compatible and should go in @CMAKE_INSTALL_PREFIX@/etc/catkin/profile.d/xxx
+REM Namely, 10.ros.all
+REM Actually it would go in 10.ros.bat.in and the .all should get split up
+
+set ROS_ROOT=@CMAKE_INSTALL_PREFIX@/share/ros
+set ROS_PACKAGE_PATH=@CMAKE_INSTALL_PREFIX@/share;@CMAKE_INSTALL_PREFIX@/stacks
+@if NOT DEFINED ROS_MASTER_URI (
+  set ROS_MASTER_URI=http://localhost:11311
+)
+set ROS_ETC_DIR=@CMAKE_INSTALL_PREFIX@/etc/ros
+set ROS_DISTRO=fuerte
+
