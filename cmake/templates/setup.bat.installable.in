@@ -4,7 +4,7 @@ set CATKIN_SHELL=bat
 
 REM path segment PREFIX/lib/pythonX.Y/[dist|site]-packages in PYTHONPATH is calculated
 REM by us... this appears to be what setuptools does under --install-layout=deb
-set PYTHONPATH=@CMAKE_INSTALL_PREFIX@/lib/python@PYTHON_VERSION_XDOTY@/@PYTHON_PACKAGES_DIR@;%PYTHONPATH%
+set PYTHONPATH=@CMAKE_INSTALL_PREFIX@/lib/@PYTHON_PACKAGES_DIR@;%PYTHONPATH%
 set PATH=@CMAKE_INSTALL_PREFIX@/bin;%PATH%
 set CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@
 set CATKIN_SOURCE_DIR=@CMAKE_SOURCE_DIR@
