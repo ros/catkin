@@ -41,26 +41,6 @@ endfunction()
 
 
 function(catkin_generic_hooks)
-  foreach(shell sh bash zsh)
-    configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.buildspace.in
-      ${CMAKE_BINARY_DIR}/setup.${shell})
-
-    configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.installable.in
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.${shell})
-
-    if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
-      install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.${shell}
-        DESTINATION ${CMAKE_INSTALL_PREFIX}
-        )
-    endif()
-  endforeach()
-
-  configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.installable.in
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
-
-  configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.buildspace.in
-    ${CMAKE_BINARY_DIR}/env.sh)
 
   if(MSVC)
     # TODO: windows .bat versions, currently only for buildspace
@@ -68,15 +48,43 @@ function(catkin_generic_hooks)
       ${CMAKE_BINARY_DIR}/setup.bat)
     configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.buildspace.in
       ${CMAKE_BINARY_DIR}/env.bat)
-  endif(MSVC)
-  
-  if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
+    configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.installable.in
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.bat)
+    configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.installable.in
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.bat)
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.bat
+              DESTINATION ${CMAKE_INSTALL_PREFIX}
+    )
     install(PROGRAMS
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.bat
       DESTINATION ${CMAKE_INSTALL_PREFIX}
     )
-  endif()
-
+  else(MSVC) # Not msvc
+    foreach(shell sh bash zsh)
+      configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.buildspace.in
+        ${CMAKE_BINARY_DIR}/setup.${shell})
+      configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.installable.in
+        ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.${shell})
+      if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
+        install(FILES
+          ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.${shell}
+          DESTINATION ${CMAKE_INSTALL_PREFIX}
+          )
+      endif()
+    endforeach()
+    configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.installable.in
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh)
+    configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.buildspace.in
+      ${CMAKE_BINARY_DIR}/env.sh)
+    if(catkin_SOURCE_DIR) #TODO FIXME these should only be installed if this is catkin?
+      install(PROGRAMS
+        ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/env.sh
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
+      )
+    endif()
+  endif(MSVC)
+  
   configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.installable.in
     ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/.rosinstall)
 
