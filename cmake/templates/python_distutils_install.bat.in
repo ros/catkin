@@ -1,3 +1,20 @@
 @echo off
 
 echo "Python distutils install : on windows this is still just an empty stub that needs feeding."
+
+if DEFINED DESTDIR (
+  echo "Destdir.............%DESTDIR%"
+  set DESTDIR_ARG=--root=%DESTDIR%
+)
+echo "Destir..............%DESTDIR%"
+echo "Destdir arg.........%DESTDIR_ARG%"
+echo "Install cmd working dir........@INSTALL_CMD_WORKING_DIRECTORY@"
+echo "Setuptools arg extra.......@SETUPTOOLS_ARG_EXTRA@"
+echo "CMake Install Prefix.......@CMAKE_INSTALL_PREFIX@"
+
+cd @INSTALL_CMD_WORKING_DIRECTORY@
+
+REM mkdir @CMAKE_INSTALL_PREFIX@/lib/site-packages
+REM Missing @SETUPTOOLS_ARG_EXTRA@ after DESTDIR_ARG
+cmd /V:on /C "set PYTHONPATH=@INSTALLED_PYTHONPATH@;@CMAKE_BINARY_DIR@/gen/py;%PYTHONPATH% && set CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@ && @PYTHON_EXECUTABLE@ @CMAKE_CURRENT_SOURCE_DIR@/setup.py install %DESTDIR_ARG% --prefix=@PYTHON_INSTALL_PREFIX@"
+

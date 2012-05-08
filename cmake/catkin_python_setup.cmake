@@ -33,6 +33,8 @@ function(catkin_python_setup)
     assert(INSTALLED_PYTHONPATH)
     set(INSTALL_CMD_WORKING_DIRECTORY ${${pkg_name}_SOURCE_DIR})
     if(MSVC)
+      # Need to convert install prefix to native path for python setuptools --prefix (its fussy about \'s)
+      file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX} PYTHON_INSTALL_PREFIX)
       set(INSTALL_SCRIPT
         ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/python_distutils_install.bat)
       configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.bat.in
