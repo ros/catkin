@@ -107,7 +107,7 @@ Now push all branches and tags to a remote::
 If you are working with an existing repo, either run ``gbp-clone`` or make sure to fetch all branches.
 
 Subsequent Releases
-===================
+^^^^^^^^^^^^^^^^^^^
 
 Choose a temporary directory somewhere in a quiet place, free from
 distractions.
@@ -203,6 +203,12 @@ Update the stack.yaml
 Switch to the catkin branch and modify whatever you want in there (at least the stack.yaml, but patches too maybe)::
 
   git checkout catkin
+
+Patches
++++++++
+
+If you have patches to commit, simply put the new file with the corresponding hierarchy in the catkin branch.
+No need to deal with the ``debian/patches`` folder.
 
 Create the debian packaging
 +++++++++++++++++++++++++++
