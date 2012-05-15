@@ -10,7 +10,7 @@ Workspace
 This is a directory containing multiple stacks, e.g. one constructed
 by ``rosinstall``.  This directory must contain a symlink::
 
-  CMakeLists -> catkin/toplevel.cmake
+  CMakeLists.txt -> catkin/toplevel.cmake
 
 which triggers catkin's topological sort via inspection of ``stack.yaml``.
 
