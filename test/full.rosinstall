@@ -1,5 +1,5 @@
 - git:
-    uri: 'git://github.com/willowgarage/catkin.git'
+    uri: 'git://github.com/ros/catkin.git'
     local-name: catkin
     version: master
 
