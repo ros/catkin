@@ -1,3 +1,5 @@
+#!/bin/zsh 
+
 CATKIN_SHELL=zsh
 . @CMAKE_BINARY_DIR@/setup.sh
 

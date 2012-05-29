@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 CATKIN_SHELL=zsh
 . @CMAKE_INSTALL_PREFIX@/setup.sh
 
