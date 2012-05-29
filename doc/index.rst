@@ -34,6 +34,7 @@ Contents
    variables
    code_generation
    glossary
+   rosbuild_migration
 
 Evolving Documentation Snippets
 -------------------------------
