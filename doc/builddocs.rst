@@ -31,6 +31,15 @@ example, to build catkin's documentation::
     cd catkin/doc
     make html
 
+To build and upload a new version of catkin's documentation to `ros.org
+<http://ros.org/doc/fuerte/api/catkin/html/>`_, (this is specific
+to catkin itself, and requires that you have appropriate credentials
+configured)::
+
+    git clone git://github.com/ros/catkin.git
+    cd catkin/doc
+    make upload
+
 Usage
 -----
 
