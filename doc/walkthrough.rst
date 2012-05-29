@@ -17,7 +17,7 @@ Pick a temp directory::
 
 Get the rosinstall file::
 
-  % wget https://raw.github.com/willowgarage/catkin/master/test/test.rosinstall
+  % wget https://raw.github.com/ros/catkin/master/test/test.rosinstall
 
 Rosinstall it.  You don't want it built, use ``-n``, like this::
 

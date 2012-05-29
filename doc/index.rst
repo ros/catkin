@@ -12,7 +12,7 @@ Code & tickets
 See 'issues' links for tickets.
 
 +---------------+------------------------------------------+
-|Catkin         |http://github.com/willowgarage/catkin     |
+|Catkin         |http://github.com/ros/catkin              |
 +---------------+------------------------------------------+
 |Catkinized ROS |http://github.com/ros                     |
 |Stacks         |                                          |
