@@ -26,6 +26,7 @@ Contents
    :maxdepth: 1
 
    walkthrough
+   builddocs
    supposed
    layout
    macros
