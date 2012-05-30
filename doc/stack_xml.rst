@@ -50,8 +50,10 @@ Example
     <name>ros_comm</name>
     <version>0.1.2</version>
     <description brief="ROS communications-related libraries and tools">ROS communications-related packages, including core client libraries (roscpp, rospy, roslisp) and graph introspection tools (rostopic, rosnode, rosservice, rosparam).</description>
-    <author>Troy Straszheim straszheim@willowgarage.com, Morten Kjaergaard, Ken Conley</author>
-    <maintainer>Troy Straszheim straszheim@willowgarage.com</maintainer>
+    <author>Troy Straszheim</author>
+    <author>Morten Kjaergaard</author>
+    <author email="kwc@willowgarage.com">Ken Conley</author>
+    <maintainer email="straszheim@willowgarage.com">Troy Straszheim</maintainer>
     <license>BSD</license>
     <copyright>willowgarage</copyright>
 
@@ -89,6 +91,12 @@ Text
 The version number of the stack. Major.Minor.Patchlevel version.
 Numeric only. Used by deb packaging utilities.
 
+Attributes
+''''''''''
+
+ ``abi="1.2.1"`` *(optional)*
+  An optional ABI version number if it is different from the version number.
+
 Example
 '''''''
 
@@ -107,6 +115,12 @@ Text
 
 Description of the stack. It may be multi-line and include XHTML.
 
+Attributes
+''''''''''
+
+ ``brief="brief text"`` *(optional)*
+  One-line summary of your stack. Useful for UI displays where the stack name isn't sufficiently descriptive.
+
 Example
 '''''''
 
@@ -116,47 +130,53 @@ Example
     Python implementation of the ROS master/node APIs and client library.
   </description>
 
-Attributes
-''''''''''
-
- ``brief="brief text"`` *(optional)*
-  One-line summary of your stack. Useful for UI displays where the stack name isn't sufficiently descriptive.
-
 
 .. _stack_author_tag:
 
-<author>
---------
+<author> (multiple)
+-------------------
 
 Text
 ''''
 
-Colon separated list of names with optional contact information of the persons authored the stack.
+The name of the person who authored the stack.
+
+Attributes
+''''''''''
+
+ ``email="name@domain.tld"`` *(optional)*
+  Email address of author.
 
 Example
 '''''''
 
 ::
 
-    <author>Alyssa P. Hacker aphacker@willowgarage.com, John Doe</author>
+    <author email="aphacker@willowgarage.com">Alyssa P. Hacker</author>
 
 
 .. _stack_maintainer_tag:
 
-<maintainer>
-------------
+<maintainer> (multiple)
+-----------------------
 
 Text
 ''''
 
-Name and contact information of the person maintaining the stack.
+The name of the person maintaining the stack.
+
+Attributes
+''''''''''
+
+ ``email="name@domain.tld"`` *(optional)*
+  Email address of maintainer.
 
 Example
 '''''''
 
 ::
 
-    <maintainer>Alyssa P. Hacker aphacker@willowgarage.com</maintainer>
+    <maintainer email="aphacker@willowgarage.com">Alyssa P. Hacker</maintainer>
 
 
 .. _stack_license_tag:

@@ -21,7 +21,7 @@ def read_control_file(source_dir, control_file):
     if pkg_name in blacklisted_stacks:
         return
     pkgs[pkg_name] = p = Pkg(path=source_dir.replace("\\","/"))
-    p.depends = stack.build_depends
+    p.depends = [d.name for d in stack.build_depends]
     p.genlang = stack.message_generator
     # print >>sys.stderr, "p=", p
 

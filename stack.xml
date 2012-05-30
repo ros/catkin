@@ -2,8 +2,10 @@
   <name>catkin</name>
   <version>0.3.29</version>
   <description>Willow Garage low-level build system macros and infrastructure.</description>
-  <author>Troy Straszheim straszheim@willowgarage.com, Morten Kjaergaard, Brian Gerkey</author>
-  <maintainer>Brian Gerkey gerkey@willowgarage.com</maintainer>
+  <author email="straszheim@willowgarage.com">Troy Straszheim</author>
+  <author>Morten Kjaergaard</author>
+  <author>Brian Gerkey</author>
+  <maintainer email="gerkey@willowgarage.com">Brian Gerkey</maintainer>
   <license>BSD</license>
   <copyright>Willow Garage</copyright>
   <url>http://www.ros.org/wiki/catkin</url>

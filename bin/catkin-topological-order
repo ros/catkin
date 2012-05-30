@@ -8,7 +8,7 @@ import rospkg.stack
 
 def parse_stack(xml_file):
     stack = rospkg.stack.parse_stack_file(xml_file)
-    return {stack.name:dict(deps=stack.build_depends,
+    return {stack.name:dict(deps=[d.name for d in stack.build_depends],
                             dir=os.path.dirname(xml_file)
                             )
             }

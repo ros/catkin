@@ -9,11 +9,18 @@ stack = rospkg.stack.parse_stack_file(sys.argv[1])
 pkg = stack.name
 
 values = {}
-for k in ['version', 'maintainer']:
-    if hasattr(stack, k):
-        values[k] = getattr(stack, k)
+values['version'] = stack.version
+
+maintainers = []
+for m in stack.maintainers:
+    maintainer = m.name
+    if m.email:
+        maintainer += ' <%s>' % m.email
+    maintainers.append(maintainer)
+values['maintainer'] = ', '.join(maintainers)
+
 # need to turn the depends into semicolon separated list
-values['depends'] = ';'.join(stack.build_depends)
+values['depends'] = ';'.join([d.name for d in stack.build_depends])
 
 with open(sys.argv[2], 'w') as ofile:
     for k, v in values.items():
