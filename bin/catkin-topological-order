@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 
-import yaml
 import sys
 import os
 import argparse
+import rospkg.stack
 
-name_key = 'Catkin-ProjectName'
 
-
-def parse_stack(yaml_file):
-    stack = yaml.load(open(yaml_file))
-    return {stack[name_key]:dict(deps=set([dep.strip() for dep in stack['Depends'].split(',')]),
-                                 dir=os.path.dirname(yaml_file)
-                                 )
+def parse_stack(xml_file):
+    stack = rospkg.stack.parse_stack_file(xml_file)
+    return {stack.name:dict(deps=stack.build_depends,
+                            dir=os.path.dirname(xml_file)
+                            )
             }
 
 def buildable_graph_from_stacks(wd):
@@ -20,9 +18,9 @@ def buildable_graph_from_stacks(wd):
     exists = os.path.exists
     graph = {}
 
-    for f in [ join(join(wd, f), 'stack.yaml')
+    for f in [ join(join(wd, f), 'stack.xml')
                for f in os.listdir(wd)
-               if exists(join(join(wd, f), 'stack.yaml'))
+               if exists(join(join(wd, f), 'stack.xml'))
                ]:
         graph.update(parse_stack(f))
 

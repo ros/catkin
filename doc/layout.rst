@@ -25,7 +25,7 @@ e.g. for project 'proj'::
   src/
     proj/
       CMakeLists.txt
-      stack.yaml  # explains interstack dependencies and debian-generating rules
+      stack.xml  # explains interstack dependencies and debian-generating rules
       msg/
         ProjMsg.msg
       srv/

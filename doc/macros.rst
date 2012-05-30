@@ -67,9 +67,9 @@ Catkin cmake macro reference
 
    `Required for all stacks.  No parameters.`
 
-   Reads the :ref:`stack.yaml` from the current source dir and makes
+   Reads the :ref:`stack.xml` from the current source dir and makes
    the version number available to cmake via ``stackname_VERSION``;
-   does the same for other fields in the `stack.yaml`.  Also sets
+   does the same for other fields in the `stack.xml`.  Also sets
    ``CATKIN_CURRENT_STACK``.  You must call `catkin_stack()` once
    in each stack's CMakeLists.txt, before any calls to `catkin_project()`,
    to ensure that auto-generated pkg-config and CMake files get correct
@@ -82,8 +82,8 @@ Catkin cmake macro reference
    Called only in catkin's ``toplevel.cmake``, normally symlinked to
    from the workspace level directory (which contains multiple
    stacks).  This provokes the traversal of the stack directories
-   based on the dependencies specified in the ``Depends`` field of
-   their respective ``stack.yaml`` files.
+   based on the dependencies specified in the ``build_depends`` field of
+   their respective ``stack.xml`` files.
 
 Documentation Macros
 ^^^^^^^^^^^^^^^^^^^^

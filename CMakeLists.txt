@@ -60,6 +60,6 @@ catkin_python_setup()
 
 stamp(cmake/stack_get.py)
 
-install(FILES stack.yaml DESTINATION share/catkin)
+install(FILES stack.xml DESTINATION share/catkin)
 
 add_nosetests(${PROJECT_SOURCE_DIR})

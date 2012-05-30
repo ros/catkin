@@ -1,5 +1,6 @@
 @{
-import yaml, os, sys, glob, em
+import os, sys, glob, em
+import rospkg.stack
 
 class Pkg:
     def __init__(self, **kwds):
@@ -10,26 +11,18 @@ class Pkg:
 
 pkgs = {}
 
-PKG_NAME_FIELD = "Catkin-ProjectName"
-PKG_DEP_FIELD = "Depends"
-GENERATOR_FIELD = "Catkin-ROS-Message-Generator"
-
 def read_control_file(source_dir, control_file):
-    stackyaml = yaml.load(open(control_file))
+    stack = rospkg.stack.parse_stack_file(control_file)
 
-    pkg_name = stackyaml[PKG_NAME_FIELD]
+    pkg_name = stack.name
     # print >>sys.stderr, "pkg_name=<%s>" % pkg_name
     if 'ALL' not in enabled_stacks and pkg_name not in enabled_stacks:
         return
     if pkg_name in blacklisted_stacks:
         return
     pkgs[pkg_name] = p = Pkg(path=source_dir.replace("\\","/"))
-    p.depends = stackyaml.get('Depends', '')
-    if type(p.depends) == str:
-        p.depends = set([x.strip() for x in p.depends.split(',') if len(x.strip()) > 0])
-    else:
-        p.depends = set([])
-    p.genlang = stackyaml.get(GENERATOR_FIELD, None)
+    p.depends = stack.build_depends
+    p.genlang = stack.message_generator
     # print >>sys.stderr, "p=", p
 
 #def find_external_pkgs(pkgs):
@@ -65,12 +58,12 @@ def topo_packages_generators_first(pkgs):
         topo_pkgs.append([name,p])
     return topo_pkgs
 
-stackyamls = glob.glob(os.path.join(source_root_dir, '*', 'stack.yaml'))
-# print >>sys.stderr, "stackyamls=", stackyamls
-for stackyamlfilename in stackyamls:
-    if os.path.basename(os.path.dirname(stackyamlfilename)).startswith('.'):
+stackxmls = glob.glob(os.path.join(source_root_dir, '*', 'stack.xml'))
+# print >>sys.stderr, "stackxmls=", stackxmls
+for stackxmlfilename in stackxmls:
+    if os.path.basename(os.path.dirname(stackxmlfilename)).startswith('.'):
         continue
-    read_control_file(os.path.dirname(stackyamlfilename), stackyamlfilename)
+    read_control_file(os.path.dirname(stackxmlfilename), stackxmlfilename)
 if pkgs:
     all_deps = reduce(set.union, [p.depends for p in pkgs.values()])
 else:
@@ -86,7 +79,7 @@ if 'catkin' in pkgs:
     del pkgs['catkin']
     remove_deps(pkgs, 'catkin')
 
-langs = [name for name,p in pkgs.items() if p.genlang]
+langs = [name for name, p in pkgs.items() if p.genlang]
 
 topo_pkgs = topo_packages_generators_first(pkgs)
 }
@@ -106,7 +99,7 @@ message(FATAL_ERROR "Circular dependency in subset of packages:\n@pkg")
 @[if name]
 message(STATUS "+++ @name")
 set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
-stamp(@(pkg.path)/stack.yaml)
+stamp(@(pkg.path)/stack.xml)
 add_subdirectory(@(pkg.path))
 @[end if]
 @[end for]

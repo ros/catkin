@@ -59,7 +59,7 @@ Design sketch
 
 * Catkin does not differentiate between stacks or packages: it simply
   examines the subdirectories of ``CMAKE_SOURCE_DIR`` for buildable
-  projects (indicated by the presence of a file :ref:`stack.yaml`).  It
+  projects (indicated by the presence of a file :ref:`stack.xml`).  It
   determines the dependency ordering of stacks by examining these
   files.
 
@@ -114,7 +114,7 @@ Main trickery
 During the cmake run the main source directory is scanned for stacks
 to build.  Actually cmake does not care if it is a stack or a package;
 it cares that the directory has something there that indicates that
-it is buildable, and what its dependencies are... that, is :ref:`stack.yaml`.  Catkin
+it is buildable, and what its dependencies are... that, is :ref:`stack.xml`.  Catkin
 topologically sorts this and reads the files in order.
 
 .. rubric:: Generation of ``find_package`` infrastructure

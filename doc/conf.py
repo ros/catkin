@@ -52,12 +52,12 @@ copyright = u'2010, Willow Garage -- ' + ' Version ' + dochash + ", " + ' '.join
 # built documents.
 #
 # The short X.Y version.
-import re
-search = re.search(r'Version\:\s*(\d+\.\d+\.\d+)',open('../stack.yaml').read())
-if not search:
-    print >>sys.stderr, 'You must have a Version field in your stack.yaml'
+import rospkg.stack
+try:
+    version = rospkg.stack.parse_stack_file('../stack.xml').version
+except Exception, e:
+    print >> sys.stderr, 'Could not extract version from your stack.xml:\n%s' % e
     sys.exit(-1)
-version = search.groups()[0]
 
 # The full version, including alpha/beta/rc tags.
 release = version

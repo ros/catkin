@@ -12,7 +12,7 @@ by ``rosinstall``.  This directory must contain a symlink::
 
   CMakeLists.txt -> catkin/toplevel.cmake
 
-which triggers catkin's topological sort via inspection of ``stack.yaml``.
+which triggers catkin's topological sort via inspection of ``stack.xml``.
 
 Stack
 -----
@@ -24,7 +24,7 @@ A typical "stack" will contain, at the top level::
   project1/
   project2/
 
-.. _stack.yaml:
+.. _stack.xml:
 
 stack.xml
 ^^^^^^^^^
