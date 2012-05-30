@@ -28,6 +28,7 @@ Contents
    walkthrough
    builddocs
    supposed
+   stack_xml
    layout
    macros
    environment
