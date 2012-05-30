@@ -28,7 +28,7 @@ about your stack, including what it is, who wrote it, and who can use it.
 Optional Tags
 -------------
 
-The most common optional tags are ``<build_depend>``, ``<depend>`` and
+The most common optional tags are ``<build_depends>``, ``<depends>`` and
 ``<url>``. We strongly recommend the use of the ``<url>`` tag to point users
 to a website where they can find out more information about your stack.
 The website is most commonly a wiki page on ROS.org so that users can easily
@@ -36,8 +36,8 @@ edit and update information about your stack.
 
  * :ref:`\<url\> <stack_url_tag>`
  * :ref:`\<review\> <stack_review_tag>`
- * :ref:`\<build_depend\> <stack_build_depend_tag>`
- * :ref:`\<depend\> <stack_depend_tag>`
+ * :ref:`\<build_depends\> <stack_build_depends_tag>`
+ * :ref:`\<depends\> <stack_depends_tag>`
  * :ref:`\<build_type\> <stack_build_type_tag>`
  * :ref:`\<message_generator\> <stack_message_generator_tag>`
 
@@ -58,12 +58,12 @@ Example
     <url>http://www.ros.org</url>
     <review status="Doc reviewed" notes="2009/6/10"/>
 
-    <build_depend>genmsg</depend>
-    <build_depend>libboost-thread-dev</depend>
-    <build_depend>libboost-date-time-dev</depend>
+    <build_depends>genmsg</build_depends>
+    <build_depends>libboost-thread-dev</build_depends>
+    <build_depends>libboost-date-time-dev</build_depends>
 
-    <depend>libboost-thread</depend>
-    <depend>libboost-date-time</depend>
+    <depends>libboost-thread</depends>
+    <depends>libboost-date-time</depends>
   </stack>
 
 
@@ -257,10 +257,10 @@ Example
     <review status="experimental" notes="reviewed on 3/14/09" />
 
 
-.. _stack_depend_tag:
+.. _stack_depends_tag:
 
-<depend> (multiple)
--------------------
+<depends> (multiple)
+--------------------
 
 Declares a ROS dep key that this stack depends on at run-time.
 Used to determine dependency ordering of current workspace
@@ -271,13 +271,13 @@ Example
 
 ::
 
-    <depend>roscpp</depend>
+    <depends>roscpp</depends>
 
 
-.. _stack_build_depend_tag:
+.. _stack_build_depends_tag:
 
-<build_depend> (multiple)
--------------------------
+<build_depends> (multiple)
+--------------------------
 
 Declares a ROS dep key that this stack depends on at build-time.
 Used to determine dependency ordering of current workspace
@@ -288,7 +288,7 @@ Example
 
 ::
 
-    <build_depend>genmsg</build_depend>
+    <build_depends>genmsg</build_depends>
 
 
 .. _stack_build_type_tag:
