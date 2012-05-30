@@ -138,7 +138,7 @@ Example
 
 ::
 
-    <author>Alyssa P. Hacker/aphacker@willowgarage.com, </author>
+    <author>Alyssa P. Hacker aphacker@willowgarage.com, John Doe</author>
 
 
 .. _stack_maintainer_tag:
@@ -156,7 +156,7 @@ Example
 
 ::
 
-    <author>Alyssa P. Hacker/aphacker@willowgarage.com</author>
+    <maintainer>Alyssa P. Hacker aphacker@willowgarage.com</maintainer>
 
 
 .. _stack_license_tag:
