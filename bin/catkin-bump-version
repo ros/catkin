@@ -10,7 +10,7 @@ parser.add_argument('bump', choices=('major', 'minor', 'patch'), help='Which ver
 args = parser.parse_args()
 
 try:
-    version = rospkg.stack.parse_stack_file('stack.xml').version
+    stack = rospkg.stack.parse_stack_file('stack.xml')
 except IOError:
     print >> sys.stderr, 'This doesn\'t appear to be a catkin stack.\n\tMake sure you are in a directory with a stack.xml.'
     sys.exit(1)
