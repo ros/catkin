@@ -1,8 +1,3 @@
-# TODO: consider installing em somewhere else
-install(DIRECTORY em/
-  DESTINATION bin/em
-  USE_SOURCE_PERMISSIONS
-  )
 install(PROGRAMS
   catkin-build-debs-of-workspace
   catkin-bump-version
