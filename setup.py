@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-import rospkg.stack
+import sys
+from xml.etree.ElementTree import ElementTree
 
 try:
-    version = rospkg.stack.parse_stack_file('stack.xml').version
+    root = ElementTree(None, 'stack.xml')
+    version = root.findtext('version')
 except Exception, e:
     print >> sys.stderr, 'Could not extract version from your stack.xml:\n%s' % e
     sys.exit(-1)
 
 setup(name='catkin',
-      version= version,
-      packages=['catkin'],
+      version = version,
+      packages = ['catkin'],
       package_dir = {'catkin':'python/catkin',
                      },
       scripts = [],
