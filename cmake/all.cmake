@@ -39,7 +39,6 @@ foreach(f
     catkin_workspace
     catkin_python_setup
     catkin_add_env_hooks
-    langs
     libraries
     rosbuild_compat
     platform/lsb
