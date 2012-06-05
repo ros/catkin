@@ -24,6 +24,11 @@
     version: master
 
 - git:
+    uri: 'git://github.com/ros/langs.git'
+    local-name: langs
+    version: master
+
+- git:
     uri: 'git://github.com/ros/genpybindings.git'
     local-name: genpybindings
     version: master
