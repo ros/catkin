@@ -299,6 +299,9 @@ Example
 <build_depends> (multiple)
 --------------------------
 
+Test
+''''
+
 Declares a ROS dep key that this stack depends on at build-time.
 Used to determine dependency ordering of current workspace
 (when this exists) and used by package and release tools.
@@ -316,10 +319,20 @@ Example
 <build_type>
 ------------
 
+Text
+''''
+
 The build type determines the debian rules file to use.
 Options: ``cmake``, ``autotools``, or ``python_distutils``.
 See bloom/bin/em for the definitions.
 Defaults to ``cmake``.
+
+Attributes
+''''''''''
+
+ ``file="local_path_to_rules.em_file"`` *(optional)*
+  If the value is ``custom`` then that file path has to be given. E.g. ``./bloom/rules.em``
+
 
 Example
 '''''''
@@ -327,6 +340,7 @@ Example
 ::
 
     <build_type>autotools</build_type>
+    <build_type file="./bloom/rules.em">custom</build_type>
 
 
 .. _stack_message_generator_tag:
