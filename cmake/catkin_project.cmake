@@ -39,6 +39,8 @@ function(catkin_project PACKAGE_NAME)
   #
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin PARENT_SCOPE)
 
+  # force new policy for escaping preprocessor definitions
+  cmake_policy(SET CMP0005 NEW)
   # Add ROS_PACKAGE_NAME define
   add_definitions(-DROS_PACKAGE_NAME=\"${PROJECT_NAME}\")
 
