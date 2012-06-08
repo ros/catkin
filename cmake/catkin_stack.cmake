@@ -14,6 +14,9 @@ function(catkin_stack)
     )
 
   include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/stack.cmake)
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/stack.xml
+          DESTINATION share/${CATKIN_CURRENT_STACK}
+  )
 
   assert(CATKIN_ENV)
 
