@@ -5,7 +5,7 @@
   <author email="straszheim@willowgarage.com">Troy Straszheim</author>
   <author>Morten Kjaergaard</author>
   <author>Brian Gerkey</author>
-  <maintainer email="gerkey@willowgarage.com">Brian Gerkey</maintainer>
+  <maintainer email="dthomas@willowgarage.com">Dirk Thomas</maintainer>
   <license>BSD</license>
   <copyright>Willow Garage</copyright>
   <url>http://www.ros.org/wiki/catkin</url>
