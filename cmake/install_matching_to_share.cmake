@@ -5,9 +5,15 @@ function(install_matching_to_share GLOBEXPR)
 
   foreach(file ${globbed})
     get_filename_component(pathonly ${file} PATH)
-    get_filename_component(package ${pathonly} NAME)
-    install(FILES ${file}
-      DESTINATION share/${package}
-      )
+    if(NOT LENGTH ${pathonly})
+      install(FILES ${file}
+	DESTINATION share/${CATKIN_CURRENT_STACK}
+	)      
+    else()
+      get_filename_component(package ${pathonly} NAME)
+      install(FILES ${file}
+	DESTINATION share/${package}
+	)
+    endif()
   endforeach()
 endfunction()
