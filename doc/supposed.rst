@@ -36,21 +36,25 @@ packaging utilities when making debians.
 Example::
 
   <stack>
-    <name>roscpp_core</name>
-    <version>0.1.3</version>
-    <description>Willow Garage low level build system macros and infrastructure</description>
-    <author>Troy Straszheim straszheim@willowgarage.com, Morten Kjaergaard, Ken Conley</author>
-    <maintainer>Troy Straszheim straszheim@willowgarage.com</maintainer>
-    <url>http://www.ros.org</url>
+    <name>ros_comm</name>
+    <version>0.1.2</version>
+    <description brief="ROS communications-related libraries and tools">ROS communications-related packages, including core client libraries (roscpp, rospy, roslisp) and graph introspection tools (rostopic, rosnode, rosservice, rosparam).</description>
+    <author>Troy Straszheim</author>
+    <author>Morten Kjaergaard</author>
+    <author email="kwc@willowgarage.com">Ken Conley</author>
+    <maintainer email="straszheim@willowgarage.com">Troy Straszheim</maintainer>
+    <license>BSD</license>
     <copyright>willowgarage</copyright>
-    <build_type>cmake</build_type>
 
-    <build_depend>genmsg</depend>
-    <build_depend>libboost-thread-dev</depend>
-    <build_depend>libboost-date-time-dev</depend>
+    <url>http://www.ros.org</url>
+    <review status="Doc reviewed" notes="2009/6/10"/>
 
-    <depend>libboost-thread</depend>
-    <depend>libboost-date-time</depend>
+    <build_depends>genmsg</build_depends>
+    <build_depends>libboost-thread-dev</build_depends>
+    <build_depends>libboost-date-time-dev</build_depends>
+
+    <depends>libboost-thread</depends>
+    <depends>libboost-date-time</depends>
   </stack>
 
 For more details on the individual tags see :ref:`stack_xml`.
