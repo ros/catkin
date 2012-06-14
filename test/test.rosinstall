@@ -29,6 +29,11 @@
     version: master
 
 - git:
+    uri: 'git://github.com/ros/langs-dev.git'
+    local-name: langs-dev
+    version: master
+
+- git:
     uri: 'git://github.com/ros/std_msgs.git'
     local-name: std_msgs
     version: master
