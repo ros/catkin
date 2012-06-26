@@ -1,3 +1,13 @@
+# BUILD_SHARED_LIBS is a global cmake variable (usually defaults to on) 
+# that determines the build type of libraries:
+#   http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:BUILD_SHARED_LIBS
+# It defaults to shared.
+
+# Make sure this is already defined as a cached variable (@sa libraries.cmake)
+if (NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build dynamically-linked binaries" ON)
+endif()
+
 # Windows/cmake make things difficult if building dll's. 
 # These use RUNTIME_OUTPUT_DIRECTORY (aka bin) and can't be 
 # distinguished from exe's. We want exe output directory to be
