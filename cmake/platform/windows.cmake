@@ -1,24 +1,12 @@
-
 # BUILD_SHARED_LIBS is a global cmake variable (usually defaults to on) 
 # that determines the build type of libraries:
 #   http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:BUILD_SHARED_LIBS
 # It defaults to shared.
-#
-# Our only current major use case for static libraries is
-# via the mingw cross compiler, though embedded builds
-# could be feasibly built this way also (largely untested).
 
-# Cached variable
-option(BUILD_SHARED_LIBS "Build dynamically-linked binaries" ON)
-
-function(configure_shared_library_build_settings)
-  if (BUILD_SHARED_LIBS)
-    message(STATUS "BUILD_SHARED_LIBS is on.")
-    add_definitions(-DROS_BUILD_SHARED_LIBS=1)
-  else()
-    message(STATUS "BUILD_SHARED_LIBS is off.")
-  endif()
-endfunction()
+# Make sure this is already defined as a cached variable (@sa libraries.cmake)
+if (NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build dynamically-linked binaries" ON)
+endif()
 
 # Windows/cmake make things difficult if building dll's. 
 # These use RUNTIME_OUTPUT_DIRECTORY (aka bin) and can't be 
@@ -41,7 +29,8 @@ if (BUILD_SHARED_LIBS)
         # It is not imported, add our custom copy rule
         add_custom_command(TARGET ${ARGV0} POST_BUILD
                  #cmake -E copy_if_different ${ARGV0}.dll ${CMAKE_BINARY_DIR}/bin # Doesn't handle regexp, i.e. dll*
-                 COMMAND if exist "${PROJECT_BINARY_DIR}/bin/${ARGV0}.dll" ( cp bin/*dll* ${CMAKE_BINARY_DIR}/bin )
+                 # uglier than above, but bruce force copies all the windows rubbish as well (.pdb, .manifest, .txt etc).
+                 COMMAND if exist "${PROJECT_BINARY_DIR}/bin/${ARGV0}.dll" ( cp bin/${ARGV0}* ${CMAKE_BINARY_DIR}/bin )
                  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                  )
         # Quite likely, linux guys hacking packages will not think to set the runtime destination to bin
@@ -54,8 +43,13 @@ if (BUILD_SHARED_LIBS)
                     ARCHIVE DESTINATION lib
                     LIBRARY DESTINATION lib 
             )
+          if( NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+            install(FILES ${CMAKE_BINARY_DIR}/bin/${ARGV0}.pdb DESTINATION bin)
+          endif() 
         endif()
       endif()
     endfunction()
+    # Almost impossible to do the same as above to install .pdb's for exe's as we do not know their 
+    # runtime destinations. Sometimes the runtime destination is bin, sometimes it is _pkg_name_/bin.
   endif(MSVC)
 endif(BUILD_SHARED_LIBS)
