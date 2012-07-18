@@ -1,23 +1,24 @@
-@set CATKIN_SHELL=bat
-@set PYTHONPATH=@CMAKE_BINARY_DIR@/gen/py;%PYTHONPATH%
-@set PATH=@CMAKE_BINARY_DIR@/bin;@catkin_SOURCE_DIR@/bin;%PATH%
-@set CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@
-@set CATKIN_SOURCE_DIR=@CMAKE_SOURCE_DIR@
+@echo off
+set CATKIN_SHELL=bat
+set PYTHONPATH=@CMAKE_BINARY_DIR@/gen/py;%PYTHONPATH%
+set PATH=@CMAKE_BINARY_DIR@/bin;@catkin_SOURCE_DIR@/bin;%PATH%
+set CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@
+set CATKIN_SOURCE_DIR=@CMAKE_SOURCE_DIR@
 
-@REM We should eventually do catkin's env-hooks properly.
-@REM Refer to setup.sh.buildspace.in for example code on how to bring them in.
+rem We should eventually do catkin's env-hooks properly.
+rem Refer to setup.sh.buildspace.in for example code on how to bring them in.
 
-@REM These should go in a catkin/00.catkin.buildspace.bat.in
+rem These should go in a catkin/00.catkin.buildspace.bat.in
 
-@set ROSDEPS_ROOT=@ROSDEPS_ROOT@
-@if DEFINED ROSDEPS_ROOT set PATH=%ROSDEPS_ROOT%/bin;%ROSDEPS_ROOT%/lib;%PATH%
+set CATKIN_ROSDEPS_BINARY_PATH=@CATKIN_ROSDEPS_BINARY_PATH@
+if DEFINED CATKIN_ROSDEPS_BINARY_PATH set PATH=%CATKIN_ROSDEPS_BINARY_PATH%;%PATH%
 
-@REM These are compatible and should go in build/etc/catkin/profile.d/10.ros.buildspace.all
-@REM Actually it would go in 10.ros.buildsspace.bat.in and the .all should get split up
+REM These are compatible and should go in build/etc/catkin/profile.d/10.ros.buildspace.all
+REM Actually it would go in 10.ros.buildsspace.bat.in and the .all should get split up
 
-@set ROS_TEST_RESULTS_DIR=@CMAKE_BINARY_DIR@/test_results
-@set ROS_PACKAGE_PATH=@CMAKE_SOURCE_DIR@
-@set ROS_DISTRO=fuerte
-@if NOT DEFINED ROS_MASTER_URI (
+set ROS_TEST_RESULTS_DIR=@CMAKE_BINARY_DIR@/test_results
+set ROS_PACKAGE_PATH=@CMAKE_SOURCE_DIR@
+set ROS_DISTRO=fuerte
+if NOT DEFINED ROS_MASTER_URI (
   set ROS_MASTER_URI=http://localhost:11311
 )
