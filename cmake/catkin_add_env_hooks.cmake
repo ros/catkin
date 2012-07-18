@@ -41,7 +41,16 @@ endfunction()
 
 
 function(catkin_generic_hooks)
-
+  if(CMAKE_HOST_WIN32)
+    set(CATKIN_PATH_SEPARATOR ";")
+  else()
+    set(CATKIN_PATH_SEPARATOR ":")
+  endif()
+  foreach(path ${CATKIN_ROSDEPS_PATH})
+	file(TO_NATIVE_PATH ${path}/bin _binpath)
+	file(TO_NATIVE_PATH ${path}/lib _libpath)
+	set(CATKIN_ROSDEPS_BINARY_PATH ${CATKIN_ROSDEPS_BINARY_PATH}${CATKIN_PATH_SEPARATOR}${_binpath}${CATKIN_PATH_SEPARATOR}${_libpath})
+  endforeach()
   if(MSVC)
     # TODO: windows .bat versions, currently only for buildspace
     configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.buildspace.in
