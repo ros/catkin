@@ -67,7 +67,7 @@ The basic case (``ros_comm``)::
   cmake_minimum_required(VERSION 2.8)
 
   # find_package(catkin REQUIRED)
-  # catkin_stack(ros_comm)
+  # catkin_stack()
 
   # optional find_package(... [REQUIRED])
 
@@ -90,10 +90,9 @@ necessary when building in a workspace (as the first CMakeLists.txt
 has already been read), but necessary when building e.g. in a
 packaging context.
 
-.. rubric:: catkin_stack [optional]
+.. rubric:: catkin_stack
 
 Find the catkin package first and then call :cmake:macro:`catkin_stack`.
-This is only necessary if you need the variables exported by catkin_stack.
 
 .. rubric:: find_package [optional]
 
