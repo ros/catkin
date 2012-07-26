@@ -44,7 +44,8 @@ endif()
 set(@PACKAGE_NAME@_CONFIG_INCLUDED TRUE)
 
 if (NOT "X@PACKAGE_INCLUDE_DIRS@" STREQUAL "X")
-  set(@PACKAGE_NAME@_INCLUDE_DIRS @PKG_INCLUDE_PREFIX@/include) #TODO FIX this.
+  find_file(@PACKAGE_NAME@_INCLUDE_DIRS include PATHS @PKG_INCLUDE_PREFIX@
+            NO_DEFAULT_PATH)
 endif()
 
 foreach(lib @PACKAGE_LIBRARIES@)
@@ -75,5 +76,7 @@ if(@PACKAGE_NAME@_LIBRARIES)
 endif()
 
 foreach(extra @PACKAGE_CFG_EXTRAS@)
-  include(@PKG_CMAKE_DIR@/${extra})
+  set(_extra_inc _extra_inc-NOTFOUND)
+  find_file(_extra_inc ${extra} PATHS @PKG_CMAKE_DIR@ NO_DEFAULT_PATH)
+  include(${_extra_inc})
 endforeach()
