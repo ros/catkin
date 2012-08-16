@@ -1,0 +1,68 @@
+# generated from catkin/cmake/catkin-config.cmake.in
+# which overlays the default template catkin/cmake/template/pkg-config.cmake.in
+
+# prevent usage with wrong case
+if(CATKIN_FIND_COMPONENTS OR CATKIN_FIND_REQUIRED OR CATKIN_FIND_QUIETLY)
+  message(FATAL_ERROR "find_package() only supports lower-case package name 'catkin'")
+endif()
+
+# mark as found
+if(NOT catkin_FOUND)
+  set(catkin_FOUND)
+  set(CATKIN_PACKAGE_PREFIX "" CACHE STRING "Prefix to apply to package generated via gendebian")
+endif()
+
+# the following lines must be the same as in catkin/CMakeLists.txt
+set(catkin_BUILD_PREFIX ${CMAKE_BINARY_DIR}/buildspace CACHE PATH "catkin buildspace")
+# compare boolean as string since policy CMP0012 is only enabled afterwards
+if("@PKG_BUILDSPACE@" STREQUAL "TRUE")
+  set(catkin_EXTRAS_DIR @catkin_EXTRAS_DIR@)
+else()
+  set(catkin_EXTRAS_DIR @PKG_CMAKE_DIR@)
+endif()
+set(catkin_GEN_EXTRAS_DIR @PKG_CMAKE_DIR@)
+
+include(${catkin_EXTRAS_DIR}/all.cmake)
+
+# don't overwrite catkin_* variables when being called recursively
+if(NOT _CATKIN_FIND_ OR _CATKIN_FIND_ EQUAL 0)
+  set(_CATKIN_FIND_ 0)
+  set(catkin_INCLUDE_DIRS "")
+  set(catkin_LIBRARIES "")
+  set(catkin_LIBRARY_DIRS "")
+endif()
+
+# increment recursion counter
+math(EXPR _CATKIN_FIND_ "${_CATKIN_FIND_} + 1")
+
+# find all components
+foreach(component ${catkin_FIND_COMPONENTS})
+  string(TOLOWER "${component}" component_lower)
+  if(${component_lower} STREQUAL "catkin")
+    message(FATAL_ERROR "'${component}' is not a valid component for find_package()")
+  endif()
+
+  # get search paths from all workspace
+  set(paths "")
+  foreach(workspace $ENV{CATKIN_WORKSPACES})
+    string(REGEX REPLACE ":.*" "" workspace ${workspace})
+    list(APPEND paths ${workspace}/cmake/${component})
+  endforeach()
+
+  # find package component
+  if(catkin_FIND_REQUIRED)
+    find_package(${component} REQUIRED NO_MODULE PATHS ${paths})
+  elseif(catkin_FIND_QUIETLY)
+    find_package(${component} QUIET NO_MODULE PATHS ${paths})
+  else()
+    find_package(${component} NO_MODULE PATHS ${paths})
+  endif()
+
+  # append component-specific variables to catkin_* variables
+  list_append_unique(catkin_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
+  list_append_unique(catkin_LIBRARIES ${${component}_LIBRARIES})
+  list_append_unique(catkin_LIBRARY_DIRS ${${component}_LIBRARY_DIRS})
+endforeach()
+
+# decrement recursion counter
+math(EXPR _CATKIN_FIND_ "${_CATKIN_FIND_} - 1")

@@ -8,16 +8,15 @@
 # could be feasibly built this way also (largely untested).
 
 # Make sure this is already defined as a cached variable (@sa platform/windows.cmake)
-if (NOT DEFINED BUILD_SHARED_LIBS)
+if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build dynamically-linked binaries" ON)
 endif()
 
 function(configure_shared_library_build_settings)
-  if (BUILD_SHARED_LIBS)
-    message(STATUS "BUILD_SHARED_LIBS is on.")
+  if(BUILD_SHARED_LIBS)
+    message(STATUS "BUILD_SHARED_LIBS is on")
     add_definitions(-DROS_BUILD_SHARED_LIBS=1)
   else()
-    message(STATUS "BUILD_SHARED_LIBS is off.")
+    message(STATUS "BUILD_SHARED_LIBS is off")
   endif()
 endfunction()
-

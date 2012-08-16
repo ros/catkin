@@ -1,0 +1,5 @@
+# generated from catkin/cmake/env-hooks/05.catkin-test-results.sh.in
+
+if @ENV_BUILDSPACE@; then
+    export CATKIN_TEST_RESULTS_DIR=@CMAKE_BINARY_DIR@/test_results
+fi

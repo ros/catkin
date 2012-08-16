@@ -14,7 +14,7 @@ except Exception, e:
 setup(name='catkin',
       version = version,
       packages = ['catkin'],
-      package_dir = {'catkin':'python/catkin',
+      package_dir = {'catkin': 'python/catkin',
                      },
       scripts = [],
       author = "Troy Straszheim, Morten Kjaergaard",

@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+import argparse
+import os
+import shutil
+import sys
+
+parser = argparse.ArgumentParser(description='Initializes a catkin workspace by creating a top-level CMakeLists.txt')
+parser.add_argument('workspace', nargs='?', default='.', help='The path to an existing folder (default: .)')
+args = parser.parse_args()
+
+# verify that workspace folder exists
+workspace = os.path.abspath(args.workspace)
+if not os.path.isdir(workspace):
+    print('Workspace "%s" does not exist' % workspace, file=sys.stderr)
+    exit(1)
+
+env_name = 'CATKIN_WORKSPACES'
+paths = os.environ[env_name].split(';') if env_name in os.environ and os.environ[env_name] != '' else []
+
+# search for file in all workspaces
+srcs = []
+for path in paths:
+    parts = path.split(':')
+    if len(parts) > 1:
+        path = parts[1]
+    else:
+        path = os.path.join(path, 'share')
+    # skip this workspace if file does not exist 
+    src = os.path.join(path, 'catkin', 'cmake', 'toplevel.cmake')
+    if not os.path.exists(src):
+        srcs.append(src)
+        continue
+    # verify that destination file does not exist
+    dst = os.path.join(workspace, 'CMakeLists.txt')
+    if os.path.exists(dst):
+        print('File "%s" already exists' % dst, file=sys.stderr)
+        exit(2)
+    # symlink/copy file
+    try:
+        os.symlink(src, dst)
+        print('Creating symlink "%s" pointing to "%s"' % (dst, src))
+    except:
+        try:
+            shutil.copyfile(src, dst)
+            print('Copying file from "%s" to "%s"' % (src, dst))
+        except:
+            print('Could neither symlink nor copy file "%s" to "%s"' % (src, dst), file=sys.stderr)
+            exit(3)
+            
+    exit(0)
+
+print('Could not find file "catkin/cmake/toplevel.cmake" in any workspace, checked the following paths:\n%s)"' % ('\n'.join(srcs)), file=sys.stderr)
+exit(3)

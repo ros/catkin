@@ -3,7 +3,7 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/python_version
   OUTPUT_VARIABLE PYTHON_VERSION_XDOTY
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-set(PYTHON_VERSION_XDOTY ${PYTHON_VERSION_XDOTY} CACHE STRING "python version")
+set(PYTHON_VERSION_XDOTY ${PYTHON_VERSION_XDOTY} CACHE STRING "Python version")
 
 #This should be resolved automatically one day...
 option(SETUPTOOLS_DEB_LAYOUT "ON for debian style python packages layout" ON)
@@ -21,14 +21,12 @@ else()
   set(SETUPTOOLS_ARG_EXTRA "--install-scripts=${PYTHON_INSTALL_PREFIX}" CACHE STRING "extra arguments to setuptools")
 endif()
 
-# Windows setuptools installs to Lib/site-packages not Lib/python2.7/site-packages 
-# Or is this SETUPTOOLS_DEB_LAYOUT dependant?
-if(MSVC)
-  set(INSTALLED_PYTHONPATH ${CMAKE_INSTALL_PREFIX}/lib/${PYTHON_PACKAGES_DIR}
-    CACHE INTERNAL "This needs to be in pythonpath when setup.py install is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
+if(NOT MSVC)
+  set(PYTHON_INSTALL_DIR lib/python${PYTHON_VERSION_XDOTY}/${PYTHON_PACKAGES_DIR}
+    CACHE INTERNAL "This needs to be in PYTHONPATH when setup.py install is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
 else()
-  set(INSTALLED_PYTHONPATH ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_XDOTY}/${PYTHON_PACKAGES_DIR}
-    CACHE INTERNAL "This needs to be in pythonpath when setup.py install is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
+  # Windows setuptools installs to lib/site-packages not lib/python2.7/site-packages 
+  # Or is this SETUPTOOLS_DEB_LAYOUT dependent?
+  set(PYTHON_INSTALL_DIR lib/${PYTHON_PACKAGES_DIR}
+    CACHE INTERNAL "This needs to be in PYTHONPATH when setup.py install is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
 endif()
-
-

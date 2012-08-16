@@ -15,7 +15,7 @@ macro(rosbuild_catkinize)
     cmake_policy(SET CMP0003 NEW)
     cmake_policy(SET CMP0011 NEW)
     message(STATUS "    >> Rosbuild-compat: thunking from rosbuild in ${CMAKE_CURRENT_SOURCE_DIR}")
-    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/catkin.cmake)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/catkin.cmake)
       include(catkin.cmake NO_POLICY_SCOPE)
     else()
       message(STATUS "    >> warning: Directory ${CMAKE_CURRENT_SOURCE_DIR} contains rosbuild_catkinize but no catkin.cmake")
@@ -51,10 +51,8 @@ endfunction()
 function(rosbuild_add_gtest TARGET)
   message(STATUS "    >> Rosbuild-compat: rosbuild_add_gtest ${ARGN}")
   add_executable(${TARGET} ${catkin_EXTRAS_DIR}/dummy_main.cpp)
-  set_property(TARGET ${TARGET}
-    PROPERTY
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin
-    )
+  set_property(TARGET ${TARGET} PROPERTY
+    RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/bin)
 endfunction()
 
 function(rosbuild_add_rostest TARGET)
@@ -62,9 +60,7 @@ function(rosbuild_add_rostest TARGET)
   string(REPLACE "/" "_" _testname ${TARGET})
 
   add_executable(rostest_${_testname} ${catkin_EXTRAS_DIR}/dummy_main.cpp)
-  set_property(TARGET rostest_${_testname}
-    PROPERTY
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin
-    )
+  set_property(TARGET rostest_${_testname} PROPERTY
+    RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/bin)
 endfunction()
 

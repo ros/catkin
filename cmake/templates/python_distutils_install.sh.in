@@ -1,7 +1,5 @@
 #!/bin/sh -x
 
-
-
 if [ -n "$DESTDIR" ] ; then
     case $DESTDIR in
         /*) # ok
@@ -21,11 +19,10 @@ cd @INSTALL_CMD_WORKING_DIRECTORY@
 # into one location when some dependencies were installed in another
 # location, #123.
 /usr/bin/env \
-    PYTHONPATH=@INSTALLED_PYTHONPATH@:@CMAKE_BINARY_DIR@/gen/py:$PYTHONPATH \
+    PYTHONPATH=@CMAKE_INSTALL_PREFIX@/@PYTHON_INSTALL_DIR@:@CMAKE_BINARY_DIR@/@PYTHON_INSTALL_DIR@:$PYTHONPATH \
     CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@ \
     @PYTHON_EXECUTABLE@ \
     @CMAKE_CURRENT_SOURCE_DIR@/setup.py \
     install \
     $DESTDIR_ARG \
     @SETUPTOOLS_ARG_EXTRA@ --prefix=@CMAKE_INSTALL_PREFIX@
-

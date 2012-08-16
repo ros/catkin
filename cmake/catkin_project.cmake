@@ -1,170 +1,159 @@
-function(catkin_project PACKAGE_NAME)
-  # catkin_stack() is required first, #78
-  if(NOT CATKIN_CURRENT_STACK)
-    message(FATAL_ERROR "catkin_project(): CATKIN_CURRENT_STACK is unset.  You must call catkin_stack() in the directory containing stack.xml before you can call catkin_project() in that directory or any of its children.")
-  endif()
-  if (NOT PROJECT_NAME STREQUAL PACKAGE_NAME)
-    message(FATAL_ERROR "catkin_project called for project (PROJECT_NAME=${PROJECT_NAME}) "
-      "that does not match package name argument PACKAGE_NAME=${PACKAGE_NAME}\n"
-      "Did you forget to call project()?\n")
-  endif()
-  set(Maintainer ${${CATKIN_CURRENT_STACK}_MAINTAINER})
+function(catkin_project catkin_project_name)
+  debug_message(10 "catkin_project(${catkin_project_name}) called in file ${CMAKE_CURRENT_LIST_FILE}")
 
-  parse_arguments(PACKAGE
-    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;PYTHONPATH;DEPENDS"
+  # verify that catkin_stack() has been called before
+  if(NOT CATKIN_CURRENT_STACK)
+    message(FATAL_ERROR "catkin_project() CATKIN_CURRENT_STACK is not set.  You must call catkin_stack() in the directory containing stack.xml before you can call catkin_project() in that directory or any of its children.")
+  endif()
+  # verify that project() has been called before with the same name
+  if(NOT catkin_project_name STREQUAL PROJECT_NAME)
+    message(FATAL_ERROR "catkin_project() name argument '${catkin_project_name}' does not match current PROJECT_NAME '${PROJECT_NAME}'.  You must call project() with the same name before.")
+  endif()
+
+  parse_arguments(PROJECT
+    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;DEPENDS"
     ""
     ${ARGN})
-
-  check_unused_arguments("catkin_project" "${PACKAGE_DEFAULT_ARGS}")
-
-  if (PACKAGE_PYTHONPATH)
-    message(WARNING "PYTHONPATH in catkin_project is deprecated. Please remove for pkg: ${PACKAGE_NAME}")
+  if(PROJECT_DEFAULT_ARGS)
+    message(FATAL_ERROR "catkin_project() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
   endif()
 
-  log(2 "catkin_project ${PACKAGE_NAME} at version ${${PACKAGE_NAME}_VERSION} in @CMAKE_INSTALL_PREFIX@")
-  set(pfx ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY})
-  set(PACKAGE_NAME ${PACKAGE_NAME})
-  # ${${CATKIN_CURRENT_STACK}_VERSION} is set by the most recent call to
-  # catkin_stack(), which sets CATKIN_CURRENT_STACK and then parses the
-  # stack.xml, making each field into a CMake cache variable.
-  set(PACKAGE_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
-  set(PACKAGE_INCLUDE_DIRS ${PACKAGE_INCLUDE_DIRS})
-  set(PACKAGE_DEPENDS ${PACKAGE_DEPENDS})
-  set(PACKAGE_LIBRARIES ${PACKAGE_LIBRARIES})
-  set(PACKAGE_CFG_EXTRAS ${PACKAGE_CFG_EXTRAS})
-  set(PACKAGE_CMAKE_CONFIG_FILES_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/cmake)
+  # stack version provided by stack.cmake/xml
+  set(PROJECT_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
+
+  # DISABLED add ROS_PACKAGE_NAME define
+  #add_definitions(-DROS_PACKAGE_NAME=\"${PROJECT_NAME}\")
+
+  # get library paths for all workspaces
+  set(lib_paths "")
+  foreach(workspace $ENV{CATKIN_WORKSPACES})
+    string(REGEX REPLACE ":.*" "" workspace ${workspace})
+    list_append_unique(lib_paths ${workspace}/lib)
+  endforeach()
 
   #
-  # Default executable output location to "private".
+  # BUILDSPACE
   #
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin PARENT_SCOPE)
 
-  # force new policy for escaping preprocessor definitions
-  cmake_policy(SET CMP0005 NEW)
-  # Add ROS_PACKAGE_NAME define
-  add_definitions(-DROS_PACKAGE_NAME=\"${PROJECT_NAME}\")
+  set(PKG_BUILDSPACE TRUE)
+  set(PKG_INSTALLSPACE FALSE)
 
-  #
-  # Versions find_packageable from the buildspace
-  #
-  string(TOLOWER ${PACKAGE_NAME} package_lower)
-  set(_cfgdir ${CMAKE_BINARY_DIR}/cmake/${package_lower})
-  set(_cfgout ${_cfgdir}/${package_lower}-config.cmake)
-  log(2 "Writing config to ${_cfgout}")
+  set(PROJECT_SPACE_DIR ${catkin_BUILD_PREFIX})
 
-  # in source
+  # absolute path to include dirs
+  set(PROJECT_RELATIVE_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
+  # validate that include dirs are existing folders relative to projects source
+  set(PROJECT_INCLUDE_DIRS "")
+  foreach(relative_include ${PROJECT_RELATIVE_INCLUDE_DIRS})
+    set(absolute_include ${CMAKE_CURRENT_SOURCE_DIR}/${relative_include})
+    if(NOT EXISTS ${absolute_include})
+      message(FATAL_ERROR "catkin_project() include path not found: ${absolute_include}")
+    endif()
+    list(APPEND PROJECT_INCLUDE_DIRS ${absolute_include})
+  endforeach()
+
   set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
-  set(PKG_LIB_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
-  set(PKG_CMAKE_DIR ${_cfgdir})
-  set(PKG_CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-  set(PKG_BIN_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/scripts
-    ${CMAKE_CURRENT_BINARY_DIR}/bin)
-  set(PKG_LOCATION "Source")
+  # prepend library path of this workspace
+  set(PKG_CONFIG_LIB_PATHS ${lib_paths})
+  list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
+  set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
 
-  #put all extras into the cfg dir...
-  foreach(extra ${PACKAGE_CFG_EXTRAS})
+  # ensure that output folder exists
+  file(MAKE_DIRECTORY ${catkin_BUILD_PREFIX}/lib/pkgconfig)
+  # generate buildspace pc for project
+  em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkg.buildspace.context.pc.py
+    ${catkin_EXTRAS_DIR}/em/pkg.pc.em
+    ${catkin_BUILD_PREFIX}/lib/pkgconfig/${PROJECT_NAME}.pc)
+
+  # generate buildspace config for project
+  set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
+  if(NOT EXISTS ${infile})
+    set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig.cmake.in)
+  endif()
+  configure_file(${infile}
+    ${catkin_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config.cmake
+    @ONLY
+  )
+
+  # generate buildspace config-version for project
+  configure_file(${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in
+    ${catkin_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config-version.cmake
+    @ONLY
+  )
+
+  # generate buildspace cfg-extras for project
+  foreach(extra ${PROJECT_CFG_EXTRAS})
     assert_file_exists(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra}.in "Nonexistent extra")
+    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra}.in
     configure_file(cmake/${extra}.in
-      ${_cfgdir}/${extra}
+      ${catkin_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
       @ONLY
-      )
+    )
   endforeach()
 
-  file(RELATIVE_PATH PACKAGE_RELATIVE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-  if(PACKAGE_RELATIVE_PATH STREQUAL "")
-    set(PACKAGE_RELATIVE_PATH ".")
-  endif()
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/etc)
-  safe_execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/update_index.py
-    ${CMAKE_BINARY_DIR}/etc/packages.list
-    "${PACKAGE_NAME}"
-    "${PACKAGE_RELATIVE_PATH}"
-    )
-
   #
-  #  Install stuff for share/ relative to this.  Maybe we'll want
-  #  to use PACKAGE_RELATIVE_PATH here?
+  # INSTALLSPACE
   #
-  set(PROJECT_SHARE_INSTALL_PREFIX share/${PACKAGE_NAME})
 
+  set(PKG_BUILDSPACE FALSE)
+  set(PKG_INSTALLSPACE TRUE)
 
-  #EAR: Why can't the buildspace config files be overridden from the ${PROJECT_NAME}_EXTRAS_DIR ?
+  set(PROJECT_SPACE_DIR ${CMAKE_INSTALL_PREFIX})
+  set(PROJECT_INCLUDE_DIRS ${PROJECT_SPACE_DIR}/include)
 
-  # THIS IS IMPORTANT. CMAKE_PREFIX_PATH appears to be twitchy: just
-  # spent hours figuring out that having /opt/ros/fuerte first is
-  # necessary for this finding to work.  Very strange.  xxx_DIR
-  # circumvents this twitchiness.
-  set(${PACKAGE_NAME}_DIR ${_cfgdir} CACHE FILEPATH "${PACKAGE_NAME} cmake config file dir")
-  configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.buildspace.in
-    ${_cfgout}
-    @ONLY
-    )
+  set(PKG_INCLUDE_PREFIX "")  # not used in installspace
+  # prepend library path of this workspace
+  set(PKG_CONFIG_LIB_PATHS ${lib_paths})
+  list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
+  set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
 
-  configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config-version.cmake.in
-    ${_cfgdir}/${package_lower}-config-version.cmake
-    @ONLY
-    )
-
-  # installable
-  set(PKG_INCLUDE_PREFIX ${CMAKE_INSTALL_PREFIX})
-  set(PKG_LIB_PREFIX ${CMAKE_INSTALL_PREFIX})
-  set(PKG_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}/cmake)
-  set(PKG_CMAKE_SRC_DIR ${PKG_CMAKE_DIR})
-  set(PKG_BIN_DIRS ${CMAKE_INSTALL_PREFIX}/bin)
-  set(PKG_LOCATION "Installed")
-
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/pkg-config)
-  em_expand(${catkin_EXTRAS_DIR}/templates/pkg-config.pc.context.in
-    ${CMAKE_CURRENT_BINARY_DIR}/pkg-config.pc.context.py
-    ${catkin_EXTRAS_DIR}/em/pkg-config.pc.em
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}.pc)
-
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PACKAGE_NAME}.pc
+  # ensure that output folder exists
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/installspace)
+  # generate and install pc for project
+  em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkg.installspace.context.pc.py
+    ${catkin_EXTRAS_DIR}/em/pkg.pc.em
+    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}.pc)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}.pc
     DESTINATION lib/pkgconfig
-    )
+  )
 
-  string(TOLOWER ${PROJECT_NAME} project_lower)
+  # generate config for project
+  set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
+  if(NOT EXISTS ${infile})
+    set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig.cmake.in)
+  endif()
+  configure_file(${infile}
+    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}Config.cmake
+    @ONLY
+  )
 
-  #
-  #  Versions to be installed
-  #
-  set(INSTALLABLE_CFG_EXTRAS "")
-  foreach(extra ${PACKAGE_CFG_EXTRAS})
-    list(APPEND INSTALLABLE_CFG_EXTRAS ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${extra})
+  # generate config-version for project
+  set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config-version.cmake.in)
+  if(NOT EXISTS ${infile})
+    set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in)
+  endif()
+  configure_file(${infile}
+    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}Config-version.cmake
+    @ONLY
+  )
+
+  # generate cfg-extras for project
+  set(installable_cfg_extras "")
+  foreach(extra ${PROJECT_CFG_EXTRAS})
+    list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/installspace/${extra})
     configure_file(cmake/${extra}.in
-      cmake_install/${extra}
+      ${CMAKE_CURRENT_BINARY_DIR}/installspace/${extra}
       @ONLY
-      )
+    )
   endforeach()
 
-  if(EXISTS ${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config.cmake.in)
-    configure_file(${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config.cmake
-      @ONLY
-      )
-  else()
-    configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config.cmake.installable.in
-      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config.cmake
-      @ONLY
-      )
-  endif()
-
-  if(EXISTS ${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config-version.cmake.in)
-    configure_file(${${PROJECT_NAME}_EXTRAS_DIR}/${project_lower}-config-version.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config-version.cmake
-      @ONLY
-      )
-  else()
-    configure_file(${catkin_EXTRAS_DIR}/templates/pkg-config-version.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${project_lower}-config-version.cmake
-      @ONLY
-      )
-  endif()
-
+  # install config, config-version and cfg-extras for project
   install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake_install/${package_lower}-config-version.cmake
-    ${INSTALLABLE_CFG_EXTRAS}
-    DESTINATION ${PROJECT_SHARE_INSTALL_PREFIX}/cmake
-    )
+    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}Config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}Config-version.cmake
+    ${installable_cfg_extras}
+    DESTINATION share/${PROJECT_NAME}/cmake
+  )
 endfunction()
