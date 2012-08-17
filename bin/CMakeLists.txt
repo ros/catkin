@@ -1,10 +1,10 @@
 # XXX reenable later
 set(programs
   catkin-init-workspace
+  catkin-topological-order
   #catkin-build-debs-of-workspace
   #catkin-bump-version
   #catkin-parse-stack
-  #catkin-topological-order
   #catkin-version
   #catkin_install_parse
   #catkin_util.sh

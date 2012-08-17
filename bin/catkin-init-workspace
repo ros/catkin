@@ -6,7 +6,7 @@ import os
 import shutil
 import sys
 
-parser = argparse.ArgumentParser(description='Initializes a catkin workspace by creating a top-level CMakeLists.txt')
+parser = argparse.ArgumentParser(description='Initializes a catkin workspace by creating a top-level CMakeLists.txt.')
 parser.add_argument('workspace', nargs='?', default='.', help='The path to an existing folder (default: .)')
 args = parser.parse_args()
 
