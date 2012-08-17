@@ -32,9 +32,9 @@ endif()
 if(@BUILDSPACE@)
   find_program_required(CHECK_TEST_RAN_EXE check_test_ran.py
     PATHS @catkin_EXTRAS_DIR@
-    NO_DEFAULT_PATH)
+    NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 else()
   find_program_required(CHECK_TEST_RAN_EXE check_test_ran.py
     PATHS @CMAKE_INSTALL_PREFIX@/share/catkin/cmake
-    NO_DEFAULT_PATH)
+    NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 endif()
