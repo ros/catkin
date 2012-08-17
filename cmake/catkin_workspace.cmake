@@ -4,12 +4,8 @@ function(catkin_workspace)
   # set global output directories for artifacts and create them if necessary
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/bin)
   if(NOT IS_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
     file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-  endif()
-  if(NOT IS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-    file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   endif()
 
   # tools/libraries.cmake
@@ -27,29 +23,37 @@ function(catkin_workspace)
 
   assert(catkin_EXTRAS_DIR)
   em_expand(
-    ${catkin_EXTRAS_DIR}/templates/sort_stacks_topologically.context.py.in
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/sort_stacks_topologically.py
-    ${catkin_EXTRAS_DIR}/em/sort_stacks_topologically.cmake.em
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/sort_stacks_topologically.cmake
+    ${catkin_EXTRAS_DIR}/templates/order_projects.context.py.in
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/order_projects.py
+    ${catkin_EXTRAS_DIR}/em/order_projects.cmake.em
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/order_projects.cmake
     )
-  debug_message(10 "catkin_workspace() including sort_stacks_topologically.cmake")
-  include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/sort_stacks_topologically.cmake)
+  debug_message(10 "catkin_workspace() including order_projects.cmake")
+  include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/order_projects.cmake)
 
-  if(CATKIN_TOPOLOGICALLY_SORTED_STACKS)
+  if(CATKIN_ORDERED_PROJECTS)
     message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    message(STATUS "~~  traversing stacks in dependency order  ~~")
-    message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    message(STATUS "build order of stacks:")
-    foreach(stack_path ${CATKIN_TOPOLOGICALLY_SORTED_STACKS})
-      message(STATUS "- ${stack_path}")
+    message(STATUS "~~  traversing projects in topological order:")
+    foreach(name ${CATKIN_ORDERED_PROJECTS})
+      message(STATUS "~~  - ${name}")
     endforeach()
+    message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-    foreach(stack_path ${CATKIN_TOPOLOGICALLY_SORTED_STACKS})
-      get_filename_component(folder ${stack_path} NAME)
-      message(STATUS "+++ add_subdirectory(${folder})")
+    list(LENGTH CATKIN_ORDERED_PROJECTS count)
+    math(EXPR range "${count} - 1")
+    foreach(index RANGE ${range})
+      list(GET CATKIN_ORDERED_PROJECTS ${index} name)
+      list(GET CATKIN_ORDERED_PROJECT_PATHS ${index} path)
+      message(STATUS "+++ add_subdirectory(${path})")
+      # set project specific output directory and create it if necessary
+      set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib/${name})
+      if(NOT IS_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+      endif()
+
       set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
-      stamp(${stack_path}/stack.xml)
-      add_subdirectory(${stack_path})
+      stamp(${path}/stack.xml)
+      add_subdirectory(${path})
     endforeach()
   endif()
 endfunction()
