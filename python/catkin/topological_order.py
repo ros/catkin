@@ -14,7 +14,7 @@ class ProjectData:
         self.message_generator = project.message_generator
 
     def __repr__(self):
-        return "name=%s path=%s build_depends=%s message_generator=%s\n" % (self.name, self.path, self.build_depends, self.message_generator)
+        return 'name=%s path=%s build_depends=%s message_generator=%s\n' % (self.name, self.path, self.build_depends, self.message_generator)
 
 
 def _remove_dependency(projects, name):
