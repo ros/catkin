@@ -13,7 +13,7 @@ def find_in_workspaces(project, path=None, search_in=None):
       'libexec': os.path.join('lib', project),
       'share': os.path.join('share', project),
     }
-    if search_in is None:
+    if not search_in:
         search_in = subfolders.keys()
 
     env_name = 'CATKIN_WORKSPACES'
@@ -22,9 +22,7 @@ def find_in_workspaces(project, path=None, search_in=None):
     # search for path in all workspaces
     checked = []
     for workspace in workspaces:
-        parts = workspace.split(':')
-        if len(parts) > 1:
-            workspace = parts[1]
+        workspace = workspace.split(':')[0]
 
         # check subfolders for existance
         subfolders_exist = {}
