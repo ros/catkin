@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+import argparse
+import os
+import sys
+
+from catkin.find_in_workspaces import find_in_workspaces
+
+parser = argparse.ArgumentParser(description='Searches the catkin workspaces for project-specific files/folders.')
+parser.add_argument('project', help='The project to find a path for')
+parser.add_argument('path', nargs='?', help='The relative path of a project file/folder (a prefix is sufficient)')
+group = parser.add_argument_group('Search folders', 'Restrict the folders to search in')
+group.add_argument('--bin', action='store_true', help='Search in "bin" folder')
+group.add_argument('--lib', action='store_true', help='Search in "lib" folder')
+group.add_argument('--libexec', action='store_true', help='Search in "lib/PROJECT" folder')
+group.add_argument('--share', action='store_true', help='Search in "share/PROJECT" folder')
+args = parser.parse_args()
+
+try:
+    search_in = []
+    for name in ['bin', 'lib', 'libexec', 'share']:
+        if getattr(args, name):
+            search_in.append(name)
+    result = find_in_workspaces(args.project, args.path, search_in)
+    print(result)
+except Exception as e:
+    print(str(e), file=sys.stderr)
+    exit(1)

@@ -1,5 +1,6 @@
 # XXX reenable later
 set(programs
+  catkin-find
   catkin-init-workspace
   catkin-topological-order
   #catkin-build-debs-of-workspace
