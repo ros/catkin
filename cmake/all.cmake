@@ -77,9 +77,6 @@ set(CATKIN_ENV "" CACHE INTERNAL "catkin environment" FORCE)
 # uses em_expand without CATKIN_ENV being set yet
 catkin_generate_environment()
 
-# add additional environment hooks
-catkin_add_env_hooks(05.catkin-test-results SHELLS bat sh DIRECTORY ${catkin_EXTRAS_DIR}/env-hooks)
-
 # environment to call external processes
 if(CMAKE_HOST_UNIX) # true for linux, apple, mingw-cross and cygwin
   set(CATKIN_ENV ${catkin_BUILD_PREFIX}/env.sh CACHE INTERNAL "catkin environment")
