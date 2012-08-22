@@ -11,7 +11,7 @@ function(catkin_generate_environment)
     # generate setup for various shells
     set(CURRENT_WORKSPACE ${catkin_BUILD_PREFIX}:${CMAKE_SOURCE_DIR})
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
       ${catkin_BUILD_PREFIX}/setup.sh)
     foreach(shell bash zsh)
@@ -26,7 +26,7 @@ function(catkin_generate_environment)
       ${catkin_BUILD_PREFIX}/env.bat)
     # generate setup
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.bat.em
       ${catkin_BUILD_PREFIX}/setup.bat)
   endif()
@@ -37,24 +37,24 @@ function(catkin_generate_environment)
     # non-windows
     # generate and install env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/env.sh)
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh)
     install(PROGRAMS
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/env.sh
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
       DESTINATION ${CMAKE_INSTALL_PREFIX})
     # generate and install setup for various shells
     set(CURRENT_WORKSPACE ${CMAKE_INSTALL_PREFIX})
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_CURRENT_BINARY_DIR}/setup.installspace.context.py
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.installspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/setup.sh)
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh)
     install(FILES
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/setup.sh
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh
       DESTINATION ${CMAKE_INSTALL_PREFIX})
     foreach(shell bash zsh)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
-        ${CMAKE_CURRENT_BINARY_DIR}/installspace/setup.${shell})
+        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell})
       install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/installspace/setup.${shell}
+        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell}
         DESTINATION ${CMAKE_INSTALL_PREFIX})
     endforeach()
 
@@ -62,27 +62,26 @@ function(catkin_generate_environment)
     # windows
     # generate and install env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/env.bat)
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.bat)
     install(PROGRAMS
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/env.bat
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.bat
       DESTINATION ${CMAKE_INSTALL_PREFIX})
     # generate and install setup
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_CURRENT_BINARY_DIR}/setup.installspace.context.py
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.installspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.bat.em
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/setup.bat)
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.bat)
     install(FILES
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/setup.bat
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.bat
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
 
   # XXX what is .rosinstall needed for?
   #if(catkin_SOURCE_DIR)
-  #  message(STATUS "foo ${CMAKE_CURRENT_BINARY_DIR}")
   #  configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.installable.in
-  #    ${CMAKE_CURRENT_BINARY_DIR}/installspace/.rosinstall)
+  #    ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/.rosinstall)
   #  install(FILES
-  #    ${CMAKE_CURRENT_BINARY_DIR}/installspace/.rosinstall
+  #    ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/.rosinstall
   #    DESTINATION ${CMAKE_INSTALL_PREFIX})
   #endif()
 endfunction()
