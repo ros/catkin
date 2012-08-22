@@ -25,11 +25,10 @@ function(add_nosetests dir)
     set(_dir_name ${dir})
   else()
     find_file(_dir_name ${dir}
-              PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-              NO_DEFAULT_PATH
-              NO_CMAKE_FIND_ROOT_PATH)  # for cross-compilation.  thanks jeremy.
+      PATHS ${CMAKE_CURRENT_SOURCE_DIR}
+      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
     if(NOT _dir_name)
-      message(FATAL_ERROR "Can't find nosetests dir \"${dir}\"")
+      message(FATAL_ERROR "Can't find nosetests dir '${dir}'")
     endif()
   endif()
 
@@ -43,6 +42,6 @@ function(add_nosetests dir)
   set(output_dir_name ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME})
   append_test_to_cache(catkin-tests "${CMAKE_COMMAND} -E make_directory ${output_dir_name}")
   string(REPLACE "/" "." output_file_name ${dir})
-  append_test_to_cache(catkin-tests "${_chdir_prefix}${NOSETESTS} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/${output_file_name}.xml ${_covarg}${_chdir_suffix}")
-  append_test_to_cache(catkin-tests "${CHECK_TEST_RAN_EXE} ${output_dir_name}/${output_file_name}.xml")
+  append_test_to_cache(catkin-tests "${_chdir_prefix}${NOSETESTS} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/nosetests-${output_file_name}.xml ${_covarg}${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${CHECK_TEST_RAN_EXE} ${output_dir_name}/nosetests-${output_file_name}.xml")
 endfunction()

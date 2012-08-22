@@ -55,8 +55,8 @@ function(add_gtest exe)
   string(REPLACE "/" "_" _testname ${exe})
   get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
   # We use rosunit to call the executable to get process control, #1629, #3112
-  append_test_to_cache(catkin-tests "${_chdir_prefix}${_exe_path}/${exe} --gtest_output=xml:${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/TEST-${_testname}.xml${_chdir_suffix}")
-  append_test_to_cache(catkin-tests "${CHECK_TEST_RAN_EXE} ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/TEST-${_testname}.xml")
+  append_test_to_cache(catkin-tests "${_chdir_prefix}${_exe_path}/${exe} --gtest_output=xml:${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${_testname}.xml${_chdir_suffix}")
+  append_test_to_cache(catkin-tests "${CHECK_TEST_RAN_EXE} ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${_testname}.xml")
 endfunction()
 
 if(_CATKIN_GTEST_SRC_FOUND)
