@@ -39,10 +39,10 @@ def succeed(cmd, **kwargs):
 def rosinstall(pth, specfile):
     assert exists(pth)
     assert exists(specfile)
-    succeed(["/usr/local/bin/rosinstall", "-n", pth, specfile], cwd=pwd)
-    assert( exists(pth + "/catkin/toplevel.cmake"))
+    succeed(["/usr/local/bin/rosinstall", "-n", pth, specfile, '--continue-on-error'], cwd=pwd)
+    assert(exists(pth + "/catkin/cmake/toplevel.cmake"))
     succeed(["/bin/rm", "-f", "CMakeLists.txt"], cwd=pth)
-    succeed(["/bin/ln", "-s", "catkin/toplevel.cmake", "CMakeLists.txt"], cwd=pth)
+    succeed(["/bin/ln", "-s", "catkin/cmake/toplevel.cmake", "CMakeLists.txt"], cwd=pth)
 
 def fail(cmd, **kwargs):
     print ">>>", cmd, kwargs
