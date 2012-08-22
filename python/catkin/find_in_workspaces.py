@@ -13,8 +13,10 @@ def find_in_workspaces(project, path=None, search_in=None):
       'libexec': os.path.join('lib', project),
       'share': os.path.join('share', project),
     }
-    if not search_in:
+    if search_in is None:
         search_in = subfolders.keys()
+    if not isinstance(search_in, list):
+        search_in = [search_in]
 
     env_name = 'CATKIN_WORKSPACES'
     workspaces = os.environ[env_name].split(';') if env_name in os.environ and os.environ[env_name] != '' else []
