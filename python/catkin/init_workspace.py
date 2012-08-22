@@ -12,9 +12,10 @@ def init_workspace(workspace_dir):
     for workspace in workspaces:
         parts = workspace.split(':')
         if len(parts) > 1:
-            workspace = parts[1]
+            src = os.path.join(parts[1], 'catkin', 'cmake', 'toplevel.cmake')
+        else:
+            src = os.path.join(workspace, 'share', 'catkin', 'cmake', 'toplevel.cmake')
         # skip this workspace if file does not exist
-        src = os.path.join(workspace, 'share', 'catkin', 'cmake', 'toplevel.cmake')
         if not os.path.exists(src):
             checked.append(src)
             continue
