@@ -18,6 +18,9 @@ function(catkin_project catkin_project_name)
     message(FATAL_ERROR "catkin_project() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
   endif()
 
+  # set project specific output directory for binaries
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib/${PROJECT_NAME} PARENT_SCOPE)
+
   # stack version provided by stack.cmake/xml
   set(PROJECT_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
 
