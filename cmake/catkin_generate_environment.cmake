@@ -3,13 +3,13 @@ function(catkin_generate_environment)
 
   # buildspace
   set(SETUP_DIR ${catkin_BUILD_PREFIX})
+  set(CURRENT_WORKSPACE ${catkin_BUILD_PREFIX}:${CMAKE_SOURCE_DIR})
   if(NOT MSVC)
     # non-windows
     # generate env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
       ${catkin_BUILD_PREFIX}/env.sh)
     # generate setup for various shells
-    set(CURRENT_WORKSPACE ${catkin_BUILD_PREFIX}:${CMAKE_SOURCE_DIR})
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
@@ -25,7 +25,6 @@ function(catkin_generate_environment)
     configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
       ${catkin_BUILD_PREFIX}/env.bat)
     # generate setup
-    set(CURRENT_WORKSPACE ${catkin_BUILD_PREFIX};${CMAKE_SOURCE_DIR})
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.bat.em
@@ -34,6 +33,7 @@ function(catkin_generate_environment)
 
   # installspace
   set(SETUP_DIR ${CMAKE_INSTALL_PREFIX})
+  set(CURRENT_WORKSPACE ${CMAKE_INSTALL_PREFIX})
   if(NOT MSVC)
     # non-windows
     # generate and install env
@@ -43,7 +43,6 @@ function(catkin_generate_environment)
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
       DESTINATION ${CMAKE_INSTALL_PREFIX})
     # generate and install setup for various shells
-    set(CURRENT_WORKSPACE ${CMAKE_INSTALL_PREFIX})
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.installspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em

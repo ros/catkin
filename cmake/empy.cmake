@@ -17,6 +17,7 @@ function(find_python_module module)
       set(PY_${module_upper} ${_${module}_location} CACHE STRING "Location of Python module ${module}")
     endif(NOT _${module}_status)
   endif(NOT PY_${module_upper})
+  include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(PY_${module} DEFAULT_MSG PY_${module_upper})
 endfunction(find_python_module)
 
