@@ -51,7 +51,6 @@ foreach(filename
     install_matching_to_share
     list_append_unique
     parse_arguments
-    python
     safe_execute_process
     stamp
     platform/lsb
