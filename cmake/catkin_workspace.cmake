@@ -60,8 +60,6 @@ function(catkin_workspace)
         file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
       endif()
       set(CATKIN_CURRENT_RUNTIME_DESTINATION lib/${name})
-      # set project specific output directory for architecture independent files
-      set(CATKIN_CURRENT_SHARE_DIRECTORY share/${name})
 
       set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
       stamp(${path}/stack.xml)

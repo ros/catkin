@@ -24,9 +24,6 @@ function(catkin_project catkin_project_name)
   # stack version provided by stack.cmake/xml
   set(PROJECT_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
 
-  # DISABLED add ROS_PACKAGE_NAME define
-  #add_definitions(-DROS_PACKAGE_NAME=\"${PROJECT_NAME}\")
-
   # get library paths for all workspaces
   set(lib_paths "")
   foreach(workspace $ENV{CATKIN_WORKSPACES})

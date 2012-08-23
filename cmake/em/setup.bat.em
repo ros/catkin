@@ -15,7 +15,8 @@ if 'CATKIN_WORKSPACES' in os.environ and os.environ['CATKIN_WORKSPACES'] != '':
     print('. %s/setup.$CATKIN_SHELL' % parent_path)
 }@
 
-REM Do not use EnableDelayedExpansion here, it messes with the != symbols.
+REM python function to generate ROS package path based on all parent workspaces (prepends the separator if necessary)
+REM do not use EnableDelayedExpansion here, it messes with the != symbols
 echo from __future__ import print_function > catkin_prefix.py
 echo import os >> catkin_prefix.py
 echo import sys >> catkin_prefix.py
