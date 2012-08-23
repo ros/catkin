@@ -44,10 +44,24 @@ function(rosbuild_download_test_data)
   message(STATUS "    >> Rosbuild-compat: rosbuild_download_test_data ${ARGN}")
 endfunction()
 
+
+#
+#   :param FILE: name of pyunit test file
+#
+#   Add file to test list and run under `rosunit` at testing time.
 function(rosbuild_add_pyunit)
   message(STATUS "    >> Rosbuild-compat: rosbuild_add_pyunit ${ARGN}")
 endfunction()
 
+#
+#   :param EXE: executable name
+#   :param FILES: list of gtest .cpp files
+#   :param TIMEOUT: The timeout in seconds (defaults to 60s)
+#   :param WORKING_DIRECTORY: The working directory
+#
+#   Add an executable `EXE` build from `FILES` and link to gtest.  Run under
+#   `rosunit` when test target is built.
+#
 function(rosbuild_add_gtest TARGET)
   message(STATUS "    >> Rosbuild-compat: rosbuild_add_gtest ${ARGN}")
   add_executable(${TARGET} ${catkin_EXTRAS_DIR}/dummy_main.cpp)
