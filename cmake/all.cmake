@@ -45,6 +45,7 @@ foreach(filename
     catkin_workspace
     debug_message
     em_expand
+    python # defines PYTHON_EXECUTABLE, required by empy
     empy
     find_program_required
     install_matching_to_share
