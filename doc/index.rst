@@ -31,6 +31,7 @@ Contents
    stack_xml
    layout
    macros
+   macros2
    environment
    variables
    code_generation
