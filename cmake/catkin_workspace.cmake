@@ -1,3 +1,12 @@
+#
+#   `No parameters.`
+#
+#   Called only in catkin's ``toplevel.cmake``, normally symlinked to
+#   from the workspace level directory (which contains multiple
+#   stacks).  This provokes the traversal of the stack directories
+#   based on the dependencies specified in the ``build_depends`` field of
+#   their respective ``stack.xml`` files.
+#
 function(catkin_workspace)
   debug_message(10 "catkin_workspace() called in file '${CMAKE_CURRENT_LIST_FILE}'")
 

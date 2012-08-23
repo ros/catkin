@@ -1,5 +1,15 @@
-# macro to ensure that ${PROJECT_NAME}_CACHE gets set in a higher scope
-# where we can check it later
+#   macro to ensure that ${PROJECT_NAME}_CACHE gets set in a higher scope
+#   where we can check it later
+#
+#   `Internal use.`
+#
+#   :param CACHENAME: Name of cache.
+#   :param [args]:    Command to be appended to cache file.
+#
+#   Use this when you want to append to a file that is recreated at
+#   each cmake run.  ``CACHENAME`` need not be globally unique.  File
+#   will be located in the ``PROJECT_BINARY_DIR`` cmake files directory
+#   (`CMakeFiles`) as ``${PROJECT_NAME}.${CACHENAME}``.
 macro(append_test_to_cache CACHENAME)
   set(cachefile ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}.${CACHENAME})
   if(NOT ${PROJECT_NAME}_CACHE)
