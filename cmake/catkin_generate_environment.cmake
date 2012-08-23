@@ -25,6 +25,7 @@ function(catkin_generate_environment)
     configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
       ${catkin_BUILD_PREFIX}/env.bat)
     # generate setup
+    set(CURRENT_WORKSPACE ${catkin_BUILD_PREFIX};${CMAKE_SOURCE_DIR})
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.bat.em

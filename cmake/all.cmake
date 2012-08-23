@@ -45,12 +45,12 @@ foreach(filename
     catkin_workspace
     debug_message
     em_expand
+    python # defines PYTHON_EXECUTABLE, required by empy
     empy
     find_program_required
     install_matching_to_share
     list_append_unique
     parse_arguments
-    python
     safe_execute_process
     stamp
     platform/lsb
