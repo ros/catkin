@@ -63,28 +63,6 @@ Catkin cmake macro reference
    ``setup.py`` is interrogated by catkin and used during
    installation.  See :ref:`setup_dot_py_handling`.
 
-.. cmake:macro:: catkin_stack()
-
-   `Required for all stacks.  No parameters.`
-
-   Reads the :ref:`stack.xml` from the current source dir and makes
-   the version number available to cmake via ``stackname_VERSION``;
-   does the same for other fields in the `stack.xml`.  Also sets
-   ``CATKIN_CURRENT_STACK``.  You must call `catkin_stack()` once
-   in each stack's CMakeLists.txt, before any calls to `catkin_project()`,
-   to ensure that auto-generated pkg-config and CMake files get correct
-   version information.
-
-.. cmake:macro:: catkin_workspace()
-
-   `No parameters.`
-
-   Called only in catkin's ``toplevel.cmake``, normally symlinked to
-   from the workspace level directory (which contains multiple
-   stacks).  This provokes the traversal of the stack directories
-   based on the dependencies specified in the ``build_depends`` field of
-   their respective ``stack.xml`` files.
-
 Documentation Macros
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -110,78 +88,6 @@ Documentation Macros
    ``*-sphinx-deploy``  targets which rsync  the documentation  to the
    provided  location  (value  may  contain ``user@``:  it  is  passed
    directly to cmake)
-
-
-Testing macros
-^^^^^^^^^^^^^^
-
-.. cmake:macro:: initialize_tests()
-
-   Initialize.  Tests.
-
-.. cmake:macro:: append_test_to_cache(CACHENAME [args])
-
-   `Internal use.`
-
-   :param CACHENAME: Name of cache.
-   :param [args]:    Command to be appended to cache file.
-
-   Use this when you want to append to a file that is recreated at
-   each cmake run.  ``CACHENAME`` need not be globally unique.  File
-   will be located in the ``PROJECT_BINARY_DIR`` cmake files directory
-   (`CMakeFiles`) as ``${PROJECT_NAME}.${CACHENAME}``.
-
-.. cmake:macro:: add_pyunit(FILE)
-
-   :param FILE: name of pyunit test file
-
-   Add file to test list and run under `rosunit` at testing time.
-
-
-.. cmake:macro:: add_gtest(EXE FILES [parameters])
-
-   :param EXE: executable name
-   :param FILES: list of gtest .cpp files
-   :param TIMEOUT: The timeout in seconds (defaults to 60s)
-   :param WORKING_DIRECTORY: The working directory
-
-   Add an executable `EXE` build from `FILES` and link to gtest.  Run under
-   `rosunit` when test target is built.
-
-
-Convenience macros
-^^^^^^^^^^^^^^^^^^
-
-.. cmake:macro:: install_matching_to_share(globexpr)
-
-   :param globexpr: Glob expression (shell style)
-
-   For each file `F` in subdirectories of ``CMAKE_CURRENT_SOURCE_DIR``
-   that (recursively) match globbing expression `globexpr`, install
-   `F` to ``share/P/F``, where ``P`` is the name of the parent
-   directory of `F`
-
-   .. rubric:: Example
-
-   For a directory containing::
-
-     src/
-       CMakeLists.txt
-       foo/
-         bar.txt
-       shimmy/
-         baz/
-           bam.txt
-
-   A call to ``install_matching_to_share(b??.txt)`` in
-   ``src/CMakeLists.txt`` will create an installation of::
-
-     <CMAKE_INSTALL_PREFIX>/
-       share/
-         foo/
-           bar.txt
-         baz/
-           bam.txt
 
 
 .. cmake:macro:: catkin_add_env_hooks(fileprefix SHELLS shell1 shell2...)
@@ -214,10 +120,5 @@ Convenience macros
    the event of collision.
 
 
-.. cmake:macro:: stamp(filepath)
 
-   :param filepath:  file name
 
-   Use ``configure_file`` to generate a file ``filepath.stamp`` hidden
-   somewhere in the build tree.  This will cause cmake to rebuild its
-   cache when ``filepath`` is modified.
