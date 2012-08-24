@@ -56,10 +56,10 @@ foreach(filename
     platform/lsb
     platform/ubuntu
     platform/windows
-    test/append_test_to_cache
     test/download_test_data
     test/gtest
     test/nosetests
+    test/tests
     tools/libraries
     tools/rt
 
@@ -89,5 +89,3 @@ foreach(filename
   )
   include(${catkin_EXTRAS_DIR}/${filename}.cmake)
 endforeach()
-
-include(${catkin_GEN_EXTRAS_DIR}/tests.cmake)

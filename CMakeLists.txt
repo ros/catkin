@@ -5,24 +5,6 @@ project(catkin)
 # the following lines must be the same as in catkin/cmake/catkin-config.cmake.in
 set(catkin_BUILD_PREFIX ${CMAKE_BINARY_DIR}/buildspace CACHE PATH "catkin buildspace")
 set(catkin_EXTRAS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake CACHE PATH "catkin extras")
-set(catkin_GEN_EXTRAS_DIR ${catkin_BUILD_PREFIX}/share/catkin/cmake CACHE PATH "catkin generated extras")
-
-# generate tests.cmake for buildspace
-set(BUILDSPACE TRUE)
-set(INSTALLSPACE FALSE)
-configure_file(cmake/test/tests.cmake.in
-  ${catkin_BUILD_PREFIX}/share/catkin/cmake/tests.cmake
-  @ONLY)
-
-# generate and install tests.cmake for installspace
-set(BUILDSPACE FALSE)
-set(INSTALLSPACE TRUE)
-configure_file(cmake/test/tests.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/tests.cmake
-  @ONLY)
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/tests.cmake
-  DESTINATION share/catkin/cmake)
 
 include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
 
@@ -41,8 +23,7 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/bin)
 install(DIRECTORY cmake
   DESTINATION share/catkin
   USE_SOURCE_PERMISSIONS
-  PATTERN "catkinConfig.cmake.in" EXCLUDE
-  PATTERN "test/tests.cmake.in" EXCLUDE)
+  PATTERN "catkinConfig.cmake.in" EXCLUDE)
 
 # XXX HACK so that eigen can be found if catkin is in the
 #workspace... this is very bad that catkin knows about eigen...
@@ -55,4 +36,4 @@ catkin_python_setup()
 # XXX reenable later
 #stamp(cmake/stack_get.py)
 
-add_nosetests(${CMAKE_CURRENT_SOURCE_DIR})
+add_nosetests(test)

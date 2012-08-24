@@ -37,10 +37,6 @@ function(add_gtest exe)
   if(_gtest_TIMEOUT)
     message(WARNING "TIMEOUT argument to add_gtest() is ignored")
   endif()
-  if(_gtest_WORKING_DIRECTORY)
-    set(_chdir_prefix "bash -c \"cd ${_gtest_WORKING_DIRECTORY} && ")
-    set(_chdir_suffix "\"")
-  endif()
 
   # create the executable, with basic + gtest build flags
   include_directories(${GTEST_INCLUDE_DIRS})
@@ -53,10 +49,10 @@ function(add_gtest exe)
 
   # sanitize test name to be used as a legal target name
   string(REPLACE "/" "_" _testname ${exe})
+  # XXX we DONT use rosunit to call the executable to get process control, #1629, #3112
   get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
-  # We use rosunit to call the executable to get process control, #1629, #3112
-  append_test_to_cache(catkin-tests "${_chdir_prefix}${_exe_path}/${exe} --gtest_output=xml:${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${_testname}.xml${_chdir_suffix}")
-  append_test_to_cache(catkin-tests "${CHECK_TEST_RAN_EXE} ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${_testname}.xml")
+  set(cmd "${_exe_path}/${exe} --gtest_output=xml:${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${_testname}.xml")
+  catkin_run_tests_target("gtest" ${_testname} "gtest-${_testname}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_gtest_WORKING_DIRECTORY})
 endfunction()
 
 if(_CATKIN_GTEST_SRC_FOUND)

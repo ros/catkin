@@ -20,7 +20,6 @@ if("@PKG_BUILDSPACE@" STREQUAL "TRUE")
 else()
   set(catkin_EXTRAS_DIR @PKG_CMAKE_DIR@)
 endif()
-set(catkin_GEN_EXTRAS_DIR @PKG_CMAKE_DIR@)
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
