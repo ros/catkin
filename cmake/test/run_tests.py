@@ -6,8 +6,6 @@ import os
 import subprocess
 from xml.etree.ElementTree import ElementTree
 
-print('run_tests:', os.environ['ROS_PACKAGE_PATH'])
-
 parser = argparse.ArgumentParser(description='Runs the test command passed as an argument and verifies that the expected result file has been generated.')
 parser.add_argument('command', nargs='+', help='The test command to execute')
 parser.add_argument('--results', help='The path to the xunit result file')
