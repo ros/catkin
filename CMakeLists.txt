@@ -8,9 +8,6 @@ set(catkin_EXTRAS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake CACHE PATH "catkin extra
 
 include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
 
-# add additional environment hooks
-catkin_add_env_hooks(05.catkin-test-results SHELLS bat sh DIRECTORY ${catkin_EXTRAS_DIR}/env-hooks)
-
 # undefine CATKIN_CURRENT_STACK since it might be set in the cache from a previous build
 set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
 

@@ -84,6 +84,9 @@ else()
   set(CATKIN_ENV ${catkin_BUILD_PREFIX}/env.bat CACHE INTERNAL "catkin environment")
 endif()
 
+# add additional environment hooks
+catkin_add_env_hooks(05.catkin-test-results SHELLS bat sh DIRECTORY ${catkin_EXTRAS_DIR}/env-hooks)
+
 foreach(filename
     catkin_python_setup # requires stamp and environment files
   )
