@@ -4,7 +4,9 @@ from __future__ import print_function
 import argparse
 import os
 import subprocess
-from xml.etree.ElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree, ParseError
+
+from catkin.tidy_xml import tidy_xml
 
 parser = argparse.ArgumentParser(description='Runs the test command passed as an argument and verifies that the expected result file has been generated.')
 parser.add_argument('command', nargs='+', help='The test command to execute')
@@ -20,12 +22,15 @@ print('-- run_tests.py: verify result "%s"' % args.results)
 
 if os.path.exists(args.results):
     # if result file exists ensure that it contains valid xml
-
     try:
         root = ElementTree(None, args.results)
-        print(root)
-    except Exception as e:
-        print('Invalid XML in result file "%s"' % args.results)
+    except ParseError as e:
+        #print('Invalid XML in result file "%s"' % args.results)
+        tidy_xml(args.results)
+        try:
+            root = ElementTree(None, args.results)
+        except ParseError as e:
+            print('Invalid XML in result file "%s" (even after trying to tidy it) ' % args.results)
 else:
     # if result file does not exist create placeholder which indicates failure
     placeholder = os.path.join(os.path.dirname(args.results), 'MISSING-%s' % os.path.basename(args.results))
