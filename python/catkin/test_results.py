@@ -19,13 +19,17 @@ def test_results(test_results_dir):
         dirnames[:] = [d for d in dirnames if not d.startswith('.')]
         for filename in [f for f in filenames if f.endswith('.xml')]:
             filename_abs = os.path.join(dirpath, filename)
-            num_tests, num_errors, num_failures = read_junit(filename_abs)
             name = filename_abs[len(test_results_dir) + 1:]
+            try:
+                num_tests, num_errors, num_failures = read_junit(filename_abs)
+            except Exception as e:
+                print('Skipping "%s": %s' % (name, str(e)))
+                continue
             results[name] = (num_tests, num_errors, num_failures)
     return results
 
 
-def print_summary(results, show_stable=True, show_unstable=True):
+def print_summary(results, show_stable=False, show_unstable=True):
     sum_tests = sum_errors = sum_failures = 0
     for name in sorted(results.keys()):
         (num_tests, num_errors, num_failures) = results[name]
