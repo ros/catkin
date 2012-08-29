@@ -14,17 +14,17 @@ set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
 catkin_stack()
 catkin_project(catkin)
 
-# for backward compatibility we provide rosConfig(-version).cmake files
-file(COPY cmake/rosConfig.cmake
-  DESTINATION ${catkin_BUILD_PREFIX}/share/catkin/cmake
+# for backward compatibility we provide ROSConfig(-version).cmake files
+file(COPY cmake/ROSConfig.cmake
+  DESTINATION ${catkin_BUILD_PREFIX}/share/ros/cmake
 )
 set(PROJECT_VERSION ${catkin_VERSION})
 configure_file(${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in
-  ${catkin_BUILD_PREFIX}/share/catkin/cmake/rosConfig-version.cmake
+  ${catkin_BUILD_PREFIX}/share/ros/cmake/ROSConfig-version.cmake
   @ONLY
 )
-install(FILES ${catkin_BUILD_PREFIX}/share/catkin/cmake/rosConfig.cmake ${catkin_BUILD_PREFIX}/share/catkin/cmake/rosConfig-version.cmake
-  DESTINATION share/catkin/cmake
+install(FILES ${catkin_BUILD_PREFIX}/share/catkin/cmake/ROSConfig.cmake ${catkin_BUILD_PREFIX}/share/catkin/cmake/ROSConfig-version.cmake
+  DESTINATION share/ros/cmake
 )
 
 
