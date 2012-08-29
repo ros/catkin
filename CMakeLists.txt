@@ -23,7 +23,7 @@ configure_file(${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in
   ${catkin_BUILD_PREFIX}/share/ros/cmake/ROSConfig-version.cmake
   @ONLY
 )
-install(FILES ${catkin_BUILD_PREFIX}/share/catkin/cmake/ROSConfig.cmake ${catkin_BUILD_PREFIX}/share/catkin/cmake/ROSConfig-version.cmake
+install(FILES ${catkin_BUILD_PREFIX}/share/ros/cmake/ROSConfig.cmake ${catkin_BUILD_PREFIX}/share/ros/cmake/ROSConfig-version.cmake
   DESTINATION share/ros/cmake
 )
 
