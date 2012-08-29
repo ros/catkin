@@ -35,10 +35,10 @@ Rosinstall it.  You don't want it built, use ``-n``, like this::
 *Don't use the setup.bash/sh file that rosinstall generates.  Catkin will generate one for you later*.
 
 There will be lots of output.  Currently you need a toplevel
-``CMakeLists.txt``, make a symlink to ``catkin/toplevel.cmake``::
+``CMakeLists.txt``, make a symlink to ``catkin/cmake/toplevel.cmake``::
 
   % cd src
-  % ln -s catkin/toplevel.cmake CMakeLists.txt
+  % ln -s catkin/cmake/toplevel.cmake CMakeLists.txt
   % ls
   catkin/          common_msgs/  genmsg/	genpybindings/	ros_comm/     setup.bash  setup.zsh
   CMakeLists.txt@  gencpp/       genpy/	        ros/		roscpp_core/  setup.sh	  std_msgs/
