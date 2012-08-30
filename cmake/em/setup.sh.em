@@ -68,7 +68,7 @@ if [ $NORMAL_MODE -eq 1 ]; then
   if [ $IS_DARWIN -eq 0 ]; then
     export LD_LIBRARY_PATH=$($DIRNAME/setup.py --remove --name LD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")
   else
-    export DYLD_LIBRARY_PATHPATH=$($DIRNAME/setup.py --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")
+    export DYLD_LIBRARY_PATH=$($DIRNAME/setup.py --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")
   fi
   export CMAKE_PREFIX_PATH=$($DIRNAME/setup.py --remove --name CMAKE_PREFIX_PATH --value "$CMAKE_PREFIX_PATH_dir")
   export PKG_CONFIG_PATH=$($DIRNAME/setup.py --remove --name PKG_CONFIG_PATH --value "$PKG_CONFIG_PATH_dir")
