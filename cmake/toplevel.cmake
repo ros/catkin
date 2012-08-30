@@ -14,7 +14,6 @@ foreach(workspace $ENV{CATKIN_WORKSPACES})
     list(APPEND CMAKE_PREFIX_PATH ${workspace})
   endif()
 endforeach()
-list(INSERT CMAKE_PREFIX_PATH 0 ${CMAKE_BINARY_DIR}/buildspace)
 
 # include catkin directly or via find_package()
 if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/catkin)

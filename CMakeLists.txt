@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 2.8)
 
 project(catkin)
 
-# the following lines must be the same as in catkin/cmake/catkin-config.cmake.in
+# the following lines must be the same as in catkin/cmake/catkinConfig.cmake.in
 set(catkin_BUILD_PREFIX ${CMAKE_BINARY_DIR}/buildspace CACHE PATH "catkin buildspace")
 set(catkin_EXTRAS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake CACHE PATH "catkin extras")
+list(INSERT CMAKE_PREFIX_PATH 0 ${CMAKE_BINARY_DIR}/buildspace)
 
 include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
 

@@ -20,6 +20,8 @@ if("@PKG_BUILDSPACE@" STREQUAL "TRUE")
 else()
   set(catkin_EXTRAS_DIR @PKG_CMAKE_DIR@)
 endif()
+# this line can not be moved to the toplevel.cmake since buildspace must be on prefix path when not using a workspace
+list(INSERT CMAKE_PREFIX_PATH 0 ${CMAKE_BINARY_DIR}/buildspace)
 
 include(${catkin_EXTRAS_DIR}/all.cmake)
 
