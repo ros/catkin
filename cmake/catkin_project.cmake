@@ -39,20 +39,21 @@ function(catkin_project catkin_project_name)
   set(PKG_INSTALLSPACE FALSE)
 
   set(PROJECT_SPACE_DIR ${catkin_BUILD_PREFIX})
+  set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
 
-  # absolute path to include dirs
-  set(PROJECT_RELATIVE_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
-  # validate that include dirs are existing folders relative to projects source
-  set(PROJECT_INCLUDE_DIRS "")
-  foreach(relative_include ${PROJECT_RELATIVE_INCLUDE_DIRS})
-    set(absolute_include ${CMAKE_CURRENT_SOURCE_DIR}/${relative_include})
-    if(NOT EXISTS ${absolute_include})
-      message(FATAL_ERROR "catkin_project() include path not found: ${absolute_include}")
+  # absolute path to include dirs and validate that they are existing either absolute or relative to projects source
+  set(PROJECT_ABSOLUTE_INCLUDE_DIRS "")
+  foreach(idir ${PROJECT_INCLUDE_DIRS})
+    if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
+      set(include ${idir})
+    elseif(IS_DIRECTORY ${PKG_INCLUDE_PREFIX}/${idir})
+      set(include ${PKG_INCLUDE_PREFIX}/${idir})
+    else()
+      message(FATAL_ERROR "catkin_project() include dir '${idir}' is neither an absolute directory nor exists relative to '${CMAKE_CURRENT_SOURCE_DIR}'")
     endif()
-    list(APPEND PROJECT_INCLUDE_DIRS ${absolute_include})
+    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${include})
   endforeach()
 
-  set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
   list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
@@ -100,9 +101,8 @@ function(catkin_project catkin_project_name)
   set(PKG_INSTALLSPACE TRUE)
 
   set(PROJECT_SPACE_DIR ${CMAKE_INSTALL_PREFIX})
-  set(PROJECT_INCLUDE_DIRS ${PROJECT_SPACE_DIR}/include)
+  set(PKG_INCLUDE_PREFIX ${PROJECT_SPACE_DIR})
 
-  set(PKG_INCLUDE_PREFIX "")  # not used in installspace
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
   list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
