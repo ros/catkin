@@ -6,6 +6,7 @@ project(catkin)
 set(catkin_BUILD_PREFIX ${CMAKE_BINARY_DIR}/buildspace CACHE PATH "catkin buildspace")
 set(catkin_EXTRAS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake CACHE PATH "catkin extras")
 list(INSERT CMAKE_PREFIX_PATH 0 ${CMAKE_BINARY_DIR}/buildspace)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} PARENT_SCOPE)
 
 include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
 
@@ -27,7 +28,6 @@ configure_file(${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in
 install(FILES ${catkin_BUILD_PREFIX}/share/ros/cmake/ROSConfig.cmake ${catkin_BUILD_PREFIX}/share/ros/cmake/ROSConfig-version.cmake
   DESTINATION share/ros/cmake
 )
-
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/bin)
 

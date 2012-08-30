@@ -21,8 +21,7 @@ function(catkin_workspace)
   configure_shared_library_build_settings()
 
   # add include folder from all workspaces
-  foreach(workspace $ENV{CATKIN_WORKSPACES})
-    string(REGEX REPLACE ":.*" "" workspace ${workspace})
+  foreach(workspace ${CATKIN_WORKSPACES})
     include_directories(${workspace}/include)
   endforeach()
   include_directories(BEFORE ${catkin_BUILD_PREFIX}/include)

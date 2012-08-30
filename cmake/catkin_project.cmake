@@ -26,8 +26,7 @@ function(catkin_project catkin_project_name)
 
   # get library paths for all workspaces
   set(lib_paths "")
-  foreach(workspace $ENV{CATKIN_WORKSPACES})
-    string(REGEX REPLACE ":.*" "" workspace ${workspace})
+  foreach(workspace ${CATKIN_WORKSPACES})
     list_append_unique(lib_paths ${workspace}/lib)
   endforeach()
 
@@ -102,6 +101,12 @@ function(catkin_project catkin_project_name)
 
   set(PROJECT_SPACE_DIR ${CMAKE_INSTALL_PREFIX})
   set(PKG_INCLUDE_PREFIX ${PROJECT_SPACE_DIR})
+
+  # absolute path to include dir under install prefix if any include dir is set
+  set(PROJECT_ABSOLUTE_INCLUDE_DIRS "")
+  if(${PROJECT_INCLUDE_DIRS})
+    set(PROJECT_ABSOLUTE_INCLUDE_DIRS ${PKG_INCLUDE_PREFIX}/include)
+  endif()
 
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
