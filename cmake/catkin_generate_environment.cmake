@@ -41,7 +41,7 @@ function(catkin_generate_environment)
   # installspace
   set(SETUP_DIR ${CMAKE_INSTALL_PREFIX})
   set(CURRENT_WORKSPACE ${CMAKE_INSTALL_PREFIX})
-  if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+  if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
     # install setup.py
     install(PROGRAMS
       ${catkin_EXTRAS_DIR}/templates/setup.py
@@ -54,7 +54,7 @@ function(catkin_generate_environment)
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
       @ONLY)
-    if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+    if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
       install(PROGRAMS
         ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
         DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -64,7 +64,7 @@ function(catkin_generate_environment)
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.installspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh)
-    if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+    if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
       install(FILES
         ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh
         DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -73,7 +73,7 @@ function(catkin_generate_environment)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
         ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell}
         @ONLY)
-      if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+      if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
         install(FILES
           ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell}
           DESTINATION ${CMAKE_INSTALL_PREFIX})
