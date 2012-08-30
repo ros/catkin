@@ -1,5 +1,5 @@
 function(catkin_add_env_hooks ARG_ENV_HOOK)
-  parse_arguments(ARG "DIRECTORY;SHELLS" "" ${ARGN})
+  parse_arguments(ARG "DIRECTORY;SHELLS" "SKIP_INSTALL" ${ARGN})
 
   # create directory if necessary
   if(NOT IS_DIRECTORY ${catkin_BUILD_PREFIX}/etc/catkin/profile.d)
@@ -11,24 +11,23 @@ function(catkin_add_env_hooks ARG_ENV_HOOK)
   endif()
 
   foreach(shell ${ARG_SHELLS})
-    _catkin_add_env_hooks(${ARG_DIRECTORY} ${ARG_ENV_HOOK}.${shell})
+    set(ENV_HOOK ${ARG_ENV_HOOK}.${shell})
+    assert_file_exists(${ARG_DIRECTORY}/${ENV_HOOK}.in "User-supplied environment file '${ARG_DIRECTORY}/${ENV_HOOK}.in' missing")
+
+    # generate environment hook for buildspace
+    set(ENV_BUILDSPACE true)
+    set(ENV_INSTALLSPACE false)
+    configure_file(${ARG_DIRECTORY}/${ENV_HOOK}.in
+      ${catkin_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
+
+    # generate and install environment hook for installspace
+    set(ENV_BUILDSPACE false)
+    set(ENV_INSTALLSPACE true)
+    configure_file(${ARG_DIRECTORY}/${ENV_HOOK}.in
+      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${ENV_HOOK})
+    if(NOT ${ARG_SKIP_INSTALL})
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${ENV_HOOK}
+        DESTINATION etc/catkin/profile.d)
+    endif()
   endforeach()
-endfunction()
-
-function(_catkin_add_env_hooks ENV_HOOK_DIR ENV_HOOK)
-  assert_file_exists(${ENV_HOOK_DIR}/${ENV_HOOK}.in "User-supplied environment file '${ENV_HOOK_DIR}/${ENV_HOOK}.in' missing")
-
-  # generate environment hook for buildspace
-  set(ENV_BUILDSPACE true)
-  set(ENV_INSTALLSPACE false)
-  configure_file(${ENV_HOOK_DIR}/${ENV_HOOK}.in
-    ${catkin_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
-
-  # generate and install environment hook for installspace
-  set(ENV_BUILDSPACE false)
-  set(ENV_INSTALLSPACE true)
-  configure_file(${ENV_HOOK_DIR}/${ENV_HOOK}.in
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${ENV_HOOK})
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${ENV_HOOK}
-    DESTINATION etc/catkin/profile.d)
 endfunction()
