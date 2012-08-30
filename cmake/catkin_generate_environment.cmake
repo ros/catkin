@@ -41,10 +41,12 @@ function(catkin_generate_environment)
   # installspace
   set(SETUP_DIR ${CMAKE_INSTALL_PREFIX})
   set(CURRENT_WORKSPACE ${CMAKE_INSTALL_PREFIX})
-  # install setup.py
-  install(PROGRAMS
-    ${catkin_EXTRAS_DIR}/templates/setup.py
-    DESTINATION ${CMAKE_INSTALL_PREFIX})
+  if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+    # install setup.py
+    install(PROGRAMS
+      ${catkin_EXTRAS_DIR}/templates/setup.py
+      DESTINATION ${CMAKE_INSTALL_PREFIX})
+  endif()
 
   if(NOT MSVC)
     # non-windows
@@ -52,24 +54,30 @@ function(catkin_generate_environment)
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
       @ONLY)
-    install(PROGRAMS
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
-      DESTINATION ${CMAKE_INSTALL_PREFIX})
+    if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+      install(PROGRAMS
+        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+    endif()
     # generate and install setup for various shells
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.installspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh)
-    install(FILES
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh
-      DESTINATION ${CMAKE_INSTALL_PREFIX})
+    if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+      install(FILES
+        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+    endif()
     foreach(shell bash zsh)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
         ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell}
         @ONLY)
-      install(FILES
-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell}
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
+      if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+        install(FILES
+          ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell}
+          DESTINATION ${CMAKE_INSTALL_PREFIX})
+      endif()
     endforeach()
 
   else()
