@@ -1,9 +1,10 @@
 function(catkin_generate_environment)
-  set(CATKIN_WORKSPACES $ENV{CATKIN_WORKSPACES})
-
   # buildspace
   set(SETUP_DIR ${catkin_BUILD_PREFIX})
   set(CURRENT_WORKSPACE ${catkin_BUILD_PREFIX}:${CMAKE_SOURCE_DIR})
+
+  # create workspace marker
+  file(WRITE ${catkin_BUILD_PREFIX}/CATKIN_WORKSPACE "")
   # copy setup.py
   file(COPY ${catkin_EXTRAS_DIR}/templates/setup.py
     DESTINATION ${catkin_BUILD_PREFIX})
@@ -41,7 +42,10 @@ function(catkin_generate_environment)
   # installspace
   set(SETUP_DIR ${CMAKE_INSTALL_PREFIX})
   set(CURRENT_WORKSPACE ${CMAKE_INSTALL_PREFIX})
+
   if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
+    # create workspace marker
+    file(WRITE ${CMAKE_INSTALL_PREFIX}/CATKIN_WORKSPACE "")
     # install setup.py
     install(PROGRAMS
       ${catkin_EXTRAS_DIR}/templates/setup.py
