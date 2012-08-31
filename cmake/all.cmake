@@ -60,11 +60,11 @@ foreach(filename
     test/gtest
     test/nosetests
     test/tests
+    tools/doxygen
     tools/libraries
     tools/rt
 
 #    rosbuild_compat
-#    tools/doxygen
 #    tools/threads
   )
   include(${catkin_EXTRAS_DIR}/${filename}.cmake)

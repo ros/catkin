@@ -45,10 +45,7 @@ else()
 endif()
 
 macro(catkin_doxygen TARGET_NAME SEARCH_DIRS)
-  #doxygen based docs
-  set(DOC_SEARCH_DIRS ${SEARCH_DIRS}
-  )
-  foreach(dir ${DOC_SEARCH_DIRS})
+  foreach(dir ${SEARCH_DIRS})
     file(GLOB_RECURSE _doc_sources ${dir}/*)
     list(APPEND doc_sources ${_doc_sources})
   endforeach()
@@ -68,4 +65,3 @@ macro(catkin_doxygen TARGET_NAME SEARCH_DIRS)
   add_dependencies(doxygen ${TARGET_NAME})
 
 endmacro()
-
