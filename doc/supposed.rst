@@ -4,13 +4,13 @@ Sketch of directory structure
 How things ought to look, starting at the outermost level of the
 source directory and moving down through stacks and packages.
 
-Workspace
----------
+Workspace (the ``src`` folder)
+------------------------------
 
 This is a directory containing multiple stacks, e.g. one constructed
 by ``rosinstall``.  This directory must contain a symlink::
 
-  CMakeLists.txt -> catkin/toplevel.cmake
+  CMakeLists.txt -> catkin/cmake/toplevel.cmake
 
 which triggers catkin's topological sort via inspection of ``stack.xml``.
 
@@ -85,7 +85,7 @@ The basic case (``ros_comm``)::
 
 .. rubric:: cmake_minimum_required
 
-The leading ``cmake_minimum_required`` is standard cmake.  Not
+The leading ``cmake_minimum_required`` is standard CMake.  Not
 necessary when building in a workspace (as the first CMakeLists.txt
 has already been read), but necessary when building e.g. in a
 packaging context.
@@ -99,7 +99,7 @@ Find the catkin package first and then call :cmake:macro:`catkin_stack`.
 The ``# optional find_package`` line is for anything that is common to
 all subprojects and not handled by catkin_stack.  Consider using
 `REQUIRED <standards.html#find-package-required>`_ whenever possible.
-This is standard cmake.
+This is standard CMake.
 
 .. rubric:: catkin_python_setup
 
@@ -121,13 +121,19 @@ Each package (as added by ``add_subdirectory`` in the stack) Will
 contain a ``CMakeLists.txt``.  Basic case::
 
   project(rostime)
+  find_package(catkin REQUIRED COMPONENTS cpp_common)
 
-  find_package(ROS REQUIRED COMPONENTS catkin cpp_common)
-  include_directories(${ROS_INCLUDE_DIRS})
+  catkin_project(${PROJECT_NAME}
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    )
 
-  find_package(Boost REQUIRED COMPONENTS date_time thread)
+  include_directories(${catkin_INCLUDE_DIRS})
+  link_directories(${catkin_INCLUDE_DIRS})
 
   include_directories(include)
+
+  find_package(Boost REQUIRED COMPONENTS date_time thread)
 
   set(${PROJECT_NAME}_SRCS
     src/duration.cpp
@@ -137,10 +143,10 @@ contain a ``CMakeLists.txt``.  Basic case::
 
   add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRCS})
 
-  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${ROS_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
   install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION lib/${PROJECT_NAME}
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     )
@@ -149,31 +155,29 @@ contain a ``CMakeLists.txt``.  Basic case::
     DESTINATION include
     )
 
-  catkin_project(${PROJECT_NAME}
-    INCLUDE_DIRS include
-    LIBRARIES ${PROJECT_NAME}
-    )
-
 
 .. rubric:: project
 
-This is standard cmake.
+This is standard CMake.
 
 .. rubric:: find_package [optional]
 
-``find_package`` of whatever is necessary.  This is standard cmake.
+``find_package`` of whatever is necessary.  This is standard CMake.
 Consider using `REQUIRED <standards.html#find-package-required>`_
 whenever possible.
-For ``ROS``, you may use the aggregate
-``find_package(ROS COMPONENTS ...)`` method, this will be more
+For ``catkin``, you may use the aggregate
+``find_package(catkin COMPONENTS ...)`` method, this will be more
 succinct than a bunch of individual ``find_package`` calls.
 
-*Yes*, you should specify ``catkin`` in this list of packages.  There
-may be users that do not build with catkin's macros but wish to use
-include/link flags for ROS libraries.  You may want to
-``find_package`` of stack-wide components up at the top level, and
-then find_package more specific components in the packages that use
-them.
+You may want to ``find_package`` of stack-wide components up at the
+top level, and then find_package more specific components in the
+packages that use them.
+
+.. rubric:: catkin_project
+
+:cmake:macro:`catkin_project` defines information dependent projects
+(i.e. include directories, libraries to link against and depending 
+projects).
 
 You will want to ``include_directories(${ROS_INCLUDE_DIRS})``
 and other folders where necessary.
@@ -186,13 +190,13 @@ line with `alphabetic order <standards.html#keep-lists-sorted>`_.
 .. rubric:: add_library
 
 Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
-project name.  This is standard cmake.  Explicitly use ``SHARED`` for
+project name.  This is standard CMake.  Explicitly use ``SHARED`` for
 building a shared library.
 
 .. rubric:: target_link_libraries
 
 Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
-project name.  This is standard cmake.  Explicitly link against all
+project name.  This is standard CMake.  Explicitly link against all
 necessary libraries, i.e. ``ROS_LIBRARIES``.
 
 .. rubric:: install
@@ -201,14 +205,3 @@ necessary libraries, i.e. ``ROS_LIBRARIES``.
 lib``, include directories in ``DESTINATION include``, and "private"
 stuff in ``share/${PROJECT_NAME}/``, i.e. private binaries thereunder
 in ``bin/``... whatever turns out to be compatible with rosbuild.
-
-.. rubric:: catkin_project
-
-:cmake:macro:`catkin_project` defines information dependent projects
-(i.e. include directories, libraries to link against and depending 
-projects).
-
-The ``VERSION`` argument is vestigial.
-
-
-
