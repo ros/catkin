@@ -29,6 +29,14 @@ install(FILES ${catkin_BUILD_PREFIX}/share/ros/cmake/ROSConfig.cmake ${catkin_BU
   DESTINATION share/ros/cmake
 )
 
+# for compatibility we provide eigen-config(-version).cmake files
+file(COPY cmake/Modules/eigen-config.cmake cmake/Modules/eigen-config-version.cmake
+  DESTINATION ${catkin_BUILD_PREFIX}/share/eigen/cmake
+)
+install(FILES cmake/Modules/eigen-config.cmake cmake/Modules/eigen-config-version.cmake
+  DESTINATION share/eigen/cmake
+)
+
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/bin)
 
 # install cmake files for catkin (except some files only used at build time of catkin)
