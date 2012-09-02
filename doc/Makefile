@@ -37,7 +37,7 @@ clean:
 	-rm -rf $(BUILDDIR)/*
 
 cmakeapi:
-	python generate_macros_rst.py -o macros2.rst
+	./generate_cmake_rst.py -o cmake.rst  ../cmake
 
 html: cmakeapi
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

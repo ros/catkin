@@ -6,6 +6,8 @@ cmake macros and associated code used to build some parts of
 `ROS <http://www.ros.org>`_ as of the
 `Fuerte <http://ros.org/wiki/fuerte>`_ release.
 
+This version of the documentation is specific to the `Groovy <http://ros.org/wiki/groovy>`_ release
+
 Code & tickets
 --------------
 
@@ -30,8 +32,7 @@ Contents
    supposed
    stack_xml
    layout
-   macros
-   macros2
+   cmake
    environment
    variables
    code_generation
@@ -104,7 +105,7 @@ compliant (or as close as we can get) filesystem under
 obeys ``DESTDIR`` for ease of packaging.  Projects specify what should
 be installed and where in the usual cmake fashion, via the
 ``install()`` macro.  Resources, assets, launchfiles, etc get
-installed to ``share/PKGNAME/``.
+installed using a set of destination variables (:ref:`variables`).
 
 
 Main trickery

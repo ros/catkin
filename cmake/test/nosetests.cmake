@@ -1,12 +1,17 @@
-find_program(NOSETESTS nosetests)
-if(NOT nosetests_path)
-  # retry with name including major version number
-  find_program(NOSETESTS nosetests2)
-endif()
-if(NOT NOSETESTS)
-  message(WARNING "nosetests not found, Python tests can not be run (try installing package 'python-nose')")
-endif()
-
+#
+# Add Python nosetests.
+# An executable is built with the name of the source file, linked against
+# GTest and added to the set of unit tests.
+#
+# The test can be executed by calling nosetests directly or using:
+# `` make run_tests_${PROJECT_NAME}_nosetests_${dir}``
+# (where slashs in the ``dir`` are replaced with underscores)
+#
+# :param dir: a relative or absolute directory to search for nosetests in
+# :param WORKING_DIRECTORY: the working directory when executing
+#  the tests.
+# :param TIMEOUT: the timeout for individual tests (default 60s).
+#
 function(add_nosetests dir)
   if(NOT NOSETESTS)
     message(STATUS "skipping nosetests(${dir}) in project '${PROJECT_NAME}'")
@@ -45,3 +50,12 @@ function(add_nosetests dir)
   set(cmd ${cmd} "${NOSETESTS} --process-timeout=${_nose_TIMEOUT} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/nosetests-${output_file_name}.xml${_covarg}")
   catkin_run_tests_target("nosetests" ${output_file_name} "nosetests-${output_file_name}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_nose_WORKING_DIRECTORY})
 endfunction()
+
+find_program(NOSETESTS nosetests)
+if(NOT nosetests_path)
+  # retry with name including major version number
+  find_program(NOSETESTS nosetests2)
+endif()
+if(NOT NOSETESTS)
+  message(WARNING "nosetests not found, Python tests can not be run (try installing package 'python-nose')")
+endif()

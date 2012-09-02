@@ -1,3 +1,59 @@
+#
+# It creates the CMake stuff necessary for ``find_package`` to work
+# (i.e. to be *found* by others that call ``find_package``) and
+# provide information about include directories, libraries,
+# further dependencies and CMake variables for dependent projects.
+#
+# Best practice is to call this macro early in your CMakeLists.txt,
+# immediately after calling ``project()`` and ``find_package(catkin REQUIRED)``.
+#
+# :param catkin_project_name: requires the same value as passed to
+#   CMake's ``project()`` (*may be vestigial*)
+# :param INCLUDE_DIRS: ``CMAKE_CURRENT_SOURCE_DIR``-relative paths to
+#   C/C++ includes
+# :param LIBRARIES: names of library targets that will appear in the
+#   ``catkin_LIBRARIES`` and ``${PROJECT_NAME}_LIBRARIES of other
+#   projects that search for you via ``find_package``.  Currently
+#   this will break if the logical target names are not the same as
+#   the installed names.
+# :param DEPENDS: The argument ``DEPENDS`` is used when client code
+#   finds us via ``find_package()``.  Each project listed will in
+#   turn be ``find_package``\ -ed and their ``INCLUDE_DIRS`` and
+#   ``LIBRARIES`` will be appended to ours.  Only catkin projects
+#   should be used where we can ensure that they are
+#   *find_packagable* and *package_configurable*.
+# :param CFG_EXTRAS: Any extra CMake stuff that should be accessible
+#   to users of the project.  This file should live in subdirectory
+#   ``cmake`` and have extension ``.in``.  It will be expanded by
+#   CMake's ``configure_file()`` and made available to clients in
+#   both the install and build spaces: be sure it works both ways.
+#   TODO: document which variables are available in these templates
+#   (boolean @PKG_BUILDSPACE@, boolean @PKG_INSTALLSPACE@).
+# :outvar PROJECT_INCLUDE_DESTINATION: set to
+#   ``include``.
+#   For use with CMake ``install()`` macro as destination argument.
+# :outvar PROJECT_LIB_DESTINATION: set to
+#   ``lib``.
+#   For use with CMake ``install()`` macro as destination argument.
+# :outvar PROJECT_LIBEXEC_DESTINATION: set to
+#   ``lib/${PROJECT_NAME}``.
+#   For use with CMake ``install()`` macro as destination argument.
+# :outvar PROJECT_PYTHON_DESTINATION: set to
+#   ``lib/python${PYTHON_VERSION_XDOTY}/${PYTHON_PACKAGES_DIR}/${PROJECT_NAME}``.
+#   For use with CMake ``install()`` macro as destination argument.
+# :outvar PROJECT_SHARE_DESTINATION: set to
+#   ``share/${PROJECT_NAME}``.
+#   For use with CMake ``install()`` macro as destination argument.
+#
+# Example:
+# ::
+#   catkin_project(proj
+#     INCLUDE_DIRS include
+#     LIBRARIES proj-one proj-two
+#     DEPENDS roscpp
+#     CFG_EXTRAS proj-extras.cmake
+#   )
+#
 function(catkin_project catkin_project_name)
   debug_message(10 "catkin_project(${catkin_project_name}) called in file ${CMAKE_CURRENT_LIST_FILE}")
 

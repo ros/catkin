@@ -1,4 +1,13 @@
-# optionally give relative path to setup.py file
+#
+# Creates forwarding python :term:`pkgutil` infrastructure that "points"
+# from the part of the build directory that holds :term:`generated
+# code` (python) back to the specified source directories that hold
+# :term:`static code`.
+#
+# In addition, this will provoke that the python distutils' file
+# ``setup.py`` is interrogated by catkin and used during
+# installation.  See :ref:`setup_dot_py_handling`.
+#
 function(catkin_python_setup)
   if(ARGN)
     message(FATAL_ERROR "catkin_python_setup() called with unused arguments: ${ARGN}")

@@ -26,7 +26,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-function(add_gtest exe)
+#
+# Add a GTest based test target.
+# An executable is built with the name of the source file, linked against
+# GTest and added to the set of unit tests.
+#
+# The test can be executed by calling the binary directly or using:
+# `` make run_tests_${PROJECT_NAME}_gtest_${sourcefile}``
+# (where slashs in ``sourcefile`` are replaced with underscores)
+#
+# :param sourcefile: the cpp file containing the GTest test functions
+# :param WORKING_DIRECTORY: the working directory when executing
+#  the executable.
+# :param TIMEOUT: is currently not supported.
+#
+function(add_gtest sourcefile)
   if(NOT GTEST_FOUND)
     message(STATUS "skipping gtest '${exe}' in project '${PROJECT_NAME}'")
     return()

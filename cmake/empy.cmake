@@ -1,6 +1,5 @@
-# find_python_module() cribbed from
-# http://www.cmake.org/pipermail/cmake/2011-January/041666.html
 function(find_python_module module)
+  # cribbed from http://www.cmake.org/pipermail/cmake/2011-January/041666.html
   string(TOUPPER ${module} module_upper)
   if(NOT PY_${module_upper})
     if(ARGC GREATER 1 AND ARGV1 STREQUAL "REQUIRED")

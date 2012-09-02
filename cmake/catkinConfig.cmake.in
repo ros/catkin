@@ -1,5 +1,14 @@
 # generated from catkin/cmake/catkin-config.cmake.in
 # which overlays the default template catkin/cmake/template/pkg-config.cmake.in
+#
+# :outvar catkin_INCLUDE_DIRS: contains the include dirs of all searched components.
+#    For use with CMake ``include_directories(${catkin_INCLUDE_DIRS})``.
+# :outvar catkin_LIBRARY_DIRS: contains the library dirs of all searched components.
+#    For use with CMake ``link_directories(${catkin_INCLUDE_DIRS})``.
+# :outvar catkin_LIBRARIES: contains the include dirs of all searched components.
+#    For use with CMake ``include_directories(${catkin_INCLUDE_DIRS})``.
+# :outvar <comp>_INCLUDE_DIRS/_LIBRARY_DIRS/_LIBRARY:
+#    contains the include dirs / library dirs / libraries of the searched component <comp>.
 
 # prevent usage with wrong case
 if(CATKIN_FIND_COMPONENTS OR CATKIN_FIND_REQUIRED OR CATKIN_FIND_QUIETLY)
