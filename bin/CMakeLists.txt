@@ -1,13 +1,13 @@
 # XXX reenable later
 set(programs
-  catkin-find
-  catkin-init-workspace
-  catkin-test-results
-  catkin-topological-order
+  catkin_find
+  catkin_init_workspace
+  catkin_stack_version
+  catkin_test_results
+  catkin_topological_order
+
   #catkin-build-debs-of-workspace
-  #catkin-bump-version
   #catkin-parse-stack
-  #catkin-version
   #catkin_install_parse
   #catkin_util.sh
   #git-catkin

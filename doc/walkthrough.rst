@@ -44,7 +44,7 @@ Then you need a toplevel ``CMakeLists.txt`` for the workspace, make a symlink to
 
 When catkin is installed you can use the following command to create the symlink::
 
-  % catkin-init-workspace src
+  % catkin_init_workspace src
 
 The ``src`` folder should now contain all checked out repositories::
 
