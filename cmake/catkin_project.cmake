@@ -74,9 +74,6 @@ function(catkin_project catkin_project_name)
     message(FATAL_ERROR "catkin_project() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
   endif()
 
-  # set project specific output directory for binaries
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib/${PROJECT_NAME} PARENT_SCOPE)
-
   # stack version provided by stack.cmake/xml
   set(PROJECT_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
 
@@ -217,4 +214,34 @@ function(catkin_project catkin_project_name)
     ${installable_cfg_extras}
     DESTINATION share/${PROJECT_NAME}/cmake
   )
+
+  #
+  # BUILD AND INSTALL DESTINATIONS
+  #
+
+  # set project specific output directory for libraries
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib PARENT_SCOPE)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib PARENT_SCOPE)
+  # set project specific output directory for binaries
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib/${PROJECT_NAME} PARENT_SCOPE)
+
+  # set project specific install destinations
+  set(PROJECT_INCLUDE_DESTINATION include PARENT_SCOPE)
+  set(PROJECT_LIB_DESTINATION lib PARENT_SCOPE)
+  set(PROJECT_LIBEXEC_DESTINATION lib/${PROJECT_NAME} PARENT_SCOPE)
+  set(PROJECT_PYTHON_DESTINATION ${PYTHON_INSTALL_DIR}/${PROJECT_NAME} PARENT_SCOPE)
+  set(PROJECT_SHARE_DESTINATION share/${PROJECT_NAME} PARENT_SCOPE)
+
+  # set global install destinations for core binaries
+  set(GLOBAL_BIN_DESTINATION bin PARENT_SCOPE)
+
+  # install manifest.xml
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/manifest.xml)
+    install(FILES manifest.xml
+      DESTINATION share/${PROJECT_NAME})
+  else()
+    if(NOT "${PROJECT_NAME}" STREQUAL "${CATKIN_CURRENT_STACK}")
+      message(WARNING "catkin_project(${PROJECT_NAME}) does not have a manifest.xml in '${CMAKE_CURRENT_SOURCE_DIR}', skipped installing it")
+    endif()
+  endif()
 endfunction()

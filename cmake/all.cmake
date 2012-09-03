@@ -48,7 +48,6 @@ foreach(filename
     python # defines PYTHON_EXECUTABLE, required by empy
     empy
     find_program_required
-    install_matching_to_share
     list_append_unique
     parse_arguments
     safe_execute_process
@@ -64,6 +63,7 @@ foreach(filename
     tools/libraries
     tools/rt
 
+#    install_matching_to_share
 #    rosbuild_compat
 #    tools/threads
   )

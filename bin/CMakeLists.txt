@@ -2,6 +2,7 @@
 set(programs
   catkin-find
   catkin-init-workspace
+  catkin-test-results
   catkin-topological-order
   #catkin-build-debs-of-workspace
   #catkin-bump-version
@@ -16,13 +17,13 @@ set(programs
 # install all programs
 install(PROGRAMS
   ${programs}
-  DESTINATION bin
+  DESTINATION ${GLOBAL_BIN_DESTINATION}
 )
 
 # generate relay-script for each program
 foreach(program ${programs})
   set(EXECUTABLE ${catkin_SOURCE_DIR}/bin/${program})
   configure_file(${catkin_EXTRAS_DIR}/templates/script.sh.in
-    ${catkin_BUILD_PREFIX}/bin/${program}
+    ${catkin_BUILD_PREFIX}/${GLOBAL_BIN_DESTINATION}/${program}
     @ONLY)
 endforeach()

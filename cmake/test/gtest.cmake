@@ -28,21 +28,21 @@
 
 #
 # Add a GTest based test target.
-# An executable is built with the name of the source file, linked against
-# GTest and added to the set of unit tests.
+# An executable target is created with all source files, it is linked
+# against GTest and added to the set of unit tests.
 #
 # The test can be executed by calling the binary directly or using:
-# `` make run_tests_${PROJECT_NAME}_gtest_${sourcefile}``
-# (where slashs in ``sourcefile`` are replaced with underscores)
+# `` make run_tests_${PROJECT_NAME}_gtest_${target}``
 #
-# :param sourcefile: the cpp file containing the GTest test functions
+# :param target: the name of the target
+# :param source_files: a list of source files used to build the test executable
 # :param WORKING_DIRECTORY: the working directory when executing
 #  the executable.
 # :param TIMEOUT: is currently not supported.
 #
-function(add_gtest sourcefile)
+function(add_gtest target)
   if(NOT GTEST_FOUND)
-    message(STATUS "skipping gtest '${exe}' in project '${PROJECT_NAME}'")
+    message(STATUS "skipping gtest '${target}' in project '${PROJECT_NAME}'")
     return()
   endif()
 
@@ -55,18 +55,16 @@ function(add_gtest sourcefile)
   # create the executable, with basic + gtest build flags
   include_directories(${GTEST_INCLUDE_DIRS})
   link_directories(${GTEST_LIBRARY_DIRS})
-  add_executable(${exe} EXCLUDE_FROM_ALL ${_gtest_DEFAULT_ARGS})
-  target_link_libraries(${exe} ${GTEST_LIBRARIES} ${THREADS_LIBRARY})
+  add_executable(${target} EXCLUDE_FROM_ALL ${_gtest_DEFAULT_ARGS})
+  target_link_libraries(${target} ${GTEST_LIBRARIES} ${THREADS_LIBRARY})
 
-  # make sure the executable is built before running tests
-  add_dependencies(tests ${exe})
+  # make sure the target is built before running tests
+  add_dependencies(tests ${target})
 
-  # sanitize test name to be used as a legal target name
-  string(REPLACE "/" "_" _testname ${exe})
   # XXX we DONT use rosunit to call the executable to get process control, #1629, #3112
-  get_target_property(_exe_path ${exe} RUNTIME_OUTPUT_DIRECTORY)
-  set(cmd "${_exe_path}/${exe} --gtest_output=xml:${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${_testname}.xml")
-  catkin_run_tests_target("gtest" ${_testname} "gtest-${_testname}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_gtest_WORKING_DIRECTORY})
+  get_target_property(_target_path ${target} RUNTIME_OUTPUT_DIRECTORY)
+  set(cmd "${_target_path}/${target} --gtest_output=xml:${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${target}.xml")
+  catkin_run_tests_target("gtest" ${target} "gtest-${target}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_gtest_WORKING_DIRECTORY})
 endfunction()
 
 if(_CATKIN_GTEST_SRC_FOUND)
