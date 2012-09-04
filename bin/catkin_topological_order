@@ -5,7 +5,12 @@ import argparse
 import os
 import sys
 
-from catkin.topological_order import topological_order
+try:
+    from catkin.topological_order import topological_order
+except ImportError:
+    # find the import relatively to make it work before installing catkin
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
+    from catkin.topological_order import topological_order
 
 parser = argparse.ArgumentParser(description='Outputs the catkin projects of a workspace in topological order.')
 parser.add_argument('workspace', nargs='?', default='.', help='The path to a workspace (default: .)')

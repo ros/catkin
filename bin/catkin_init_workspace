@@ -5,7 +5,12 @@ import argparse
 import os
 import sys
 
-from catkin.init_workspace import init_workspace
+try:
+    from catkin.init_workspace import init_workspace
+except ImportError:
+    # find the import relatively to make it work before installing catkin
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
+    from catkin.init_workspace import init_workspace
 
 parser = argparse.ArgumentParser(description='Initializes a catkin workspace by creating a top-level CMakeLists.txt.')
 parser.add_argument('workspace', nargs='?', default='.', help='The path to an existing folder (default: .)')
