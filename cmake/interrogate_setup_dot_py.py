@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import pprint, sys, os
+import os
+import pprint
+import sys
 
 # print("%s" % sys.argv)
 STACKNAME = sys.argv[1]
@@ -10,24 +12,24 @@ out = open(outfile, "w")
 #print("Interrogating setup.py for package %s into %s " % (STACKNAME, outfile),
 #      file=sys.stderr)
 
+
 def samefile(path1, path2):
     """
-    This is a cross-platform implementation for posixpath's 
-    os.path.samefile. 
+    This is a cross-platform implementation for posixpath's
+    os.path.samefile.
     """
     try:
         result = os.path.samefile(path1, path2)
-    except AttributeError: 
+    except AttributeError:
         # This is a rather naive implementation.
         # It will break except in the simplest of cases
         # but suffices for catkin on windows.
         result = os.path.normcase(os.path.normpath(path1)) == \
                  os.path.normcase(os.path.normpath(path2))
     return result
-        
-    
+
+
 def mysetup(*args, **kwargs):
-    global out
     if 'version' not in kwargs:
         print("""
     *** Unable to find 'version' in setup.py of %s
@@ -42,7 +44,7 @@ def mysetup(*args, **kwargs):
         raise RuntimeError(r'package_dir not in setup.py', file=sys.stderr)
 
     package_dir = kwargs['package_dir']
-    allprefix=package_dir.get('', None)
+    allprefix = package_dir.get('', None)
 
     pkgs = kwargs.get('packages', [])
 
@@ -56,7 +58,7 @@ def mysetup(*args, **kwargs):
             splits = pkg.split('.')
             # hack: ignore write-combining setup.py files for msg and srv
             # files
-            if len(splits) > 1 and splits[1] not in ['msg', 'srv']: 
+            if len(splits) > 1 and splits[1] not in ['msg', 'srv']:
                 top_level = splits[0]
                 top_level_dir = package_dir[top_level]
                 expected_dir = os.path.join(top_level_dir, os.path.join(*splits[1:]))
@@ -75,9 +77,12 @@ def mysetup(*args, **kwargs):
             resolved_pkgs += [package_dir[pkg]]
 
     print(r'set(%s_PACKAGES "%s")' % (STACKNAME, ';'.join(pkgs)), file=out)
-    print(r'set(%s_PACKAGE_DIRS "%s")' % (STACKNAME, ';'.join(resolved_pkgs).replace("\\","/")), file=out)
+    print(r'set(%s_PACKAGE_DIRS "%s")' % (STACKNAME, ';'.join(resolved_pkgs).replace("\\", "/")), file=out)
 
-class Dummy: pass
+
+class Dummy:
+    pass
+
 
 d = Dummy()
 setattr(d, 'setup', mysetup)
@@ -85,7 +90,7 @@ setattr(d, 'setup', mysetup)
 sys.modules['setuptools'] = d
 sys.modules['distutils.core'] = d
 
-# print("execcing %s" % sys.argv[2])
+# print("executing %s" % sys.argv[2])
 
 # be sure you're in the directory containing
 # setup.py so the sys.path manipulation works,
@@ -93,9 +98,3 @@ sys.modules['distutils.core'] = d
 os.chdir(os.path.dirname(os.path.abspath(sys.argv[2])))
 
 execfile(sys.argv[2])
-
-
-
-
-
-
