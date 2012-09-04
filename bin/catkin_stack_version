@@ -3,50 +3,36 @@
 from __future__ import print_function
 import argparse
 import os
-import re
 import sys
-from xml.etree.ElementTree import ElementTree
+
+try:
+    from catkin.stack_version import bump_version, get_version, update_version
+except ImportError:
+    # find the import relatively to make it work before installing catkin
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
+    from catkin.stack_version import bump_version, get_version, update_version
 
 parser = argparse.ArgumentParser(description='Show or bump the version number in stack.xml.')
 parser.add_argument('path', nargs='?', default='.', help='The path to the stack.xml (default: .)')
 parser.add_argument('--bump', choices=('major', 'minor', 'patch'), help='Which part of the version number to bump?')
 args = parser.parse_args()
 
-stack_path = os.path.join(args.path, 'stack.xml')
-if not os.path.exists(stack_path):
-    print('Could not find stack.xml in current folder.', file=sys.stderr)
-    sys.exit(1)
-
 try:
-    root = ElementTree(None, stack_path)
-    version = root.findtext('version')
+    version = get_version(args.path)
 except Exception as e:
-    print('Could not extract version from stack.xml:\n%s' % e, file=sys.stderr)
-    sys.exit(2)
+    print(str(e), file=sys.stderr)
+    sys.exit(1)
 
 # only print the version number
 if args.bump is None:
     print(version)
-    sys.exit(0)
 
-# bump the version number
-new_version = re.search('(\d+)\.(\d+)\.(\d+)', version).groups()
-new_version = [int(x) for x in new_version]
-# find the desired index
-idx = dict(major=0, minor=1, patch=2)[args.bump]
-# increment the desired part
-new_version[idx] += 1
-# reset all parts behind the bumped part
-new_version = new_version[:idx + 1] + [0 for x in new_version[idx + 1:]]
-new_version = '%d.%d.%d' % tuple(new_version)
-
-# write back modified stack.xml
-with open(stack_path, 'r') as f:
-    stack_str = f.read()
-with open(stack_path, 'w') as f:
-    new_stack_str, number_of_subs = re.subn('<version([^<>]*)>%s</version>' % re.escape(version), '<version\g<1>>%s</version>' % new_version, stack_str, 1)
-    if number_of_subs != 1:
-        print('Could not bump version number', file=sys.stderr)
-        sys.exit(3)
-    f.write(new_stack_str)
+else:
+    # bump the version number
+    try:
+        new_version = bump_version(version, args.bump)
+        update_version(args.path, new_version)
+    except Exception as e:
+        print(str(e), file=sys.stderr)
+        sys.exit(1)
     print('%s -> %s' % (version, new_version))
