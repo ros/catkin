@@ -3,8 +3,8 @@
 Handling of ``setup.py``
 ------------------------
 
-Used in build and installation.
+The setup.py file uses Python ``distutils`` or ``setuputils`` to describe the Python content of the stack.
 
-Any scripts listed in ``scripts`` will be symlinked to from
-:ref:`toplevel_bin`
+It is used during build to symlink all scripts listed in ``scripts`` to a folder in buildspace where they can be found and executed.
 
+Furthermore it is used to install the Python packages to the correct path under ``CMAKE_INSTALL_PREFIX``.

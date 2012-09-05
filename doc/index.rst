@@ -13,12 +13,12 @@ Code & tickets
 
 See 'issues' links for tickets.
 
-+---------------+------------------------------------------+
-|Catkin         |http://github.com/ros/catkin              |
-+---------------+------------------------------------------+
-|Catkinized ROS |http://github.com/ros                     |
-|Stacks         |                                          |
-+---------------+------------------------------------------+
++----------------+------------------------------+
+| Catkin         | http://github.com/ros/catkin |
++----------------+------------------------------+
+| Catkinized ROS | http://github.com/ros        |
+| Stacks         |                              |
++----------------+------------------------------+
 
 
 Contents
@@ -28,16 +28,16 @@ Contents
    :maxdepth: 1
 
    walkthrough
-   builddocs
    supposed
-   stack_xml
    layout
+   stack_xml
    cmake
    environment
    variables
    code_generation
    glossary
    rosbuild_migration
+   catkin_migration
 
 Evolving Documentation Snippets
 -------------------------------
@@ -48,6 +48,7 @@ Evolving Documentation Snippets
    find_package
    setup_dot_py
    standards
+   builddocs
 
 Design sketch
 -------------

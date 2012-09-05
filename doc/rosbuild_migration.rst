@@ -5,11 +5,11 @@ Migrating from rosbuild to catkin
 
 From Box Turtle to Fuerte, the ROS build system was `rosbuild
 <http://ros.org/wiki/rosbuild>`_.  In Fuerte, we introduced `catkin
-<http://ros.org/wiki/catkin>`_.  We aim to deprecate rosbuild in Groovy,
+<http://ros.org/wiki/catkin>`_.  We aim to deprecate rosbuild in the future,
 and encourage users to migrate their code from rosbuild to catkin.  We
-especially encourage maintainers of released ROS stacks to migrate as soon
-as possible, because the build farm that generates binary Debian packages
-from released ROS stacks will eventually be decommissioned.
+especially encourage maintainers of released ROS stacks to migrate soon,
+because the build farm that generates binary Debian packages
+from released ROS stacks will eventually be decommissioned in the future.
 
 Quick start guide
 .................
@@ -19,10 +19,10 @@ catkin are:
 
 1. Update ``stack.xml``...
 2. Create a top-level ``CMakeLists.txt`` for the stack...
-3. Delete any ``manifest.xml`` files:
+3. For each folder containing a ``manifest.xml`` file:
 
- a. Make each containing directory a CMake project...
- b. Combine ``rosdep`` keys from ``manifest.xml`` files into ``stack.xml`` as ``depends`` keys...
+ a. Create a CMake project containing a ``catkin_project(PACKAGE_NAME)`` invocation...
+ b. Combine ``rosdep`` keys from ``manifest.xml`` files into ``stack.xml`` as ``build_depends`` and ``depends`` keys...
 
 4. In each ``CMakeLists.txt``:
 
@@ -90,7 +90,7 @@ Main differences between rosbuild and catkin:
  - as a result: rosbuild implicitly adds compile and link flags based on package dependency information; catkin requires you to add them explicitly
 
 - rosbuild always does in-source builds; catkin supports both in-source and out-of-source builds (out-of-source is recommended)
-- rosbuild uses ``manifest.xml`` for per-package dependency information; catkin uses ``stack.xml`` for per-package dependency information
+- rosbuild uses ``manifest.xml`` for per-package dependency information; catkin uses ``stack.xml`` for per-stack dependency information
 - rosbuild use per-package dependency information to assemble compile and link flags; catkin uses per-stack dependency only to determine traversal order
 - rosbuild provides a ``make`` interface to each package; catkin provides a ``cmake`` interface to each stack
 
@@ -109,7 +109,7 @@ Detailed migration guide
   - ``rosbuild_remove_compile_flags(target removed_flags)`` -> ``set_target_properties(target PROPERTIES COMPILE_FLAGS new_flags)``
   - ``rosbuild_add_link_flags(target added_flags)`` -> ``set_target_properties(target PROPERTIES LINK_FLAGS new_flags)``
   - ``rosbuild_remove_link_flags(target removed_flags)`` -> ``set_target_properties(target PROPERTIES LINK_FLAGS new_flags)``
-  - ``rosbuild_add_boost_directories(); rosbuild_link_boost(target components)`` -> ``find_package(Boost COMPONENTS components); include_directories(${Boost_INCLUDE_DIRS}); target_link_libraries(target ${Boost_LIBRARIES})``
+  - ``rosbuild_add_boost_directories(); rosbuild_link_boost(target components)`` -> ``find_package(Boost REQUIRED COMPONENTS components); include_directories(${Boost_INCLUDE_DIRS}); target_link_libraries(target ${Boost_LIBRARIES})``
   - ``rosbuild_add_openmp_flags()`` -> ``find_package(OpenMP)``, then do other stuff
   - ``rosbuild_invoke_rospack()`` -> don't do this
   - ``rosbuild_find_ros_package()`` -> don't do this
@@ -120,11 +120,11 @@ Detailed migration guide
 
  - Test macros:
 
-  - rosbuild_add_gtest
+  - ``rosbuild_add_gtest(...)`` -> ``catkin_add_gtest(...)``
   - rosbuild_add_gtest_labeled
   - rosbuild_add_gtest_future
   - rosbuild_add_gtest_build_flags
-  - rosbuild_add_pyunit
+  - ``rosbuild_add_pyunit`` -> migrate to ``catkin_add_nosetests(...)``
   - rosbuild_add_pyunit_labeled
   - rosbuild_add_pyunit_future
   - rosbuild_add_rostest

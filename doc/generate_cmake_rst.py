@@ -32,20 +32,26 @@ def generate_rst(files):
     multiple lines of reStructured text are added documenting the
     function.
     '''
+    public = {}
     documented = {}
     undocumented = {}
     for (fullpath, relpath) in files:
         last_block = []
+        last_block_public = False
         with open(fullpath, 'r') as f:
             lines = f.readlines()
         for line in lines:
             if line.startswith('#'):
-                # careful to not strip '\n' in empty comment lines
-                last_block.append(line.lstrip('#').rstrip('\n'))
+                line = line.lstrip('#')
+                if line.strip() == '@public':
+                    last_block_public = True
+                else:
+                    last_block.append(line.rstrip('\n'))
             else:
                 declaration = re.match('[a-zA-Z]+\([a-zA-Z_ ]+\)', line)
                 if declaration is None:
                     last_block = []
+                    last_block_public = False
                 else:
                     tokens = line.split('(')
                     dec_type = tokens[0].strip()
@@ -57,21 +63,41 @@ def generate_rst(files):
                         dec_line = '.. cmake:macro:: %s(%s)' % (dec_args[0], ', '.join(dec_args[1:]))
                         rst.append(dec_line)
                         rst.append('')
-                        rst.append(' defined in %s' % relpath)
-                        rst.append('')
-                        rst.extend(last_block)
+                        rst.append(' *[%s defined in %s]*' % (dec_type, relpath))
+                        if last_block:
+                            rst.append('')
+                            rst.extend(last_block)
 
                         if dec_args[0] in documented or dec_args[0] in undocumented:
                             raise RuntimeError('Function/macro with same name "%s" exists multiple times' % dec_args[0])
-                        if last_block != []:
+                        if last_block_public:
+                            public[dec_args[0]] = rst
+                        elif last_block:
                             documented[dec_args[0]] = rst
                         else:
                             undocumented[dec_args[0]] = rst
 
                     last_block = []
+                    last_block_public = False
 
     rst = ['Extracted CMake documentation',
            '=============================']
+    rst.append('')
+    rst.append('Public CMake functions / macros')
+    rst.append('-------------------------------')
+    rst.append('')
+    for name in sorted(public.keys()):
+        rst.append(' * :cmake:macro:`%s`' % name)
+    for name in sorted(public.keys()):
+        rst.append('')
+        rst.extend(public[name])
+
+    rst.append('')
+    rst.append('Non-public CMake functions / macros')
+    rst.append('-----------------------------------')
+    rst.append('')
+    for name in sorted(documented.keys()):
+        rst.append(' * :cmake:macro:`%s`' % name)
     for name in sorted(documented.keys()):
         rst.append('')
         rst.extend(documented[name])

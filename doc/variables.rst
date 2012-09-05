@@ -3,6 +3,84 @@
 Variables
 =========
 
+Build space
+-----------
+
+.. cmake:data:: CATKIN_BUILD_PREFIX
+
+   This is set to ``${CMAKE_BINARY_DIR}/buildspace`` by either ``catkin/CMakeLists.txt`` or ``catkin/cmake/catkinConfig.cmake`` and is the analogue to ``CMAKE_PREFIX_PATH``.
+   Since the layout of the both folders ``CATKIN_BUILD_PREFIX`` and ``CMAKE_PREFIX_PATH`` is identical you can append any of the above install destinations to the build prefix.
+
+Install destinations
+--------------------
+
+All destination variable are meant to be used with the CMake ``install()`` macro as an ``DESTINATION`` argument.
+They only contain relative paths and are supposed to be relative to the ``${CMAKE_INSTALL_PREFIX}`` (or ``${CATKIN_BUILD_PREFIX}``).
+
+**Project specific**
+
+.. cmake:data:: CATKIN_PROJECT_BIN_DESTINATION
+
+   This is set to ``${CATKIN_GLOBAL_LIBEXEC_DESTINATION}/${PROJECT_NAME}``.
+
+.. cmake:data:: CATKIN_PROJECT_ETC_DESTINATION
+
+   This is set to ``${CATKIN_GLOBAL_ETC_DESTINATION}/${PROJECT_NAME}``.
+
+.. cmake:data:: CATKIN_PROJECT_INCLUDE_DESTINATION
+
+   This is set to ``${CATKIN_GLOBAL_INCLUDE_DESTINATION}/${PROJECT_NAME}``.
+
+.. cmake:data:: CATKIN_PROJECT_LIB_DESTINATION
+
+   This is set to ``${CATKIN_GLOBAL_LIB_DESTINATION}``.
+   All libraries go into a global folder.  Still use this variable instead of ``CATKIN_GLOBAL_LIB_DESTINATION`` for project libraries.
+
+.. cmake:data:: CATKIN_PROJECT_PYTHON_DESTINATION
+
+   This is set to ``${CATKIN_GLOBAL_PYTHON_DESTINATION}/${PROJECT_NAME}``.
+
+.. cmake:data:: CATKIN_PROJECT_SHARE_DESTINATION
+
+   This is set to ``${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}``.
+
+**Global**
+
+.. cmake:data:: CATKIN_GLOBAL_BIN_DESTINATION
+
+   This is set to ``bin``.
+   This destination should only be used for the core ROS binaries.
+   If you are unsure if you should use this destination use ``PROJECT_LIBEXEC_DESTINATION`` instead.
+
+.. cmake:data:: CATKIN_GLOBAL_ETC_DESTINATION
+
+   This is set to ``etc``.
+
+.. cmake:data:: CATKIN_GLOBAL_INCLUDE_DESTINATION
+
+   This is set to ``include``.
+   This destination should only be used when installing headers which are not in a subfolder which matches the project name.
+   Else you should use the destination ``PROJECT_LIBEXEC_DESTINATION`` instead.
+
+.. cmake:data:: CATKIN_GLOBAL_LIB_DESTINATION
+
+   This is set to ``lib``.
+   This variable should not be used directly, use ``CATKIN_PROJECT_LIB_DESTINATION`` instead.
+
+.. cmake:data:: CATKIN_GLOBAL_LIBEXEC_DESTINATION
+
+   This is set to ``lib``.
+   On non-Debian distributions it could be set to ``libexec``.
+   This variable should not be used directly, use ``CATKIN_PROJECT_BIN_DESTINATION`` instead.
+
+.. cmake:data:: CATKIN_GLOBAL_PYTHON_DESTINATION
+
+   This is set to ``lib/pythonX.Y/dist-packages`` (Debian), ``lib/pythonX.Y/site-packages`` (non-Debian) or ``lib/site-packages`` (Windows).
+
+.. cmake:data:: CATKIN_GLOBAL_SHARE_DESTINATION
+
+   This is set to ``share``.
+
 Environment
 -----------
 
@@ -12,43 +90,3 @@ Environment
    arguments inside the catkin environment.  CMake that executes shell
    commands (e.g. as part of ``add_custom_command``) should use this
    rather than wrangling environment explicitly.
-
-Install destinations
---------------------
-
-All destination variable are meant to be used with the CMake ``install()`` macro as an ``DESTINATION`` argument.
-They only contain relative paths and are supposed to be relative to the ``${CMAKE_INSTALL_PREFIX}``.
-
-.. cmake:data:: PROJECT_INCLUDE_DESTINATION
-
-   This is set to ``include``.
-
-.. cmake:data:: PROJECT_LIB_DESTINATION
-
-   This is set to ``lib``.
-
-.. cmake:data:: PROJECT_LIBEXEC_DESTINATION
-
-   This is set to ``lib/${PROJECT_NAME}``.
-
-.. cmake:data:: PROJECT_PYTHON_DESTINATION
-
-   This is set to ``lib/pythonX.Y/dist-packages/${PROJECT_NAME}``.
-
-.. cmake:data:: PROJECT_SHARE_DESTINATION
-
-   This is set to ``share/${PROJECT_NAME}``.
-
-.. cmake:data:: GLOBAL_BIN_DESTINATION
-
-   This is set to ``bin``.
-   This destination should only be used for the core ROS binaries.
-   If you are unsure if you should use this destination use ``PROJECT_LIBEXEC_DESTINATION`` instead.
-
-Build space
------------
-
-.. cmake:data:: CATKIN_BUILD_PREFIX
-
-   This is set to ``${CMAKE_BINARY_DIR}/buildspace`` by either ``catkin/CMakeLists.txt`` or ``catkin/cmake/catkinConfig.cmake`` and is the analogue to ``CMAKE_PREFIX_PATH``.
-   Since the layout of the both folders ``CATKIN_BUILD_PREFIX`` and ``CMAKE_PREFIX_PATH`` is identical you can append any of the above install destinations to the build prefix.
