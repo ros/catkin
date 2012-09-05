@@ -9,11 +9,6 @@ set(programs
   catkin_ws
 
   #catkin-build-debs-of-workspace
-  #catkin-parse-stack
-  #catkin_install_parse
-  #catkin_util.sh
-  #git-catkin
-  #git-catkin-track-all
 )
 
 # install all programs

@@ -45,15 +45,6 @@ install(DIRECTORY cmake
   USE_SOURCE_PERMISSIONS
   PATTERN "catkinConfig.cmake.in" EXCLUDE)
 
-# XXX HACK so that eigen can be found if catkin is in the
-#workspace... this is very bad that catkin knows about eigen...
-#file(COPY cmake/Modules/eigen-config.cmake
-#  DESTINATION ${CMAKE_BINARY_DIR}/cmake
-#)
-
 catkin_python_setup()
-
-# XXX reenable later
-#stamp(cmake/stack_get.py)
 
 add_nosetests(test)
