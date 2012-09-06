@@ -47,9 +47,9 @@ function(catkin_add_gtest target)
   catkin_run_tests_target("gtest" ${target} "gtest-${target}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_gtest_WORKING_DIRECTORY})
 endfunction()
 
-function(add_gtest target)
+function(add_gtest)
   message(WARNING "add_gtest() is deprecated, please rename the function call to catkin_add_gtest()")
-  catkin_add_gtest($ARGN)
+  catkin_add_gtest(${ARGN})
 endfunction()
 
 if(_CATKIN_GTEST_SRC_FOUND)
