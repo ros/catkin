@@ -14,13 +14,13 @@ set(programs
 # install all programs
 install(PROGRAMS
   ${programs}
-  DESTINATION ${GLOBAL_BIN_DESTINATION}
+  DESTINATION bin
 )
 
 # generate relay-script for each program
 foreach(program ${programs})
   set(EXECUTABLE ${catkin_SOURCE_DIR}/bin/${program})
   configure_file(${catkin_EXTRAS_DIR}/templates/script.sh.in
-    ${catkin_BUILD_PREFIX}/${GLOBAL_BIN_DESTINATION}/${program}
+    ${CATKIN_BUILD_PREFIX}/bin/${program}
     @ONLY)
 endforeach()

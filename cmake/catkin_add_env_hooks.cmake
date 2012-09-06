@@ -1,33 +1,42 @@
 #
-# For each shell in ``SHELLS``, ``<fileprefix>.<shell>.in`` in the
+# Register environment hooks which are executed by the setup script.
+#
+# For each shell in ``SHELLS``, ``<file_prefix>.<shell>.in`` in the
 # directory ``DIRECTORY`` is expand to ``etc/catkin/profile.d/``,
 # where it will be read by generated ``setup.<shell>``.
 #
-# The template can distinguish between build- and installspace using
-# the boolean parameters ``ENV_BUILDSPACE`` and ``ENV_INSTALLSPACE``
+# The template can distinguish between build- and installspace
+# using the boolean variables ``BUILDSPACE`` and ``INSTALLSPACE``
 # which are either ``true`` or ``false``.
 #
 # .. note:: Note the extra ".in" that must appear in the filename
-#    that does not appear in the argument.
+#   that does not appear in the argument.
 #
-# **NOTE** These files will share a single directory with other
-# packages that choose to install env hooks.  Be careful to give the
-# file a unique name.  Typically ``NNprojectname.sh`` is used, where
-# NN can define when something should be run (the files are read in
-# alphanumeric order) and ``projectname`` serves to disambiguate in
-# the event of collision.
+# .. note:: These files will share a single directory with other
+#   packages that choose to install env hooks.  Be careful to give
+#   the file a unique name.  Typically ``NN.name.<shell>`` is used,
+#   where NN can define when something should be run (the files are
+#   read in alphanumeric order) and the name serves to disambiguate
+#   in the event of collisions.
 #
-# :param SHELLS: list of shells (i.e.: sh bat)
-# :param DIRECTORY: Directory of the env hooks (default ${CMAKE_CURRENT_SOURCE_DIR})
+# :param file_prefix: the filename prefix
+# :type file_prefix: string
+# :param SHELLS: the shell extensions (i.e.: sh bat)
+# :type SHELLS: list of strings
+# :param DIRECTORY: the directory (default: ${CMAKE_CURRENT_SOURCE_DIR})
+# :type DIRECTORY: string
 # :param SKIP_INSTALL: if specified the env hooks are only generated
 #   in the buildspace but not installed
+# :type SKIP_INSTALL: option
 #
-function(catkin_add_env_hooks ARG_ENV_HOOK)
+# @public
+#
+function(catkin_add_env_hooks file_prefix)
   parse_arguments(ARG "DIRECTORY;SHELLS" "SKIP_INSTALL" ${ARGN})
 
   # create directory if necessary
-  if(NOT IS_DIRECTORY ${catkin_BUILD_PREFIX}/etc/catkin/profile.d)
-    file(MAKE_DIRECTORY ${catkin_BUILD_PREFIX}/etc/catkin/profile.d)
+  if(NOT IS_DIRECTORY ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d)
+    file(MAKE_DIRECTORY ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d)
   endif()
 
   if(NOT ARG_DIRECTORY)
@@ -35,18 +44,18 @@ function(catkin_add_env_hooks ARG_ENV_HOOK)
   endif()
 
   foreach(shell ${ARG_SHELLS})
-    set(ENV_HOOK ${ARG_ENV_HOOK}.${shell})
+    set(ENV_HOOK ${file_prefix}.${shell})
     assert_file_exists(${ARG_DIRECTORY}/${ENV_HOOK}.in "User-supplied environment file '${ARG_DIRECTORY}/${ENV_HOOK}.in' missing")
 
     # generate environment hook for buildspace
-    set(ENV_BUILDSPACE true)
-    set(ENV_INSTALLSPACE false)
+    set(BUILDSPACE true)
+    set(INSTALLSPACE false)
     configure_file(${ARG_DIRECTORY}/${ENV_HOOK}.in
-      ${catkin_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
+      ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
 
     # generate and install environment hook for installspace
-    set(ENV_BUILDSPACE false)
-    set(ENV_INSTALLSPACE true)
+    set(BUILDSPACE false)
+    set(INSTALLSPACE true)
     configure_file(${ARG_DIRECTORY}/${ENV_HOOK}.in
       ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${ENV_HOOK})
     if(NOT ${ARG_SKIP_INSTALL})

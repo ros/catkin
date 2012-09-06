@@ -1,13 +1,21 @@
 #
-# `Required for all stacks.`
+# Process :ref:`stack.xml` from ``CMAKE_CURRENT_SOURCE_DIR`` and
+# make several information available to CMake.
 #
-# Reads the :ref:`stack.xml` from the current source dir and makes
-# the version number available to cmake via ``stackname_VERSION``;
-# does the same for other fields in the `stack.xml`.  Also sets
-# ``CATKIN_CURRENT_STACK``.  You must call `catkin_stack()` once
-# in each stack's CMakeLists.txt, before any calls to `catkin_project()`,
-# to ensure that auto-generated pkg-config and CMake files get correct
-# version information.
+# .. note:: It must be called once in each stack's CMakeLists.txt,
+#   before any calls to `catkin_project()`, to ensure that
+#   auto-generated CMake and pkg-config files contain correct version
+#   information.
+#
+# It installs ``stack.xml`` to ``share/${CATKIN_CURRENT_STACK}``.
+#
+# :outvar CATKIN_CURRENT_STACK: the stack name
+# :outvar <stackname>_VERSION: the version number
+# :outvar <stackname>_MAINTAINER: the name and email of the maintainer(s)
+# :outvar <stackname>_DEPENDS: the build dependencies
+#
+# @public
+#
 function(catkin_stack)
   debug_message(10 "catkin_stack() called in file ${CMAKE_CURRENT_LIST_FILE}")
 

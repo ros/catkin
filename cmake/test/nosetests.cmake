@@ -1,18 +1,26 @@
 #
-# Add Python nosetests.
-# An executable is built with the name of the source file, linked against
-# GTest and added to the set of unit tests.
+# Add Python nose tests.
 #
-# The test can be executed by calling nosetests directly or using:
-# `` make run_tests_${PROJECT_NAME}_nosetests_${dir}``
-# (where slashs in the ``dir`` are replaced with underscores)
+# Nose collects tests from the directory ``dir`` automatically.
 #
-# :param dir: a relative or absolute directory to search for nosetests in
-# :param WORKING_DIRECTORY: the working directory when executing
-#  the tests.
-# :param TIMEOUT: the timeout for individual tests (default 60s).
+# .. note:: The test can be executed by calling ``nosetests``
+#   directly or using:
+#   `` make run_tests_${PROJECT_NAME}_nosetests_${dir}``
+#   (where slashes in the ``dir`` are replaced with underscores)
 #
-function(add_nosetests dir)
+# :param dir: a relative or absolute directory to search for
+#   nosetests in
+# :type dir: string
+# :param WORKING_DIRECTORY: the working directory when executing the
+#   tests
+# :type WORKING_DIRECTORY: string
+# :param TIMEOUT: the timeout for individual tests in seconds
+#   (default: 60)
+# :type TIMEOUT: integer
+#
+# @public
+#
+function(catkin_add_nosetests dir)
   if(NOT NOSETESTS)
     message(STATUS "skipping nosetests(${dir}) in project '${PROJECT_NAME}'")
     return()
@@ -49,6 +57,11 @@ function(add_nosetests dir)
   set(cmd "${CMAKE_COMMAND} -E make_directory ${output_dir_name}")
   set(cmd ${cmd} "${NOSETESTS} --process-timeout=${_nose_TIMEOUT} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/nosetests-${output_file_name}.xml${_covarg}")
   catkin_run_tests_target("nosetests" ${output_file_name} "nosetests-${output_file_name}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_nose_WORKING_DIRECTORY})
+endfunction()
+
+function(add_nosetests)
+  message(WARNING "add_nosetests() is deprecated, please rename the function call to catkin_add_nosetests()")
+  catkin_add_nosetests(${ARGN})
 endfunction()
 
 find_program(NOSETESTS nosetests)

@@ -29,7 +29,15 @@ if(NOT TARGET clean-test-results)
   add_dependencies(tests clean-test-results)
 endif()
 
-# all test results go under ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/..
+#
+# Create a test target, integrate it with the run_tests infrastructure
+# and post-process the junit result.
+#
+# All test results go under ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/..
+#
+# This function is only used internally by the various
+# catkin_add_*test() functions.
+#
 function(catkin_run_tests_target type name xunit_filename)
   parse_arguments(_testing "COMMAND;WORKING_DIRECTORY" "" ${ARGN})
   if(_testing_DEFAULT_ARGS)

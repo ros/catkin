@@ -1,16 +1,19 @@
 #
-# Called only in catkin's ``toplevel.cmake``, normally symlinked to
-# from the workspace level directory (which contains multiple
-# stacks).  This provokes the traversal of the stack directories
-# based on the dependencies specified in the ``build_depends`` field of
-# their respective ``stack.xml`` files.
+# Search all direct subfolders in the workspace for ``stack.xml``
+# files.  Based on the dependencies specified in the
+# ``build_depends`` tags it performs a topological sort and calls
+# ``add_subdirectory()`` for each directory.
+#
+# The functions is only called in catkin's ``toplevel.cmake``, which
+# is usually symlinked to the workspace root directory (which
+# contains multiple stacks).
 #
 function(catkin_workspace)
   debug_message(10 "catkin_workspace() called in file '${CMAKE_CURRENT_LIST_FILE}'")
 
   # set global output directories for artifacts and create them if necessary
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/lib)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CATKIN_BUILD_PREFIX}/lib)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CATKIN_BUILD_PREFIX}/lib)
   if(NOT IS_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
     file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
   endif()
@@ -22,7 +25,7 @@ function(catkin_workspace)
   foreach(workspace ${CATKIN_WORKSPACES})
     include_directories(${workspace}/include)
   endforeach()
-  include_directories(BEFORE ${catkin_BUILD_PREFIX}/include)
+  include_directories(BEFORE ${CATKIN_BUILD_PREFIX}/include)
 
   set(CATKIN_WHITELIST_STACKS "" CACHE STRING "List of ';' separated stacks to build")
   set(CATKIN_BLACKLIST_STACKS "" CACHE STRING "List of ';' separated stacks to exclude")

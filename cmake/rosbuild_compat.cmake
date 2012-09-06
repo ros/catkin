@@ -66,7 +66,7 @@ function(rosbuild_add_gtest TARGET)
   message(STATUS "    >> Rosbuild-compat: rosbuild_add_gtest ${ARGN}")
   add_executable(${TARGET} ${catkin_EXTRAS_DIR}/dummy_main.cpp)
   set_property(TARGET ${TARGET} PROPERTY
-    RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/bin)
+    RUNTIME_OUTPUT_DIRECTORY ${CATKIN_BUILD_PREFIX}/bin)
 endfunction()
 
 function(rosbuild_add_rostest TARGET)
@@ -75,6 +75,6 @@ function(rosbuild_add_rostest TARGET)
 
   add_executable(rostest_${_testname} ${catkin_EXTRAS_DIR}/dummy_main.cpp)
   set_property(TARGET rostest_${_testname} PROPERTY
-    RUNTIME_OUTPUT_DIRECTORY ${catkin_BUILD_PREFIX}/bin)
+    RUNTIME_OUTPUT_DIRECTORY ${CATKIN_BUILD_PREFIX}/bin)
 endfunction()
 

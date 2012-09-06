@@ -29,13 +29,15 @@ Update `CMakeLists.txt`` files
 
   Specify ``DESTINATION``, ``ARCHIVE DESTINATION``, ``LIBRARY DESTINATION`` and ``RUNTIME DESTINATION`` as required.
 
-* After create a GTest target using ``catkin_add_gtest(target ...)`` you should test for the existance of the target  before trying to use it (i.e. by calling ``target_link_libraries(target ..,)``)::
+* Remove manually ``install()`` invocations for ``stack.xml`` and ``manifest.xml`` files (this is handled by catkin automatically).
+
+* After creating a GTest target using ``catkin_add_gtest(target ...)`` you should test for the existance of the target before trying to use it (i.e. by calling ``target_link_libraries(target ..,)``)::
 
   % if(TARGET target)
   %   target_link_libraries(target ...)
   % endif()
 
-  This handles the case gracefully where GTest is not available.
+  This handles the case gracefully when GTest is not available.
 
 CMake extra files
 -----------------

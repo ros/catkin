@@ -58,9 +58,9 @@ foreach(workspace ${workspaces})
 endforeach()
 
 # the following lines must be the same as in catkin/CMakeLists.txt
-set(catkin_BUILD_PREFIX ${CMAKE_BINARY_DIR}/buildspace CACHE PATH "catkin buildspace")
+set(CATKIN_BUILD_PREFIX ${CMAKE_BINARY_DIR}/buildspace CACHE PATH "catkin buildspace")
 # compare boolean as string since policy CMP0012 is only enabled afterwards
-if("@PKG_BUILDSPACE@" STREQUAL "TRUE")
+if("@BUILDSPACE@" STREQUAL "TRUE")
   set(catkin_EXTRAS_DIR @catkin_EXTRAS_DIR@)
 else()
   set(catkin_EXTRAS_DIR @PKG_CMAKE_DIR@)

@@ -1,12 +1,17 @@
 #
-# Creates forwarding python :term:`pkgutil` infrastructure that "points"
-# from the part of the build directory that holds :term:`generated
-# code` (python) back to the specified source directories that hold
-# :term:`static code`.
+# Create forwarding Python :term:`pkgutil` infrastructure in
+# buildspace that enables mixing :term:`generated code` in buildspace
+# with :term:`static code` from sourcespace within a single Python
+# package.
 #
-# In addition, this will provoke that the python distutils' file
-# ``setup.py`` is interrogated by catkin and used during
-# installation.  See :ref:`setup_dot_py_handling`.
+# In addition, this will interrogate the Python setup.py file in
+# ``${${PROJECT_NAME}_SOURCE_DIR}`` and add the install command of
+# distutils/setuputils to the install target.
+# 
+# .. note:: If the project also uses message generation via
+#   ``generate_messages()`` this function must be called before.
+#
+# @public
 #
 function(catkin_python_setup)
   if(ARGN)
@@ -91,7 +96,7 @@ function(catkin_python_setup)
         get_filename_component(path ${pkg_dir} PATH)
         set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${path})
         configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
-          ${catkin_BUILD_PREFIX}/${PYTHON_INSTALL_DIR}/${pkg}/__init__.py
+          ${CATKIN_BUILD_PREFIX}/${PYTHON_INSTALL_DIR}/${pkg}/__init__.py
           @ONLY)
       endforeach()
     endif()
@@ -104,7 +109,7 @@ function(catkin_python_setup)
       endif()
       set(PYTHON_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/${script})
       configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
-        ${catkin_BUILD_PREFIX}/bin/${name}
+        ${CATKIN_BUILD_PREFIX}/bin/${name}
         @ONLY)
     endforeach()
   endif()

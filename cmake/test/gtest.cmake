@@ -1,46 +1,26 @@
 #
-# Copyright (c) 2011, Willow Garage, Inc.
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in the
-#       documentation and/or other materials provided with the distribution.
-#     * Neither the name of the Willow Garage, Inc. nor the names of its
-#       contributors may be used to endorse or promote products derived from
-#       this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-#
-
-#
 # Add a GTest based test target.
-# An executable target is created with all source files, it is linked
+#
+# An executable target is created with the source files, it is linked
 # against GTest and added to the set of unit tests.
 #
-# The test can be executed by calling the binary directly or using:
-# `` make run_tests_${PROJECT_NAME}_gtest_${target}``
+# .. note:: The test can be executed by calling the binary directly
+#   or using: ``make run_tests_${PROJECT_NAME}_gtest_${target}``
 #
-# :param target: the name of the target
-# :param source_files: a list of source files used to build the test executable
-# :param WORKING_DIRECTORY: the working directory when executing
-#  the executable.
-# :param TIMEOUT: is currently not supported.
+# :param target: the target name
+# :type target: string
+# :param source_files: a list of source files used to build the test
+#   executable
+# :type source_files: list of strings
+# :param WORKING_DIRECTORY: the working directory when executing the
+#   executable
+# :type FILE_PREFIX: string
+# :param TIMEOUT: currently not supported
+# :type FILE_PREFIX: integer
 #
-function(add_gtest target)
+# @public
+#
+function(catkin_add_gtest target)
   if(NOT GTEST_FOUND)
     message(STATUS "skipping gtest '${target}' in project '${PROJECT_NAME}'")
     return()
@@ -49,7 +29,7 @@ function(add_gtest target)
   # XXX look for optional TIMEOUT argument, #2645
   parse_arguments(_gtest "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(_gtest_TIMEOUT)
-    message(WARNING "TIMEOUT argument to add_gtest() is ignored")
+    message(WARNING "TIMEOUT argument to catkin_add_gtest() is ignored")
   endif()
 
   # create the executable, with basic + gtest build flags
@@ -65,6 +45,11 @@ function(add_gtest target)
   get_target_property(_target_path ${target} RUNTIME_OUTPUT_DIRECTORY)
   set(cmd "${_target_path}/${target} --gtest_output=xml:${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${target}.xml")
   catkin_run_tests_target("gtest" ${target} "gtest-${target}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_gtest_WORKING_DIRECTORY})
+endfunction()
+
+function(add_gtest target)
+  message(WARNING "add_gtest() is deprecated, please rename the function call to catkin_add_gtest()")
+  catkin_add_gtest($ARGN)
 endfunction()
 
 if(_CATKIN_GTEST_SRC_FOUND)

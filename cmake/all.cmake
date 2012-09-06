@@ -4,8 +4,8 @@ if(_CATKIN_ALL_INCLUDED_)
 endif()
 set(_CATKIN_ALL_INCLUDED_ TRUE)
 
-if(NOT catkin_BUILD_PREFIX)
-  message(FATAL_ERROR "\ncatkin_BUILD_PREFIX is not set\n")
+if(NOT CATKIN_BUILD_PREFIX)
+  message(FATAL_ERROR "\nCATKIN_BUILD_PREFIX is not set\n")
 endif()
 if(NOT catkin_EXTRAS_DIR)
   message(FATAL_ERROR "\ncatkin_EXTRAS_DIR is not set\n")
@@ -33,7 +33,6 @@ cmake_policy(SET CMP0017 NEW)
 
 list(APPEND CMAKE_MODULE_PATH ${catkin_EXTRAS_DIR}/Modules)
 
-# XXX move stuff to separate folders
 # functions/macros: list_append_unique, safe_execute_process
 # python-integration: catkin_python_setup.cmake, interrogate_setup_dot_py.py, templates/__init__.py.in, templates/script.py.in, templates/python_distutils_install.bat.in, templates/python_distutils_install.sh.in, templates/safe_execute_install.cmake.in
 foreach(filename
@@ -55,6 +54,7 @@ foreach(filename
     platform/lsb
     platform/ubuntu
     platform/windows
+    rosbuild_compat
     test/download_test_data
     test/gtest
     test/nosetests
@@ -63,8 +63,6 @@ foreach(filename
     tools/libraries
     tools/rt
 
-#    install_matching_to_share
-#    rosbuild_compat
 #    tools/threads
   )
   include(${catkin_EXTRAS_DIR}/${filename}.cmake)
@@ -79,9 +77,9 @@ catkin_generate_environment()
 
 # environment to call external processes
 if(CMAKE_HOST_UNIX) # true for linux, apple, mingw-cross and cygwin
-  set(CATKIN_ENV ${catkin_BUILD_PREFIX}/env.sh CACHE INTERNAL "catkin environment")
+  set(CATKIN_ENV ${CATKIN_BUILD_PREFIX}/env.sh CACHE INTERNAL "catkin environment")
 else()
-  set(CATKIN_ENV ${catkin_BUILD_PREFIX}/env.bat CACHE INTERNAL "catkin environment")
+  set(CATKIN_ENV ${CATKIN_BUILD_PREFIX}/env.bat CACHE INTERNAL "catkin environment")
 endif()
 
 # add additional environment hooks

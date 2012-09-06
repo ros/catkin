@@ -1,28 +1,28 @@
 function(catkin_generate_environment)
   # buildspace
-  set(SETUP_DIR ${catkin_BUILD_PREFIX})
-  set(CURRENT_WORKSPACE ${catkin_BUILD_PREFIX}:${CMAKE_SOURCE_DIR})
+  set(SETUP_DIR ${CATKIN_BUILD_PREFIX})
+  set(CURRENT_WORKSPACE ${CATKIN_BUILD_PREFIX}:${CMAKE_SOURCE_DIR})
 
   # create workspace marker
-  file(WRITE ${catkin_BUILD_PREFIX}/CATKIN_WORKSPACE "")
+  file(WRITE ${CATKIN_BUILD_PREFIX}/CATKIN_WORKSPACE "")
   # copy setup.py
   file(COPY ${catkin_EXTRAS_DIR}/templates/setup.py
-    DESTINATION ${catkin_BUILD_PREFIX})
+    DESTINATION ${CATKIN_BUILD_PREFIX})
 
   if(NOT MSVC)
     # non-windows
     # generate env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
-      ${catkin_BUILD_PREFIX}/env.sh
+      ${CATKIN_BUILD_PREFIX}/env.sh
       @ONLY)
     # generate setup for various shells
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
-      ${catkin_BUILD_PREFIX}/setup.sh)
+      ${CATKIN_BUILD_PREFIX}/setup.sh)
     foreach(shell bash zsh)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
-        ${catkin_BUILD_PREFIX}/setup.${shell}
+        ${CATKIN_BUILD_PREFIX}/setup.${shell}
         @ONLY)
     endforeach()
 
@@ -30,13 +30,13 @@ function(catkin_generate_environment)
     # windows
     # generate env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
-      ${catkin_BUILD_PREFIX}/env.bat
+      ${CATKIN_BUILD_PREFIX}/env.bat
       @ONLY)
     # generate setup
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.bat.em
-      ${catkin_BUILD_PREFIX}/setup.bat)
+      ${CATKIN_BUILD_PREFIX}/setup.bat)
   endif()
 
   # installspace
@@ -46,7 +46,7 @@ function(catkin_generate_environment)
   if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
     # install workspace marker
     install(FILES
-      ${catkin_BUILD_PREFIX}/CATKIN_WORKSPACE
+      ${CATKIN_BUILD_PREFIX}/CATKIN_WORKSPACE
       DESTINATION ${CMAKE_INSTALL_PREFIX})
     # install setup.py
     install(PROGRAMS
