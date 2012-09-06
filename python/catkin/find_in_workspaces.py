@@ -2,53 +2,75 @@ from __future__ import print_function
 import os
 
 
-def find_in_workspaces(project, path=None, search_in=None):
-    if path is None:
-        path = ''
+# OUT is always a list of folders
+#
+# IN: project=None
+# OUT: foreach ws in workspaces: foreach s in search_in: cand = ws[0] + s (+ path)
+#      add cand to result list if it exists
+#      is not defined for s == 'libexec', bailing out
+#
+# IN: project=not None
+# OUT: foreach ws in workspaces: foreach s in search_in: cand = ws[0] + s + project (+ path)
+#      except for s == 'share', cand is a list of two paths: ws[0] + s + project (+ path) and ws[1] + project (+ path)
+#      add cand to result list if it exists
+#      is not defined for s in ['bin', 'lib'], bailing out
+def find_in_workspaces(search_dirs=None, project=None, path=None):
+    '''
+    Find all paths which match the search criteria.
+    All workspaces are searched in order.
+    Each workspace, each search_in subfolder, the project name and the path are concatenated to define a candidate path.
+    If the candidate path exists it is appended to the result list.
+    :param search_dir: The list of subfolders to search in (default contains all valid values: 'bin', 'etc', 'lib', 'libexec', 'share'), ``list``
+    :param project: The project name to search for (not possible with the global search_in folders 'bin' and 'lib'), ``str``
+    :param path: The path, ``str``
+    Note: the search might return multiple paths for a 'share' from build- and source-space.
+    :returns: List of paths, ``list``
+    '''
 
-    # define all possible subfolders
-    subfolders = {
-      'bin': 'bin',
-      'lib': 'lib',
-      'libexec': os.path.join('lib', project),
-      'share': os.path.join('share', project),
-    }
-    if search_in is None:
-        search_in = subfolders.keys()
-    if not isinstance(search_in, list):
-        search_in = [search_in]
+    # define valid search folders
+    valid_global_search_dirs = ['bin', 'etc', 'include', 'lib', 'share']
+    valid_project_search_dirs = ['etc', 'include', 'libexec', 'share']
 
+    # make search folders a list
+    if search_dirs is None:
+        search_dirs = []
+    if not isinstance(search_dirs, list):
+        search_dirs = [search_dirs]
+
+    # determine valid search folders
+    all_valid_search_dirs = set(valid_global_search_dirs) | set(valid_project_search_dirs)
+    if not all_valid_search_dirs >= set(search_dirs):
+        raise RuntimeError('Unsupported search folders: %s' % ', '.join(['"%s"' % i for i in search_dirs if i not in all_valid_search_dirs]))
+
+    valid_search_dirs = valid_global_search_dirs if project is None else valid_project_search_dirs
+    if not set(valid_search_dirs) >= set(search_dirs):
+        raise RuntimeError('Searching %s a project can not be combined with the search folders %s' % ('without' if project is None else 'for', ', '.join(['"%s"' % i for i in search_dirs if i not in valid_search_dirs])))
+    if not search_dirs:
+        search_dirs = valid_search_dirs
+
+    # collect candidate paths
+    paths = []
     env_name = 'CATKIN_WORKSPACES'
     workspaces = os.environ[env_name].split(';') if env_name in os.environ and os.environ[env_name] != '' else []
-
-    # search for path in all workspaces
-    checked = []
     for workspace in workspaces:
-        workspace = workspace.split(':')[0]
+        ws = workspace.split(':')[0]
+        ws_src = workspace.split(':')[1] if ws != workspace else None
 
-        # check subfolders for existance
-        subfolders_exist = {}
-        for key, subfolder in subfolders.items():
-            subfolder = os.path.join(workspace, subfolder, '')
-            subfolders_exist[key] = os.path.exists(subfolder)
+        for sub in search_dirs:
+            p = os.path.join(ws, sub if sub != 'libexec' else 'lib')
+            if project is not None:
+                p = os.path.join(p, project)
+            if path is not None:
+                p = os.path.join(p, path)
+            paths.append(p)
 
-        # check if project is part of this workspace
-        if not subfolders_exist['libexec'] and not subfolders_exist['share']:
-            continue
+            # for search in share also consider source part of workspace
+            if ws_src is not None and project is not None and sub == 'share':
+                p = os.path.join(ws_src, project)
+                if path is not None:
+                    p = os.path.join(p, path)
+                paths.append(p)
 
-        # find all matching paths
-        matches = []
-        for key in search_in:
-            if not subfolders_exist[key]:
-                continue
-            candidate = os.path.join(workspace, subfolders[key], path)
-            checked.append(candidate)
-            if os.path.exists(candidate):
-                matches.append(candidate)
-
-        if len(matches) > 1:
-            raise RuntimeError('Could not find unique path "%s" for project "%s" in workspace "%s", the following paths are matching:\n%s' % (path, project, workspace, '\n'.join(matches)))
-        if len(matches) == 1:
-            return matches[0]
-
-    raise RuntimeError('Could not find "%s" in any workspace, checked the following paths:\n%s' % (path, '\n'.join(checked)))
+    # find all existing candidates
+    existing = [p for p in paths if os.path.exists(p)]
+    return (existing, paths)
