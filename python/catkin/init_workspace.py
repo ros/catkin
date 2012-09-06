@@ -4,17 +4,23 @@ import shutil
 
 
 def _symlink_toplevel_cmake(src, dst, checked):
+
     # check if toplevel file exists
     src = os.path.join(src, 'toplevel.cmake')
     if not os.path.exists(src):
         checked.append(src)
         return False
 
+    if os.path.isabs(src):
+        # we prefer relative symlinks so that we can move the workspace
+        src_rel = os.path.relpath(src, dst)
+
+
     # try to symlink file
     dst = os.path.join(dst, 'CMakeLists.txt')
     try:
-        os.symlink(src, dst)
-        print('Creating symlink "%s" pointing to "%s"' % (dst, src))
+        os.symlink(src_rel, dst)
+        print('Creating symlink "%s" pointing to "%s"' % (dst, src_rel))
     except Exception:
         # try to copy file
         try:
@@ -42,7 +48,7 @@ def init_workspace(workspace_dir):
             return
 
     # search for toplevel file in relative location
-    src = os.path.relpath(os.path.join(os.path.dirname(__file__), '..', '..', 'cmake'))
+    src = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'cmake'))
     success = _symlink_toplevel_cmake(src, workspace_dir, checked)
     if success:
         return
