@@ -5,12 +5,7 @@ How to build catkin workspaces
 
 Install CMake and ROS bootstrap tools::
 
-  % sudo apt-get install cmake python-rosdep python-rospkg
-
-Install PIP-based ROS bootstrap tools::
-
-  % sudo easy_install -U pip
-  % sudo pip install -U rosinstall
+  % sudo apt-get install cmake python-rosdep python-rospkg python-rosinstall
 
 Pick a temp directory::
 
