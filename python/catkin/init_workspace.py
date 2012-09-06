@@ -3,15 +3,12 @@ import os
 import shutil
 
 
-def _symlink_toplevel_cmake(src, dst, checked):
-    # check if toplevel file exists
-    src = os.path.join(src, 'toplevel.cmake')
-    if not os.path.exists(src):
-        checked.append(src)
-        return False
+def _symlink_toplevel_cmake(src, dst):
+    # update relative source to be relative from destination
+    if not os.path.isabs(src):
+        src = os.path.relpath(src, os.path.dirname(dst))
 
     # try to symlink file
-    dst = os.path.join(dst, 'CMakeLists.txt')
     try:
         os.symlink(src, dst)
         print('Creating symlink "%s" pointing to "%s"' % (dst, src))
@@ -25,25 +22,54 @@ def _symlink_toplevel_cmake(src, dst, checked):
     return True
 
 
+#
+# Create a toplevel CMakeLists.txt in the root of a workspace.
+#
+# The toplevel.cmake file is looked up either in the CATKIN_WORKSPACES
+# or relative to this file.  Then it tries to create a symlink first
+# and if that fails copies the file.
+#
+# It installs ``manifest.xml`` to ``share/${PROJECT_NAME}``.
+#
+# .. note:: The symlink is absolute when catkin is found via the
+#   environment (since that indicates a different workspace and it
+#   may change relative location to the workspace referenced as a
+#   parameter). The symlink is relative when the toplevel.cmake of
+#   this catkin instance is used since it is part of the
+#   to-be-initialized workspace.
+#
+# :param workspace_dir: the path to the workspace where the
+#   CMakeLists.txt should be created
+# :type workspace_dir: string
+#
 def init_workspace(workspace_dir):
     env_name = 'CATKIN_WORKSPACES'
     workspaces = os.environ[env_name].split(';') if env_name in os.environ and os.environ[env_name] != '' else []
+
+    # verify that destination file does not exist
+    dst = os.path.join(workspace_dir, 'CMakeLists.txt')
+    if os.path.exists(dst):
+        raise RuntimeError('File "%s" already exists' % dst)
 
     # search for toplevel file in all workspaces
     checked = []
     for workspace in workspaces:
         parts = workspace.split(':')
         if len(parts) > 1:
-            src = os.path.join(parts[1], 'catkin', 'cmake')
+            src = os.path.join(parts[1], 'catkin', 'cmake', 'toplevel.cmake')
         else:
-            src = os.path.join(workspace, 'share', 'catkin', 'cmake')
-        success = _symlink_toplevel_cmake(src, workspace_dir, checked)
+            src = os.path.join(workspace, 'share', 'catkin', 'cmake', 'toplevel.cmake')
+        # check if toplevel file exists
+        if not os.path.exists(src):
+            checked.append(src)
+            continue
+        success = _symlink_toplevel_cmake(src, dst)
         if success:
             return
 
-    # search for toplevel file in relative location
+    # use toplevel file in relative location
     src = os.path.relpath(os.path.join(os.path.dirname(__file__), '..', '..', 'cmake'))
-    success = _symlink_toplevel_cmake(src, workspace_dir, checked)
+    success = _symlink_toplevel_cmake(src, dst)
     if success:
         return
 

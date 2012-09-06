@@ -22,11 +22,6 @@ if not os.path.isdir(workspace):
     print('Workspace "%s" does not exist' % workspace, file=sys.stderr)
     exit(1)
 
-# verify that destination file does not exist
-dst = os.path.join(workspace, 'CMakeLists.txt')
-if os.path.exists(dst):
-    raise RuntimeError('File "%s" already exists' % dst)
-
 try:
     init_workspace(workspace)
 except Exception as e:
