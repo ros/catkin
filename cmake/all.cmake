@@ -54,7 +54,6 @@ foreach(filename
     platform/lsb
     platform/ubuntu
     platform/windows
-    rosbuild_compat
     test/download_test_data
     test/gtest
     test/nosetests
