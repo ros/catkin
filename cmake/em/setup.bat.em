@@ -6,73 +6,95 @@ if [%CATKIN_SHELL%]==[] (
   set CATKIN_SHELL=bat
 )
 
-REM source setup.SHELL from parent workspace (if any)
-@{
-import os
-parent_path = None
-if 'CATKIN_WORKSPACES' in os.environ and os.environ['CATKIN_WORKSPACES'] != '':
-    parent_path = os.environ['CATKIN_WORKSPACES'].split(';')[0].split(':')[0]
-    print('. %s/setup.$CATKIN_SHELL' % parent_path)
-}@
+REM called without arguments: create a clean environment, resetting all already set variables
+REM   - removes all prepended items from environment variables (based on current CATKIN_WORKSPACES)
+REM   - sets CATKIN_WORKSPACES to current + list of parents
+REM   - calls setup from all parent workspaces with "--recursive" argument
+REM   - prepends current to all variables
+REM   - sources current environment hooks
+REM called with "--recursive": used in recursive call from other setup
+REM   - does not touch CATKIN_WORKSPACES
+REM   - prepends current to all variables
+REM   - sources current environment hooks
+REM called with "--extend": used to extend one environment with a second one
+REM   - prepends current + list of parent to existing CATKIN_WORKSPACES
+REM   - calls setup from all parent workspaces with "--recursive" argument
+REM   - prepends current to all variables
+REM   - sources current environment hooks
 
-REM python function to generate ROS package path based on all parent workspaces (prepends the separator if necessary)
-REM do not use EnableDelayedExpansion here, it messes with the != symbols
-echo from __future__ import print_function > catkin_prefix.py
-echo import os >> catkin_prefix.py
-echo import sys >> catkin_prefix.py
-echo if len(sys.argv) != 4: >> catkin_prefix.py
-echo     print("\nWrong number of arguments passed to Python code\n", file=sys.stderr) >> catkin_prefix.py
-echo     exit(1) >> catkin_prefix.py
-echo prepended_item, separator, env_name = sys.argv[1:] >> catkin_prefix.py
-echo items = os.environ[env_name].split(separator) if env_name in os.environ and os.environ[env_name] != '' else [] >> catkin_prefix.py
-echo print(prepended_item + (separator if items else '') if prepended_item not in items else '') >> catkin_prefix.py
-
-setlocal EnableDelayedExpansion
-
-REM prepend current workspace to CATKIN_WORKSPACES
-set CATKIN_WORKSPACES_PREFIX=
-for /f %%a in ('python catkin_prefix.py "@CURRENT_WORKSPACE" ";" "CATKIN_WORKSPACES"') do set CATKIN_WORKSPACES_PREFIX=!CATKIN_WORKSPACES_PREFIX!%%a
-set CATKIN_WORKSPACES=%CATKIN_WORKSPACES_PREFIX%%CATKIN_WORKSPACES%
-
-REM define base dir for further variables (based on current workspace)
-set BASE_DIR=@(CURRENT_WORKSPACE.split(';')[0])
-
-REM prepend bin folder of workspace to PATH
-set PATH_PREFIX=
-for /f %%a in ('python catkin_prefix.py "%BASE_DIR%/bin" ";" "PATH"') do set PATH_PREFIX=!PATH_PREFIX!%%a
-set PATH=%PATH_PREFIX%%PATH%
-
-REM prepend lib/pythonX.Y/..-packages folder of workspace to PYTHONPATH
+REM bin folder of workspace prepended to PATH
+set PATH_dir=/bin
+REM lib/pythonX.Y/..-packages folder of workspace prepended to PYTHONPATH
 REM the path suffix is calculated in catkin/cmake/python.cmake
-set PYTHONPATH_PREFIX=
-for /f %%a in ('python catkin_prefix.py "%BASE_DIR%/@PYTHON_INSTALL_DIR" ";" "PYTHONPATH"') do set PYTHONPATH_PREFIX=!PYTHONPATH_PREFIX!%%a
-set PYTHONPATH=%PYTHONPATH_PREFIX%%PYTHONPATH%
+set PYTHONPATH_dir=/@PYTHON_INSTALL_DIR
+REM include folder of workspace prepended to CPATH
+set CPATH_dir=/include
+REM lib folder of workspace prepended to (DY)LD_LIBRARY_PATH
+set LD_LIBRARY_PATH_dir=/lib
+REM folder of workspace prepended to CMAKE_PREFIX_PATH
+set CMAKE_PREFIX_PATH_dir=""
+REM lib/pkgconfig folder of workspace prepended to PKG_CONFIG_PATH
+set PKG_CONFIG_PATH_dir=/lib/pkgconfig
+REM set the DIRNAME
+for %%F in (%0) do set DIRNAME=%%~dpF
+REM set the python executable
+@{import sys}
+set python=@(sys.executable)
 
-REM prepend include folder of workspace to CPATH
-set CPATH_PREFIX=
-for /f %%a in ('python catkin_prefix.py "%BASE_DIR%/include" ";" "CPATH"') do set CPATH_PREFIX=!CPATH_PREFIX!%%a
-set CPATH=%CPATH_PREFIX%%CPATH%
-
-REM prepend lib folder of workspace to LD_LIBRARY_PATH
-set LD_LIBRARYPATH_PREFIX=
-for /f %%a in ('python catkin_prefix.py "%BASE_DIR%/lib" ";" "LD_LIBRARY_PATH"') do set LD_LIBRARYPATH_PREFIX=!LD_LIBRARYPATH_PREFIX!%%a
-set LD_LIBRARY_PATH=%LD_LIBRARYPATH_PREFIX%%LD_LIBRARY_PATH%
-
-REM prepend folder of workspace (cmake-subfolder for build-space) to CMAKE_PREFIX_PATH
-set CMAKE_PREFIXPATH_PREFIX=
-for /f %%a in ('python catkin_prefix.py "%BASE_DIR%" ";" "CMAKE_PREFIX_PATH"') do set CMAKE_PREFIXPATH_PREFIX=!CMAKE_PREFIXPATH_PREFIX!%%a
-set CMAKE_PREFIX_PATH=%CMAKE_PREFIXPATH_PREFIX%%CMAKE_PREFIX_PATH%
-
-REM prepend lib/pkgconfig folder of workspace to PKG_CONFIG_PATH
-set PKG_CONFIGPATH_PREFIX=
-for /f %%a in ('python catkin_prefix.py "%BASE_DIR%/lib/pkgconfig" ";" "PKG_CONFIG_PATH"') do set PKG_CONFIGPATH_PREFIX=!PKG_CONFIGPATH_PREFIX!%%a
-set PKG_CONFIG_PATH=%PKG_CONFIGPATH_PREFIX%%PKG_CONFIG_PATH%
-
-REM run all environment hooks of workspace
-for %%f in ("%BASE_DIR%\etc\catkin\profile.d\*.%CATKIN_SHELL%") do (
-    call %%f
+REM decide which mode is requested
+set RECURSIVE_MODE=0
+set EXTEND_MODE=0
+set NORMAL_MODE=0
+if [%_CATKIN_SETUP_RECURSION%] == [1] (
+  set RECURSIVE_MODE=1
+) else (
+  if [%1] == ["--extend"] (
+    set EXTEND_MODE=1
+  ) else (
+    set NORMAL_MODE=1
+  )
 )
 
-del catkin_prefix.py
+REM reset environment variables by unrolling modifications based on CATKIN_WORKSPACES (when called without arguments)
+if [%NORMAL_MODE%] == [1] (
+  for /f %%a in ('%python% %DIRNAME%\setup.py --remove --name PATH --value "%PATH_dir%"') do set PATH=%%a
+  for /f %%a in ('%python% %DIRNAME%\setup.py --remove --name PYTHONPATH --value "%PYTHONPATH_dir%"') do set PYTHONPATH=%%a
+  for /f %%a in ('%python% %DIRNAME%\setup.py --remove --name CPATH --value "%CPATH_dir%"') do set CPATH=%%a
+  for /f %%a in ('%python% %DIRNAME%\setup.py --remove --name LD_LIBRARY_PATH --value "%LD_LIBRARY_PATH_dir%"') do set LD_LIBRARY_PATH=%%a
+  for /f %%a in ('%python% %DIRNAME%\setup.py --remove --name CMAKE_PREFIX_PATH --value "%CMAKE_PREFIX_PATH_dir%"') do set CMAKE_PREFIX_PATH=%%a
+  for /f %%a in ('%python% %DIRNAME%\setup.py --remove --name PKG_CONFIG_PATH --value "%PKG_CONFIG_PATH_dir%"') do set PKG_CONFIG_PATH=%%a
+)
 
-endlocal
+
+REM set CATKIN_WORKSPACES (when called without arguments)
+if [%NORMAL_MODE%] == [1] (
+  for /f %%a in ('%python% %DIRNAME%\setup.py --set-workspaces --value "@CURRENT_WORKSPACE;@CATKIN_WORKSPACES"') do set CATKIN_WORKSPACES=%%a
+)
+
+REM prepend current and parent workspaces to CATKIN_WORKSPACES (when called with argument --extend)
+if [%EXTEND_MODE%] == [1] (
+  for /f %%a in ('%python% %DIRNAME%\setup.py --set-workspaces --value "@CURRENT_WORKSPACE;@CATKIN_WORKSPACES"') do set CATKIN_WORKSPACES=%%a%CATKIN_WORKSPACES%
+)
+
+REM source setup.SHELL from parent workspaces (if any) (when called without --recursive argument)
+@[if CATKIN_WORKSPACES]@
+if [%EXTEND_MODE%] == [1] (
+  set _CATKIN_SETUP_RECURSION=1
+  for %%a in (@(' '.join(['"%s"' % ws.split(':')[0] for ws in reversed(CATKIN_WORKSPACES.split(';'))]))) do call %%a\setup.bat --recursive
+  set _CATKIN_SETUP_RECURSION=0
+)
+@[end if]@
+
+REM define base dir of workspace (based on CURRENT_WORKSPACE) (after sourcing the parents)
+set BASE_DIR="@(CURRENT_WORKSPACE.split(':')[1].split(':')[0])"
+
+REM prepend folders of workspace to environment variables
+for /f %%a in ('%python% %DIRNAME%\setup.py --prefix --name PATH --value %BASE_DIR%%PATH_dir%') do set PATH=%%a%PATH%
+for /f %%a in ('%python% %DIRNAME%\setup.py --prefix --name PYTHONPATH --value %BASE_DIR%%PYTHONPATH_dir%') do set PYTHONPATH=%%a%PYTHONPATH%
+for /f %%a in ('%python% %DIRNAME%\setup.py --prefix --name CPATH --value %BASE_DIR%%CPATH_dir%') do set CPATH=%%a%CPATH%
+REM for /f %%a in ('%python% %DIRNAME%\setup.py --prefix --name LD_LIBRARY_PATH --value %BASE_DIR%%LD_LIBRARY_PATH_dir%) do set LD_LIBRARY_PATH=%%a%LD_LIBRARY_PATH%
+REM for /f %%a in ('%python% %DIRNAME%\setup.py --prefix --name CMAKE_PREFIX_PATH --value %BASE_DIR%%CMAKE_PREFIX_PATH_dir%) do set CMAKE_PREFIX_PATH=%%a%CMAKE_PREFIX_PATH%
+REM for /f %%a in ('%python% %DIRNAME%\setup.py --prefix --name PKG_CONFIG_PATH --value %BASE_DIR%%PKG_CONFIG_PATH_dir%) do set PKG_CONFIG_PATH=%%a%PKG_CONFIG_PATH%
+
+REM run all environment hooks of this workspace
+for /r %%a in (%BASE_DIR%\etc\catkin\profile.d\*.bat) do call "%%a"
