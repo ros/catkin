@@ -9,7 +9,7 @@ class ProjectData:
     def __init__(self, xml_filename):
         project = rospkg.stack.parse_stack_file(xml_filename)
         self.name = project.name
-        self.path = os.path.dirname(xml_filename)
+        self.path = os.path.abspath(os.path.dirname(xml_filename))
         self.build_depends = set([d.name for d in project.build_depends])
         self.message_generator = project.message_generator
 
@@ -65,7 +65,7 @@ def _sort_projects(projects):
 def topological_order(source_root_dir, whitelisted=None, blacklisted=None):
     projects = {}
     xml_filenames = glob.glob(os.path.join(source_root_dir, '*', 'stack.xml'))
-    #print('xml_filenames = %s' % xml_filenames, file=sys.stderr)
+    # print('xml_filenames = %s' % xml_filenames, file=sys.stderr)
 
     # fetch all meta data
     prefix = os.path.abspath(source_root_dir) + os.sep
