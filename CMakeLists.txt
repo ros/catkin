@@ -47,4 +47,4 @@ install(DIRECTORY cmake
 
 catkin_python_setup()
 
-catkin_add_nosetests(test)
+#catkin_add_nosetests(test)
