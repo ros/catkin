@@ -21,8 +21,9 @@ function(catkin_workspace)
   # tools/libraries.cmake
   configure_shared_library_build_settings()
 
-  # add include folder from all workspaces
+  # get include folders from all build- and installspaces
   foreach(workspace ${CATKIN_WORKSPACES})
+    string(REGEX REPLACE ":.*" "" workspace ${workspace})
     include_directories(${workspace}/include)
   endforeach()
   include_directories(BEFORE ${CATKIN_BUILD_PREFIX}/include)
@@ -54,7 +55,7 @@ function(catkin_workspace)
       list(GET CATKIN_ORDERED_PROJECTS ${index} name)
       list(GET CATKIN_ORDERED_PROJECT_PATHS ${index} path)
       message(STATUS "+++ add_subdirectory(${path})")
-      set(CATKIN_CURRENT_STACK "" CACHE INTERNAL "" FORCE)
+      unset(CATKIN_CURRENT_STACK)
       stamp(${path}/stack.xml)
       add_subdirectory(${path})
     endforeach()

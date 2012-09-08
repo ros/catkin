@@ -1,15 +1,38 @@
-# prevent multiple inclusion
+# XXXX prevent multiple inclusion
 if(_CATKIN_ALL_INCLUDED_)
-  return()
+  message(FATAL_ERROR "catkin/cmake/all.cmake included multiple times")
 endif()
 set(_CATKIN_ALL_INCLUDED_ TRUE)
 
-if(NOT CATKIN_BUILD_PREFIX)
-  message(FATAL_ERROR "\nCATKIN_BUILD_PREFIX is not set\n")
+if(NOT DEFINED catkin_EXTRAS_DIR)
+  message(FATAL_ERROR "catkin_EXTRAS_DIR is not set")
 endif()
-if(NOT catkin_EXTRAS_DIR)
-  message(FATAL_ERROR "\ncatkin_EXTRAS_DIR is not set\n")
-endif()
+
+# list of unique workspaces based on CATKIN_WORKSPACES and CMAKE_PREFIX_PATH
+# considers CMAKE_PREFIX_PATH for the case that setup.sh has not been sourced
+set(CATKIN_WORKSPACES "")
+foreach(workspace $ENV{CATKIN_WORKSPACES})
+  list(FIND CATKIN_WORKSPACES ${workspace} _index)
+  if(_index EQUAL -1)
+    list(APPEND CATKIN_WORKSPACES ${workspace})
+  endif()
+endforeach()
+# ...plus all CMAKE_PREFIX_PATH which are catkin workspaces
+foreach(path ${CMAKE_PREFIX_PATH})
+  if(EXISTS "${path}/CATKIN_WORKSPACE")
+    list(FIND CATKIN_WORKSPACES ${path} _index)
+    if(_index EQUAL -1)
+      list(APPEND CATKIN_WORKSPACES ${path})
+    endif()
+  endif()
+endforeach()
+
+
+# define buildspace
+set(CATKIN_BUILD_PREFIX ${CMAKE_BINARY_DIR}/buildspace)
+# add buildspace to CMAKE_PREFIX_PATH
+list(INSERT CMAKE_PREFIX_PATH 0 ${CATKIN_BUILD_PREFIX})
+
 
 # enable all new policies
 cmake_policy(SET CMP0000 NEW)
@@ -30,8 +53,6 @@ cmake_policy(SET CMP0014 NEW)
 cmake_policy(SET CMP0015 NEW)
 cmake_policy(SET CMP0016 NEW)
 cmake_policy(SET CMP0017 NEW)
-
-list(APPEND CMAKE_MODULE_PATH ${catkin_EXTRAS_DIR}/Modules)
 
 # functions/macros: list_append_unique, safe_execute_process
 # python-integration: catkin_python_setup.cmake, interrogate_setup_dot_py.py, templates/__init__.py.in, templates/script.py.in, templates/python_distutils_install.bat.in, templates/python_distutils_install.sh.in, templates/safe_execute_install.cmake.in

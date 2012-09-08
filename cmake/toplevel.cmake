@@ -3,37 +3,34 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-# DISABLED optionally provide a cmake file in the workspace to override arbitrary stuff
-#include(workspace.cmake OPTIONAL)
+# optionally provide a cmake file in the workspace to override arbitrary stuff
+include(workspace.cmake OPTIONAL)
 
-# list of unique workspaces based on CATKIN_WORKSPACES and CMAKE_PREFIX_PATH
-# considers CMAKE_PREFIX_PATH for the case that setup.sh has not been sourced
-# the same list is built in cmake/catkinConfig.cmake.in in the case toplevel.cmake is not used
-set(CATKIN_WORKSPACES "")
-foreach(workspace $ENV{CATKIN_WORKSPACES})
-  string(REGEX REPLACE ":.*" "" workspace ${workspace})
-  list(FIND CATKIN_WORKSPACES ${workspace} _index)
-  if(_index EQUAL -1)
-    list(APPEND CATKIN_WORKSPACES ${workspace})
-  endif()
-endforeach()
-foreach(path ${CMAKE_PREFIX_PATH})
-  if(EXISTS ${path}/CATKIN_WORKSPACE)
-    list(FIND CATKIN_WORKSPACES ${path} _index)
-    if(_index EQUAL -1)
-      list(APPEND CATKIN_WORKSPACES ${path})
-    endif()
-  endif()
-endforeach()
+set(CATKIN_TOPLEVEL TRUE)
 
 # include catkin directly or via find_package()
-if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/catkin)
+if(EXISTS "${CMAKE_SOURCE_DIR}/catkin/cmake/all.cmake" AND EXISTS "${CMAKE_SOURCE_DIR}/catkin/CMakeLists.txt")
+  set(catkin_EXTRAS_DIR "${CMAKE_SOURCE_DIR}/catkin/cmake")
+  # include all.cmake without add_subdirectory to let it operate in same scope
+  include(catkin/cmake/all.cmake NO_POLICY_SCOPE)
   add_subdirectory(catkin)
+
 else()
+  # list of unique build- and installspaces
+  set(catkin_search_path "")
+  foreach(workspace $ENV{CATKIN_WORKSPACES})
+    string(REGEX REPLACE ":.*" "" workspace ${workspace})
+    list(APPEND catkin_search_path ${workspace})
+  endforeach()
+  list(REMOVE_DUPLICATES catkin_search_path)
+
+  # search for catkin in all workspaces and the CMAKE_PREFIX_PATH
+  set(CATKIN_TOPLEVEL_FIND_PACKAGE TRUE)
   find_package(catkin REQUIRED
     NO_POLICY_SCOPE
-    PATHS ${CATKIN_WORKSPACES}
+    PATHS ${catkin_search_path} ${CMAKE_PREFIX_PATH}
     NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+  unset(CATKIN_TOPLEVEL_FIND_PACKAGE)
 endif()
 
 catkin_workspace()
