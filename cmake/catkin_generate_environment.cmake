@@ -27,7 +27,7 @@ function(catkin_generate_environment)
       @ONLY)
     # generate setup for various shells
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
+      ${CMAKE_BINARY_DIR}/catkin_generated/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
       ${CATKIN_BUILD_PREFIX}/setup.sh)
     foreach(shell bash zsh)
@@ -44,7 +44,7 @@ function(catkin_generate_environment)
       @ONLY)
     # generate setup
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.buildspace.context.py
+      ${CMAKE_BINARY_DIR}/catkin_generated/setup.buildspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.bat.em
       ${CATKIN_BUILD_PREFIX}/setup.bat)
   endif()
@@ -55,9 +55,9 @@ function(catkin_generate_environment)
 
   if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
     # generate and install workspace marker
-    file(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/CATKIN_WORKSPACE "")
+    file(WRITE ${CMAKE_BINARY_DIR}/catkin_generated/installspace/CATKIN_WORKSPACE "")
     install(FILES
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/CATKIN_WORKSPACE
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/CATKIN_WORKSPACE
       DESTINATION ${CMAKE_INSTALL_PREFIX})
     # install setup.py
     install(PROGRAMS
@@ -69,30 +69,30 @@ function(catkin_generate_environment)
     # non-windows
     # generate and install env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.sh
       @ONLY)
     if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
       install(PROGRAMS
-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.sh
+        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.sh
         DESTINATION ${CMAKE_INSTALL_PREFIX})
     endif()
     # generate and install setup for various shells
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.installspace.context.py
+      ${CMAKE_BINARY_DIR}/catkin_generated/setup.installspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh)
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.sh)
     if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
       install(FILES
-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.sh
+        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.sh
         DESTINATION ${CMAKE_INSTALL_PREFIX})
     endif()
     foreach(shell bash zsh)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell}
+        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
         @ONLY)
       if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
         install(FILES
-          ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.${shell}
+          ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
           DESTINATION ${CMAKE_INSTALL_PREFIX})
       endif()
     endforeach()
@@ -101,28 +101,28 @@ function(catkin_generate_environment)
     # windows
     # generate and install env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.bat
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.bat
       @ONLY)
     install(PROGRAMS
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/env.bat
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.bat
       DESTINATION ${CMAKE_INSTALL_PREFIX})
     # generate and install setup
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/setup.installspace.context.py
+      ${CMAKE_BINARY_DIR}/catkin_generated/setup.installspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.bat.em
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.bat)
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.bat)
     install(FILES
-      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/setup.bat
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.bat
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
 
   # XXX what is .rosinstall needed for?
   #if(catkin_SOURCE_DIR)
   #  configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.installable.in
-  #    ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/.rosinstall
+  #    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
   #    @ONLY)
   #  install(FILES
-  #    ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/installspace/.rosinstall
+  #    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
   #    DESTINATION ${CMAKE_INSTALL_PREFIX})
   #endif()
 endfunction()

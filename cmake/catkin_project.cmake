@@ -144,7 +144,7 @@ function(catkin_project catkin_project_name)
   file(MAKE_DIRECTORY ${CATKIN_BUILD_PREFIX}/lib/pkgconfig)
   # generate buildspace pc for project
   em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/pkg.buildspace.context.pc.py
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.buildspace.context.pc.py
     ${catkin_EXTRAS_DIR}/em/pkg.pc.em
     ${CATKIN_BUILD_PREFIX}/lib/pkgconfig/${PROJECT_NAME}.pc)
 
@@ -196,13 +196,13 @@ function(catkin_project catkin_project_name)
   set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
 
   # ensure that output folder exists
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/installspace)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace)
   # generate and install pc for project
   em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/pkg.installspace.context.pc.py
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.installspace.context.pc.py
     ${catkin_EXTRAS_DIR}/em/pkg.pc.em
-    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}.pc)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc
     DESTINATION lib/pkgconfig
   )
 
@@ -212,7 +212,7 @@ function(catkin_project catkin_project_name)
     set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig.cmake.in)
   endif()
   configure_file(${infile}
-    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}Config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config.cmake
     @ONLY
   )
 
@@ -222,24 +222,24 @@ function(catkin_project catkin_project_name)
     set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in)
   endif()
   configure_file(${infile}
-    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}Config-version.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
     @ONLY
   )
 
   # generate cfg-extras for project
   set(installable_cfg_extras "")
   foreach(extra ${PROJECT_CFG_EXTRAS})
-    list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/installspace/${extra})
+    list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
     configure_file(cmake/${extra}.in
-      ${CMAKE_CURRENT_BINARY_DIR}/installspace/${extra}
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra}
       @ONLY
     )
   endforeach()
 
   # install config, config-version and cfg-extras for project
   install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}Config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/installspace/${PROJECT_NAME}Config-version.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
     ${installable_cfg_extras}
     DESTINATION share/${PROJECT_NAME}/cmake
   )

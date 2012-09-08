@@ -34,12 +34,12 @@ function(catkin_workspace)
   assert(catkin_EXTRAS_DIR)
   em_expand(
     ${catkin_EXTRAS_DIR}/templates/order_projects.context.py.in
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/order_projects.py
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/order_projects.py
     ${catkin_EXTRAS_DIR}/em/order_projects.cmake.em
-    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/order_projects.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/order_projects.cmake
     )
   debug_message(10 "catkin_workspace() including order_projects.cmake")
-  include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/order_projects.cmake)
+  include(${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/order_projects.cmake)
 
   if(CATKIN_ORDERED_PROJECTS)
     message(STATUS "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

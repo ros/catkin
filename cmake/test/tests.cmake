@@ -44,13 +44,6 @@ function(catkin_run_tests_target type name xunit_filename)
     message(FATAL_ERROR "catkin_run_tests_target() called with unused arguments: ${_testing_DEFAULT_ARGS}")
   endif()
 
-  set(command_file ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/catkin_tests/${PROJECT_NAME}.${type}.${name}.tests)
-  set(results ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/${xunit_filename})
-  # requires newline at the end so that the message appears in the file
-  file(WRITE ${command_file} "# '${type}' invocation in project '${PROJECT_NAME}' for tests '${name}'\n")
-  file(APPEND ${command_file} "# results should be stored in '${results}'\n")
-  file(APPEND ${command_file} "${_testing_COMMAND}\n")
-
   # create meta target to trigger all tests of a project
   if(NOT TARGET run_tests_${PROJECT_NAME})
     add_custom_target(run_tests_${PROJECT_NAME})
@@ -62,6 +55,7 @@ function(catkin_run_tests_target type name xunit_filename)
     add_dependencies(run_tests_${PROJECT_NAME} run_tests_${PROJECT_NAME}_${type})
   endif()
   # create target for test execution
+  set(results ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/${xunit_filename})
   if (_testing_WORKING_DIRECTORY)
     set(working_dir_arg "--working-dir" ${_testing_WORKING_DIRECTORY})
   endif()

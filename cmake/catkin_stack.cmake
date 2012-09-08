@@ -36,10 +36,10 @@ function(catkin_stack)
     safe_execute_process(COMMAND ${PYTHON_EXECUTABLE}
       ${catkin_EXTRAS_DIR}/parse_stack_xml.py
       ${CMAKE_CURRENT_SOURCE_DIR}/stack.xml
-      ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/stack.cmake)
+      ${PROJECT_BINARY_DIR}/catkin_generated/stack.cmake)
   endif()
   # load extracted variable into cmake
-  include(${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/stack.cmake)
+  include(${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/stack.cmake)
 
   # install stack.xml
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/stack.xml

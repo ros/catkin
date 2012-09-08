@@ -47,7 +47,7 @@ function(catkin_python_setup)
     set(INSTALL_CMD_WORKING_DIRECTORY ${${PROJECT_NAME}_SOURCE_DIR})
     if(NOT MSVC)
       set(INSTALL_SCRIPT
-        ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/python_distutils_install.sh)
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/python_distutils_install.sh)
       configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.sh.in
         ${INSTALL_SCRIPT}
         @ONLY)
@@ -55,7 +55,7 @@ function(catkin_python_setup)
       # need to convert install prefix to native path for python setuptools --prefix (its fussy about \'s)
       file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX} PYTHON_INSTALL_PREFIX)
       set(INSTALL_SCRIPT
-        ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/python_distutils_install.bat)
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/python_distutils_install.bat)
       configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.bat.in
         ${INSTALL_SCRIPT}
         @ONLY)
@@ -63,8 +63,8 @@ function(catkin_python_setup)
 
     # run generated python script
     configure_file(${catkin_EXTRAS_DIR}/templates/safe_execute_install.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
-    install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/safe_execute_install.cmake)
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/safe_execute_install.cmake)
+    install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/safe_execute_install.cmake)
 
     stamp(${${PROJECT_NAME}_SOURCE_DIR}/${setup_py_file})
 
@@ -75,12 +75,12 @@ function(catkin_python_setup)
       ${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py
       ${PROJECT_NAME}
       ${${PROJECT_NAME}_SOURCE_DIR}/${setup_py_file}
-      ${${PROJECT_NAME}_BINARY_DIR}/${path_to_setup_py}setup_py_interrogation.cmake
+      ${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/${path_to_setup_py}setup_py_interrogation.cmake
       )
 
     debug_message(10 "catkin_python_setup() in project '{PROJECT_NAME}' executes:  ${cmd}")
     safe_execute_process(COMMAND ${cmd})
-    include(${${PROJECT_NAME}_BINARY_DIR}/${path_to_setup_py}setup_py_interrogation.cmake)
+    include(${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/${path_to_setup_py}setup_py_interrogation.cmake)
 
     # generate relaying __init__.py for each python package
     if(${PROJECT_NAME}_PACKAGES)

@@ -57,9 +57,9 @@ function(catkin_add_env_hooks file_prefix)
     set(BUILDSPACE false)
     set(INSTALLSPACE true)
     configure_file(${ARG_DIRECTORY}/${ENV_HOOK}.in
-      ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${ENV_HOOK})
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK})
     if(NOT ${ARG_SKIP_INSTALL})
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${ENV_HOOK}
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
         DESTINATION etc/catkin/profile.d)
     endif()
   endforeach()
