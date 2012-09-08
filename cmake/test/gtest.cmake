@@ -21,7 +21,7 @@
 # @public
 #
 function(catkin_add_gtest target)
-  if(NOT GTEST_FOUND)
+  if(NOT GTEST_FOUND AND NOT GTEST_FROM_SOURCE_FOUND)
     message(STATUS "skipping gtest '${target}' in project '${PROJECT_NAME}'")
     return()
   endif()
@@ -36,8 +36,11 @@ function(catkin_add_gtest target)
   include_directories(${GTEST_INCLUDE_DIRS})
   link_directories(${GTEST_LIBRARY_DIRS})
   add_executable(${target} EXCLUDE_FROM_ALL ${_gtest_DEFAULT_ARGS})
+  assert(${GTEST_LIBRARIES})
   target_link_libraries(${target} ${GTEST_LIBRARIES} ${THREADS_LIBRARY})
 
+  # make sure gtest is built before the test target
+  add_dependencies(${target} gtest gtest_main)
   # make sure the target is built before running tests
   add_dependencies(tests ${target})
 
@@ -52,32 +55,54 @@ function(add_gtest)
   catkin_add_gtest(${ARGN})
 endfunction()
 
-if(_CATKIN_GTEST_SRC_FOUND)
-  return()
-endif()
-
 find_package(GTest QUIET)
 if(NOT GTEST_FOUND)
-  find_file(_CATKIN_GTEST_SRC "gtest.cc" PATHS "/usr/src/gtest/src" "${CMAKE_SOURCE_DIR}/gtest/src" NO_DEFAULT_PATH NO_CMAKE_PATH)
+  # only add gtest directory once per workspace
+  if(NOT TARGET gtest)
+    find_file(_CATKIN_GTEST_SRC "gtest.cc"
+      PATHS
+      # search in the current workspace
+      "${CMAKE_SOURCE_DIR}/gtest/src"
+      # fall back to system installed path (i.e. on Ubuntu)
+      "/usr/src/gtest/src"
+      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+    find_file(_CATKIN_GTEST_INCLUDE "gtest/gtest.h"
+      PATHS
+      # search in the current workspace
+      "${CMAKE_SOURCE_DIR}/gtest/include"
+      # fall back to system installed path (i.e. on Ubuntu)
+      "/usr/include/gtest"
+      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 
-  if(_CATKIN_GTEST_SRC)
-    GET_FILENAME_COMPONENT(_CATKIN_GTEST_DIR ${_CATKIN_GTEST_SRC} PATH)
-    set(_CATKIN_GTEST_DIR "${_CATKIN_GTEST_DIR}/../" CACHE INTERNAL "")
-    # add source dir directly (this only works on Ubuntu for now)
-    add_subdirectory(${_CATKIN_GTEST_DIR} "../gtest")
-    # set the same variables as find_package()
-    set(GTEST_FOUND TRUE CACHE INTERNAL "")
-    find_path(GTEST_INCLUDE_DIRS gtest/gtest.h)
-    set(GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS} CACHE INTERNAL "")
-    set(GTEST_LIBRARIES "gtest" CACHE INTERNAL "")
-    set(GTEST_MAIN_LIBRARIES "gtest_main" CACHE INTERNAL "")
-    set(GTEST_BOTH_LIBRARIES "${GTEST_LIBRARIES};${GTEST_MAIN_LIBRARIES}" CACHE INTERNAL "")
-    set(GTEST_LIBRARY_DIRS ${CMAKE_BINARY_DIR}/gtest CACHE INTERNAL "")
-    message(STATUS "Found gtest sources under '/usr/src/gtest': gtests will be built")
-    set(_CATKIN_GTEST_SRC_FOUND TRUE CACHE INTERNAL "")
+    if(_CATKIN_GTEST_SRC)
+      get_filename_component(_CATKIN_GTEST_SOURCE_DIR ${_CATKIN_GTEST_SRC} PATH)
+      get_filename_component(_CATKIN_GTEST_BASE_DIR ${_CATKIN_GTEST_SOURCE_DIR} PATH)
+      # add CMakeLists.txt from gtest dir
+      set(_CATKIN_GTEST_BINARY_DIR ${CMAKE_BINARY_DIR}/gtest)
+      add_subdirectory(${_CATKIN_GTEST_BASE_DIR} ${_CATKIN_GTEST_BINARY_DIR})
+      get_filename_component(_CATKIN_GTEST_INCLUDE_DIR ${_CATKIN_GTEST_INCLUDE} PATH)
+      # set from-source variables
+      set(GTEST_FROM_SOURCE_FOUND TRUE CACHE INTERNAL "")
+      set(GTEST_FROM_SOURCE_INCLUDE_DIRS ${_CATKIN_GTEST_INCLUDE_DIR} CACHE INTERNAL "")
+      set(GTEST_FROM_SOURCE_LIBRARY_DIRS ${_CATKIN_GTEST_BINARY_DIR} CACHE INTERNAL "")
+      set(GTEST_FROM_SOURCE_LIBRARIES "gtest" CACHE INTERNAL "")
+      set(GTEST_FROM_SOURCE_MAIN_LIBRARIES "gtest_main" CACHE INTERNAL "")
+      message(STATUS "Found gtest sources under '${_CATKIN_GTEST_BASE_DIR}': gtests will be built")
+    endif()
+    if(NOT GTEST_FROM_SOURCE_FOUND)
+      message(WARNING "gtest not found, C++ tests can not be built. You can run 'svn checkout http://googletest.googlecode.com/svn/tags/release-1.6.0 gtest' in the root of your workspace")
+    endif()
   endif()
-  if(NOT GTEST_FOUND)
-    message(WARNING "gtest not found, C++ tests can not be built. You can run \"svn checkout http://googletest.googlecode.com/svn/tags/release-1.6.0 gtest\" in the root of your workspace")
+  if(GTEST_FROM_SOURCE_FOUND)
+    # set the same variables as find_package()
+    # do NOT set GTEST_FOUND in the cache since when using gtest from source
+    # we must always add the subdirectory to have the gtest targets defined
+    set(GTEST_FOUND ${GTEST_FROM_SOURCE_FOUND})
+    set(GTEST_INCLUDE_DIRS ${GTEST_FROM_SOURCE_INCLUDE_DIRS})
+    set(GTEST_LIBRARY_DIRS ${GTEST_FROM_SOURCE_LIBRARY_DIRS})
+    set(GTEST_LIBRARIES ${GTEST_FROM_SOURCE_LIBRARIES})
+    set(GTEST_MAIN_LIBRARIES ${GTEST_FROM_SOURCE_MAIN_LIBRARIES})
+    set(GTEST_BOTH_LIBRARIES ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
   endif()
 else()
   message(STATUS "Found gtest: gtests will be built")
