@@ -66,6 +66,11 @@ cmake_policy(SET CMP0015 NEW)
 cmake_policy(SET CMP0016 NEW)
 cmake_policy(SET CMP0017 NEW)
 
+# the following operations must be performed inside a project context
+if(NOT PROJECT_NAME)
+  project(catkin_internal)
+endif()
+
 # functions/macros: list_append_unique, safe_execute_process
 # python-integration: catkin_python_setup.cmake, interrogate_setup_dot_py.py, templates/__init__.py.in, templates/script.py.in, templates/python_distutils_install.bat.in, templates/python_distutils_install.sh.in, templates/safe_execute_install.cmake.in
 foreach(filename
