@@ -23,10 +23,9 @@ if(NOT TARGET clean-test-results)
   # clean out previous test results before running tests
   add_custom_target(clean-test-results
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CATKIN_TEST_RESULTS_DIR})
-  # make the 'tests' target depend on 'clean-test-results'
-  # which will ensure that test results are deleted before we try to build tests
-  # and thus before we try to run tests
-  add_dependencies(tests clean-test-results)
+  # make the 'run_tests' target depend on 'clean-test-results'
+  # which will ensure that test results are deleted before we try to run all tests
+  add_dependencies(run_tests clean-test-results)
 endif()
 
 #
