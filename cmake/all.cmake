@@ -131,12 +131,24 @@ set(CATKIN_ENV "" CACHE INTERNAL "catkin environment" FORCE)
 # uses em_expand without CATKIN_ENV being set yet
 catkin_generate_environment()
 
-# environment to call external processes
+# file extension of env script
 if(CMAKE_HOST_UNIX) # true for linux, apple, mingw-cross and cygwin
-  set(CATKIN_ENV ${CATKIN_BUILD_PREFIX}/env.sh CACHE INTERNAL "catkin environment")
+  set(script_ext sh)
 else()
-  set(CATKIN_ENV ${CATKIN_BUILD_PREFIX}/env.bat CACHE INTERNAL "catkin environment")
+  set(script_ext bat)
 endif()
+# take snapshot of the modifications the env script causes
+# to reproduce the same changes with a static script in a fraction of the time
+safe_execute_process(COMMAND ${PYTHON_EXECUTABLE}
+  ${catkin_EXTRAS_DIR}/env_caching.py
+  ${CATKIN_BUILD_PREFIX}/env.${script_ext}
+  --python ${PYTHON_EXECUTABLE}
+  OUTPUT_VARIABLE SCRIPT)
+configure_file(${catkin_EXTRAS_DIR}/templates/script.in
+  ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/env_cached.${script_ext}
+  @ONLY)
+# environment to call external processes
+set(CATKIN_ENV ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/env_cached.${script_ext} CACHE INTERNAL "catkin environment")
 
 # add additional environment hooks
 if(CATKIN_BUILD_BINARY_PACKAGE AND NOT "${PROJECT_NAME}" STREQUAL "catkin")
