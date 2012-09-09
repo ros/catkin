@@ -12,8 +12,8 @@ def get_repository_type(path):
 
 def find_repositories(parent_dir):
     reps = {}
-    for d in [d for d in os.listdir(parent_dir) if os.path.isdir(d)]:
-        vcs_type = get_repository_type(d)
+    for d in [d for d in os.listdir(parent_dir) if os.path.isdir(os.path.join(parent_dir, d))]:
+        vcs_type = get_repository_type(os.path.join(parent_dir, d))
         if vcs_type is not None:
             reps[d] = vcs_type
     return reps
