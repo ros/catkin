@@ -64,5 +64,5 @@ function(catkin_run_tests_target type name xunit_filename)
     COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
     ${catkin_EXTRAS_DIR}/test/run_tests.py --results ${results} ${working_dir_arg} ${_testing_COMMAND})
   add_dependencies(run_tests_${PROJECT_NAME}_${type} run_tests_${PROJECT_NAME}_${type}_${name})
-  add_dependencies(run_tests_${PROJECT_NAME}_${type}_${name} tests)
+  add_dependencies(run_tests_${PROJECT_NAME}_${type}_${name})
 endfunction()
