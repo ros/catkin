@@ -18,7 +18,12 @@ if(CATKIN_TOPLEVEL_FIND_PACKAGE OR NOT CATKIN_TOPLEVEL)
     set(catkin_EXTRAS_DIR "@PKG_CMAKE_DIR@")
   endif()
 
-  include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
+  # prevent multiple inclusion from repeated find_package() calls in non-workspace context
+  # as long as this variable is in the scope the variables from all.cmake are also, so no need to be evaluated again
+  if(NOT DEFINED _CATKIN_CONFIG_ALL_INCLUDED_)
+    set(_CATKIN_CONFIG_ALL_INCLUDED_ TRUE)
+    include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
+  endif()
 endif()
 
 # skip setting find_package() variables when discovered from toplevel.cmake

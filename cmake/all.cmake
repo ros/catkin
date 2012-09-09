@@ -1,5 +1,5 @@
-# XXXX prevent multiple inclusion
-if(_CATKIN_ALL_INCLUDED_)
+# prevent multiple inclusion
+if(DEFINED _CATKIN_ALL_INCLUDED_)
   message(FATAL_ERROR "catkin/cmake/all.cmake included multiple times")
 endif()
 set(_CATKIN_ALL_INCLUDED_ TRUE)
