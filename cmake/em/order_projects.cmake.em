@@ -11,8 +11,8 @@ set(CATKIN_ORDERED_PROJECT_PATHS "")
 @[if not name]@
 message(FATAL_ERROR "Circular dependency in subset of projects:\n@project_data")
 @[end if]@
-list(APPEND CATKIN_ORDERED_PROJECTS @(name))
-list(APPEND CATKIN_ORDERED_PROJECT_PATHS @(project_data.path.replace(os.sep, '/')))
+list(APPEND CATKIN_ORDERED_PROJECTS "@(name)")
+list(APPEND CATKIN_ORDERED_PROJECT_PATHS "@(project_data.path.replace(os.sep, '/'))")
 @[end for]@
 
 @{

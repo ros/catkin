@@ -1,4 +1,4 @@
 #!/bin/sh
 # generated from catkin/cmake/templates/script.sh.in
 
-"@EXECUTABLE@" $@
+"@EXECUTABLE@" "$@"

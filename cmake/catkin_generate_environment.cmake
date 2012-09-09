@@ -15,9 +15,11 @@ function(catkin_generate_environment)
     set(sourcespaces ${existing_sourcespaces})
   endif()
   file(WRITE "${CATKIN_BUILD_PREFIX}/CATKIN_WORKSPACE" "${sourcespaces}")
-  # copy setup.py
-  file(COPY ${catkin_EXTRAS_DIR}/templates/setup.py
-    DESTINATION ${CATKIN_BUILD_PREFIX})
+  # generate relay-script for setup.py
+  set(PYTHON_SCRIPT ${catkin_EXTRAS_DIR}/templates/setup.py)
+  configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
+    ${CATKIN_BUILD_PREFIX}/setup.py
+    @ONLY)
 
   if(NOT MSVC)
     # non-windows

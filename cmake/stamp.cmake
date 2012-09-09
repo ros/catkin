@@ -6,7 +6,7 @@
 #   cache when ``filepath`` is modified.
 #
 function(stamp path)
-  get_filename_component(filename ${path} NAME)
+  get_filename_component(filename "${path}" NAME)
   configure_file(${path}
     ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/stamps/${PROJECT_NAME}/${filename}
     @ONLY)

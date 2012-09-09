@@ -24,7 +24,13 @@ else()
   endforeach()
   list(REMOVE_DUPLICATES catkin_search_path)
 
-  # search for catkin in all workspaces and the CMAKE_PREFIX_PATH
+  # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
+  # or CMAKE_PREFIX_PATH from the environment
+  if(NOT DEFINED CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+  endif()
+
+  # search for catkin in all workspaces and CMAKE_PREFIX_PATH
   set(CATKIN_TOPLEVEL_FIND_PACKAGE TRUE)
   find_package(catkin REQUIRED
     NO_POLICY_SCOPE

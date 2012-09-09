@@ -4,7 +4,7 @@
 # CATKIN_WORKSPACES="@CATKIN_WORKSPACES"
 
 # absolute path to the folder containing this script
-DIRNAME=@SETUP_DIR
+DIRNAME="@SETUP_DIR"
 # remember type of shell if not already set
 if [ -z "$CATKIN_SHELL" ] ; then
   CATKIN_SHELL=sh
@@ -62,36 +62,35 @@ fi
 
 # reset environment variables by unrolling modifications based on CATKIN_WORKSPACES (when called without arguments)
 if [ $NORMAL_MODE -eq 1 ]; then
-  export PATH=$($DIRNAME/setup.py --remove --name PATH --value "$PATH_dir")
-  export PYTHONPATH=$($DIRNAME/setup.py --remove --name PYTHONPATH --value "$PYTHONPATH_dir")
-  export CPATH=$($DIRNAME/setup.py --remove --name CPATH --value "$CPATH_dir")
+  export PATH="$("$DIRNAME/setup.py" --remove --name PATH --value \"$PATH_dir\")"
+  export PYTHONPATH="$("$DIRNAME/setup.py" --remove --name PYTHONPATH --value "$PYTHONPATH_dir")"
+  export CPATH="$("$DIRNAME/setup.py" --remove --name CPATH --value "$CPATH_dir")"
   if [ $IS_DARWIN -eq 0 ]; then
-    export LD_LIBRARY_PATH=$($DIRNAME/setup.py --remove --name LD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")
+    export LD_LIBRARY_PATH="$("$DIRNAME/setup.py" --remove --name LD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
   else
-    export DYLD_LIBRARY_PATH=$($DIRNAME/setup.py --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")
+    export DYLD_LIBRARY_PATH="$("$DIRNAME/setup.py" --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
   fi
-  export CMAKE_PREFIX_PATH=$($DIRNAME/setup.py --remove --name CMAKE_PREFIX_PATH --value "$CMAKE_PREFIX_PATH_dir")
-  export PKG_CONFIG_PATH=$($DIRNAME/setup.py --remove --name PKG_CONFIG_PATH --value "$PKG_CONFIG_PATH_dir")
+  export CMAKE_PREFIX_PATH="$("$DIRNAME/setup.py" --remove --name CMAKE_PREFIX_PATH --value "$CMAKE_PREFIX_PATH_dir")"
+  export PKG_CONFIG_PATH="$("$DIRNAME/setup.py" --remove --name PKG_CONFIG_PATH --value "$PKG_CONFIG_PATH_dir")"
 fi
 
 # set CATKIN_WORKSPACES (when called without arguments)
 if [ $NORMAL_MODE -eq 1 ]; then
-  export CATKIN_WORKSPACES=`$DIRNAME/setup.py --set-workspaces --value "@CURRENT_WORKSPACE;@CATKIN_WORKSPACES"`
+  export CATKIN_WORKSPACES="$("$DIRNAME/setup.py" --set-workspaces --value "@CURRENT_WORKSPACE;@CATKIN_WORKSPACES")"
 fi
 
 # prepend current and parent workspaces to CATKIN_WORKSPACES (when called with argument --extend)
 if [ $EXTEND_MODE -eq 1 ]; then
-  export CATKIN_WORKSPACES=`$DIRNAME/setup.py --prefix-workspaces --value "@CURRENT_WORKSPACE;@CATKIN_WORKSPACES"`$CATKIN_WORKSPACES
+  export CATKIN_WORKSPACES="$("$DIRNAME/setup.py" --prefix-workspaces --value "@CURRENT_WORKSPACE;@CATKIN_WORKSPACES")$CATKIN_WORKSPACES"
 fi
 
 # source setup.SHELL from parent workspaces (if any) (when called without --recursive argument)
 @[if CATKIN_WORKSPACES]@
 if [ $RECURSIVE_MODE -eq 0 ]; then
   _CATKIN_SETUP_RECURSION=1
-  for workspace in @(' '.join(['"%s"' % ws.split(':')[0] for ws in reversed(CATKIN_WORKSPACES.split(';'))]))
-    do
-      . $workspace/setup.$CATKIN_SHELL --recursive
-    done
+  for workspace in @(' '.join(['"%s"' % ws.split(':')[0] for ws in reversed(CATKIN_WORKSPACES.split(';'))])) ; do
+    . "$workspace/setup.$CATKIN_SHELL" --recursive
+  done
   _CATKIN_SETUP_RECURSION=0
 fi
 @[end if]@
@@ -100,26 +99,25 @@ fi
 BASE_DIR="@(CURRENT_WORKSPACE.split(':')[0])"
 
 # prepend folders of workspace to environment variables
-export PATH=$($DIRNAME/setup.py --prefix --name PATH --value $BASE_DIR$PATH_dir)$PATH
-export PYTHONPATH=$($DIRNAME/setup.py --prefix --name PYTHONPATH --value $BASE_DIR$PYTHONPATH_dir)$PYTHONPATH
-export CPATH=$($DIRNAME/setup.py --prefix --name CPATH --value $BASE_DIR$CPATH_dir)$CPATH
+export PATH="$("$DIRNAME/setup.py" --prefix --name PATH --value "$BASE_DIR$PATH_dir")$PATH"
+export PYTHONPATH="$("$DIRNAME/setup.py" --prefix --name PYTHONPATH --value "$BASE_DIR$PYTHONPATH_dir")$PYTHONPATH"
+export CPATH="$("$DIRNAME/setup.py" --prefix --name CPATH --value "$BASE_DIR$CPATH_dir")$CPATH"
 if [ $IS_DARWIN -eq 0 ]; then
-  export LD_LIBRARY_PATH=$($DIRNAME/setup.py --prefix --name LD_LIBRARY_PATH --value $BASE_DIR$LD_LIBRARY_PATH_dir)$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH="$("$DIRNAME/setup.py" --prefix --name LD_LIBRARY_PATH --value "$BASE_DIR$LD_LIBRARY_PATH_dir")$LD_LIBRARY_PATH"
 else
-  export DYLD_LIBRARY_PATH=$($DIRNAME/setup.py --prefix --name DYLD_LIBRARY_PATH --value $BASE_DIR$LD_LIBRARY_PATH_dir)$DYLD_LIBRARY_PATH
+  export DYLD_LIBRARY_PATH="$("$DIRNAME/setup.py" --prefix --name DYLD_LIBRARY_PATH --value "$BASE_DIR$LD_LIBRARY_PATH_dir")$DYLD_LIBRARY_PATH"
 fi
-export CMAKE_PREFIX_PATH=$($DIRNAME/setup.py --prefix --name CMAKE_PREFIX_PATH --value $BASE_DIR$CMAKE_PREFIX_PATH_dir)$CMAKE_PREFIX_PATH
-export PKG_CONFIG_PATH=$($DIRNAME/setup.py --prefix --name PKG_CONFIG_PATH --value $BASE_DIR$PKG_CONFIG_PATH_dir)$PKG_CONFIG_PATH
+export CMAKE_PREFIX_PATH="$("$DIRNAME/setup.py" --prefix --name CMAKE_PREFIX_PATH --value "$BASE_DIR$CMAKE_PREFIX_PATH_dir")$CMAKE_PREFIX_PATH"
+export PKG_CONFIG_PATH="$("$DIRNAME/setup.py" --prefix --name PKG_CONFIG_PATH --value "$BASE_DIR$PKG_CONFIG_PATH_dir")$PKG_CONFIG_PATH"
 
 # run all environment hooks of this workspace
 FIND=`which find`
-for envfile in `$FIND "$BASE_DIR/etc/catkin/profile.d" -maxdepth 1 -name "*.sh" 2>/dev/null`
-do
-  . $envfile
+IFS=$(echo -en "\n\r")
+for envfile in $($FIND "$BASE_DIR/etc/catkin/profile.d" -maxdepth 1 -name "*.sh" 2>/dev/null) ; do
+  . "$envfile"
 done
 if [ "$CATKIN_SHELL" != "sh" ]; then
-  for envfile in `$FIND "$BASE_DIR/etc/catkin/profile.d" -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null`
-  do
-    . $envfile
+  for envfile in `$FIND "$BASE_DIR/etc/catkin/profile.d" -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null` ; do
+    . "$envfile"
   done
 fi

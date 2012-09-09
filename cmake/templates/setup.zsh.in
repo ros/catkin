@@ -2,4 +2,4 @@
 # generated from catkin/cmake/templates/setup.zsh.in
 
 CATKIN_SHELL=zsh
-. @SETUP_DIR@/setup.sh
+. "@SETUP_DIR@/setup.sh"

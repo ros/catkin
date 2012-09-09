@@ -8,8 +8,13 @@ if(NOT DEFINED catkin_EXTRAS_DIR)
   message(FATAL_ERROR "catkin_EXTRAS_DIR is not set")
 endif()
 
+# use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
+# or CMAKE_PREFIX_PATH from the environment
+if(NOT DEFINED CMAKE_PREFIX_PATH)
+  set(CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+endif()
+
 # list of unique workspaces based on CATKIN_WORKSPACES and CMAKE_PREFIX_PATH
-# considers CMAKE_PREFIX_PATH for the case that setup.sh has not been sourced
 set(CATKIN_WORKSPACES "")
 foreach(workspace $ENV{CATKIN_WORKSPACES})
   list(FIND CATKIN_WORKSPACES ${workspace} _index)
@@ -19,6 +24,7 @@ foreach(workspace $ENV{CATKIN_WORKSPACES})
 endforeach()
 # ...plus all CMAKE_PREFIX_PATH which are catkin workspaces
 # extended with their sourcespace(s) from the CATKIN_WORKSPACE file if not empty
+# for the case that setup.sh has not been sourced or CMAKE_PREFIX_PATH is overridden via command line arguments
 foreach(path ${CMAKE_PREFIX_PATH})
   if(EXISTS "${path}/CATKIN_WORKSPACE")
     file(READ "${path}/CATKIN_WORKSPACE" sourcespaces)
@@ -39,10 +45,23 @@ foreach(path ${CMAKE_PREFIX_PATH})
   endif()
 endforeach()
 
+# prepend all workspaces to the CMAKE_PREFIX_PATH
+# for the case that setup.sh has not been sourced
+set(workspaces "")
+foreach(workspace $ENV{CATKIN_WORKSPACES})
+  string(REGEX REPLACE ":.*" "" workspace ${workspace})
+  list(INSERT workspaces 0 ${workspace})
+endforeach() 
+foreach(workspace ${workspaces})
+  list(FIND CMAKE_PREFIX_PATH ${workspace} _index)
+  if(_index EQUAL -1)
+    list(INSERT CMAKE_PREFIX_PATH 0 ${workspace})
+  endif()
+endforeach()
 
 # define buildspace
-set(CATKIN_BUILD_PREFIX ${CMAKE_BINARY_DIR}/buildspace)
-# add buildspace to CMAKE_PREFIX_PATH
+set(CATKIN_BUILD_PREFIX "${CMAKE_BINARY_DIR}/buildspace")
+# prepend buildspace to CMAKE_PREFIX_PATH
 list(INSERT CMAKE_PREFIX_PATH 0 ${CATKIN_BUILD_PREFIX})
 
 

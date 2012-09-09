@@ -2,4 +2,4 @@
 # generated from catkin/cmake/templates/setup.bash.in
 
 CATKIN_SHELL=bash
-. @SETUP_DIR@/setup.sh
+. "@SETUP_DIR@/setup.sh"
