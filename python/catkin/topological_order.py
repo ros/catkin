@@ -85,7 +85,7 @@ def topological_order(source_root_dir, whitelisted=None, blacklisted=None):
             continue
         if data.name in projects:
             print('Two stacks with the same name "%s" in the workspace:\n- %s\n- %s' % (data.name, projects[data.name].path, data.path), file=sys.stderr)
-            exit(1)
+            sys.exit(1)
         projects[data.name] = data
 
     # remove catkin from list of projects
