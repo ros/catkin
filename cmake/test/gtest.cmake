@@ -80,6 +80,8 @@ if(NOT GTEST_FOUND)
       # add CMakeLists.txt from gtest dir
       set(_CATKIN_GTEST_BINARY_DIR ${CMAKE_BINARY_DIR}/gtest)
       add_subdirectory(${_CATKIN_GTEST_BASE_DIR} ${_CATKIN_GTEST_BINARY_DIR})
+      # mark gtest targets with EXCLUDE_FROM_ALL to only build when tests are built which depend on them
+      set_target_properties(gtest gtest_main PROPERTIES EXCLUDE_FROM_ALL 1)
       get_filename_component(_CATKIN_GTEST_INCLUDE_DIR ${_CATKIN_GTEST_INCLUDE} PATH)
       # set from-source variables
       set(GTEST_FROM_SOURCE_FOUND TRUE CACHE INTERNAL "")
