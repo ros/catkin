@@ -2,6 +2,7 @@ from __future__ import print_function
 import glob
 import os
 import rospkg.stack
+import sys
 
 
 class ProjectData:
@@ -82,7 +83,9 @@ def topological_order(source_root_dir, whitelisted=None, blacklisted=None):
         # skip blacklisted projects
         if blacklisted and data.name in blacklisted:
             continue
-        assert(data.name not in projects)
+        if data.name in projects:
+            print('Two stacks with the same name "%s" in the workspace:\n- %s\n- %s' % (data.name, projects[data.name].path, data.path), file=sys.stderr)
+            exit(1)
         projects[data.name] = data
 
     # remove catkin from list of projects
