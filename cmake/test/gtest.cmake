@@ -36,7 +36,7 @@ function(catkin_add_gtest target)
   include_directories(${GTEST_INCLUDE_DIRS})
   link_directories(${GTEST_LIBRARY_DIRS})
   add_executable(${target} EXCLUDE_FROM_ALL ${_gtest_DEFAULT_ARGS})
-  assert(${GTEST_LIBRARIES})
+  assert(GTEST_LIBRARIES)
   target_link_libraries(${target} ${GTEST_LIBRARIES} ${THREADS_LIBRARY})
 
   # make sure gtest is built before the test target
