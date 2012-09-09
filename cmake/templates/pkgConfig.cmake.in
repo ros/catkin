@@ -66,8 +66,7 @@ foreach(lib @PROJECT_LIBRARIES@)
       set(onelib "${lib}-NOTFOUND")
       find_library(onelib ${lib}
         PATHS ${path}
-        NO_DEFAULT_PATH
-        )
+        NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
       if(onelib)
         list(APPEND paths ${path})
         break()
