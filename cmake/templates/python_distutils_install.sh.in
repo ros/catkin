@@ -9,7 +9,7 @@ if [ -n "$DESTDIR" ] ; then
             /bin/echo "otherwise python's distutils will bork things."
             exit 1
     esac
-    DESTDIR_ARG="--root=\"$DESTDIR\""
+    DESTDIR_ARG="\"--root=$DESTDIR\""
 fi
 
 cd "@INSTALL_CMD_WORKING_DIRECTORY@"
@@ -26,4 +26,4 @@ cd "@INSTALL_CMD_WORKING_DIRECTORY@"
     build --build-base "@CMAKE_CURRENT_BINARY_DIR@" \
     install \
     $DESTDIR_ARG \
-    @SETUPTOOLS_ARG_EXTRA@ --prefix="@CMAKE_INSTALL_PREFIX@"
+    @SETUPTOOLS_ARG_EXTRA@ "--prefix=@CMAKE_INSTALL_PREFIX@"
