@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 set(catkin_EXTRAS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+project(catkin)
+
 if(NOT DEFINED CATKIN_TOPLEVEL)
   include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
 endif()
 
-
-project(catkin)
 catkin_stack()
 catkin_project(catkin)
 
