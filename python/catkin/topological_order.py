@@ -20,7 +20,8 @@ class ProjectData:
 
 def _remove_dependency(projects, name):
     for build_depends in [project_data.build_depends for project_data in projects.values()]:
-        build_depends.difference_update([name])
+        if build_depends is not None:
+            build_depends.difference_update([name])
 
 
 def _sort_projects(projects):
@@ -46,7 +47,7 @@ def _sort_projects(projects):
             names = non_message_generators
         else:
             # in case of a circular dependency pass the list of remaining projects
-            ordered_projects.append([None, ', '.join(projects.keys().sort())])
+            ordered_projects.append([None, ', '.join(sorted(projects.keys()))])
             break
 
         # alphabetic order only for convenience
