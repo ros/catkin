@@ -1,5 +1,19 @@
 #!/bin/bash -ex
 
+# helper script that make installs ros fuerte core stacks
+# using cmake and make to /opt/ros/fuerte
+
+echo "!!!!!!!!!!!!!!! DO NOT PROCEED UNLESS YOU KNOW WHAT YOU ARE DOING !!!!!!!!!"
+echo "This script completely removes /opt/ros/fuerte and reinstalls catkin stacks from source"
+echo -n "Please confirm (y or n) :"
+read CONFIRM
+case $CONFIRM in
+y|Y|YES|yes|Yes) ;;
+*) echo Aborting - you entered $CONFIRM
+exit
+;;
+esac
+
 TOP=$(cd `dirname $0` ; pwd)
 BUILD=$TOP/pkgbuild
 PREFIX=$1

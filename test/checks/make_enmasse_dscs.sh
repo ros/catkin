@@ -1,5 +1,7 @@
 #!/bin/bash -ex
 
+# this script deletes all of /opt/ros/fuerte and then runs cmake + gendebian
+
 TOP=$(cd `dirname $0` ; pwd)
 . $TOP/catkin-test.sh
 
