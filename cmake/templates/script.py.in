@@ -1,4 +1,3 @@
 #!/usr/bin/env python
-fh = open("@PYTHON_SCRIPT@", 'r')
-execfile(fh.read())
-fh.close()
+with open("@PYTHON_SCRIPT@", 'r') as fh:
+    exec(fh.read())
