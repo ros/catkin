@@ -30,7 +30,9 @@ del path
 del src_init_file
 
 for __execfile in __execfiles:
-    execfile(__execfile)
+    fh = open(__execfile, 'r')
+    execfile(fh.read())
+    fh.close()
 if __execfiles:
     del __execfile
 del __execfiles
