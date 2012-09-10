@@ -7,8 +7,8 @@ import sys
 
 class ProjectData:
 
-    def __init__(self, xml_filename):
-        project = rospkg.stack.parse_stack_file(xml_filename)
+    def __init__(self, xml_filename, rospkg_arg=rospkg):
+        project = rospkg_arg.stack.parse_stack_file(xml_filename)
         self.name = project.name
         self.path = os.path.dirname(xml_filename)
         self.build_depends = set([d.name for d in project.build_depends])
@@ -65,12 +65,12 @@ def _sort_projects(projects):
 
 
 def topological_order(source_root_dir, whitelisted=None, blacklisted=None):
-    projects = {}
     xml_filenames = glob.glob(os.path.join(source_root_dir, '*', 'stack.xml'))
     #print('xml_filenames = %s' % xml_filenames, file=sys.stderr)
 
     # fetch all meta data
     prefix = os.path.abspath(source_root_dir) + os.sep
+    project_data_list = []
     for xml_filename in xml_filenames:
         if os.path.basename(os.path.dirname(xml_filename)).startswith('.'):
             continue
@@ -78,6 +78,12 @@ def topological_order(source_root_dir, whitelisted=None, blacklisted=None):
         # make path relative to root dir
         if data.path.startswith(prefix):
             data.path = data.path[len(prefix):]
+        project_data_list.append(data)
+    return _topological_order_projects(project_data_list, whitelisted, blacklisted)
+
+def _topological_order_projects(project_data_list, whitelisted=None, blacklisted=None):
+    projects = {}
+    for data in project_data_list:
         # skip non-whitelisted projects
         if whitelisted and data.name not in whitelisted:
             continue
