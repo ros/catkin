@@ -1,5 +1,5 @@
 import os
-from utils import AbstractCatkinWorkspaceTest, TEMP_DIR, rosinstall,\
+from test.utils import AbstractCatkinWorkspaceTest, TEMP_DIR, rosinstall,\
     create_catkin_workspace
 
 class AbstractUnstableTest(AbstractCatkinWorkspaceTest):
@@ -29,7 +29,7 @@ class AbstractUnstableTest(AbstractCatkinWorkspaceTest):
     def delete_build(self):
         """
         cleans the build folder, run manually in subtests when
-        appropriate. We don't to this in setup because it tajes so
+        appropriate. We don't to this in setup because it takes so
         long to build all of ros core'
         """
         if os.path.isdir(self.builddir):
