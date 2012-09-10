@@ -39,7 +39,7 @@ Then you need a toplevel ``CMakeLists.txt`` for the workspace::
 
 If catkin is already installed and not part of the workspace you just omit the path to the script.
 
-That script creates a symlink to ``catkin/cmake/toplevel.cmake`` using the command ``ln -s src/catkin/cmake/toplevel.cmake src/CMakeLists.txt``.
+That script creates a symlink to ``catkin/cmake/toplevel.cmake`` using the command ``ln -s catkin/cmake/toplevel.cmake src/CMakeLists.txt``.
 
 The ``src`` folder should now contain all checked out repositories and a CMakeLists.txt::
 
