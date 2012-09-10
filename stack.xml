@@ -1,6 +1,6 @@
 <stack>
   <name>catkin</name>
-  <version>0.5.19</version>
+  <version>0.5.20</version>
   <description>Low-level build system macros and infrastructure for ROS.</description>
   <author email="straszheim@willowgarage.com">Troy Straszheim</author>
   <author>Morten Kjaergaard</author>
