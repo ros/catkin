@@ -4,8 +4,8 @@ import os
 import sys
 import shutil
 import unittest
-from utils import *
-from network_test_utils import AbstractUnstableTest
+from test.utils import *
+from test.network_test_utils import AbstractUnstableTest
 
 
 class SimpleUnstableTest(AbstractUnstableTest):

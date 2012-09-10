@@ -3,7 +3,7 @@
 import sys
 import os
 import unittest
-from utils import *
+from test.utils import *
 
 
 class MockTest(AbstractCatkinWorkspaceTest):

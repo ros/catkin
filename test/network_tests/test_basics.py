@@ -3,7 +3,8 @@
 import os
 import sys
 import unittest
-from utils import *
+from test.utils import *
+from . import network_test_utils
 from network_test_utils import AbstractUnstableTest
 
 
