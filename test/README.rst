@@ -1,6 +1,11 @@
 Subfolders of catkin/test:
 ==========================
 
+To run tests, you need to set the python sources of catkin first in the pythonpath. In the catkin folder, run::
+
+  $ export PYTHONPATH=`pwd`/python:$PYTHONPATH
+
+
 Use python-nose to run tests, get it from apt-get.
 Run tests from the catkin folder using just::
 
@@ -24,15 +29,20 @@ mock_resources
 
 mock catkin stacks to run tests against
 
+unit_tests
+----------
+
+tests testing (python) functions in isolation
+
 local_tests
 -----------
 
-tests that require no network connection (quick)
+tests that run catkin cli but require no network connection (quick)
 
 network_tests
 -------------
 
-tests that checkout all core ros stacks, and require network connection (slow)
+tests that run catkin cli and checkout all core ros stacks, and require network connection (slow)
 
 tmp
 ---
