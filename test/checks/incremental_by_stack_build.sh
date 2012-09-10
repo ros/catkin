@@ -1,5 +1,8 @@
 #!/bin/bash -ex
 
+# Helper script to use an existing catkin workspace and call
+# cmake, make install, for each package inside
+
 TOP=$(cd `dirname $0` ; pwd)
 
 [ $# -eq 2 ] || { /bin/echo "usage: $0 [srcdir] [scratchdir]" ; exit 1 ; }
@@ -25,6 +28,7 @@ mkdir -p $INSTALL
 export CMAKE_PREFIX_PATH=$INSTALL
 CMAKE="cmake -DCMAKE_PREFIX_PATH=$INSTALL -DCMAKE_INSTALL_PREFIX=$INSTALL"
 
+# calls cmake, make, make install on one package
 doone () {
     pkg=$1
     mkdir -p $BUILD/$pkg
