@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 project(a)
-find_package(catkin)
+catkin_project(a
+  INCLUDE_DIRS include
+  LIBRARIES a
+#  PYTHONPATH src
+  )
+
+find_package(catkin REQUIRED)
 
 add_library(a SHARED lib.cpp)
 
@@ -9,11 +15,6 @@ add_message_files(
   FILES AMsg.msg
 )
 
-catkin_project(a
-  INCLUDE_DIRS include
-  LIBRARIES a
-#  PYTHONPATH src
-  )
 
 # catkin_python_setup()
 # enable_python(a)

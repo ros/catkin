@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 project(c)
+catkin_project(c
+  INCLUDE_DIRS include
+  LIBRARIES c-one c-two
+  )
 
-find_package(catkin)
+find_package(catkin REQUIRED)
 find_package(a)
 include_directories(${a_INCLUDE_DIRS})
 
@@ -15,10 +19,7 @@ add_message_files(
   FILES CMsg.msg
 )
 
-catkin_project(c
-  INCLUDE_DIRS include
-  LIBRARIES c-one c-two
-  )
+
 
 # catkin_python_setup()
 # enable_python(c)

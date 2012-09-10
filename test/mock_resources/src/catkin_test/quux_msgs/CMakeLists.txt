@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 project(quux_msgs)
+catkin_project(${PROJECT_NAME})
 
-find_package(genmsg)
-find_package(std_msgs)
+ find_package(catkin REQUIRED)
+
+find_package(genmsg REQUIRED)
+find_package(std_msgs REQUIRED)
 
 add_message_files(
   DIRECTORY msg
@@ -11,5 +14,3 @@ add_message_files(
 
 generate_messages(DEPENDENCIES std_msgs)
 
-catkin_project(${PROJECT_NAME}
-  )

@@ -5,7 +5,8 @@ import sys
 import shutil
 import unittest
 from test.utils import *
-from test.network_test_utils import AbstractUnstableTest
+from . import network_test_utils
+from network_test_utils import AbstractUnstableTest
 
 
 class SimpleUnstableTest(AbstractUnstableTest):
@@ -108,14 +109,21 @@ class SimpleUnstableTest(AbstractUnstableTest):
                           # PYTHON_INSTALL_PATH + "/b",
                           # PYTHON_INSTALL_PATH + "/c",
                           # PYTHON_INSTALL_PATH + "/d",
-                          PYTHON_INSTALL_PATH + "/a/__init__.py")
+                          PYTHON_INSTALL_PATH + "/a/__init__.py",
+                          PYTHON_INSTALL_PATH + "/quux_msgs/__init__.py")
 
             # "DESTDIR="
             out = succeed(MAKE_CMD + ["install"],
                           cwd=other_build_dir)
            
             assert_exists(other_install_dir,
-                          "bin/nolangs_exec")
+                          "lib/pkgconfig/a.pc",
+                          "lib/pkgconfig/b.pc",
+                          "lib/pkgconfig/c.pc",
+                          "lib/pkgconfig/d.pc",
+                          "lib/pkgconfig/quux_msgs.pc",
+                          PYTHON_INSTALL_PATH + "/a/__init__.py",
+                          PYTHON_INSTALL_PATH + "/quux_msgs/__init__.py")
            
             #
             #  make sure python imports work
