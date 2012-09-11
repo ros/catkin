@@ -45,6 +45,9 @@ if(@PROJECT_NAME@_CONFIG_INCLUDED)
 endif()
 set(@PROJECT_NAME@_CONFIG_INCLUDED TRUE)
 
+# flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
+set(@PROJECT_NAME@_FOUND_CATKIN_PROJECT TRUE)
+
 if(NOT "X@PROJECT_INCLUDE_DIRS@" STREQUAL "X")
   set(@PROJECT_NAME@_INCLUDE_DIRS "")
   foreach(idir @PROJECT_INCLUDE_DIRS@)
@@ -74,7 +77,7 @@ foreach(lib @PROJECT_LIBRARIES@)
     endforeach()
     list(LENGTH paths paths_count)
     if(paths_count EQUAL 0)
-      message(FATAL_ERROR "Project '${PROJECT_NAME}' tried to find library '${lib}'.  The CMake config for '@PROJECT_NAME@' is available but the library '${lib}' is neither a target nor installed properly.  Did you compiled project '@PROJECT_NAME@'?  Did you find_package() it before the subdirectory containing its code is included?")
+      message(FATAL_ERROR "Project '${PROJECT_NAME}' tried to find library '${lib}'.  The CMake config for '@PROJECT_NAME@' is available but the library '${lib}' is neither a target nor built/installed properly.  Did you compiled project '@PROJECT_NAME@'?  Did you find_package() it before the subdirectory containing its code is included?")
     endif()
     list(GET paths 0 path)
     list(APPEND @PROJECT_NAME@_LIBRARY_DIRS ${path})

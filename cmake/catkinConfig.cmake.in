@@ -43,6 +43,9 @@ if(NOT catkin_FOUND)
   set(CATKIN_PACKAGE_PREFIX "" CACHE STRING "Prefix to apply to package generated via gendebian")
 endif()
 
+# flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
+set(catkin_FOUND_CATKIN_PROJECT TRUE)
+
 # XXXX don't overwrite catkin_* variables when being called recursively
 if(NOT _CATKIN_FIND_ OR _CATKIN_FIND_ EQUAL 0)
   set(_CATKIN_FIND_ 0)
