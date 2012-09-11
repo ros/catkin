@@ -70,6 +70,7 @@
 #
 # Example:
 # ::
+#
 #   catkin_package_export(
 #     INCLUDE_DIRS include
 #     LIBRARIES proj-one proj-two
