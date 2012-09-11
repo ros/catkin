@@ -57,34 +57,35 @@ math(EXPR _CATKIN_FIND_ "${_CATKIN_FIND_} + 1")
 # find all components
 foreach(component ${catkin_FIND_COMPONENTS})
   string(TOLOWER "${component}" component_lower)
-  if(${component_lower} STREQUAL "catkin")
-    message(FATAL_ERROR "'${component}' is not a valid component for find_package()")
-  endif()
+  # skip catkin since it does not make sense as a component
+  # yet it enables to use ${${PROJECT_NAME}_DEPENDS} as DEPENDS for catkin_project()
+  if(NOT ${component_lower} STREQUAL "catkin")
 
-  # get search paths from all CMAKE_PREFIX_PATH (which includes buildspace and all workspaces)
-  set(paths "")
-  foreach(path ${CMAKE_PREFIX_PATH})
-    if(IS_DIRECTORY ${path}/share/${component}/cmake)
-      list(APPEND paths ${path}/share/${component}/cmake)
+    # get search paths from all CMAKE_PREFIX_PATH (which includes buildspace and all workspaces)
+    set(paths "")
+    foreach(path ${CMAKE_PREFIX_PATH})
+      if(IS_DIRECTORY ${path}/share/${component}/cmake)
+        list(APPEND paths ${path}/share/${component}/cmake)
+      endif()
+    endforeach()
+
+    # find package component
+    if(catkin_FIND_REQUIRED)
+      find_package(${component} REQUIRED NO_MODULE PATHS ${paths}
+        NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+    elseif(catkin_FIND_QUIETLY)
+      find_package(${component} QUIET NO_MODULE PATHS ${paths}
+        NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+    else()
+      find_package(${component} NO_MODULE PATHS ${paths}
+        NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
     endif()
-  endforeach()
 
-  # find package component
-  if(catkin_FIND_REQUIRED)
-    find_package(${component} REQUIRED NO_MODULE PATHS ${paths}
-      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
-  elseif(catkin_FIND_QUIETLY)
-    find_package(${component} QUIET NO_MODULE PATHS ${paths}
-      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
-  else()
-    find_package(${component} NO_MODULE PATHS ${paths}
-      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+    # append component-specific variables to catkin_* variables
+    list_append_unique(catkin_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
+    list_append_unique(catkin_LIBRARIES ${${component}_LIBRARIES})
+    list_append_unique(catkin_LIBRARY_DIRS ${${component}_LIBRARY_DIRS})
   endif()
-
-  # append component-specific variables to catkin_* variables
-  list_append_unique(catkin_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
-  list_append_unique(catkin_LIBRARIES ${${component}_LIBRARIES})
-  list_append_unique(catkin_LIBRARY_DIRS ${${component}_LIBRARY_DIRS})
 endforeach()
 
 # decrement recursion counter
