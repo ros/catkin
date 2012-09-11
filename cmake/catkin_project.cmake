@@ -104,6 +104,11 @@ function(catkin_project catkin_project_name)
     message(FATAL_ERROR "catkin_project() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
   endif()
 
+  # unset previously found directory of this project, so that this project overlays the other cleanly
+  if(${PROJECT_NAME}_DIR)
+    set(${PROJECT_NAME}_DIR "" CACHE PATH "" FORCE)
+  endif()
+
   # filter out DEPENDS which have not been find_package()-ed before
   foreach(depend ${PROJECT_DEPENDS})
     if(NOT ${depend}_FOUND)
