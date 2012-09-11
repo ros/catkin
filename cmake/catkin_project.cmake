@@ -41,7 +41,7 @@
 #   The template can distinguish between build- and installspace
 #   using the boolean variables ``BUILDSPACE`` and ``INSTALLSPACE``
 #   and should be verified to work in both cases.
-# :type DEPENDS: list of strings
+# :type CFG_EXTRAS: string
 #
 # :outvar CATKIN_PROJECT_BIN_DESTINATION:
 #   See :cmake:data:`CATKIN_PROJECT_BIN_DESTINATION`.
@@ -101,6 +101,13 @@ function(catkin_project catkin_project_name)
   if(PROJECT_DEFAULT_ARGS)
     message(FATAL_ERROR "catkin_project() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
   endif()
+  # filter out DEPENDS which have not been find_package()-ed before
+  foreach(depend ${PROJECT_DEPENDS})
+    if(NOT ${depend}_FOUND)
+      message(WARNING "catkin_project(${PROJECT_NAME}) depends on '${depend}' which has not been find_package()-ed before")
+      list(REMOVE_ITEM PROJECT_DEPENDS ${depend})
+    endif()
+  endforeach()
 
   # stack version provided by stack.cmake/xml
   set(PROJECT_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
