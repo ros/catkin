@@ -29,8 +29,10 @@
 #   It is used when client code finds this project via
 #   ``find_package()``.  Each project listed will in turn be
 #   ``find_package``\ -ed and their ``INCLUDE_DIRS`` and ``LIBRARIES``
-#   will be appended to ours.  Only catkin projects should be used
-#   where we can ensure that they are *find_packagable* and
+#   will be appended to ours.  Only projects should be used where we
+#   can guarantee that they are *find_packagable*. If they are not
+#   catkin projects they are not added to the ``requires`` list in
+#   the pkg-config file since we can not ensure that they are
 #   *package_configurable*.
 # :type DEPENDS: list of strings
 # :param CFG_EXTRAS: a CMake file containing extra stuff that should
@@ -101,11 +103,20 @@ function(catkin_project catkin_project_name)
   if(PROJECT_DEFAULT_ARGS)
     message(FATAL_ERROR "catkin_project() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
   endif()
+
   # filter out DEPENDS which have not been find_package()-ed before
   foreach(depend ${PROJECT_DEPENDS})
     if(NOT ${depend}_FOUND)
       message(WARNING "catkin_project(${PROJECT_NAME}) depends on '${depend}' which has not been find_package()-ed before")
       list(REMOVE_ITEM PROJECT_DEPENDS ${depend})
+    endif()
+  endforeach()
+
+  # find catkin-only projects in DEPENDS list for use in .pc files
+  set(PROJECT_CATKIN_DEPENDS "")
+  foreach(depend ${PROJECT_DEPENDS})
+    if(${${depend}_FOUND_CATKIN_PROJECT})
+      list(APPEND PROJECT_CATKIN_DEPENDS ${depend})
     endif()
   endforeach()
 
