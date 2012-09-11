@@ -6,6 +6,9 @@ Stack manifest XML tags reference
 NOTE: Stack manifests always have the filename ``stack.xml``.
 This document describes catkin-ized stacks.
 
+.. todo:: The separation into stacks and packages is going to be
+   dropped, then this page needs to be changed accordingly.
+
 <stack>
 -------
 

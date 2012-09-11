@@ -1,8 +1,6 @@
 Migrating from rosbuild to catkin
 =================================
 
-**UNDER CONSTRUCTION**
-
 From Box Turtle to Fuerte, the ROS build system was `rosbuild
 <http://ros.org/wiki/rosbuild>`_.  In Fuerte, we introduced `catkin
 <http://ros.org/wiki/catkin>`_.  We aim to deprecate rosbuild in the future,
@@ -11,8 +9,16 @@ especially encourage maintainers of released ROS stacks to migrate soon,
 because the build farm that generates binary Debian packages
 from released ROS stacks will eventually be decommissioned in the future.
 
+Since catkinized stacks cannot depend on rosbuild stacks, the
+migration has to start with core stacks and move on along the
+dependency chain. This is the motivation for the wet/dry metaphor
+alon a rising tide.
+
 Quick start guide
 .................
+
+.. todo:: The separation into stacks and packages is going to be
+   dropped, then this page needs to be changed accordingly.
 
 At a high level, the key steps to convert a ROS stack from rosbuild to
 catkin are:
@@ -24,6 +30,8 @@ catkin are:
  a. Replace the exported explicit compiler and linker flags with a dynamic pkg-config invocation:
 
    ``<cpp cflags="`pkg-config --cflags PACKAGE_NAME`" lflags="`pkg-config --libs PACKAGE_NAME`"/>``
+
+This allows rosbuild packages to depend on catkinized packages.
 
  b. Create a CMake project containing a ``catkin_project(PACKAGE_NAME)`` invocation...
  c. Combine ``rosdep`` keys from ``manifest.xml`` files into ``stack.xml`` as ``build_depends`` and ``depends`` keys...
