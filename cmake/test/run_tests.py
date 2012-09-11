@@ -14,6 +14,11 @@ parser.add_argument('--results', help='The path to the xunit result file')
 parser.add_argument('--working-dir', nargs='?', help='The working directory for the executed command')
 args = parser.parse_args()
 
+# if result file exists remove it before test execution
+if os.path.exists(args.results):
+    print('-- run_tests.py: remove old result "%s"' % args.results)
+    os.remove(args.results)
+
 print('-- run_tests.py: execute commands%s%s' % (' with working directory "%s"' % args.working_dir if args.working_dir is not None else '', (''.join(['\n  %s' % cmd for cmd in args.command]))))
 for cmd in args.command:
     subprocess.call(cmd, cwd=args.working_dir, shell=True)
