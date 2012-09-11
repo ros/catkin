@@ -1,5 +1,5 @@
 #
-# Create forwarding Python :term:`pkgutil` infrastructure in
+# Creates forwarding Python :term:`pkgutil` infrastructure in
 # buildspace that enables mixing :term:`generated code` in buildspace
 # with :term:`static code` from sourcespace within a single Python
 # package.
@@ -10,6 +10,7 @@
 # 
 # .. note:: If the project also uses message generation via
 #   ``generate_messages()`` this function must be called before.
+#
 #
 # @public
 #
