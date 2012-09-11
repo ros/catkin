@@ -4,7 +4,13 @@ Sketch of directory structure
 How things ought to look, starting at the outermost level of the
 source directory and moving down through stacks and packages.
 
-Workspace (the ``src`` folder)
+.. todo:: The separation into stacks and packages is going to be
+   dropped, then this page needs to be changed accordingly.
+
+.. contents::
+
+
+``src`` (the Workspace folder)
 ------------------------------
 
 This is a directory containing multiple stacks, e.g. one constructed
@@ -15,9 +21,9 @@ by ``rosinstall``.  This directory must contain a symlink::
 which triggers catkin's topological sort via inspection of ``stack.xml``.
 
 Stack
------
+~~~~~
 
-A typical "stack" will contain, at the top level::
+A typical "stack" contains, at the top level::
 
   stack.xml
   CMakeLists.txt
@@ -66,8 +72,8 @@ The basic case (``ros_comm``)::
 
   cmake_minimum_required(VERSION 2.8)
 
-  # find_package(catkin REQUIRED)
-  # catkin_stack()
+  find_package(catkin REQUIRED)
+  catkin_stack()
 
   # optional find_package(... [REQUIRED])
 
@@ -82,6 +88,7 @@ The basic case (``ros_comm``)::
     add_subdirectory(${subdir})
   endforeach()
 
+.. todo:: This is not how the CMakeLists.txt of ros_comm actually looks like anymore.
 
 .. rubric:: cmake_minimum_required
 
@@ -90,9 +97,15 @@ necessary when building in a workspace (as the first CMakeLists.txt
 has already been read), but necessary when building e.g. in a
 packaging context.
 
+.. rubric:: find_package(catkin REQUIRED)
+
+This provides all catkin macros.
+
 .. rubric:: catkin_stack
 
-Find the catkin package first and then call :cmake:macro:`catkin_stack`.
+Call :cmake:macro:`catkin_stack` to read the data declared in
+stack.xml.  This also implicitly calls find_package on all
+dependencies declared in the stack.xml.
 
 .. rubric:: find_package [optional]
 
@@ -103,7 +116,7 @@ This is standard CMake.
 
 .. rubric:: catkin_python_setup
 
-Call :cmake:macro:`catkin_python_setup` if the project contains a 
+Call :cmake:macro:`catkin_python_setup` if the project contains a
 setup.py / Python code which should installed.
 
 .. rubric:: add_subdirectory
@@ -114,11 +127,16 @@ refers to a target defined in ``proj1``, then ``proj1`` must come
 first in the ordering.
 
 
-package
--------
+Package
+^^^^^^^
 
-Each package (as added by ``add_subdirectory`` in the stack) Will
-contain a ``CMakeLists.txt``.  Basic case::
+Each package (as added by ``add_subdirectory`` in the stack)
+contains a ``CMakeLists.txt``.
+
+CMakeLists.txt
+..............
+
+Basic case::
 
   project(rostime)
   find_package(catkin REQUIRED COMPONENTS cpp_common)
@@ -135,15 +153,10 @@ contain a ``CMakeLists.txt``.  Basic case::
 
   find_package(Boost REQUIRED COMPONENTS date_time thread)
 
-  set(${PROJECT_NAME}_SRCS
-    src/duration.cpp
-    src/rate.cpp
-    src/time.cpp
-  )
+  add_library(${PROJECT_NAME}
+    src/time.cpp src/rate.cpp src/duration.cpp)
 
-  add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRCS})
-
-  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 
   install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -176,26 +189,24 @@ packages that use them.
 .. rubric:: catkin_project
 
 :cmake:macro:`catkin_project` defines information dependent projects
-(i.e. include directories, libraries to link against and depending 
+(i.e. include directories, libraries to link against and depending
 projects).
 
 You will want to ``include_directories(${ROS_INCLUDE_DIRS})``
 and other folders where necessary.
 
-.. rubric:: source files
+.. todo:: more detail required here
 
-Add all source files to a list.  For better readability one file per
-line with `alphabetic order <standards.html#keep-lists-sorted>`_.
 
 .. rubric:: add_library
 
-Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
+Using ``${PROJECT_NAME}`` wherever possible to avoid repeating the
 project name.  This is standard CMake.  Explicitly use ``SHARED`` for
 building a shared library.
 
 .. rubric:: target_link_libraries
 
-Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
+Using ``${PROJECT_NAME}`` wherever possible to avoid repeating the
 project name.  This is standard CMake.  Explicitly link against all
 necessary libraries, i.e. ``ROS_LIBRARIES``.
 
