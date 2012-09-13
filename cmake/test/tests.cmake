@@ -12,10 +12,10 @@ if(NOT TARGET tests)
   message("TODO: implement add_roslaunch_check() in rostest-extras.cmake")
 endif()
 
-# create target to run tests
+# create target to run all tests
+# it uses the dot-prefixed test targets to depend on building all tests and cleaning test results before the tests are executed
 if(NOT TARGET run_tests)
   add_custom_target(run_tests)
-  add_dependencies(run_tests tests)
 endif()
 
 # create target to clean test results
@@ -66,9 +66,10 @@ function(catkin_run_tests_target type name xunit_filename)
   add_custom_target(run_tests_${PROJECT_NAME}_${type}_${name}
     COMMAND ${cmd})
   add_dependencies(run_tests_${PROJECT_NAME}_${type} run_tests_${PROJECT_NAME}_${type}_${name})
-  # hidden test target which depends on clean_test_results
+  # hidden test target which depends on building all tests and cleaning test results
   add_custom_target(.run_tests_${PROJECT_NAME}_${type}_${name}
     COMMAND ${cmd})
   add_dependencies(.run_tests_${PROJECT_NAME}_${type} .run_tests_${PROJECT_NAME}_${type}_${name})
   add_dependencies(.run_tests_${PROJECT_NAME}_${type}_${name} clean_test_results)
+  add_dependencies(.run_tests_${PROJECT_NAME}_${type}_${name} tests)
 endfunction()
