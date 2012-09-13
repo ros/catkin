@@ -51,6 +51,11 @@ function(catkin_generate_environment)
       ${CATKIN_BUILD_PREFIX}/setup.bat)
   endif()
 
+  # generate rosinstall file referencing setup.sh
+  configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
+    ${CATKIN_BUILD_PREFIX}/.rosinstall
+    @ONLY)
+
   # installspace
   set(SETUP_DIR ${CMAKE_INSTALL_PREFIX})
   set(CURRENT_WORKSPACE ${CMAKE_INSTALL_PREFIX})
@@ -118,13 +123,11 @@ function(catkin_generate_environment)
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
 
-  # XXX what is .rosinstall needed for?
-  #if(catkin_SOURCE_DIR)
-  #  configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.installable.in
-  #    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
-  #    @ONLY)
-  #  install(FILES
-  #    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
-  #    DESTINATION ${CMAKE_INSTALL_PREFIX})
-  #endif()
+  # generate rosinstall file referencing setup.sh
+  configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
+    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
+    @ONLY)
+  install(FILES
+    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
+    DESTINATION ${CMAKE_INSTALL_PREFIX})
 endfunction()
