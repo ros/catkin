@@ -127,7 +127,9 @@ function(catkin_generate_environment)
   configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
     ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
     @ONLY)
-  install(FILES
-    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
-    DESTINATION ${CMAKE_INSTALL_PREFIX})
+  if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
+    install(FILES
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
+      DESTINATION ${CMAKE_INSTALL_PREFIX})
+  endif()
 endfunction()
