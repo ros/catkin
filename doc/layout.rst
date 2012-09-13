@@ -61,7 +61,7 @@ e.g. for project 'proj'::
         proj/                 # one folder per package
           cmake/              # generated projConfig.cmake and projConfig-version.cmake for find_package()
 
-      CATKIN_WORKSPACE        # identifies folder as a catkin workspace
+      .CATKIN_WORKSPACE       # identifies folder as a catkin workspace
       env.sh
       setup.bash
       setup.py

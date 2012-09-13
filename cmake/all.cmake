@@ -23,11 +23,11 @@ foreach(workspace $ENV{CATKIN_WORKSPACES})
   endif()
 endforeach()
 # ...plus all CMAKE_PREFIX_PATH which are catkin workspaces
-# extended with their sourcespace(s) from the CATKIN_WORKSPACE file if not empty
+# extended with their sourcespace(s) from the .CATKIN_WORKSPACE file if not empty
 # for the case that setup.sh has not been sourced or CMAKE_PREFIX_PATH is overridden via command line arguments
 foreach(path ${CMAKE_PREFIX_PATH})
-  if(EXISTS "${path}/CATKIN_WORKSPACE")
-    file(READ "${path}/CATKIN_WORKSPACE" sourcespaces)
+  if(EXISTS "${path}/.CATKIN_WORKSPACE")
+    file(READ "${path}/.CATKIN_WORKSPACE" sourcespaces)
     if("${sourcespaces}" STREQUAL "")
       list(FIND CATKIN_WORKSPACES ${path} _index)
       if(_index EQUAL -1)

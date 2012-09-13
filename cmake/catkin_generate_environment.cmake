@@ -5,16 +5,16 @@ function(catkin_generate_environment)
 
   # create workspace marker
   set(sourcespaces "${CMAKE_SOURCE_DIR}")
-  if(EXISTS "${CATKIN_BUILD_PREFIX}/CATKIN_WORKSPACE")
+  if(EXISTS "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE")
     # prepend to existing list of sourcespaces
-    file(READ "${CATKIN_BUILD_PREFIX}/CATKIN_WORKSPACE" existing_sourcespaces)
+    file(READ "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE" existing_sourcespaces)
     list(FIND existing_sourcespaces "${CMAKE_SOURCE_DIR}" _index)
     if(_index EQUAL -1)
       list(INSERT existing_sourcespaces 0 ${CMAKE_SOURCE_DIR})
     endif()
     set(sourcespaces ${existing_sourcespaces})
   endif()
-  file(WRITE "${CATKIN_BUILD_PREFIX}/CATKIN_WORKSPACE" "${sourcespaces}")
+  file(WRITE "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE" "${sourcespaces}")
   # generate relay-script for setup.py
   set(PYTHON_SCRIPT ${catkin_EXTRAS_DIR}/templates/setup.py)
   configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
@@ -62,9 +62,9 @@ function(catkin_generate_environment)
 
   if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
     # generate and install workspace marker
-    file(WRITE ${CMAKE_BINARY_DIR}/catkin_generated/installspace/CATKIN_WORKSPACE "")
+    file(WRITE ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.CATKIN_WORKSPACE "")
     install(FILES
-      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/CATKIN_WORKSPACE
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.CATKIN_WORKSPACE
       DESTINATION ${CMAKE_INSTALL_PREFIX})
     # install setup.py
     install(PROGRAMS
