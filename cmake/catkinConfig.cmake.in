@@ -85,11 +85,14 @@ foreach(component ${catkin_FIND_COMPONENTS})
     endif()
 
     # append component-specific variables to catkin_* variables
-    list_append_unique(catkin_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
-    list_append_unique(catkin_LIBRARIES ${${component}_LIBRARIES})
-    list_append_unique(catkin_LIBRARY_DIRS ${${component}_LIBRARY_DIRS})
+    list(APPEND catkin_INCLUDE_DIRS ${${component}_INCLUDE_DIRS})
+    list(APPEND catkin_LIBRARIES ${${component}_LIBRARIES})
+    list(APPEND catkin_LIBRARY_DIRS ${${component}_LIBRARY_DIRS})
   endif()
 endforeach()
+list(REMOVE_DUPLICATES catkin_INCLUDE_DIRS)
+list(REMOVE_DUPLICATES catkin_LIBRARIES)
+list(REMOVE_DUPLICATES catkin_LIBRARY_DIRS)
 
 # decrement recursion counter
 math(EXPR _CATKIN_FIND_ "${_CATKIN_FIND_} - 1")

@@ -1,8 +1,0 @@
-macro(list_append_unique listname)
-  foreach(item ${ARGN})
-    list(FIND ${listname} ${item} _index)
-    if(_index EQUAL -1)
-      list(APPEND ${listname} ${item})
-    endif()
-  endforeach()
-endmacro()

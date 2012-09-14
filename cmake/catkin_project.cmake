@@ -132,8 +132,9 @@ function(catkin_project catkin_project_name)
   set(lib_paths "")
   foreach(workspace ${CATKIN_WORKSPACES})
     string(REGEX REPLACE ":.*" "" workspace ${workspace})
-    list_append_unique(lib_paths ${workspace}/lib)
+    list(APPEND lib_paths ${workspace}/lib)
   endforeach()
+  list(REMOVE_DUPLICATES lib_paths)
 
   #
   # BUILDSPACE

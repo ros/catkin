@@ -90,7 +90,7 @@ if(NOT PROJECT_NAME)
   project(catkin_internal)
 endif()
 
-# functions/macros: list_append_unique, safe_execute_process
+# functions/macros: safe_execute_process
 # python-integration: catkin_python_setup.cmake, interrogate_setup_dot_py.py, templates/__init__.py.in, templates/script.py.in, templates/python_distutils_install.bat.in, templates/python_distutils_install.sh.in, templates/safe_execute_install.cmake.in
 foreach(filename
     assert
@@ -104,7 +104,6 @@ foreach(filename
     python # defines PYTHON_EXECUTABLE, required by empy
     empy
     find_program_required
-    list_append_unique
     parse_arguments
     safe_execute_process
     stamp
