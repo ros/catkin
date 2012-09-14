@@ -1,7 +1,19 @@
 # generated from catkin/cmake/template/pkg-config.cmake.in
 
-# Remove duplicate libraries, generalized from PCLConfig.cmake.in
-macro(remove_duplicate_libraries _unfiltered_libraries _final_filtered_libraries)
+# append elements to a list if they are not already in the list
+# copied from catkin/cmake/list_append_unique.cmake to keep pkgConfig
+# self contained
+macro(_list_append_unique listname)
+  foreach(_item ${ARGN})
+    list(FIND ${listname} ${_item} _index)
+    if(_index EQUAL -1)
+      list(APPEND ${listname} ${_item})
+    endif()
+  endforeach()
+endmacro()
+
+# remove duplicate libraries, generalized from PCLConfig.cmake.in
+macro(_remove_duplicate_libraries _unfiltered_libraries _final_filtered_libraries)
   set(_filtered_libraries)
   set(_debug_libraries)
   set(_optimized_libraries)
@@ -37,7 +49,7 @@ macro(remove_duplicate_libraries _unfiltered_libraries _final_filtered_libraries
     endif("${library}" STREQUAL "debug")
   endforeach(library)
   set(_final_filtered_libraries _filtered_libraries)
-endmacro(remove_duplicate_libraries)
+endmacro()
 
 
 if(@PROJECT_NAME@_CONFIG_INCLUDED)
@@ -58,7 +70,7 @@ if(NOT "X@PROJECT_INCLUDE_DIRS@" STREQUAL "X")
     else()
       message(FATAL_ERROR "Project '@PROJECT_NAME@' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '@PKG_INCLUDE_PREFIX@/${idir}'.  Ask the maintainer '${@PROJECT_NAME@_MAINTAINER}' to fix it.")
     endif()
-    list(APPEND @PROJECT_NAME@_INCLUDE_DIRS ${include})
+    _list_append_unique(@PROJECT_NAME@_INCLUDE_DIRS ${include})
   endforeach()
 endif()
 
@@ -77,7 +89,7 @@ foreach(library @PROJECT_LIBRARIES@)
       endif()
     endforeach()
     if(lib)
-      list(APPEND @PROJECT_NAME@_LIBRARY_DIRS ${lib_path})
+      _list_append_unique(@PROJECT_NAME@_LIBRARY_DIRS ${lib_path})
       list(APPEND @PROJECT_NAME@_LIBRARIES ${lib})
     else()
       # as a fall back for non-catkin libraries try to search globally
@@ -96,19 +108,13 @@ foreach(dep @PROJECT_DEPENDS@)
   if(NOT ${dep}_FOUND)
     find_package(${dep})
   endif()
-  list(APPEND @PROJECT_NAME@_INCLUDE_DIRS ${${dep}_INCLUDE_DIRS})
+  _list_append_unique(@PROJECT_NAME@_INCLUDE_DIRS ${${dep}_INCLUDE_DIRS})
   list(APPEND @PROJECT_NAME@_LIBRARIES ${${dep}_LIBRARIES})
-  list(APPEND @PROJECT_NAME@_LIBRARY_DIRS ${${dep}_LIBRARY_DIRS})
+  _list_append_unique(@PROJECT_NAME@_LIBRARY_DIRS ${${dep}_LIBRARY_DIRS})
 endforeach()
 
-if(@PROJECT_NAME@_INCLUDE_DIRS)
-  list(REMOVE_DUPLICATES @PROJECT_NAME@_INCLUDE_DIRS)
-endif()
 if(@PROJECT_NAME@_LIBRARIES)
-  remove_duplicate_libraries(@PROJECT_NAME@_LIBRARIES @PROJECT_NAME@_LIBRARIES)
-endif()
-if(@PROJECT_NAME@_LIBRARY_DIRS)
-  list(REMOVE_DUPLICATES @PROJECT_NAME@_LIBRARY_DIRS)
+  _remove_duplicate_libraries(@PROJECT_NAME@_LIBRARIES @PROJECT_NAME@_LIBRARIES)
 endif()
 
 foreach(extra @PROJECT_CFG_EXTRAS@)
