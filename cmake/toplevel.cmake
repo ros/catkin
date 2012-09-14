@@ -20,9 +20,11 @@ else()
   set(catkin_search_path "")
   foreach(workspace $ENV{CATKIN_WORKSPACES})
     string(REGEX REPLACE ":.*" "" workspace ${workspace})
-    list(APPEND catkin_search_path ${workspace})
+    list(FIND catkin_search_path ${workspace} _index)
+    if(_index EQUAL -1)
+      list(APPEND catkin_search_path ${workspace})
+    endif()
   endforeach()
-  list(REMOVE_DUPLICATES catkin_search_path)
 
   # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
   # or CMAKE_PREFIX_PATH from the environment
