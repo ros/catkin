@@ -21,9 +21,8 @@ function(catkin_workspace)
   # tools/libraries.cmake
   configure_shared_library_build_settings()
 
-  # get include folders from all build- and installspaces
+  # get include folders from all workspaces
   foreach(workspace ${CATKIN_WORKSPACES})
-    string(REGEX REPLACE ":.*" "" workspace ${workspace})
     include_directories(${workspace}/include)
   endforeach()
   include_directories(BEFORE ${CATKIN_BUILD_PREFIX}/include)

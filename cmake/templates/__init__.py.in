@@ -17,13 +17,11 @@ __execfiles = []
 for p in __extended_path:
     src_init_file = path.join(p, __name__ + '.py')
     if path.isfile(src_init_file):
-        #execfile(src_init_file, globals(), locals())
         __execfiles.append(src_init_file)
     else:
         src_init_file = path.join(p, __name__, '__init__.py')
         if path.isfile(src_init_file):
             __execfiles.append(src_init_file)
-            #execfile(src_init_file, globals(), locals())
 del __extended_path
 del p
 del path

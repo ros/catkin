@@ -62,6 +62,7 @@ e.g. for project 'proj'::
           cmake/              # generated projConfig.cmake and projConfig-version.cmake for find_package()
 
       .CATKIN_WORKSPACE       # identifies folder as a catkin workspace
+                              # it contains a semicolon separated list of source folders if the workspace is a buildspace
       env.sh
       setup.bash
       setup.py

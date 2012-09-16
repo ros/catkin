@@ -50,26 +50,35 @@ def find_in_workspaces(search_dirs=None, project=None, path=None):
 
     # collect candidate paths
     paths = []
-    env_name = 'CATKIN_WORKSPACES'
-    workspaces = os.environ[env_name].split(';') if env_name in os.environ and os.environ[env_name] != '' else []
+    env_name = 'CMAKE_PREFIX_PATH'
+    # get all cmake prefix paths
+    workspaces = [workspace for workspace in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
+    # remove non-workspaces
+    workspaces = [workspace for workspace in workspaces if os.path.exists(os.path.join(workspace, '.CATKIN_WORKSPACE'))]
     for workspace in workspaces:
-        ws = workspace.split(':')[0]
-        ws_src = workspace.split(':')[1] if ws != workspace else None
+        # determine source spaces
+        filename = os.path.join(workspace, '.CATKIN_WORKSPACE')
+        data = ''
+        with open(filename) as f:
+            data = f.read()
+        source_paths = data.split(';') if data != '' else []
 
         for sub in search_dirs:
-            p = os.path.join(ws, sub if sub != 'libexec' else 'lib')
+            # search in workspace
+            p = os.path.join(workspace, sub if sub != 'libexec' else 'lib')
             if project is not None:
                 p = os.path.join(p, project)
             if path is not None:
                 p = os.path.join(p, path)
             paths.append(p)
 
-            # for search in share also consider source part of workspace
-            if ws_src is not None and project is not None and sub == 'share':
-                p = os.path.join(ws_src, project)
-                if path is not None:
-                    p = os.path.join(p, path)
-                paths.append(p)
+            # for search in share also consider source spaces
+            if project is not None and sub == 'share':
+                for source_path in source_paths:
+                    p = os.path.join(source_path, project)
+                    if path is not None:
+                        p = os.path.join(p, path)
+                    paths.append(p)
 
     # find all existing candidates
     existing = [p for p in paths if os.path.exists(p)]

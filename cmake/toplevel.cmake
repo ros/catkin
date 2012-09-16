@@ -16,27 +16,28 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/catkin/cmake/all.cmake" AND EXISTS "${CMAKE_SOURC
   add_subdirectory(catkin)
 
 else()
-  # list of unique build- and installspaces
-  set(catkin_search_path "")
-  foreach(workspace $ENV{CATKIN_WORKSPACES})
-    string(REGEX REPLACE ":.*" "" workspace ${workspace})
-    list(FIND catkin_search_path ${workspace} _index)
-    if(_index EQUAL -1)
-      list(APPEND catkin_search_path ${workspace})
-    endif()
-  endforeach()
-
   # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
   # or CMAKE_PREFIX_PATH from the environment
   if(NOT DEFINED CMAKE_PREFIX_PATH)
-    set(CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+    string(REPLACE ":" ";" CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
   endif()
 
-  # search for catkin in all workspaces and CMAKE_PREFIX_PATH
+  # list of catkin workspaces
+  set(catkin_search_path "")
+  foreach(path ${CMAKE_PREFIX_PATH})
+    if(EXISTS "${path}/.CATKIN_WORKSPACE")
+      list(FIND catkin_search_path ${path} _index)
+      if(_index EQUAL -1)
+        list(APPEND catkin_search_path ${path})
+      endif()
+    endif()
+  endforeach()
+
+  # search for catkin in all workspaces
   set(CATKIN_TOPLEVEL_FIND_PACKAGE TRUE)
   find_package(catkin REQUIRED
     NO_POLICY_SCOPE
-    PATHS ${catkin_search_path} ${CMAKE_PREFIX_PATH}
+    PATHS ${catkin_search_path}
     NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
   unset(CATKIN_TOPLEVEL_FIND_PACKAGE)
 endif()

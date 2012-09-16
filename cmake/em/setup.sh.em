@@ -1,56 +1,46 @@
 #!/bin/sh
 # generated from catkin/cmake/em/setup.sh.em
-# CURRENT_WORKSPACE="@CURRENT_WORKSPACE"
-# CATKIN_WORKSPACES="@CATKIN_WORKSPACES"
 
-# absolute path to the folder containing this script
-DIRNAME="@SETUP_DIR"
+# Sets various the enviroment variables and sources additional enviroment hooks.
+# The output depends on the CMAKE_PREFIX_PATH and the path of this workspace.
+# It tries it's best to undo changes from a previously sourced setup file before.
+# Supported command line options:
+# --extend: skips the undoing of changes from a previously sourced setup file
+# Supported enviroment variables:
+# _CATKIN_SETUP_NO_RECURSION: skips it's own recursion (when invoked by another setup file)
+
+# environment at generation time
+# CURRENT_CMAKE_PREFIX_PATH="@CMAKE_PREFIX_PATH"
+# CURRENT_WORKSPACE="@SETUP_DIR"
+
 # remember type of shell if not already set
-if [ -z "$CATKIN_SHELL" ] ; then
+if [ -z "$CATKIN_SHELL" ]; then
   CATKIN_SHELL=sh
 fi
 
-# called without arguments: create a clean environment, resetting all already set variables
-#   - removes all prepended items from environment variables (based on current CATKIN_WORKSPACES)
-#   - sets CATKIN_WORKSPACES to current + list of parents
-#   - calls setup from all parent workspaces with "--recursive" argument
-#   - prepends current to all variables
-#   - sources current environment hooks
-# called with "--recursive": used in recursive call from other setup
-#   - does not touch CATKIN_WORKSPACES
-#   - prepends current to all variables
-#   - sources current environment hooks
-# called with "--extend": used to extend one environment with a second one
-#   - prepends current + list of parent to existing CATKIN_WORKSPACES
-#   - calls setup from all parent workspaces with "--recursive" argument
-#   - prepends current to all variables
-#   - sources current environment hooks
+# decide which commands to perform
+DO_CLEAN=1
+IS_RECURSIVE=0
+if [ "$_CATKIN_SETUP_NO_RECURSION" = "1" ]; then
+  DO_CLEAN=0
+  IS_RECURSIVE=1
+elif [ $# -eq 1 -a "$1" = "--extend" ]; then
+  DO_CLEAN=0
+fi
 
-# bin folder of workspace prepended to PATH
-PATH_dir=/bin
-# lib/pythonX.Y/..-packages folder of workspace prepended to PYTHONPATH
-# the path suffix is calculated in catkin/cmake/python.cmake
-PYTHONPATH_dir=/@PYTHON_INSTALL_DIR
+# folder of workspace prepended to CMAKE_PREFIX_PATH
+CMAKE_PREFIX_PATH_dir=""
 # include folder of workspace prepended to CPATH
 CPATH_dir=/include
 # lib folder of workspace prepended to (DY)LD_LIBRARY_PATH
 LD_LIBRARY_PATH_dir=/lib
-# folder of workspace prepended to CMAKE_PREFIX_PATH
-CMAKE_PREFIX_PATH_dir=""
+# bin folder of workspace prepended to PATH
+PATH_dir=/bin
 # lib/pkgconfig folder of workspace prepended to PKG_CONFIG_PATH
 PKG_CONFIG_PATH_dir=/lib/pkgconfig
-
-# decide which mode is requested
-RECURSIVE_MODE=0
-EXTEND_MODE=0
-NORMAL_MODE=0
-if [ "$_CATKIN_SETUP_RECURSION" = "1" ]; then
-  RECURSIVE_MODE=1
-elif [ $# -eq 1 -a "$1" = "--extend" ]; then
-  EXTEND_MODE=1
-else
-  NORMAL_MODE=1
-fi
+# lib/pythonX.Y/..-packages folder of workspace prepended to PYTHONPATH
+# the path suffix is calculated in catkin/cmake/python.cmake
+PYTHONPATH_dir=/@PYTHON_INSTALL_DIR
 
 # detect if running on Darwin platform
 UNAME=`which uname`
@@ -60,64 +50,57 @@ if [ "$UNAME" = "Darwin" ]; then
   IS_DARWIN=1
 fi
 
-# reset environment variables by unrolling modifications based on CATKIN_WORKSPACES (when called without arguments)
-if [ $NORMAL_MODE -eq 1 ]; then
-  export PATH="$("$DIRNAME/setup.py" --remove --name PATH --value \"$PATH_dir\")"
-  export PYTHONPATH="$("$DIRNAME/setup.py" --remove --name PYTHONPATH --value "$PYTHONPATH_dir")"
-  export CPATH="$("$DIRNAME/setup.py" --remove --name CPATH --value "$CPATH_dir")"
+# reset environment variables by unrolling modifications based on all workspaces in CMAKE_PREFIX_PATH
+# this does not cover modifications performed by environment hooks
+if [ $DO_CLEAN -eq 1 ]; then
+  export CPATH="$("@SETUP_DIR/setup.py" --remove --name CPATH --value "$CPATH_dir")"
   if [ $IS_DARWIN -eq 0 ]; then
-    export LD_LIBRARY_PATH="$("$DIRNAME/setup.py" --remove --name LD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
+    export LD_LIBRARY_PATH="$("@SETUP_DIR/setup.py" --remove --name LD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
   else
-    export DYLD_LIBRARY_PATH="$("$DIRNAME/setup.py" --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
+    export DYLD_LIBRARY_PATH="$("@SETUP_DIR/setup.py" --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
   fi
-  export CMAKE_PREFIX_PATH="$("$DIRNAME/setup.py" --remove --name CMAKE_PREFIX_PATH --value "$CMAKE_PREFIX_PATH_dir")"
-  export PKG_CONFIG_PATH="$("$DIRNAME/setup.py" --remove --name PKG_CONFIG_PATH --value "$PKG_CONFIG_PATH_dir")"
+  export PATH="$("@SETUP_DIR/setup.py" --remove --name PATH --value "$PATH_dir")"
+  export PKG_CONFIG_PATH="$("@SETUP_DIR/setup.py" --remove --name PKG_CONFIG_PATH --value "$PKG_CONFIG_PATH_dir")"
+  export PYTHONPATH="$("@SETUP_DIR/setup.py" --remove --name PYTHONPATH --value "$PYTHONPATH_dir")"
+  # rollback CMAKE_PREFIX_PATH last since the other rollback calls rely on this
+  export CMAKE_PREFIX_PATH="$("@SETUP_DIR/setup.py" --remove --name CMAKE_PREFIX_PATH --value "$CMAKE_PREFIX_PATH_dir")"
 fi
 
-# set CATKIN_WORKSPACES (when called without arguments)
-if [ $NORMAL_MODE -eq 1 ]; then
-  export CATKIN_WORKSPACES="$("$DIRNAME/setup.py" --set-workspaces --value "@CURRENT_WORKSPACE;@CATKIN_WORKSPACES")"
+# prepend CURRENT_WORKSPACE and CURRENT_CMAKE_PREFIX_PATH to CMAKE_PREFIX_PATH
+# the complete list must be set so that environment hooks in parent workspace have the full set available
+if [ $IS_RECURSIVE -eq 0 ]; then
+  export CMAKE_PREFIX_PATH="$("@SETUP_DIR/setup.py" --prefix --name CMAKE_PREFIX_PATH --value "@SETUP_DIR:@CMAKE_PREFIX_PATH")$CMAKE_PREFIX_PATH"
 fi
 
-# prepend current and parent workspaces to CATKIN_WORKSPACES (when called with argument --extend)
-if [ $EXTEND_MODE -eq 1 ]; then
-  export CATKIN_WORKSPACES="$("$DIRNAME/setup.py" --prefix-workspaces --value "@CURRENT_WORKSPACE;@CATKIN_WORKSPACES")$CATKIN_WORKSPACES"
-fi
-
-# source setup.SHELL from parent workspaces (if any) (when called without --recursive argument)
-@[if CATKIN_WORKSPACES]@
-if [ $RECURSIVE_MODE -eq 0 ]; then
-  _CATKIN_SETUP_RECURSION=1
-  for workspace in @(' '.join(['"%s"' % ws.split(':')[0] for ws in reversed(CATKIN_WORKSPACES.split(';'))])) ; do
-    . "$workspace/setup.$CATKIN_SHELL" --recursive
+# source setup.SHELL from parent workspaces
+if [ $IS_RECURSIVE -eq 0 ]; then
+  _CATKIN_SETUP_NO_RECURSION=1
+  for workspace in $("@SETUP_DIR/setup.py" --get-reversed-workspaces --value "@SETUP_DIR"); do
+    . "$workspace/setup.$CATKIN_SHELL"
   done
-  _CATKIN_SETUP_RECURSION=0
+  _CATKIN_SETUP_NO_RECURSION=0
 fi
-@[end if]@
-
-# define base dir of workspace (based on CURRENT_WORKSPACE) (after sourcing the parents)
-BASE_DIR="@(CURRENT_WORKSPACE.split(':')[0])"
 
 # prepend folders of workspace to environment variables
-export PATH="$("$DIRNAME/setup.py" --prefix --name PATH --value "$BASE_DIR$PATH_dir")$PATH"
-export PYTHONPATH="$("$DIRNAME/setup.py" --prefix --name PYTHONPATH --value "$BASE_DIR$PYTHONPATH_dir")$PYTHONPATH"
-export CPATH="$("$DIRNAME/setup.py" --prefix --name CPATH --value "$BASE_DIR$CPATH_dir")$CPATH"
+export CPATH="$("@SETUP_DIR/setup.py" --prefix --name CPATH --value "@SETUP_DIR$CPATH_dir")$CPATH"
 if [ $IS_DARWIN -eq 0 ]; then
-  export LD_LIBRARY_PATH="$("$DIRNAME/setup.py" --prefix --name LD_LIBRARY_PATH --value "$BASE_DIR$LD_LIBRARY_PATH_dir")$LD_LIBRARY_PATH"
+  export LD_LIBRARY_PATH="$("@SETUP_DIR/setup.py" --prefix --name LD_LIBRARY_PATH --value "@SETUP_DIR$LD_LIBRARY_PATH_dir")$LD_LIBRARY_PATH"
 else
-  export DYLD_LIBRARY_PATH="$("$DIRNAME/setup.py" --prefix --name DYLD_LIBRARY_PATH --value "$BASE_DIR$LD_LIBRARY_PATH_dir")$DYLD_LIBRARY_PATH"
+  export DYLD_LIBRARY_PATH="$("@SETUP_DIR/setup.py" --prefix --name DYLD_LIBRARY_PATH --value "@SETUP_DIR$LD_LIBRARY_PATH_dir")$DYLD_LIBRARY_PATH"
 fi
-export CMAKE_PREFIX_PATH="$("$DIRNAME/setup.py" --prefix --name CMAKE_PREFIX_PATH --value "$BASE_DIR$CMAKE_PREFIX_PATH_dir")$CMAKE_PREFIX_PATH"
-export PKG_CONFIG_PATH="$("$DIRNAME/setup.py" --prefix --name PKG_CONFIG_PATH --value "$BASE_DIR$PKG_CONFIG_PATH_dir")$PKG_CONFIG_PATH"
+export PATH="$("@SETUP_DIR/setup.py" --prefix --name PATH --value "@SETUP_DIR$PATH_dir")$PATH"
+export PKG_CONFIG_PATH="$("@SETUP_DIR/setup.py" --prefix --name PKG_CONFIG_PATH --value "@SETUP_DIR$PKG_CONFIG_PATH_dir")$PKG_CONFIG_PATH"
+export PYTHONPATH="$("@SETUP_DIR/setup.py" --prefix --name PYTHONPATH --value "@SETUP_DIR$PYTHONPATH_dir")$PYTHONPATH"
 
 # run all environment hooks of this workspace
 FIND=`which find`
-IFS=$(echo -en "\n\r")
-for envfile in $($FIND "$BASE_DIR/etc/catkin/profile.d" -maxdepth 1 -name "*.sh" 2>/dev/null) ; do
+SORT=`which sort`
+ENV_HOOKS_GENERIC=$($FIND "@SETUP_DIR/etc/catkin/profile.d" -maxdepth 1 -name "*.sh" 2>/dev/null | $SORT)
+if [ "$CATKIN_SHELL" != "sh" ]; then
+  ENV_HOOKS_SPECIFIC=$($FIND "@SETUP_DIR/etc/catkin/profile.d" -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null | $SORT)
+else
+  ENV_HOOKS_SPECIFIC=
+fi
+for envfile in $ENV_HOOKS_GENERIC $ENV_HOOKS_SPECIFIC; do
   . "$envfile"
 done
-if [ "$CATKIN_SHELL" != "sh" ]; then
-  for envfile in `$FIND "$BASE_DIR/etc/catkin/profile.d" -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null` ; do
-    . "$envfile"
-  done
-fi

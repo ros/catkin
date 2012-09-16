@@ -6,54 +6,51 @@ import os
 import sys
 
 
-def set_workspaces(value):
-    '''Return the value for the environment variable CATKIN_WORKSPACES without empty or duplicate items.'''
-    values = [v for v in value.split(';') if v != '']
-    unique = []
-    for v in values:
-        if v not in unique:
-            unique.append(v)
-    return ';'.join(unique)
-
-
-def prefix_workspaces(value):
-    '''Return the prefix to prepend VALUE to the environment variable CATKIN_WORKSPACES without empty or duplicate items.'''
-    name = 'CATKIN_WORKSPACES'
-    items = os.environ[name].split(';') if name in os.environ and os.environ[name] != '' else []
-    values = [v for v in value.split(';') if v != '']
-    for v in reversed(values):
-        if v not in items:
-            items.insert(0, v)
-    return ';'.join(items)
+def get_reversed_workspaces(value):
+    '''Return a newline separated list of workspaces in CMAKE_PREFIX_PATH in reverse order and remove any occurrences of VALUE.'''
+    env_name = 'CMAKE_PREFIX_PATH'
+    paths = [path for path in reversed(os.environ[env_name].split(os.pathsep))] if env_name in os.environ and os.environ[env_name] != '' else []
+    paths = [path for path in paths if os.path.exists(os.path.join(path, '.CATKIN_WORKSPACE'))]
+    if value is not None:
+        paths = [path for path in paths if path != value]
+    return '\n'.join(paths)
 
 
 def prefix_env(name, value):
-    '''Return the prefix to prepend VALUE to the environment variable NAME.'''
-    if os.environ.get(name, '') == '':
-        return value
-    return '%s:' % value
+    '''Return the prefix to prepend VALUE to the environment variable NAME without duplicate or empty items.'''
+    items = os.environ[name].split(os.pathsep) if name in os.environ and os.environ[name] != '' else []
+    prefix = []
+    values = [v for v in value.split(os.pathsep) if v != '']
+    for v in values:
+        if v not in items and v not in prefix:
+            prefix.append(v)
+    prefix = os.pathsep.join(prefix)
+    if prefix != '' and items:
+        prefix += os.pathsep
+    return prefix
 
 
 def remove_from_env(name, value):
-    '''Remove the first item whose value is VALUE from env[NAME] and return the updated value of the environment variable.'''
-    items = os.environ[name].split(':') if name in os.environ and os.environ[name] != '' else []
-    env_name = 'CATKIN_WORKSPACES'
-    workspaces = [ws.split(':')[0] for ws in os.environ[env_name].split(';')] if env_name in os.environ and os.environ[env_name] != '' else []
-    for workspace in workspaces:
+    '''For each catkin workspace in CMAKE_PREFIX_PATH remove the first subfolder VALUE from env[NAME] and return the updated value of the environment variable.'''
+    items = os.environ[name].split(os.pathsep) if name in os.environ and os.environ[name] != '' else []
+    env_name = 'CMAKE_PREFIX_PATH'
+    paths = [path for path in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
+    for path in paths:
+        if not os.path.exists(os.path.join(path, '.CATKIN_WORKSPACE')):
+            continue
         try:
-            items.remove(workspace + value)
+            items.remove(path + value)
         except ValueError:
             pass
-    return ':'.join(items)
+    return os.pathsep.join(items)
 
 
 def _parse_arguments():
     parser = argparse.ArgumentParser(description='Generates code blocks for the setup.SHELL script.')
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--set-workspaces', action='store_true', help='Set current and parent workspaces in environment')
-    group.add_argument('--prefix-workspaces', action='store_true', help='Prefix current and parent workspaces to environment')
+    group.add_argument('--get-reversed-workspaces', action='store_true', help='Get workspaces based on CMAKE_PREFIX_PATH in reverse order')
     group.add_argument('--prefix', action='store_true', help='Prepend a unique value to an environment variable')
-    group.add_argument('--remove', action='store_true', help='Remove a value from an environment variable')
+    group.add_argument('--remove', action='store_true', help='Remove the prefix for each workspace in CMAKE_PREFIX_PATH from the environment variable')
     parser.add_argument('--name', nargs='?', help='The name of the environment variable')
     parser.add_argument('--value', help='The value')
     args = parser.parse_args()
@@ -61,13 +58,13 @@ def _parse_arguments():
     # verify correct argument combination
     if (args.prefix or args.remove) and args.name is None:
         raise RuntimeError('Argument "--name" must be passed for "%s"' % ('--prefix' if args.prefix else '--remove'))
-    if (args.set_workspaces or args.prefix_workspaces) and args.name is not None:
-        raise RuntimeError('Argument "--name" must not be passed for "%s"' % ('--set-workspaces' if args.set_workspaces else '--prefix-workspaces'))
+    if args.get_reversed_workspaces and args.name is not None:
+        raise RuntimeError('Argument "--name" must not be passed for "--get-reversed-workspaces"')
 
     return args
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     try:
         args = _parse_arguments()
     except Exception as e:
@@ -75,10 +72,8 @@ if __name__ == "__main__":
         exit(1)
 
     # dispatch to requested operation
-    if args.set_workspaces:
-        print(set_workspaces(args.value))
-    elif args.prefix_workspaces:
-        print(prefix_workspaces(args.value))
+    if args.get_reversed_workspaces:
+        print(get_reversed_workspaces(args.value))
     elif args.prefix:
         print(prefix_env(args.name, args.value))
     elif args.remove:

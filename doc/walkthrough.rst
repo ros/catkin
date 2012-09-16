@@ -118,4 +118,4 @@ Therefore first setup the environment by sourcing the appropriate ``setup.bash``
 Thereby the ``setup.bash`` can be both from either a *buildspace* or an *installspace*.
 
 Then create a second workspace the same way as the first one.
-Catkin will automatically use the workspaces already referenced in the environment (in the ``CATKIN_WORKSPACES`` and ``CMAKE_PREFIX_PATH`` variables) as *parent* workspaces for the new one to look up dependencies.
+Catkin will automatically use the workspaces already referenced in the environment (in the ``CMAKE_PREFIX_PATH`` variable) as *parent* workspaces for the new one to look up dependencies.

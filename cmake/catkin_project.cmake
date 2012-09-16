@@ -128,10 +128,9 @@ function(catkin_project catkin_project_name)
   # stack version provided by stack.cmake/xml
   set(PROJECT_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
 
-  # get library paths from all build- and installspaces
+  # get library paths from all workspaces
   set(lib_paths "")
   foreach(workspace ${CATKIN_WORKSPACES})
-    string(REGEX REPLACE ":.*" "" workspace ${workspace})
     list_append_unique(lib_paths ${workspace}/lib)
   endforeach()
 

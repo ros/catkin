@@ -1,7 +1,6 @@
 function(catkin_generate_environment)
   # buildspace
   set(SETUP_DIR ${CATKIN_BUILD_PREFIX})
-  set(CURRENT_WORKSPACE ${CATKIN_BUILD_PREFIX}:${CMAKE_SOURCE_DIR})
 
   # create workspace marker
   set(sourcespaces "${CMAKE_SOURCE_DIR}")
@@ -58,7 +57,6 @@ function(catkin_generate_environment)
 
   # installspace
   set(SETUP_DIR ${CMAKE_INSTALL_PREFIX})
-  set(CURRENT_WORKSPACE ${CMAKE_INSTALL_PREFIX})
 
   if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
     # generate and install workspace marker
