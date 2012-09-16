@@ -8,9 +8,9 @@
 #   `` make run_tests_${PROJECT_NAME}_nosetests_${dir}``
 #   (where slashes in the ``dir`` are replaced with underscores)
 #
-# :param dir: a relative or absolute directory to search for
-#   nosetests in
-# :type dir: string
+# :param path: a relative or absolute directory to search for
+#   nosetests in or a relative or absolute file containing tests
+# :type path: string
 # :param WORKING_DIRECTORY: the working directory when executing the
 #   tests
 # :type WORKING_DIRECTORY: string
@@ -20,9 +20,9 @@
 #
 # @public
 #
-function(catkin_add_nosetests dir)
+function(catkin_add_nosetests path)
   if(NOT NOSETESTS)
-    message(STATUS "skipping nosetests(${dir}) in project '${PROJECT_NAME}'")
+    message(STATUS "skipping nosetests(${path}) in project '${PROJECT_NAME}'")
     return()
   endif()
 
@@ -35,15 +35,15 @@ function(catkin_add_nosetests dir)
   endif()
 
   # check that the directory exists
-  set(_dir_name _dir_name-NOTFOUND)
-  if(IS_ABSOLUTE ${dir})
-    set(_dir_name ${dir})
+  set(_path_name _path_name-NOTFOUND)
+  if(IS_ABSOLUTE ${path})
+    set(_path_name ${path})
   else()
-    find_file(_dir_name ${dir}
+    find_file(_path_name ${path}
       PATHS ${CMAKE_CURRENT_SOURCE_DIR}
       NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
-    if(NOT _dir_name)
-      message(FATAL_ERROR "Can't find nosetests dir '${dir}'")
+    if(NOT _path_name)
+      message(FATAL_ERROR "Can't find nosetests path '${path}'")
     endif()
   endif()
 
@@ -52,10 +52,15 @@ function(catkin_add_nosetests dir)
     set(_covarg " --with-coverage")
   endif()
 
-  set(output_dir_name ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME})
-  string(REPLACE "/" "." output_file_name ${dir})
-  set(cmd "${CMAKE_COMMAND} -E make_directory ${output_dir_name}")
-  set(cmd ${cmd} "${NOSETESTS} --process-timeout=${_nose_TIMEOUT} --where=${_dir_name} --with-xunit --xunit-file=${output_dir_name}/nosetests-${output_file_name}.xml${_covarg}")
+  set(output_path ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME})
+  string(REPLACE "/" "." output_file_name ${path})
+  set(cmd "${CMAKE_COMMAND} -E make_directory ${output_path}")
+  if(IS_DIRECTORY ${_path_name})
+    set(tests "--where=${_path_name}")
+  else()
+    set(tests "${_path_name}")
+  endif()
+  set(cmd ${cmd} "${NOSETESTS} --process-timeout=${_nose_TIMEOUT} ${tests} --with-xunit --xunit-file=${output_path}/nosetests-${output_file_name}.xml${_covarg}")
   catkin_run_tests_target("nosetests" ${output_file_name} "nosetests-${output_file_name}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_nose_WORKING_DIRECTORY})
 endfunction()
 
