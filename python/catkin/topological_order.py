@@ -20,8 +20,7 @@ class ProjectData:
 
 def _remove_dependency(projects, name):
     for build_depends in [project_data.build_depends for project_data in projects.values()]:
-        if build_depends is not None:
-            build_depends.difference_update([name])
+        build_depends.difference_update([name])
 
 
 def _sort_projects(projects):

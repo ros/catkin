@@ -31,11 +31,11 @@ class TopoTest(unittest.TestCase):
         self.assertEqual([], sprojects)
 
         mock1 = Mock()
-        mock1.build_depends = None
+        mock1.build_depends = set()
         mock1.message_generator = True
 
         mock2 = Mock()
-        mock2.build_depends = None
+        mock2.build_depends = set()
         mock2.message_generator = False
 
         mock3 = Mock()
