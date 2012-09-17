@@ -2,14 +2,17 @@ Migrating from rosbuild to catkin
 =================================
 
 From Box Turtle to Fuerte, the ROS build system was `rosbuild
-<http://ros.org/wiki/rosbuild>`_.  In Fuerte, we introduced `catkin
-<http://ros.org/wiki/catkin>`_.  We aim to deprecate rosbuild in the future,
-and encourage users to migrate their code from rosbuild to catkin.  We
-especially encourage maintainers of released ROS stacks to migrate soon,
-because the build farm that generates binary Debian packages
-from released ROS stacks will eventually be decommissioned in the future.
+<http://ros.org/wiki/rosbuild>`_. In Fuerte, `catkin
+<http://ros.org/wiki/catkin>`_ has been introduced for core ROS
+stacks.
 
-Since catkinized stacks cannot depend on rosbuild stacks, the
+The goal is to deprecate rosbuild in the future, and encourage
+users to migrate their code from rosbuild to catkin. We especially
+encourage maintainers of released ROS packages to migrate early, because
+the build farm that generates binary Debian packages from released ROS
+stacks will eventually be decommissioned in the future.
+
+Since catkinized packages cannot depend on rosbuild packages, the
 migration has to start with core stacks and move on along the
 dependency chain. This is the motivation for the wet/dry metaphor
 alon a rising tide.
@@ -23,9 +26,11 @@ Quick start guide
 At a high level, the key steps to convert a ROS stack from rosbuild to
 catkin are:
 
-1. Update ``stack.xml``...
-2. Create a top-level ``CMakeLists.txt`` for the stack...
-3. For each folder containing a ``manifest.xml`` file:
+1. Create a catkin workspace to hold your migrated projects
+2. Move any project to catkin workspace once all their dependencies are catkinized
+.. 3. In each stack, update the manifests (``stack.xml``...)
+.. 4. Create a top-level ``CMakeLists.txt`` for the stack...
+5. For each folder containing a ``manifest.xml`` file:
 
  a. Replace the exported explicit compiler and linker flags with a dynamic pkg-config invocation:
 
@@ -33,80 +38,12 @@ catkin are:
 
 This allows rosbuild packages to depend on catkinized packages.
 
- b. Create a CMake project containing a ``catkin_project(PACKAGE_NAME)`` invocation...
+ b. Create a CMakeLists.txt file containing a ``catkin_project(PACKAGE_NAME)`` invocation...
  c. Combine ``rosdep`` keys from ``manifest.xml`` files into ``stack.xml`` as ``build_depends`` and ``depends`` keys...
 
 4. In each ``CMakeLists.txt``:
 
  a. Switch from rosbuild macros to the underlying CMake commands
-
-Background
-..........
-
-What is a build system?
------------------------
-
-The main job of a build system is to declare what files should be
-processed, in what way, to generate, compile, link, and/or install a chunk
-of code.  As it processes files, the build system is specifically
-responsible for managing dependencies: it must understand which parts of the
-system depend which other parts, and process them in the appropriate order.
-
-What is rosbuild?
------------------
-
-rosbuild is a `CMake <http://www.cmake.org/>`_-based build system that
-aims to simplify the process of generating, compiling, and linking code in
-ROS packages.  The intended user of rosbuild is a ROS package developer,
-who "lives" in a ROS source tree, constantly making changes to code and
-dependency structures, recompiling, and running the resulting programs.
-Because of the source-tree use-case, rosbuild does not provide an
-``install`` target; there is no (clean) way to install a
-rosbuild-controlled package.
-
-rosbuild works by wrapping standard CMake commands (e.g.,
-``add_library()``) in custom macros (e.g., ``rosbuild_add_library()``)
-that do extra steps (e.g., add libraries that were exported from other
-packages) to ensure that the right thing happens.  In other words, there's
-a lot of magic going on behind the scenes with rosbuild: you declare
-dependencies in your package ``manifest.xml``, and rosbuild (pretty much)
-does the rest.
-
-What is catkin?
----------------
-
-catkin is also a `CMake <http://www.cmake.org/>`_-based build system
-that aims to simplify the process of generating, compiling, and linking
-code in ROS packages.  But the intended user of catkin is three-fold: a
-ROS package developer who lives in a ROS source tree, a release system (see
-`bloom <http://ros.org/wiki/bloom>`_) that need to generate system-specific
-binary installations, and an end-user who wants to use an installed ROS
-system.
-
-catkin works by adding some macros and functions, and does not wrap
-standard CMake commands.  It does relatively litle magic, preferring to
-make things explicit.  And it supports an ``install`` target.
-
-What's different between rosbuild and catkin?
-.............................................
-
-Main differences between rosbuild and catkin:
-
-- rosbuild has no ``install`` target; catkin does
-
- - as a result: catkin stacks must declare, in a whitelist fashion, what programs and files will be installed
-
-- rosbuild relies heavily on ``bash`` and ``make``; catkin uses only CMake and Python (and therefore is more portable)
-- rosbuild wraps standard CMake commands; catkin does not
-
- - as a result: rosbuild implicitly adds compile and link flags based on package dependency information; catkin requires you to add them explicitly
-
-- rosbuild always does in-source builds; catkin supports both in-source and out-of-source builds (out-of-source is recommended)
-- rosbuild uses ``manifest.xml`` for per-package dependency information; catkin uses ``stack.xml`` for per-stack dependency information
-- rosbuild use per-package dependency information to assemble compile and link flags; catkin uses per-stack dependency only to determine traversal order
-- rosbuild provides a ``make`` interface to each package; catkin provides a ``cmake`` interface to each stack
-
- - as a result: rosbuild packages are built one-by-one, each with a separate invocation of ``make``; catkin stacks can be built in a fully parallel fashion, with a single build command (which is often, but does not have to be ``make``)
 
 Detailed migration guide
 ........................

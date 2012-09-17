@@ -1,5 +1,28 @@
 .. _find_package_internals:
 
+Finding components (recommended method)
+---------------------------------------
+
+If you want to specify a dependency on several catkin components
+simultaneously, use
+``find_package(catkin [XX.YY] REQUIRED COMPONENTS comp1 comp2)``, e.g.::
+
+  find_package(catkin REQUIRED COMPONENTS
+               cpp_common rostime roscpp_traits
+               roscpp_serialization sensor_msgs)
+  include_directories(${catkin_INCLUDE_DIRS})
+
+  add_executable(myexec ...)
+  target_link_libraries(${catkin_LIBRARIES})
+
+You can also reference the variables of each component individually::
+
+  target_link_libraries(${rostime_LIBRARIES})
+
+See the CMake documentation for ``find_package()`` for more details.
+Your ``CMAKE_PREFIX_PATH`` will need to point to a catkin installation.
+
+
 Internals of the generated find_package() infrastructure
 --------------------------------------------------------
 
@@ -43,26 +66,3 @@ includes/libs are for the package by setting variables
 The user passes these values to CMake's ``include_directories()`` and
 ``target_link_libraries()``. Since the libraries contains absolute
 paths ``link_directories()`` is not necessary.
-
-
-Finding components (recommended method)
----------------------------------------
-
-If you want to specify a dependency on several catkin components
-simultaneously, use
-``find_package(catkin [XX.YY] REQUIRED COMPONENTS comp1 comp2)``, e.g.::
-
-  find_package(catkin REQUIRED COMPONENTS
-               cpp_common rostime roscpp_traits
-               roscpp_serialization sensor_msgs)
-  include_directories(${catkin_INCLUDE_DIRS})
-
-  add_executable(myexec ...)
-  target_link_libraries(${catkin_LIBRARIES})
-
-You can also reference the variables of each component individually::
-
-  target_link_libraries(${rostime_LIBRARIES})
-
-See the CMake documentation for ``find_package()`` for more details.
-Your ``CMAKE_PREFIX_PATH`` will need to point to a catkin installation.

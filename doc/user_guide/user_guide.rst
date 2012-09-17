@@ -6,7 +6,6 @@ User Guide
 
    introduction
    supposed
-   stack_xml
    rosbuild_migration
    catkin_migration
    find_package

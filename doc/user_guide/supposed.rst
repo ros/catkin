@@ -51,31 +51,12 @@ Used by catkin's dependency-sorting to determine what order to
 traverse cmake projects in (when in a catkin workspace) and by
 packaging utilities when making debians.
 
-Example::
+For more details on the individual tags see 
 
-  <stack>
-    <name>ros_comm</name>
-    <version>0.1.2</version>
-    <description brief="ROS communications-related libraries and tools">ROS communications-related packages, including core client libraries (roscpp, rospy, roslisp) and graph introspection tools (rostopic, rosnode, rosservice, rosparam).</description>
-    <author>Troy Straszheim</author>
-    <author>Morten Kjaergaard</author>
-    <author email="kwc@willowgarage.com">Ken Conley</author>
-    <maintainer email="straszheim@willowgarage.com">Troy Straszheim</maintainer>
-    <license>BSD</license>
-    <copyright>willowgarage</copyright>
+.. toctree::
+   :maxdepth: 1
 
-    <url>http://www.ros.org</url>
-    <review status="Doc reviewed" notes="2009/6/10"/>
-
-    <build_depends>genmsg</build_depends>
-    <build_depends>libboost-thread-dev</build_depends>
-    <build_depends>libboost-date-time-dev</build_depends>
-
-    <depends>libboost-thread</depends>
-    <depends>libboost-date-time</depends>
-  </stack>
-
-For more details on the individual tags see :ref:`stack_xml`.
+   stack_xml
 
 CMakeLists.txt
 ^^^^^^^^^^^^^^
