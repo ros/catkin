@@ -13,11 +13,11 @@ Pick a temp directory::
 
 Get the rosinstall file::
 
-  % wget https://raw.github.com/ros/catkin/master/rosinstalls/unstable.rosinstall
+  % wget https://raw.github.com/ros/catkin/master/rosinstalls/base.rosinstall
 
 Rosinstall it.  You don't want it built, use ``-n``, like this::
 
-  % rosinstall --catkin -n src unstable.rosinstall
+  % rosinstall --catkin -n src base.rosinstall
 
   [list of repositories checked out...]
 
