@@ -3,7 +3,10 @@ import os
 import shutil
 
 
-def _symlink_toplevel_cmake(src, dst):
+def _symlink_or_copy(src, dst):
+    """
+    Creates a symlink at dst to src, or if not possible, attempts to copy.
+    """
     if not os.path.exists(src):
         return False
 
@@ -68,7 +71,7 @@ def init_workspace(workspace_dir):
         if data == '':
             # try from install space
             src = os.path.join(workspace, 'share', 'catkin', 'cmake', 'toplevel.cmake')
-            success = _symlink_toplevel_cmake(src, dst)
+            success = _symlink_or_copy(src, dst)
             if success:
                 return
             else:
@@ -77,7 +80,7 @@ def init_workspace(workspace_dir):
             # try from all source spaces
             for source_path in data.split(';'):
                 src = os.path.join(source_path, 'catkin', 'cmake', 'toplevel.cmake')
-                success = _symlink_toplevel_cmake(src, dst)
+                success = _symlink_or_copy(src, dst)
                 if success:
                     return
                 else:
@@ -94,7 +97,7 @@ def init_workspace(workspace_dir):
     for relative_cmake_path in relative_cmake_paths:
         src = os.path.relpath(os.path.join(os.path.dirname(__file__), relative_cmake_path, 'toplevel.cmake'))
         if os.path.exists(src):
-            success = _symlink_toplevel_cmake(src, dst)
+            success = _symlink_or_copy(src, dst)
             if success:
                 return
         else:
