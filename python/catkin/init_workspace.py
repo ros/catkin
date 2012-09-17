@@ -25,28 +25,28 @@ def _symlink_toplevel_cmake(src, dst):
     return True
 
 
-#
-# Create a toplevel CMakeLists.txt in the root of a workspace.
-#
-# The toplevel.cmake file is looked up either in the catkin
-# workspaces contained in the CMAKE_PREFIX_PATH or relative to this
-# file.  Then it tries to create a symlink first and if that fails
-# copies the file.
-#
-# It installs ``manifest.xml`` to ``share/${PROJECT_NAME}``.
-#
-# .. note:: The symlink is absolute when catkin is found via the
-#   environment (since that indicates a different workspace and it
-#   may change relative location to the workspace referenced as a
-#   parameter). The symlink is relative when the toplevel.cmake of
-#   this catkin instance is used since it is part of the
-#   to-be-initialized workspace.
-#
-# :param workspace_dir: the path to the workspace where the
-#   CMakeLists.txt should be created
-# :type workspace_dir: string
-#
 def init_workspace(workspace_dir):
+    """
+    Create a toplevel CMakeLists.txt in the root of a workspace.
+
+    The toplevel.cmake file is looked up either in the catkin
+    workspaces contained in the CMAKE_PREFIX_PATH or relative to this
+    file.  Then it tries to create a symlink first and if that fails
+    copies the file.
+
+    It installs ``manifest.xml`` to ``share/${PROJECT_NAME}``.
+
+    .. note:: The symlink is absolute when catkin is found via the
+    environment (since that indicates a different workspace and it
+    may change relative location to the workspace referenced as a
+    parameter). The symlink is relative when the toplevel.cmake of
+    this catkin instance is used since it is part of the
+    to-be-initialized workspace.
+
+    :param workspace_dir: the path to the workspace where the
+    CMakeLists.txt should be created
+    :type workspace_dir: string
+    """
     # verify that destination file does not exist
     dst = os.path.join(workspace_dir, 'CMakeLists.txt')
     if os.path.exists(dst):
