@@ -7,9 +7,6 @@ def _symlink_or_copy(src, dst):
     """
     Creates a symlink at dst to src, or if not possible, attempts to copy.
     """
-    if not os.path.exists(src):
-        return False
-
     # update relative source to be relative from destination
     if not os.path.isabs(src):
         src = os.path.relpath(src, os.path.dirname(dst))
@@ -18,14 +15,13 @@ def _symlink_or_copy(src, dst):
     try:
         os.symlink(src, dst)
         print('Creating symlink "%s" pointing to "%s"' % (dst, src))
-    except Exception:
+    except Exception as ex_symlink:
         # try to copy file
         try:
             shutil.copyfile(src, dst)
             print('Copying file from "%s" to "%s"' % (src, dst))
-        except:
-            raise RuntimeError('Could neither symlink nor copy file "%s" to "%s"' % (src, dst))
-    return True
+        except Exception as ex_copy:
+            raise RuntimeError('Could neither symlink nor copy file "%s" to "%s":\n- %s\n- %s' % (src, dst, str(ex_symlink), str(ex_copy)))
 
 
 def init_workspace(workspace_dir):
@@ -55,6 +51,7 @@ def init_workspace(workspace_dir):
     if os.path.exists(dst):
         raise RuntimeError('File "%s" already exists' % dst)
 
+    src_file_path = None
     # get all cmake prefix paths
     env_name = 'CMAKE_PREFIX_PATH'
     paths = [path for path in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
@@ -71,36 +68,38 @@ def init_workspace(workspace_dir):
         if data == '':
             # try from install space
             src = os.path.join(workspace, 'share', 'catkin', 'cmake', 'toplevel.cmake')
-            success = _symlink_or_copy(src, dst)
-            if success:
-                return
+            if os.path.exists(src):
+                src_file_path = src
+                break
             else:
                 checked.append(src)
         else:
             # try from all source spaces
             for source_path in data.split(';'):
                 src = os.path.join(source_path, 'catkin', 'cmake', 'toplevel.cmake')
-                success = _symlink_or_copy(src, dst)
-                if success:
-                    return
+                if os.path.exists(src):
+                    src_file_path = src
+                    break
                 else:
                     checked.append(src)
 
-    # try to find toplevel file in relative locations
-    relative_cmake_paths = []
-    # when catkin is in source space
-    relative_cmake_paths.append(os.path.join('..', '..', 'cmake'))
-    # when catkin is installed (with Python code in lib/pythonX.Y/[dist|site]-packages)
-    relative_cmake_paths.append(os.path.join('..', '..', '..', '..', 'share', 'catkin', 'cmake'))
-    # when catkin is installed (with Python code in lib/site-packages)
-    relative_cmake_paths.append(os.path.join('..', '..', '..', 'share', 'catkin', 'cmake'))
-    for relative_cmake_path in relative_cmake_paths:
-        src = os.path.relpath(os.path.join(os.path.dirname(__file__), relative_cmake_path, 'toplevel.cmake'))
-        if os.path.exists(src):
-            success = _symlink_or_copy(src, dst)
-            if success:
-                return
-        else:
-            checked.append(src)
+    if src_file_path is None:
+        # try to find toplevel file in relative locations
+        relative_cmake_paths = []
+        # when catkin is in source space
+        relative_cmake_paths.append(os.path.join('..', '..', 'cmake'))
+        # when catkin is installed (with Python code in lib/pythonX.Y/[dist|site]-packages)
+        relative_cmake_paths.append(os.path.join('..', '..', '..', '..', 'share', 'catkin', 'cmake'))
+        # when catkin is installed (with Python code in lib/site-packages)
+        relative_cmake_paths.append(os.path.join('..', '..', '..', 'share', 'catkin', 'cmake'))
+        for relative_cmake_path in relative_cmake_paths:
+            src = os.path.relpath(os.path.join(os.path.dirname(__file__), relative_cmake_path, 'toplevel.cmake'))
+            if os.path.exists(src):
+                src_file_path = src
+                break
+            else:
+                checked.append(src)
 
-    raise RuntimeError('Could neither find file "toplevel.cmake" in any workspace nor relative, checked the following paths:\n%s' % ('\n'.join(checked)))
+    if src_file_path is None:
+        raise RuntimeError('Could neither find file "toplevel.cmake" in any workspace nor relative, checked the following paths:\n%s' % ('\n'.join(checked)))
+    success = _symlink_or_copy(src_file_path, dst)
