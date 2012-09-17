@@ -11,9 +11,9 @@ Developers Guide
    variables
    layout
    code_generation
-   glossary
+   maintainer
    cmake
-
+   glossary
 
 Installation
 ------------

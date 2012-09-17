@@ -1,11 +1,9 @@
-Sketch of directory structure
-=============================
+Creating a Catkin workspace
+===========================
 
-How things ought to look, starting at the outermost level of the
-source directory and moving down through stacks and packages.
-
-.. todo:: The separation into stacks and packages is going to be
-   dropped, then this page needs to be changed accordingly.
+A Catkin workspace is a folder with a CMakeLists.txt file. It acts
+like one huge cmake project containing any cmake project that you 
+add as subfolder as a subproject.
 
 .. contents::
 
@@ -13,15 +11,29 @@ source directory and moving down through stacks and packages.
 ``src`` (the Workspace folder)
 ------------------------------
 
-This is a directory containing multiple stacks, e.g. one constructed
-by ``rosinstall``.  This directory must contain a symlink::
+You can place your workspace folder wherever you want and name it what
+you want. One standard layout for ROS is to have a folder named like
+the distro you use this workspace for, and in that folder a folder 
+named src, to use as workspace folder.
+
+In the src folder, you can use `rosws <http://www.ros.org/doc/api/rosinstall/html/>`_ to download and
+update catkin projects from multiple sources.
+
+This directory must contain a symlink::
 
   CMakeLists.txt -> catkin/cmake/toplevel.cmake
 
 which triggers catkin's topological sort via inspection of ``stack.xml``.
 
+The symlink can be created using::
+
+  $ catkin_init_workspace
+
 Stack
-~~~~~
+-----
+
+.. todo:: The separation into stacks and packages is going to be
+   dropped, then this page needs to be changed accordingly.
 
 A typical "stack" contains, at the top level::
 
@@ -128,13 +140,13 @@ first in the ordering.
 
 
 Package
-^^^^^^^
+-------
 
 Each package (as added by ``add_subdirectory`` in the stack)
 contains a ``CMakeLists.txt``.
 
 CMakeLists.txt
-..............
+^^^^^^^^^^^^^^
 
 Basic case::
 
