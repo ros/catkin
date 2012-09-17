@@ -57,7 +57,10 @@ def init_workspace(workspace_dir):
 
     # get all cmake prefix paths
     env_name = 'CMAKE_PREFIX_PATH'
-    paths = [path for path in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
+    if env_name in os.environ and os.environ[env_name] != '':
+        paths = [path for path in os.environ[env_name].split(os.pathsep)]
+    else:
+        paths =[]
     # remove non-workspace paths
     workspaces = [path for path in paths if os.path.exists(os.path.join(path, '.CATKIN_WORKSPACE'))]
 
