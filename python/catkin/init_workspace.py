@@ -18,13 +18,13 @@ def _symlink_or_copy(src, dst):
     try:
         os.symlink(src, dst)
         print('Creating symlink "%s" pointing to "%s"' % (dst, src))
-    except Exception:
+    except Exception as excsym:
         # try to copy file
         try:
             shutil.copyfile(src, dst)
             print('Copying file from "%s" to "%s"' % (src, dst))
-        except:
-            raise RuntimeError('Could neither symlink nor copy file "%s" to "%s"' % (src, dst))
+        except Exception as exccp:
+            raise RuntimeError('Could neither symlink nor copy file "%s" to "%s"\n%s\n%s' % (src, dst, str(excsym), str(exccp)))
     return True
 
 
