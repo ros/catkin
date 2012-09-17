@@ -2,8 +2,9 @@
 
 import sys
 import os
+import shutil
 import unittest
-from test.utils import *
+from test.utils import AbstractCatkinWorkspaceTest, MOCK_DIR, MAKE_CMD, succeed, assert_exists, fail
 
 
 class MockTest(AbstractCatkinWorkspaceTest):
@@ -11,6 +12,10 @@ class MockTest(AbstractCatkinWorkspaceTest):
     This test case uses workspaces with catkin projects from the
     test/mock_resources folder.
     """
+
+    # uncomment to keep temporary files in /tmp
+    # def tearDown(self):
+    #     pass
 
     def test_catkin_only(self):
         self.cmake()
