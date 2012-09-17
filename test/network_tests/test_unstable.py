@@ -16,10 +16,12 @@ class SimpleUnstableTest(AbstractUnstableTest):
 
     def setUp(self):
         super(SimpleUnstableTest, self).setUp()
-        # a bit dirty here, tester needs to manually delete build
+        # a bit dirty here, tester needs to manually delete test/tmp/unstable_test/build
         # folder. But else, tests take too long
         if not os.path.exists(os.path.join(self.builddir, "Makefile")):
             self.cmake()
+        # if make fails due to DistributionNotFound,
+        # tester needs to manually delete test/tmp/unstable_test/src
         succeed(MAKE_CMD, cwd=self.builddir)
 
         succeed(MAKE_CMD + ["install"], cwd=self.builddir)
