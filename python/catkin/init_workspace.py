@@ -7,10 +7,6 @@ def _symlink_or_copy(src, dst):
     """
     Creates a symlink at dst to src, or if not possible, attempts to copy.
     """
-    # update relative source to be relative from destination
-    if not os.path.isabs(src):
-        src = os.path.relpath(src, os.path.dirname(dst))
-
     # try to symlink file
     try:
         os.symlink(src, dst)
@@ -35,11 +31,10 @@ def init_workspace(workspace_dir):
 
     It installs ``manifest.xml`` to ``share/${PROJECT_NAME}``.
 
-    .. note:: The symlink is absolute when catkin is found via the
-    environment (since that indicates a different workspace and it
-    may change relative location to the workspace referenced as a
-    parameter). The symlink is relative when the toplevel.cmake of
-    this catkin instance is used since it is part of the
+    .. note:: The symlink is absolute when catkin is found outside
+    the workspace_dir (since that indicates a different workspace and
+    it may change relative location to the workspace referenced as a
+    parameter). The symlink is relative when catkin is part of the
     to-be-initialized workspace.
 
     :param workspace_dir: the path to the workspace where the
@@ -52,39 +47,47 @@ def init_workspace(workspace_dir):
         raise RuntimeError('File "%s" already exists' % dst)
 
     src_file_path = None
-    # get all cmake prefix paths
-    env_name = 'CMAKE_PREFIX_PATH'
-    paths = [path for path in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
-    # remove non-workspace paths
-    workspaces = [path for path in paths if os.path.exists(os.path.join(path, '.CATKIN_WORKSPACE'))]
+    checked = []
+
+    # look in to-be-initialized workspace first
+    src = os.path.join(workspace_dir, 'catkin', 'cmake', 'toplevel.cmake')
+    if os.path.isfile(src):
+        src_file_path = os.path.relpath(src, workspace_dir)
+    else:
+        checked.append(src)
 
     # search for toplevel file in all workspaces
-    checked = []
-    for workspace in workspaces:
-        filename = os.path.join(workspace, '.CATKIN_WORKSPACE')
-        data = ''
-        with open(filename) as f:
-            data = f.read()
-        if data == '':
-            # try from install space
-            src = os.path.join(workspace, 'share', 'catkin', 'cmake', 'toplevel.cmake')
-            if os.path.exists(src):
-                src_file_path = src
-                break
-            else:
-                checked.append(src)
-        else:
-            # try from all source spaces
-            for source_path in data.split(';'):
-                src = os.path.join(source_path, 'catkin', 'cmake', 'toplevel.cmake')
-                if os.path.exists(src):
+    if src_file_path is None:
+        # get all cmake prefix paths
+        env_name = 'CMAKE_PREFIX_PATH'
+        paths = [path for path in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
+        # remove non-workspace paths
+        workspaces = [path for path in paths if os.path.isfile(os.path.join(path, '.CATKIN_WORKSPACE'))]
+        for workspace in workspaces:
+            data = ''
+            filename = os.path.join(workspace, '.CATKIN_WORKSPACE')
+            with open(filename) as f:
+                data = f.read()
+            if data == '':
+                # try from install space
+                src = os.path.join(workspace, 'share', 'catkin', 'cmake', 'toplevel.cmake')
+                if os.path.isfile(src):
                     src_file_path = src
                     break
                 else:
                     checked.append(src)
+            else:
+                # try from all source spaces
+                for source_path in data.split(';'):
+                    src = os.path.join(source_path, 'catkin', 'cmake', 'toplevel.cmake')
+                    if os.path.isfile(src):
+                        src_file_path = src
+                        break
+                    else:
+                        checked.append(src)
 
+    # search for toplevel file in relative locations
     if src_file_path is None:
-        # try to find toplevel file in relative locations
         relative_cmake_paths = []
         # when catkin is in source space
         relative_cmake_paths.append(os.path.join('..', '..', 'cmake'))
@@ -93,8 +96,8 @@ def init_workspace(workspace_dir):
         # when catkin is installed (with Python code in lib/site-packages)
         relative_cmake_paths.append(os.path.join('..', '..', '..', 'share', 'catkin', 'cmake'))
         for relative_cmake_path in relative_cmake_paths:
-            src = os.path.relpath(os.path.join(os.path.dirname(__file__), relative_cmake_path, 'toplevel.cmake'))
-            if os.path.exists(src):
+            src = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_cmake_path, 'toplevel.cmake'))
+            if os.path.isfile(src):
                 src_file_path = src
                 break
             else:
@@ -102,4 +105,4 @@ def init_workspace(workspace_dir):
 
     if src_file_path is None:
         raise RuntimeError('Could neither find file "toplevel.cmake" in any workspace nor relative, checked the following paths:\n%s' % ('\n'.join(checked)))
-    success = _symlink_or_copy(src_file_path, dst)
+    _symlink_or_copy(src_file_path, dst)
