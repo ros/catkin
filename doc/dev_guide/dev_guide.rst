@@ -1,6 +1,7 @@
 Developers Guide
 ================
 
+This section of the documentation is provided for developers of catkin itself and advanced users.
 
 .. toctree::
    :maxdepth: 1

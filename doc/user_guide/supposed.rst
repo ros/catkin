@@ -1,5 +1,5 @@
-Creating a Catkin workspace
-===========================
+Catkin workspace layout
+=======================
 
 A Catkin workspace is a folder with a CMakeLists.txt file. It acts
 like one huge cmake project containing any cmake project that you 
@@ -24,10 +24,6 @@ This directory must contain a symlink::
   CMakeLists.txt -> catkin/cmake/toplevel.cmake
 
 which triggers catkin's topological sort via inspection of ``stack.xml``.
-
-The symlink can be created using::
-
-  $ catkin_init_workspace
 
 Stack
 -----

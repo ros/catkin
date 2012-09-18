@@ -51,12 +51,7 @@ actually optional (i.e. you're not going to check ``thing_FOUND``
 and enable/disable features).
 
 
-
-
-Code style
-----------
-
-**Keep lists *sorted***
+**Keep lists sorted**
 
 Whenever using a list of items (i.e. in find_package(COMPONENTS ...)
 or files which should be build or installed) keep them alphabetically

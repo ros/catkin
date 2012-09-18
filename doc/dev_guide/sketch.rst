@@ -25,7 +25,7 @@ Design sketch
 * Packages use standard cmake macros, modulo a few that are provided
   by catkin.
 
-* The build system depends only only on python and cmake.
+* The build system depends only on python and cmake.
 
 * Downloading, untarring, patching and especially the wanton use of
   ``sed`` and/or handcoded Makefiles is considered to be in the very
