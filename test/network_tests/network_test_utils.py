@@ -1,6 +1,8 @@
 import os
-from test.utils import AbstractCatkinWorkspaceTest, TEMP_DIR, rosinstall,\
+import shutil
+from test.utils import AbstractCatkinWorkspaceTest, TEMP_DIR, rosinstall, \
     create_catkin_workspace
+
 
 class AbstractUnstableTest(AbstractCatkinWorkspaceTest):
 

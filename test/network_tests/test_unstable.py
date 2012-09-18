@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 import os
-import sys
 import shutil
-import unittest
-from test.utils import *
+import tempfile
+from test.utils import MOCK_DIR, PYTHON_INSTALL_PATH, \
+    MAKE_CMD, succeed, assert_exists, create_catkin_workspace
 from . import network_test_utils
 from network_test_utils import AbstractUnstableTest
 
@@ -16,8 +16,9 @@ class SimpleUnstableTest(AbstractUnstableTest):
 
     def setUp(self):
         super(SimpleUnstableTest, self).setUp()
-        # a bit dirty here, tester needs to manually delete test/tmp/unstable_test/build
-        # folder. But else, tests take too long
+        # a bit dirty here, tester needs to manually delete
+        # test/tmp/unstable_test/build folder. But else, tests take
+        # too long
         if not os.path.exists(os.path.join(self.builddir, "Makefile")):
             self.cmake()
         # if make fails due to DistributionNotFound,
@@ -57,7 +58,6 @@ class SimpleUnstableTest(AbstractUnstableTest):
             create_catkin_workspace(other_src_dir)
             other_build_dir = os.path.join(other_root_dir, 'build')
             other_buildspace_dir = os.path.join(other_build_dir, 'buildspace')
-            other_install_dir = os.path.join(other_root_dir, 'install')
             shutil.copytree(os.path.join(self.workspacedir, 'common_msgs'),
                             os.path.join(other_src_dir, 'common_msgs'))
             out = self.cmake(cwd=other_build_dir,
@@ -74,7 +74,7 @@ class SimpleUnstableTest(AbstractUnstableTest):
                           PYTHON_INSTALL_PATH + '/geometry_msgs/msg/_PointStamped.py',
                           'share/geometry_msgs/msg/PointStamped.msg',
                           # 'share/typelibxml/geometry_msgs/PointStamped.xml',
-                )
+                          )
         finally:
             # pass
             shutil.rmtree(other_root_dir)
@@ -92,10 +92,10 @@ class SimpleUnstableTest(AbstractUnstableTest):
             other_install_dir = os.path.join(other_root_dir, 'install')
             shutil.copytree(os.path.join(MOCK_DIR, 'src', 'catkin_test'),
                             os.path.join(other_src_dir, 'catkin_test'))
-            out = self.cmake(cwd=other_build_dir,
-                             srcdir=other_src_dir,
-                             installdir=other_install_dir)
-            out = succeed(MAKE_CMD, cwd=other_build_dir)
+            self.cmake(cwd=other_build_dir,
+                       srcdir=other_src_dir,
+                       installdir=other_install_dir)
+            succeed(MAKE_CMD, cwd=other_build_dir)
 
             assert_exists(other_buildspace_dir,
                           "lib/liba.so",
@@ -115,9 +115,9 @@ class SimpleUnstableTest(AbstractUnstableTest):
                           PYTHON_INSTALL_PATH + "/quux_msgs/__init__.py")
 
             # "DESTDIR="
-            out = succeed(MAKE_CMD + ["install"],
-                          cwd=other_build_dir)
-           
+            succeed(MAKE_CMD + ["install"],
+                    cwd=other_build_dir)
+
             assert_exists(other_install_dir,
                           "lib/pkgconfig/a.pc",
                           "lib/pkgconfig/b.pc",
@@ -126,11 +126,11 @@ class SimpleUnstableTest(AbstractUnstableTest):
                           "lib/pkgconfig/quux_msgs.pc",
                           PYTHON_INSTALL_PATH + "/a/__init__.py",
                           PYTHON_INSTALL_PATH + "/quux_msgs/__init__.py")
-           
+
             #
             #  make sure python imports work
             #
-            
+
             # succeed([other_build_dir + "/env.sh", "python -c 'import a'"])
             # succeed([other_build_dir + "/env.sh", "python -c 'import b'"])
         finally:
