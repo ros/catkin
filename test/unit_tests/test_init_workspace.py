@@ -5,8 +5,10 @@ import unittest
 import tempfile
 import shutil
 
-from catkin.init_workspace import init_workspace, _symlink_or_copy
-
+try:
+    from catkin.init_workspace import init_workspace, _symlink_or_copy
+except ImportError as impe:
+    raise ImportError('Please adjust your pythonpath before running this test: %s' % str(impe))
 
 class InitWorkspaceTest(unittest.TestCase):
 

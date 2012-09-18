@@ -2,9 +2,13 @@ import sys
 import os
 import unittest
 import rospkg.stack
-from catkin.topological_order import _sort_projects, get_message_generators,\
-    ProjectData, _topological_order_projects
 from mock import Mock, patch
+
+try:
+    from catkin.topological_order import _sort_projects, get_message_generators,\
+        ProjectData, _topological_order_projects
+except ImportError as impe:
+    raise ImportError('Please adjust your pythonpath before running this test: %s' % str(impe))
 
 class TopoTest(unittest.TestCase):
 
