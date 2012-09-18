@@ -5,6 +5,7 @@ User Guide
    :maxdepth: 1
 
    introduction
+   getting_started
    supposed
    rosbuild_migration
    catkin_migration
