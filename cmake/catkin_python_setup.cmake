@@ -26,23 +26,11 @@ function(catkin_python_setup)
     message(FATAL_ERROR "generate_messages() must be called after catkin_python_setup() in project '${PROJECT_NAME}'")
   endif()
 
-  if(${ARGC} GREATER 1)
-    message(FATAL_ERROR "catkin_python_setup() takes only one optional argument, update project '${PROJECT_NAME}'")
-  endif()
-  set(path_to_setup_py "")
-  if(${ARGC} EQUAL 1)
-    set(path_to_setup_py "${ARGN}/")
-  endif()
-  set(setup_py_file "${path_to_setup_py}setup.py")
-  if(NOT("${path_to_setup_py}" STREQUAL ""))
-    string(REPLACE "." "_" path_to_setup_py ${path_to_setup_py})
+  if(NOT EXISTS ${${PROJECT_NAME}_SOURCE_DIR}/setup.py)
+    message(FATAL_ERROR "catkin_python_setup() called without 'setup.py' in project folder ' ${${PROJECT_NAME}_SOURCE_DIR}'")
   endif()
 
-  if(NOT EXISTS ${${PROJECT_NAME}_SOURCE_DIR}/${setup_py_file})
-    message(FATAL_ERROR "catkin_python_setup() called without '${setup_py_file}' in project '${PROJECT_NAME}'")
-  endif()
-
-  if(EXISTS ${${PROJECT_NAME}_SOURCE_DIR}/${setup_py_file})
+  if(EXISTS ${${PROJECT_NAME}_SOURCE_DIR}/setup.py)
     assert(PYTHON_INSTALL_DIR)
     set(INSTALL_CMD_WORKING_DIRECTORY ${${PROJECT_NAME}_SOURCE_DIR})
     if(NOT MSVC)
@@ -66,7 +54,7 @@ function(catkin_python_setup)
       ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/safe_execute_install.cmake)
     install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/safe_execute_install.cmake)
 
-    stamp(${${PROJECT_NAME}_SOURCE_DIR}/${setup_py_file})
+    stamp(${${PROJECT_NAME}_SOURCE_DIR}/setup.py)
 
     assert(CATKIN_ENV)
     assert(PYTHON_EXECUTABLE)
@@ -74,13 +62,13 @@ function(catkin_python_setup)
       ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
       ${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py
       ${PROJECT_NAME}
-      ${${PROJECT_NAME}_SOURCE_DIR}/${setup_py_file}
-      ${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/${path_to_setup_py}setup_py_interrogation.cmake
+      ${${PROJECT_NAME}_SOURCE_DIR}/setup.py
+      ${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/setup_py_interrogation.cmake
       )
 
     debug_message(10 "catkin_python_setup() in project '{PROJECT_NAME}' executes:  ${cmd}")
     safe_execute_process(COMMAND ${cmd})
-    include(${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/${path_to_setup_py}setup_py_interrogation.cmake)
+    include(${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/setup_py_interrogation.cmake)
 
     # generate relaying __init__.py for each python package
     if(${PROJECT_NAME}_PACKAGES)
@@ -105,7 +93,7 @@ function(catkin_python_setup)
     foreach(script ${${PROJECT_NAME}_SCRIPTS})
       get_filename_component(name ${script} NAME)
       if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${script})
-        message(FATAL_ERROR "The script '${name}' as listed in '${setup_py_file}' of '${PROJECT_NAME}' doesn't exist")
+        message(FATAL_ERROR "The script '${name}' as listed in 'setup.py' of '${PROJECT_NAME}' doesn't exist")
       endif()
       set(PYTHON_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/${script})
       configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
