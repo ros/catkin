@@ -1,0 +1,270 @@
+# Software License Agreement (BSD License)
+#
+# Copyright (c) 2012, Willow Garage, Inc.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+#  * Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above
+#    copyright notice, this list of conditions and the following
+#    disclaimer in the documentation and/or other materials provided
+#    with the distribution.
+#  * Neither the name of Willow Garage, Inc. nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+"""
+Library for parsing package.xml
+"""
+
+import os
+import xml.dom.minidom as dom
+
+
+class Package(object):
+    """
+    Object representation of a ``package.xml`` file
+    """
+    __slots__ = [
+        'package_format',
+        'name',
+        'version',
+        'version_abi',
+        'description',
+        'description_brief',
+        'maintainers',
+        'urls',
+        'authors',
+        'licenses',
+        'copyright',
+        'build_depends',
+        'buildtool_depends',
+        'run_depends',
+        'test_depends',
+        'conflicts',
+        'replaces',
+        'exports',
+        'unknown_tags',  # store unrecognized tags during parsing
+        'filename'
+    ]
+
+    def __init__(self, filename=None):
+        """
+        :param filename: location of package.xml.  Necessary if
+          converting ``${prefix}`` in ``<export>`` values, ``str``.
+        """
+        for attr in self.__slots__:
+            if attr.endswith('s'):
+                setattr(self, attr, [])
+            else:
+                setattr(self, attr, None)
+        self.filename = filename
+
+    def __getitem__(self, key):
+        if key in self.__slots__:
+            return getattr(self, key)
+        raise KeyError('Unknown key "%s"' % key)
+
+    def __iter__(self):
+        for slot in self.__slots__:
+            yield slot
+
+    def __str__(self):
+        data = {}
+        for attr in self.__slots__:
+            data[attr] = getattr(self, attr)
+        return str(data)
+
+
+class InvalidPackage(Exception):
+    pass
+
+
+def parse_package(path):
+    """
+    Parse package manifest.
+
+    :param path: The path of the package.xml file
+
+    :returns: return :class:`Package` instance, populated with parsed fields
+    :raises: :exc:`InvalidPackage`
+    :raises: :exc:`IOError`
+    """
+    if os.path.isfile(path):
+        filename = path
+    elif os.path.isdir(path):
+        filename = os.path.join(path, 'package.xml')
+        if not os.path.isfile(filename):
+            raise IOError('Directory "%s" does not contain a "package.xml"' % (path))
+    else:
+        raise IOError('Path "%s" is neither a directory containing a "package.xml" file nor a file' % (path))
+
+    with open(filename, 'r') as f:
+        try:
+            return parse_package_string(f.read(), filename)
+        except InvalidPackage as e:
+            e.args = ['Invalid package manifest "%s": %s' % (filename, e.message)]
+            raise
+
+
+def parse_package_string(data, filename=None):
+    """
+    Parse package.xml string contents.
+
+    :param data: package.xml contents, ``str``
+    :param filename: full file path for debugging, ``str``
+    :returns: return parsed :class:`Package`
+    :raises: :exc:`InvalidPackage`
+    """
+    try:
+        d = dom.parseString(data)
+    except Exception as e:
+        raise InvalidPackage('The manifest contains invalid XML:\n%s' % e)
+
+    pkg = Package(filename)
+
+    # verify unique root node
+    nodes = _get_nodes(d, 'package')
+    if len(nodes) != 1:
+        raise InvalidPackage('The manifest must contain a single "package" root tag')
+    root = nodes[0]
+
+    # format attribute
+    value = _get_node_attr(root, 'format', default=1)
+    if value != int(value) or int(value) < 0:
+        raise InvalidPackage('The "format" attribute of the "package" tag must contain a positive integer if present')
+    pkg.package_format = int(value)
+
+    # name
+    pkg.name = str(_get_node_value(_get_node(root, 'name')))
+
+    # version and optional abi
+    version_node = _get_node(root, 'version')
+    pkg.version = str(_get_node_value(version_node))
+    pkg.version_abi = str(_get_node_attr(version_node, 'abi', default=None))
+
+    # description and optional brief
+    description_node = _get_node(root, 'description')
+    pkg.description = str(_get_node_value(description_node, allow_xml=True))
+    pkg.description_brief = str(_get_node_attr(description_node, 'brief', default=None))
+
+    # at least one maintainer, all must have email
+    maintainers = _get_nodes(root, 'maintainer')
+    if not maintainers:
+        raise InvalidPackage('The manifest must contain at least one "maintainer" tag')
+    for node in maintainers:
+        pkg.maintainers.append({
+            'name': _get_node_value(node),
+            'email': str(_get_node_attr(node, 'email'))
+        })
+
+    # urls with optional type
+    urls = _get_nodes(root, 'url')
+    for node in urls:
+        pkg.urls.append({
+            'url': str(_get_node_value(node)),
+            'type': str(_get_node_attr(node, 'type', default=None))
+        })
+
+    # authors with optional email
+    authors = _get_nodes(root, 'author')
+    for node in authors:
+        pkg.authors.append({
+            'name': _get_node_value(node),
+            'email': str(_get_node_attr(node, 'email', default=None))
+        })
+
+    # licenses
+    licenses = _get_nodes(root, 'license')
+    for node in licenses:
+        pkg.licenses.append(str(_get_node_value(node)))
+
+    # copyright
+    pkg.copyright = _get_optional_node_value(root, 'copyright')
+
+    # dependencies and relationships
+    pkg.build_depends = _get_dependencies(root, 'build_depend')
+    pkg.buildtool_depends = _get_dependencies(root, 'buildtool_depend')
+    pkg.run_depends = _get_dependencies(root, 'run_depend')
+    pkg.test_depends = _get_dependencies(root, 'test_depend')
+    pkg.conflicts = _get_dependencies(root, 'conflict')
+    pkg.replaces = _get_dependencies(root, 'replace')
+
+    # exports
+    export_node = _get_optional_node(root, 'export')
+    if export_node is not None:
+        exports = []
+        for node in [n for n in export_node.childNodes if n.nodeType == n.ELEMENT_NODE]:
+            export = {'tag': str(node.tagName), 'attributes': {}, 'content': _get_node_value(node, allow_xml=True)}
+            for key, value in node.attributes.items():
+                export['attributes'][str(key)] = str(value)
+            exports.append(export)
+        pkg.exports = exports
+
+    return pkg
+
+
+def _get_nodes(parent, tagname):
+    return [n for n in parent.childNodes if n.nodeType == n.ELEMENT_NODE and n.tagName == tagname]
+
+
+def _get_node(parent, tagname):
+    nodes = _get_nodes(parent, tagname)
+    if len(nodes) != 1:
+        raise InvalidPackage('The manifest must contain exactly one "%s" tags' % tagname)
+    return nodes[0]
+
+
+def _get_optional_node(parent, tagname):
+    nodes = _get_nodes(parent, tagname)
+    if len(nodes) > 1:
+        raise InvalidPackage('The manifest must not contain more than one "%s" tags' % tagname)
+    return nodes[0] if nodes else None
+
+
+def _get_node_value(node, allow_xml=False):
+    if allow_xml:
+        return ''.join([n.toxml() for n in node.childNodes])
+    return (''.join([n.data for n in node.childNodes if n.nodeType == n.TEXT_NODE])).strip()
+
+
+def _get_optional_node_value(parent, tagname, default=None):
+    node = _get_optional_node(parent, tagname)
+    if node is None:
+        return default
+    return _get_node_value(node)
+
+
+def _get_node_attr(node, attr, default=False):
+    if node.hasAttribute(attr):
+        return node.getAttribute(attr)
+    if default == False:
+        raise InvalidPackage('The "%s" tag must have the attribute "%s"' % (node.tagName, attr))
+    return default
+
+
+def _get_dependencies(parent, tagname):
+    depends = []
+    for node in _get_nodes(parent, tagname):
+        depend = {'name': str(_get_node_value(node))}
+        for attr in ['version_lt', 'version_lte', 'version_eq', 'version_gte', 'version_gt']:
+            depend[attr] = str(_get_node_attr(node, attr, None))
+        depends.append(depend)
+    return depends
