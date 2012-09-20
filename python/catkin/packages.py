@@ -54,7 +54,7 @@ def find_package_paths(basepath):
         if 'package.xml' in filenames:
             basename = os.path.basename(dirpath)
             if basename not in paths:
-                paths.append(basename)
+                paths.append(os.path.relpath(dirpath, basepath))
             del dirnames[:]
             continue
         elif '.CATKIN_NO_SUBDIRS' in filenames:
