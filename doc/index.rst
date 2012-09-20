@@ -30,7 +30,6 @@ Contents
    walkthrough
    supposed
    layout
-   stack_xml
    cmake
    environment
    variables
@@ -38,6 +37,7 @@ Contents
    glossary
    rosbuild_migration
    catkin_migration
+
 
 Evolving Documentation Snippets
 -------------------------------
@@ -49,6 +49,11 @@ Evolving Documentation Snippets
    setup_dot_py
    standards
    builddocs
+
+External Documentation
+----------------------
+
+The specification for package.xml is in `REP 127 <http://www.ros.org/reps/rep-0127.html>`_.
 
 Design sketch
 -------------
@@ -62,7 +67,7 @@ Design sketch
 
 * Catkin does not differentiate between stacks or packages: it simply
   examines the subdirectories of ``CMAKE_SOURCE_DIR`` for buildable
-  projects (indicated by the presence of a file :ref:`stack.xml`).  It
+  projects (indicated by the presence of a file :ref:`package.xml`).  It
   determines the dependency ordering of stacks by examining these
   files.
 
@@ -117,7 +122,7 @@ Main trickery
 During the cmake run the main source directory is scanned for stacks
 to build.  Actually cmake does not care if it is a stack or a package;
 it cares that the directory has something there that indicates that
-it is buildable, and what its dependencies are... that, is :ref:`stack.xml`.  Catkin
+it is buildable, and what its dependencies are... that, is :ref:`package.xml`.  Catkin
 topologically sorts this and reads the files in order.
 
 .. rubric:: Generation of ``find_package`` infrastructure
