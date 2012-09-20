@@ -23,36 +23,31 @@ This directory must contain a symlink::
 
   CMakeLists.txt -> catkin/cmake/toplevel.cmake
 
-which triggers catkin's topological sort via inspection of ``stack.xml``.
+which triggers catkin's topological sort via inspection of ``package.xml``.
 
-Stack
+Package
 -----
 
-.. todo:: The separation into stacks and packages is going to be
+.. todo:: The separation into packages and packages is going to be
    dropped, then this page needs to be changed accordingly.
 
-A typical "stack" contains, at the top level::
+A typical "package" contains, at the top level::
 
-  stack.xml
+  package.xml
   CMakeLists.txt
   project1/
   project2/
 
-.. _stack.xml:
+.. _package.xml:
 
-stack.xml
+package.xml
 ^^^^^^^^^
 
 Used by catkin's dependency-sorting to determine what order to
 traverse cmake projects in (when in a catkin workspace) and by
 packaging utilities when making debians.
 
-For more details on the individual tags see 
-
-.. toctree::
-   :maxdepth: 1
-
-   stack_xml
+The specification for package.xml is in `REP 127 <http://www.ros.org/reps/rep-0127.html>`_.
 
 CMakeLists.txt
 ^^^^^^^^^^^^^^
@@ -93,8 +88,8 @@ This provides all catkin macros.
 .. rubric:: catkin_stack
 
 Call :cmake:macro:`catkin_stack` to read the data declared in
-stack.xml.  This also implicitly calls find_package on all
-dependencies declared in the stack.xml.
+package.xml.  This also implicitly calls find_package on all
+dependencies declared in the package.xml.
 
 .. rubric:: find_package [optional]
 
@@ -119,7 +114,7 @@ first in the ordering.
 Package
 -------
 
-Each package (as added by ``add_subdirectory`` in the stack)
+Each package (as added by ``add_subdirectory`` in the package)
 contains a ``CMakeLists.txt``.
 
 CMakeLists.txt
@@ -176,7 +171,7 @@ For ``catkin``, you may use the aggregate
 ``find_package(catkin COMPONENTS ...)`` method, this will be more
 succinct than a bunch of individual ``find_package`` calls.
 
-You may want to ``find_package`` of stack-wide components up at the
+You may want to ``find_package`` of package-wide components up at the
 top level, and then find_package more specific components in the
 packages that use them.
 
