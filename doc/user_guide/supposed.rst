@@ -142,10 +142,15 @@ Basic case::
 
   find_package(Boost REQUIRED COMPONENTS date_time thread)
 
-  add_library(${PROJECT_NAME}
-    src/time.cpp src/rate.cpp src/duration.cpp)
+  set(${PROJECT_NAME}_SRCS
+    src/duration.cpp
+    src/rate.cpp
+    src/time.cpp
+  )
 
-  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+  add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRCS})
+
+  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
   install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION lib/${PROJECT_NAME}
