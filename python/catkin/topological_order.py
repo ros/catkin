@@ -12,8 +12,8 @@ class PackageData:
         package = parse_package_arg(path)
         self.name = package.name
         self.path = path
-        self.build_depends = set([d['name'] for d in (package.build_depends + package.buildtool_depends)])
-        message_generators = [e['content'] for e in package.exports if e['tag'] == 'message_generator']
+        self.build_depends = set([d.name for d in (package.build_depends + package.buildtool_depends)])
+        message_generators = [e.content for e in package.exports if e.tagname == 'message_generator']
         self.message_generator = message_generators[0] if message_generators else None
 
     def __repr__(self):

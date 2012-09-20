@@ -16,16 +16,10 @@ package = parse_package(sys.argv[1])
 values = {}
 values['version'] = package.version
 
-maintainers = []
-for m in package.maintainers:
-    maintainer = m['name']
-    if m['email'] is not None:
-        maintainer += ' <%s>' % m['email']
-    maintainers.append(maintainer)
-values['maintainer'] = ', '.join(maintainers)
+values['maintainer'] = ', '.join([str(m) for m in package.maintainers])
 
 # need to turn the depends into semicolon separated list
-values['depends'] = ';'.join([d['name'] for d in (package.build_depends + package.buildtool_depends)])
+values['depends'] = ';'.join([d.name for d in (package.build_depends + package.buildtool_depends)])
 
 with open(sys.argv[2], 'w') as ofile:
     print(r'set(_CATKIN_CURRENT_PACKAGE "%s")' % package.name, file=ofile)

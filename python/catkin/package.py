@@ -90,6 +90,49 @@ class Package(object):
         return str(data)
 
 
+class Dependendency(object):
+    __slots__ = ['name', 'version_lt', 'version_lte', 'version_eq', 'version_gte', 'version_gt']
+
+    def __init__(self, name):
+        for attr in self.__slots__:
+            setattr(self, attr, None)
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+
+class Export(object):
+    __slots__ = ['tagname', 'attributes', 'content']
+
+    def __init__(self, tagname, content=None):
+        self.tagname = tagname
+        self.attributes = {}
+        self.content = content
+
+
+class Person(object):
+    __slots__ = ['name', 'email']
+
+    def __init__(self, name, email=None):
+        self.name = name
+        self.email = email
+
+    def __str__(self):
+        return '%s <%s>' % (self.name, self.email) if self.email is not None else self.name
+
+
+class Url(object):
+    __slots__ = ['url', 'type']
+
+    def __init__(self, url, type_=None):
+        self.url = url
+        self.type = type_
+
+    def __str__(self):
+        return self.url
+
+
 def parse_package_for_distutils(path=None):
     """
     Extract the information relevant for distutils from the package
@@ -114,25 +157,25 @@ def parse_package_for_distutils(path=None):
     data['version'] = package.version
 
     # either set one author with one email or join all in a single field
-    if len(package.authors) == 1 and package.authors[0]['email'] is not None:
-        data['author'] = package.authors[0]['name']
-        data['author_email'] = package.authors[0]['email']
+    if len(package.authors) == 1 and package.authors[0].email is not None:
+        data['author'] = package.authors[0].name
+        data['author_email'] = package.authors[0].email
     else:
-        data['author'] = ', '.join([('%s <%s>' % (a['name'], a['email']) if a['email'] is not None else a['name']) for a in package.authors])
+        data['author'] = ', '.join([('%s <%s>' % (a.name, a.email) if a.email is not None else a.name) for a in package.authors])
 
     # either set one maintainer with one email or join all in a single field
     if len(package.maintainers) == 1:
-        data['maintainer'] = package.maintainers[0]['name']
-        data['maintainer_email'] = package.maintainers[0]['email']
+        data['maintainer'] = package.maintainers[0].name
+        data['maintainer_email'] = package.maintainers[0].email
     else:
-        data['maintainer'] = ', '.join(['%s <%s>' % (m['name'], m['email']) for m in package.maintainers])
+        data['maintainer'] = ', '.join(['%s <%s>' % (m.name, m.email) for m in package.maintainers])
 
     # either set the first URL with the type 'website' or the first URL of any type
-    websites = [url['url'] for url in package.urls if url['type'] == 'website']
+    websites = [url.url for url in package.urls if url.type == 'website']
     if websites:
         data['url'] = websites[0]
     elif package.urls:
-        data['url'] = package.urls[0]['url']
+        data['url'] = package.urls[0].url
 
     if len(package.description) <= 200:
         data['description'] = package.description
@@ -223,26 +266,26 @@ def parse_package_string(data, filename=None):
     if not maintainers:
         raise InvalidPackage('The manifest must contain at least one "maintainer" tag')
     for node in maintainers:
-        pkg.maintainers.append({
-            'name': _get_node_value(node, apply_str=False),
-            'email': _get_node_attr(node, 'email')
-        })
+        pkg.maintainers.append(Person(
+            _get_node_value(node, apply_str=False),
+            _get_node_attr(node, 'email')
+        ))
 
     # urls with optional type
     urls = _get_nodes(root, 'url')
     for node in urls:
-        pkg.urls.append({
-            'url': _get_node_value(node),
-            'type': _get_node_attr(node, 'type', default=None)
-        })
+        pkg.urls.append(Url(
+            _get_node_value(node),
+            _get_node_attr(node, 'type', default=None)
+        ))
 
     # authors with optional email
     authors = _get_nodes(root, 'author')
     for node in authors:
-        pkg.authors.append({
-            'name': _get_node_value(node, apply_str=False),
-            'email': _get_node_attr(node, 'email', default=None)
-        })
+        pkg.authors.append(Person(
+            _get_node_value(node, apply_str=False),
+            _get_node_attr(node, 'email', default=None)
+        ))
 
     # at least one license
     licenses = _get_nodes(root, 'license')
@@ -264,9 +307,9 @@ def parse_package_string(data, filename=None):
     if export_node is not None:
         exports = []
         for node in [n for n in export_node.childNodes if n.nodeType == n.ELEMENT_NODE]:
-            export = {'tag': str(node.tagName), 'attributes': {}, 'content': _get_node_value(node, allow_xml=True)}
+            export = Export(str(node.tagName), _get_node_value(node, allow_xml=True))
             for key, value in node.attributes.items():
-                export['attributes'][str(key)] = str(value)
+                export.attributes[str(key)] = str(value)
             exports.append(export)
         pkg.exports = exports
 
@@ -319,8 +362,8 @@ def _get_node_attr(node, attr, default=False):
 def _get_dependencies(parent, tagname):
     depends = []
     for node in _get_nodes(parent, tagname):
-        depend = {'name': _get_node_value(node)}
+        depend = Dependendency(_get_node_value(node))
         for attr in ['version_lt', 'version_lte', 'version_eq', 'version_gte', 'version_gt']:
-            depend[attr] = _get_node_attr(node, attr, None)
+            setattr(depend, attr, _get_node_attr(node, attr, None))
         depends.append(depend)
     return depends
