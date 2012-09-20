@@ -1,3 +1,0 @@
-source_root_dir = "@CMAKE_CURRENT_SOURCE_DIR@"
-whitelisted_stacks = "@CATKIN_WHITELIST_STACKS@".split(';') if "@CATKIN_WHITELIST_STACKS@" != "" else []
-blacklisted_stacks = "@CATKIN_BLACKLIST_STACKS@".split(';') if "@CATKIN_BLACKLIST_STACKS@" != "" else []

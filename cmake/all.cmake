@@ -11,7 +11,9 @@ endif()
 # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
 # or CMAKE_PREFIX_PATH from the environment
 if(NOT DEFINED CMAKE_PREFIX_PATH)
-  string(REPLACE ":" ";" CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+  if($ENV{CMAKE_PREFIX_PATH})
+    string(REPLACE ":" ";" CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+  endif()
 endif()
 
 # list of unique catkin workspaces based on CMAKE_PREFIX_PATH
@@ -65,8 +67,8 @@ foreach(filename
     assert
     catkin_add_env_hooks
     catkin_generate_environment
-    catkin_project
-    catkin_stack
+    catkin_package
+    catkin_package_export
     catkin_workspace
     debug_message
     em_expand

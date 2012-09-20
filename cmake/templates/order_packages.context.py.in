@@ -1,0 +1,3 @@
+source_root_dir = "@CMAKE_CURRENT_SOURCE_DIR@"
+whitelisted_packages = "@CATKIN_WHITELIST_PACKAGES@".split(';') if "@CATKIN_WHITELIST_PACKAGES@" != "" else []
+blacklisted_packages = "@CATKIN_BLACKLIST_PACKAGES@".split(';') if "@CATKIN_BLACKLIST_PACKAGES@" != "" else []

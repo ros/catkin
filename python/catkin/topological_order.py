@@ -1,39 +1,41 @@
 from __future__ import print_function
-import glob
 import os
-import rospkg.stack
 import sys
 
+from .package import parse_package
+from .packages import find_package_paths
 
-class ProjectData:
 
-    def __init__(self, xml_filename, rospkg_arg=rospkg):
-        project = rospkg_arg.stack.parse_stack_file(xml_filename)
-        self.name = project.name
-        self.path = os.path.dirname(xml_filename)
-        self.build_depends = set([d.name for d in project.build_depends])
-        self.message_generator = project.message_generator
+class PackageData:
+
+    def __init__(self, path, parse_package_arg=parse_package):
+        package = parse_package_arg(path)
+        self.name = package.name
+        self.path = path
+        self.build_depends = set([d['name'] for d in (package.build_depends + package.buildtool_depends)])
+        message_generators = [e['content'] for e in package.exports if e['tag'] == 'message_generator']
+        self.message_generator = message_generators[0] if message_generators else None
 
     def __repr__(self):
         return 'name=%s path=%s build_depends=%s message_generator=%s\n' % (self.name, self.path, self.build_depends, self.message_generator)
 
 
-def _remove_dependency(projects, name):
-    for build_depends in [project_data.build_depends for project_data in projects.values()]:
+def _remove_dependency(packages, name):
+    for build_depends in [package_data.build_depends for package_data in packages.values()]:
         build_depends.difference_update([name])
 
 
-def _sort_projects(projects):
+def _sort_packages(packages):
     '''
-    First returning projects which have message generators and then the rest based on their build_depends.
+    First returning packages which have message generators and then the rest based on their build_depends.
     '''
 
-    ordered_projects = []
-    while len(projects) > 0:
-        # find all projects without build dependencies
+    ordered_packages = []
+    while len(packages) > 0:
+        # find all packages without build dependencies
         message_generators = []
         non_message_generators = []
-        for name, data in projects.items():
+        for name, data in packages.items():
             if not data.build_depends:
                 if data.message_generator:
                     message_generators.append(name)
@@ -45,8 +47,8 @@ def _sort_projects(projects):
         elif non_message_generators:
             names = non_message_generators
         else:
-            # in case of a circular dependency pass the list of remaining projects
-            ordered_projects.append([None, ', '.join(sorted(projects.keys()))])
+            # in case of a circular dependency pass the list of remaining packages
+            ordered_packages.append([None, ', '.join(sorted(packages.keys()))])
             break
 
         # alphabetic order only for convenience
@@ -56,58 +58,57 @@ def _sort_projects(projects):
         # add first candidates to ordered list
         # do not add all candidates since removing the depends from the first might affect the next candidates
         name = names[0]
-        ordered_projects.append([name, projects[name]])
-        # remove project from further processing
-        del projects[name]
-        _remove_dependency(projects, name)
-    return ordered_projects
+        ordered_packages.append([name, packages[name]])
+        # remove package from further processing
+        del packages[name]
+        _remove_dependency(packages, name)
+    return ordered_packages
 
 
 def topological_order(source_root_dir, whitelisted=None, blacklisted=None):
-    xml_filenames = glob.glob(os.path.join(source_root_dir, '*', 'stack.xml'))
-    #print('xml_filenames = %s' % xml_filenames, file=sys.stderr)
+    paths = find_package_paths(source_root_dir)
+    #print('paths = %s' % paths, file=sys.stderr)
 
     # fetch all meta data
     prefix = os.path.abspath(source_root_dir) + os.sep
-    project_data_list = []
-    for xml_filename in xml_filenames:
-        if os.path.basename(os.path.dirname(xml_filename)).startswith('.'):
-            continue
-        data = ProjectData(xml_filename)
+    package_data_list = []
+    for path in paths:
+        data = PackageData(os.path.join(source_root_dir, path))
         # make path relative to root dir
         if data.path.startswith(prefix):
             data.path = data.path[len(prefix):]
-        project_data_list.append(data)
-    return _topological_order_projects(project_data_list, whitelisted, blacklisted)
+        package_data_list.append(data)
+    return _topological_order_packages(package_data_list, whitelisted, blacklisted)
 
-def _topological_order_projects(project_data_list, whitelisted=None, blacklisted=None):
-    projects = {}
-    for data in project_data_list:
-        # skip non-whitelisted projects
+
+def _topological_order_packages(package_data_list, whitelisted=None, blacklisted=None):
+    packages = {}
+    for data in package_data_list:
+        # skip non-whitelisted packages
         if whitelisted and data.name not in whitelisted:
             continue
-        # skip blacklisted projects
+        # skip blacklisted packages
         if blacklisted and data.name in blacklisted:
             continue
-        if data.name in projects:
-            print('Two stacks with the same name "%s" in the workspace:\n- %s\n- %s' % (data.name, projects[data.name].path, data.path), file=sys.stderr)
+        if data.name in packages:
+            print('Two package with the same name "%s" in the workspace:\n- %s\n- %s' % (data.name, packages[data.name].path, data.path), file=sys.stderr)
             sys.exit(1)
-        projects[data.name] = data
+        packages[data.name] = data
 
-    # remove catkin from list of projects
-    if 'catkin' in projects:
-        del projects['catkin']
+    # remove catkin from list of packages
+    if 'catkin' in packages:
+        del packages['catkin']
 
     # remove external dependencies from the list
-    if projects:
-        all_build_depends = reduce(set.union, [p.build_depends for p in projects.values()])
-        external_depends = all_build_depends - set(projects.keys())
+    if packages:
+        all_build_depends = reduce(set.union, [p.build_depends for p in packages.values()])
+        external_depends = all_build_depends - set(packages.keys())
         #print('external_depends = %s' % external_depends, file=sys.stderr)
-        for data in projects.values():
+        for data in packages.values():
             data.build_depends = set(data.build_depends) - set(external_depends)
 
-    return _sort_projects(projects)
+    return _sort_packages(packages)
 
 
-def get_message_generators(ordered_projects):
-    return [name for (name, data) in ordered_projects if data.message_generator]
+def get_message_generators(ordered_packages):
+    return [name for (name, data) in ordered_packages if data.message_generator]

@@ -8,8 +8,8 @@ if(NOT DEFINED CATKIN_TOPLEVEL)
   include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
 endif()
 
-catkin_stack()
-catkin_project(catkin)
+catkin_package()
+catkin_package_export()
 
 # for backward compatibility we provide ROSConfig(-version).cmake files
 assert(CATKIN_BUILD_PREFIX)

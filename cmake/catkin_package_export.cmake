@@ -1,21 +1,16 @@
 #
-# Set a name for the catkin project.
+# Set a name for the catkin package.
 #
 # It creates the CMake stuff necessary for ``find_package`` to work
 # (i.e. to be *found* by others that call ``find_package``) and
 # provide information about include directories, libraries,
-# further dependencies and CMake variables for dependent projects.
-#
-# It installs ``manifest.xml`` to ``share/${PROJECT_NAME}``.
+# further dependencies and CMake variables for dependent packages.
 #
 # .. note:: It must be called once for each package.  Best practice
-#   is to call this macro early in your CMakeLists.txt, immediately
-#   after calling ``project()``, ``find_package(catkin REQUIRED)``
-#   and ``catkin_stack()``.
+#   is to call this macro early in your root CMakeLists.txt,
+#   immediately after calling ``project()``,
+#   ``find_package(catkin REQUIRED)`` and ``catkin_package()``.
 #
-# :param catkin_project_name: the catkin project name which must be
-#   the same value as passed to CMake's ``project()``
-# :type catkin_project_name: string
 # :param INCLUDE_DIRS: ``CMAKE_CURRENT_SOURCE_DIR``-relative paths to
 #   C/C++ includes
 # :type INCLUDE_DIRS: list of strings
@@ -25,38 +20,38 @@
 #   this will break if the logical target names are not the same as
 #   the installed names.
 # :type LIBRARIES: list of strings
-# :param DEPENDS: a list of projects which this project depends on.
-#   It is used when client code finds this project via
+# :param DEPENDS: a list of CMake projects which this project depends
+#   on.  It is used when client code finds this project via
 #   ``find_package()``.  Each project listed will in turn be
 #   ``find_package``\ -ed and their ``INCLUDE_DIRS`` and ``LIBRARIES``
 #   will be appended to ours.  Only projects should be used where we
 #   can guarantee that they are *find_packagable*. If they are not
-#   catkin projects they are not added to the ``requires`` list in
+#   catkin packages they are not added to the ``requires`` list in
 #   the pkg-config file since we can not ensure that they are
 #   *package_configurable*.
 # :type DEPENDS: list of strings
 # :param CFG_EXTRAS: a CMake file containing extra stuff that should
-#   be accessible to users of this project after
-#   ``find_package``\ -ing it.  This file should live in the
-#   subdirectory ``cmake`` and must have an additional extension
+#   be accessible to users of this package after
+#   ``find_package``\ -ing it.  This file must live in the
+#   subdirectory ``cmake`` and must have the additional extension
 #   ``.in`` (since it is expanded using CMake's ``configure_file()``).
 #   The template can distinguish between build- and installspace
 #   using the boolean variables ``BUILDSPACE`` and ``INSTALLSPACE``
 #   and should be verified to work in both cases.
 # :type CFG_EXTRAS: string
 #
-# :outvar CATKIN_PROJECT_BIN_DESTINATION:
-#   See :cmake:data:`CATKIN_PROJECT_BIN_DESTINATION`.
-# :outvar CATKIN_PROJECT_ETC_DESTINATION:
-#   See :cmake:data:`CATKIN_PROJECT_ETC_DESTINATION`.
-# :outvar CATKIN_PROJECT_INCLUDE_DESTINATION:
-#   See :cmake:data:`CATKIN_PROJECT_INCLUDE_DESTINATION`.
-# :outvar CATKIN_PROJECT_LIB_DESTINATION:
-#   See :cmake:data:`CATKIN_PROJECT_LIB_DESTINATION`.
-# :outvar CATKIN_PROJECT_PYTHON_DESTINATION:
-#   See :cmake:data:`CATKIN_PROJECT_PYTHON_DESTINATION`.
-# :outvar CATKIN_PROJECT_SHARE_DESTINATION:
-#   See :cmake:data:`CATKIN_PROJECT_SHARE_DESTINATION`.
+# :outvar CATKIN_PACKAGE_BIN_DESTINATION:
+#   See :cmake:data:`CATKIN_PACKAGE_BIN_DESTINATION`.
+# :outvar CATKIN_PACKAGE_ETC_DESTINATION:
+#   See :cmake:data:`CATKIN_PACKAGE_ETC_DESTINATION`.
+# :outvar CATKIN_PACKAGE_INCLUDE_DESTINATION:
+#   See :cmake:data:`CATKIN_PACKAGE_INCLUDE_DESTINATION`.
+# :outvar CATKIN_PACKAGE_LIB_DESTINATION:
+#   See :cmake:data:`CATKIN_PACKAGE_LIB_DESTINATION`.
+# :outvar CATKIN_PACKAGE_PYTHON_DESTINATION:
+#   See :cmake:data:`CATKIN_PACKAGE_PYTHON_DESTINATION`.
+# :outvar CATKIN_PACKAGE_SHARE_DESTINATION:
+#   See :cmake:data:`CATKIN_PACKAGE_SHARE_DESTINATION`.
 #
 # :outvar CATKIN_GLOBAL_BIN_DESTINATION:
 #   See :cmake:data:`CATKIN_GLOBAL_BIN_DESTINATION`.
@@ -75,7 +70,7 @@
 #
 # Example:
 # ::
-#   catkin_project(proj
+#   catkin_package_export(
 #     INCLUDE_DIRS include
 #     LIBRARIES proj-one proj-two
 #     DEPENDS roscpp
@@ -84,16 +79,12 @@
 #
 # @public
 #
-function(catkin_project catkin_project_name)
-  debug_message(10 "catkin_project(${catkin_project_name}) called in file ${CMAKE_CURRENT_LIST_FILE}")
+function(catkin_package_export)
+  debug_message(10 "catkin_package_export() called in file ${CMAKE_CURRENT_LIST_FILE}")
 
-  # verify that catkin_stack() has been called before
-  if(NOT CATKIN_CURRENT_STACK)
-    message(FATAL_ERROR "catkin_project() CATKIN_CURRENT_STACK is not set.  You must call catkin_stack() in the directory containing stack.xml before you can call catkin_project() in that directory or any of its children.")
-  endif()
-  # verify that project() has been called before with the same name
-  if(NOT catkin_project_name STREQUAL PROJECT_NAME)
-    message(FATAL_ERROR "catkin_project() name argument '${catkin_project_name}' does not match current PROJECT_NAME '${PROJECT_NAME}'.  You must call project() with the same name before.")
+  # verify that catkin_package() has been called before
+  if(NOT _CATKIN_CURRENT_PACKAGE)
+    message(FATAL_ERROR "catkin_package_export() _CATKIN_CURRENT_PACKAGE is not set.  You must call catkin_package() in the directory containing package.xml before you can call catkin_package_export().")
   endif()
 
   parse_arguments(PROJECT
@@ -101,10 +92,10 @@ function(catkin_project catkin_project_name)
     ""
     ${ARGN})
   if(PROJECT_DEFAULT_ARGS)
-    message(FATAL_ERROR "catkin_project() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
+    message(FATAL_ERROR "catkin_package_export() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
   endif()
 
-  # unset previously found directory of this project, so that this project overlays the other cleanly
+  # unset previously found directory of this package, so that this package overlays the other cleanly
   if(${PROJECT_NAME}_DIR)
     set(${PROJECT_NAME}_DIR "" CACHE PATH "" FORCE)
   endif()
@@ -112,12 +103,12 @@ function(catkin_project catkin_project_name)
   # filter out DEPENDS which have not been find_package()-ed before
   foreach(depend ${PROJECT_DEPENDS})
     if(NOT ${depend}_FOUND)
-      message(WARNING "catkin_project(${PROJECT_NAME}) depends on '${depend}' which has not been find_package()-ed before")
+      message(WARNING "catkin_package_export(${PROJECT_NAME}) depends on '${depend}' which has not been find_package()-ed before")
       list(REMOVE_ITEM PROJECT_DEPENDS ${depend})
     endif()
   endforeach()
 
-  # find catkin-only projects in DEPENDS list for use in .pc files
+  # find catkin-only packages in DEPENDS list for use in .pc files
   set(PROJECT_CATKIN_DEPENDS "")
   foreach(depend ${PROJECT_DEPENDS})
     if(${${depend}_FOUND_CATKIN_PROJECT})
@@ -125,8 +116,8 @@ function(catkin_project catkin_project_name)
     endif()
   endforeach()
 
-  # stack version provided by stack.cmake/xml
-  set(PROJECT_VERSION ${${CATKIN_CURRENT_STACK}_VERSION})
+  # package version provided by package.cmake/xml
+  set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
 
   # get library paths from all workspaces
   set(lib_paths "")
@@ -144,7 +135,7 @@ function(catkin_project catkin_project_name)
   set(PROJECT_SPACE_DIR ${CATKIN_BUILD_PREFIX})
   set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
 
-  # absolute path to include dirs and validate that they are existing either absolute or relative to projects source
+  # absolute path to include dirs and validate that they are existing either absolute or relative to packages source
   set(PROJECT_ABSOLUTE_INCLUDE_DIRS "")
   foreach(idir ${PROJECT_INCLUDE_DIRS})
     if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
@@ -152,7 +143,7 @@ function(catkin_project catkin_project_name)
     elseif(IS_DIRECTORY ${PKG_INCLUDE_PREFIX}/${idir})
       set(include ${PKG_INCLUDE_PREFIX}/${idir})
     else()
-      message(FATAL_ERROR "catkin_project() include dir '${idir}' is neither an absolute directory nor exists relative to '${CMAKE_CURRENT_SOURCE_DIR}'")
+      message(FATAL_ERROR "catkin_package_export() include dir '${idir}' is neither an absolute directory nor exists relative to '${CMAKE_CURRENT_SOURCE_DIR}'")
     endif()
     list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${include})
   endforeach()
@@ -293,13 +284,5 @@ function(catkin_project catkin_project_name)
   set(CATKIN_PROJECT_PYTHON_DESTINATION ${PYTHON_INSTALL_DIR}/${PROJECT_NAME} PARENT_SCOPE)
   set(CATKIN_PROJECT_SHARE_DESTINATION share/${PROJECT_NAME} PARENT_SCOPE)
 
-  # install manifest.xml
-  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/manifest.xml)
-    install(FILES manifest.xml
-      DESTINATION share/${PROJECT_NAME})
-  else()
-    if(NOT "${PROJECT_NAME}" STREQUAL "${CATKIN_CURRENT_STACK}")
-      message(WARNING "catkin_project(${PROJECT_NAME}) does not have a manifest.xml in '${CMAKE_CURRENT_SOURCE_DIR}', skipped installing it")
-    endif()
-  endif()
+  # XXXX generate manifest.xml for backward compatibility
 endfunction()

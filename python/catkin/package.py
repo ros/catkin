@@ -48,12 +48,10 @@ class Package(object):
         'version',
         'version_abi',
         'description',
-        'description_brief',
         'maintainers',
+        'licenses',
         'urls',
         'authors',
-        'licenses',
-        'copyright',
         'build_depends',
         'buildtool_depends',
         'run_depends',
@@ -61,7 +59,6 @@ class Package(object):
         'conflicts',
         'replaces',
         'exports',
-        'unknown_tags',  # store unrecognized tags during parsing
         'filename'
     ]
 
@@ -137,14 +134,15 @@ def parse_package_for_distutils(path=None):
     elif package.urls:
         data['url'] = package.urls[0]['url']
 
-    if package.description_brief is not None:
-        data['description'] = package.description_brief
-    data['long_description'] = package.description
+    if len(package.description) <= 200:
+        data['description'] = package.description
+    else:
+        data['description'] = package.description[:200]
+        data['long_description'] = package.description
 
     #data['classifiers'] = ['Programming Language :: Python']
 
-    if package.licenses:
-        data['license'] = ', '.join(package.licenses)
+    data['license'] = ', '.join(package.licenses)
     data['keywords'] = ['ROS']
     return data
 
@@ -217,10 +215,8 @@ def parse_package_string(data, filename=None):
     pkg.version = _get_node_value(version_node)
     pkg.version_abi = _get_node_attr(version_node, 'abi', default=None)
 
-    # description and optional brief
-    description_node = _get_node(root, 'description')
-    pkg.description = _get_node_value(description_node, allow_xml=True)
-    pkg.description_brief = _get_node_attr(description_node, 'brief', default=None)
+    # description
+    pkg.description = _get_node_value(_get_node(root, 'description'), allow_xml=True)
 
     # at least one maintainer, all must have email
     maintainers = _get_nodes(root, 'maintainer')
@@ -248,13 +244,12 @@ def parse_package_string(data, filename=None):
             'email': _get_node_attr(node, 'email', default=None)
         })
 
-    # licenses
+    # at least one license
     licenses = _get_nodes(root, 'license')
+    if not licenses:
+        raise InvalidPackage('The manifest must contain at least one "license" tag')
     for node in licenses:
         pkg.licenses.append(_get_node_value(node))
-
-    # copyright
-    pkg.copyright = _get_optional_node_value(root, 'copyright')
 
     # dependencies and relationships
     pkg.build_depends = _get_dependencies(root, 'build_depend')
