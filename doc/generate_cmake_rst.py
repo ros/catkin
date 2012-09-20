@@ -80,8 +80,15 @@ def generate_rst(files):
                     last_block = []
                     last_block_public = False
 
-    rst = ['Extracted CMake documentation',
+    rst = ['Extracted CMake API reference',
            '=============================']
+    rst.append('This page was auto-generated from cmake source files using %s\n'%os.path.basename(__file__))
+    rst.append('.. ' + '!' * 70)
+    rst.append('.. !!!!!! Auto-generated file, do not modify')
+    rst.append('.. ' + '!' * 70)
+    rst.append('')
+    rst.append('.. contents::')
+    rst.append('')
     rst.append('')
     rst.append('Public CMake functions / macros')
     rst.append('-------------------------------')

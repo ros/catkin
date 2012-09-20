@@ -1,6 +1,10 @@
 Migrating from Fuerte catkin
 ============================
 
+Catkin still changes a lot, so a migration from catkin in fuerte to
+catkin in groovy is necessary. Changes to catkin in Groovy are not
+designed to be backwards compatible to catkin in Fuerte.
+
 To update an already catkinized ROS stack from the Fuerte-version of catkin to Groovy the following steps are necessary:
 
 Update `CMakeLists.txt`` files
@@ -17,12 +21,12 @@ Update `CMakeLists.txt`` files
 
 * Switch to renamed catkin functions:
 
-  * ``add_gtest`` => ``catking_add_gtest``
+  * ``add_gtest`` => ``catkin_add_gtest``
 
     Do not use path-like string for the target name.
     The first argument must be a valid CMake target name.
 
-  * ``add_nosetests`` => ``catking_add_nosetests``
+  * ``add_nosetests`` => ``catkin_add_nosetests``
 
 * Update install() invocations to use the new FHS compliant destinations (see :ref:`variables`).
   Always specify the necessary destinations explicitly.
