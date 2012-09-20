@@ -93,6 +93,62 @@ class Package(object):
         return str(data)
 
 
+def parse_package_for_distutils(path=None):
+    """
+    Extract the information relevant for distutils from the package
+    manifest.  It sets the following keys: name, version, maintainer,
+    long_description, license, keywords.  The following keys depend on information which are
+    optional: autho, author_email, maintainer_email, url
+    
+
+    :param path: The path of the package.xml file, it may or may not
+    include the filename
+
+    :returns: return dict populated with parsed fields
+    :raises: :exc:`InvalidPackage`
+    :raises: :exc:`IOError`
+    """
+    if path is None:
+        path = '.'
+    package = parse_package(path)
+
+    data = {}
+    data['name'] = package.name
+    data['version'] = package.version
+
+    # either set one author with one email or join all in a single field
+    if len(package.authors) == 1 and package.authors[0]['email'] is not None:
+        data['author'] = package.authors[0]['name']
+        data['author_email'] = package.authors[0]['email']
+    else:
+        data['author'] = ', '.join([('%s <%s>' % (a['name'], a['email']) if a['email'] is not None else a['name']) for a in package.authors])
+
+    # either set one maintainer with one email or join all in a single field
+    if len(package.maintainers) == 1:
+        data['maintainer'] = package.maintainers[0]['name']
+        data['maintainer_email'] = package.maintainers[0]['email']
+    else:
+        data['maintainer'] = ', '.join(['%s <%s>' % (m['name'], m['email']) for m in package.maintainers])
+
+    # either set the first URL with the type 'website' or the first URL of any type
+    websites = [url['url'] for url in package.urls if url['type'] == 'website']
+    if websites:
+        data['url'] = websites[0]
+    elif package.urls:
+        data['url'] = package.urls[0]['url']
+
+    if package.description_brief is not None:
+        data['description'] = package.description_brief
+    data['long_description'] = package.description
+
+    #data['classifiers'] = ['Programming Language :: Python']
+
+    if package.licenses:
+        data['license'] = ', '.join(package.licenses)
+    data['keywords'] = ['ROS']
+    return data
+
+
 class InvalidPackage(Exception):
     pass
 
@@ -101,7 +157,8 @@ def parse_package(path):
     """
     Parse package manifest.
 
-    :param path: The path of the package.xml file
+    :param path: The path of the package.xml file, it may or may not
+    include the filename
 
     :returns: return :class:`Package` instance, populated with parsed fields
     :raises: :exc:`InvalidPackage`
@@ -153,17 +210,17 @@ def parse_package_string(data, filename=None):
     pkg.package_format = int(value)
 
     # name
-    pkg.name = str(_get_node_value(_get_node(root, 'name')))
+    pkg.name = _get_node_value(_get_node(root, 'name'))
 
     # version and optional abi
     version_node = _get_node(root, 'version')
-    pkg.version = str(_get_node_value(version_node))
-    pkg.version_abi = str(_get_node_attr(version_node, 'abi', default=None))
+    pkg.version = _get_node_value(version_node)
+    pkg.version_abi = _get_node_attr(version_node, 'abi', default=None)
 
     # description and optional brief
     description_node = _get_node(root, 'description')
-    pkg.description = str(_get_node_value(description_node, allow_xml=True))
-    pkg.description_brief = str(_get_node_attr(description_node, 'brief', default=None))
+    pkg.description = _get_node_value(description_node, allow_xml=True)
+    pkg.description_brief = _get_node_attr(description_node, 'brief', default=None)
 
     # at least one maintainer, all must have email
     maintainers = _get_nodes(root, 'maintainer')
@@ -171,30 +228,30 @@ def parse_package_string(data, filename=None):
         raise InvalidPackage('The manifest must contain at least one "maintainer" tag')
     for node in maintainers:
         pkg.maintainers.append({
-            'name': _get_node_value(node),
-            'email': str(_get_node_attr(node, 'email'))
+            'name': _get_node_value(node, apply_str=False),
+            'email': _get_node_attr(node, 'email')
         })
 
     # urls with optional type
     urls = _get_nodes(root, 'url')
     for node in urls:
         pkg.urls.append({
-            'url': str(_get_node_value(node)),
-            'type': str(_get_node_attr(node, 'type', default=None))
+            'url': _get_node_value(node),
+            'type': _get_node_attr(node, 'type', default=None)
         })
 
     # authors with optional email
     authors = _get_nodes(root, 'author')
     for node in authors:
         pkg.authors.append({
-            'name': _get_node_value(node),
-            'email': str(_get_node_attr(node, 'email', default=None))
+            'name': _get_node_value(node, apply_str=False),
+            'email': _get_node_attr(node, 'email', default=None)
         })
 
     # licenses
     licenses = _get_nodes(root, 'license')
     for node in licenses:
-        pkg.licenses.append(str(_get_node_value(node)))
+        pkg.licenses.append(_get_node_value(node))
 
     # copyright
     pkg.copyright = _get_optional_node_value(root, 'copyright')
@@ -239,10 +296,14 @@ def _get_optional_node(parent, tagname):
     return nodes[0] if nodes else None
 
 
-def _get_node_value(node, allow_xml=False):
+def _get_node_value(node, allow_xml=False, apply_str=True):
     if allow_xml:
-        return ''.join([n.toxml() for n in node.childNodes])
-    return (''.join([n.data for n in node.childNodes if n.nodeType == n.TEXT_NODE])).strip()
+        value = (''.join([n.toxml() for n in node.childNodes])).strip(' \n\r\t')
+    else:
+        value = (''.join([n.data for n in node.childNodes if n.nodeType == n.TEXT_NODE])).strip(' \n\r\t')
+    if apply_str:
+        value = str(value)
+    return value
 
 
 def _get_optional_node_value(parent, tagname, default=None):
@@ -254,7 +315,7 @@ def _get_optional_node_value(parent, tagname, default=None):
 
 def _get_node_attr(node, attr, default=False):
     if node.hasAttribute(attr):
-        return node.getAttribute(attr)
+        return str(node.getAttribute(attr))
     if default == False:
         raise InvalidPackage('The "%s" tag must have the attribute "%s"' % (node.tagName, attr))
     return default
@@ -263,8 +324,8 @@ def _get_node_attr(node, attr, default=False):
 def _get_dependencies(parent, tagname):
     depends = []
     for node in _get_nodes(parent, tagname):
-        depend = {'name': str(_get_node_value(node))}
+        depend = {'name': _get_node_value(node)}
         for attr in ['version_lt', 'version_lte', 'version_eq', 'version_gte', 'version_gt']:
-            depend[attr] = str(_get_node_attr(node, attr, None))
+            depend[attr] = _get_node_attr(node, attr, None)
         depends.append(depend)
     return depends
