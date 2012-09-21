@@ -6,11 +6,11 @@ import os
 import sys
 
 try:
-    from catkin.workspace_vcs import find_repositories, vcs_branch, vcs_diff, vcs_pull, vcs_remotes, vcs_status
+    from catkin.workspace_vcs import find_repositories, vcs_branch, vcs_diff, vcs_pull, vsc_push, vcs_remotes, vcs_status
 except ImportError:
     # find the import relatively to make it work before installing catkin
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.workspace_vcs import find_repositories, vcs_branch, vcs_diff, vcs_pull, vcs_remotes, vcs_status
+    from catkin.workspace_vcs import find_repositories, vcs_branch, vcs_diff, vcs_pull, vcs_push, vcs_remotes, vcs_status
 
 parser = argparse.ArgumentParser(description='Perform a VCS command on all repositories in the current directory.')
 parser.add_argument('path', nargs='?', default='.', help='The parent path of the repositories (default: .)')
@@ -25,6 +25,8 @@ elif args.command == 'diff':
     vcs_command = vcs_diff
 elif args.command == 'pull':
     vcs_command = vcs_pull
+elif args.command == 'push':
+    vcs_command = vcs_push
 elif args.command == 'remotes':
     vcs_command = vcs_remotes
 elif args.command == 'status':

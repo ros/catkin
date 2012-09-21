@@ -56,6 +56,17 @@ def vcs_pull(path, vcs_type=None):
         raise RuntimeError('"pull" command not supported for vcs type "%s"' % vcs_type)
 
 
+def vcs_push(path, vcs_type=None):
+    if vcs_type is None:
+        vcs_type = get_repository_type(path)
+    if vcs_type in ['bzr', 'git']:
+        return subprocess.check_output(['git', 'push'], cwd=path)
+    elif vcs_type == 'hg':
+        return subprocess.check_output(['hg', 'push'], cwd=path)
+    else:
+        raise RuntimeError('"push" command not supported for vcs type "%s"' % vcs_type)
+
+
 def vcs_remotes(path, vcs_type=None):
     if vcs_type is None:
         vcs_type = get_repository_type(path)
