@@ -6,15 +6,15 @@ import os
 import sys
 
 try:
-    from catkin.stack_version import bump_version, get_version
+    from catkin.package_version import bump_version, get_version
     from catkin.workspace_vcs import get_repository_type, vcs_remotes
 except ImportError:
     # find the import relatively to make it work before installing catkin
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.stack_version import bump_version, get_version
+    from catkin.package_version import bump_version, get_version
     from catkin.workspace_vcs import get_repository_type, vcs_remotes
 
-parser = argparse.ArgumentParser(description='Outputs the commands to bump the version number, commit the modified stack.xml and create a tag in the repository.')
+parser = argparse.ArgumentParser(description='Outputs the commands to bump the version number, commit the modified package.xml and create a tag in the repository.')
 args = parser.parse_args()
 
 path = '.'
@@ -34,12 +34,12 @@ print('Execute the following commands:')
 print('')
 
 # bump version number
-script = os.path.relpath(os.path.join(os.path.dirname(__file__), 'catkin_stack_version'))
+script = os.path.relpath(os.path.join(os.path.dirname(__file__), 'catkin_package_version'))
 cmd = '%s --bump patch %s' % (script, path)
 print(cmd)
 
-# commit modified stack.xml
-cmd = '%s commit -m "%s" %s' % (vcs_type, new_version, os.path.join(path, 'stack.xml'))
+# commit modified package.xml
+cmd = '%s commit -m "%s" %s' % (vcs_type, new_version, os.path.join(path, 'package.xml'))
 print(cmd)
 # push changes
 if vcs_type in ['bzr', 'git', 'hg']:

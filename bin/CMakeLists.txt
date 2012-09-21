@@ -2,8 +2,8 @@
 set(programs
   catkin_find
   catkin_init_workspace
+  catkin_package_version
   catkin_prepare_release
-  catkin_stack_version
   catkin_test_results
   catkin_topological_order
   catkin_ws

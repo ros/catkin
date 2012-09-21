@@ -5,15 +5,15 @@ from xml.etree.ElementTree import ElementTree
 
 
 def get_version(path):
-    stack_path = os.path.join(path, 'stack.xml')
-    if not os.path.exists(stack_path):
-        raise RuntimeError('Could not find stack.xml in current folder.')
+    package_path = os.path.join(path, 'package.xml')
+    if not os.path.exists(package_path):
+        raise RuntimeError('Could not find package.xml in current folder.')
 
     try:
-        root = ElementTree(None, stack_path)
+        root = ElementTree(None, package_path)
         return root.findtext('version')
     except Exception as e:
-        raise RuntimeError('Could not extract version from stack.xml:\n%s' % e)
+        raise RuntimeError('Could not extract version from package.xml:\n%s' % e)
 
 
 def bump_version(version, bump='patch'):
@@ -30,12 +30,12 @@ def bump_version(version, bump='patch'):
 
 
 def update_version(path, new_version):
-    stack_path = os.path.join(path, 'stack.xml')
-    with open(stack_path, 'r') as f:
-        stack_str = f.read()
-    # write back modified stack.xml
-    with open(stack_path, 'w') as f:
-        new_stack_str, number_of_subs = re.subn('<version([^<>]*)>[^<>]*</version>', '<version\g<1>>%s</version>' % new_version, stack_str, 1)
+    package_path = os.path.join(path, 'package.xml')
+    with open(package_path, 'r') as f:
+        package_str = f.read()
+    # write back modified package.xml
+    with open(package_path, 'w') as f:
+        new_package_str, number_of_subs = re.subn('<version([^<>]*)>[^<>]*</version>', '<version\g<1>>%s</version>' % new_version, package_str, 1)
         if number_of_subs != 1:
             raise RuntimeError('Could not bump version number')
-        f.write(new_stack_str)
+        f.write(new_package_str)

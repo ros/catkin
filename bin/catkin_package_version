@@ -6,14 +6,14 @@ import os
 import sys
 
 try:
-    from catkin.stack_version import bump_version, get_version, update_version
+    from catkin.package_version import bump_version, get_version, update_version
 except ImportError:
     # find the import relatively to make it work before installing catkin
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.stack_version import bump_version, get_version, update_version
+    from catkin.package_version import bump_version, get_version, update_version
 
-parser = argparse.ArgumentParser(description='Show or bump the version number in stack.xml.')
-parser.add_argument('path', nargs='?', default='.', help='The path to the stack.xml (default: .)')
+parser = argparse.ArgumentParser(description='Show or bump the version number in package.xml.')
+parser.add_argument('path', nargs='?', default='.', help='The path to the package.xml (default: .)')
 parser.add_argument('--bump', choices=('major', 'minor', 'patch'), help='Which part of the version number to bump?')
 args = parser.parse_args()
 
