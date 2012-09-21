@@ -2,8 +2,8 @@ from __future__ import print_function
 import os
 import sys
 
-from .package import parse_package
-from .packages import find_package_paths
+from catkin_pkg.package import parse_package
+from catkin_pkg.packages import find_package_paths
 
 
 class PackageData:

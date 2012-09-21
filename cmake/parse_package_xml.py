@@ -1,15 +1,9 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import os
 import sys
 
-try:
-    from catkin.package import parse_package
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.package import parse_package
+from catkin_pkg.package import parse_package
 
 package = parse_package(sys.argv[1])
 
