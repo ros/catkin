@@ -1,63 +1,53 @@
-Sketch of directory structure
-=============================
+Catkin workspace layout
+=======================
 
-How things ought to look, starting at the outermost level of the
-source directory and moving down through stacks and packages.
+A Catkin workspace is a folder with a CMakeLists.txt file. It acts
+like one huge cmake project containing any cmake project that you 
+add as subfolder as a subproject.
 
-Workspace (the ``src`` folder)
+.. contents::
+
+
+``src`` (the Workspace folder)
 ------------------------------
 
-This is a directory containing multiple stacks, e.g. one constructed
-by ``rosinstall``.  This directory must contain a symlink::
+You can place your workspace folder wherever you want and name it what
+you want. One standard layout for ROS is to have a folder named like
+the distro you use this workspace for, and in that folder a folder 
+named src, to use as workspace folder.
+
+In the src folder, you can use `rosws <http://www.ros.org/doc/api/rosinstall/html/>`_ to download and
+update catkin projects from multiple sources.
+
+This directory must contain a symlink::
 
   CMakeLists.txt -> catkin/cmake/toplevel.cmake
 
-which triggers catkin's topological sort via inspection of ``stack.xml``.
+which triggers catkin's topological sort via inspection of ``package.xml``.
 
-Stack
+Package
 -----
 
-A typical "stack" will contain, at the top level::
+.. todo:: The separation into packages and packages is going to be
+   dropped, then this page needs to be changed accordingly.
 
-  stack.xml
+A typical "package" contains, at the top level::
+
+  package.xml
   CMakeLists.txt
   project1/
   project2/
 
-.. _stack.xml:
+.. _package.xml:
 
-stack.xml
+package.xml
 ^^^^^^^^^
 
 Used by catkin's dependency-sorting to determine what order to
 traverse cmake projects in (when in a catkin workspace) and by
 packaging utilities when making debians.
 
-Example::
-
-  <stack>
-    <name>ros_comm</name>
-    <version>0.1.2</version>
-    <description brief="ROS communications-related libraries and tools">ROS communications-related packages, including core client libraries (roscpp, rospy, roslisp) and graph introspection tools (rostopic, rosnode, rosservice, rosparam).</description>
-    <author>Troy Straszheim</author>
-    <author>Morten Kjaergaard</author>
-    <author email="kwc@willowgarage.com">Ken Conley</author>
-    <maintainer email="straszheim@willowgarage.com">Troy Straszheim</maintainer>
-    <license>BSD</license>
-    <copyright>willowgarage</copyright>
-
-    <url>http://www.ros.org</url>
-    <review status="Doc reviewed" notes="2009/6/10"/>
-
-    <build_depends>genmsg</build_depends>
-    <build_depends>libboost-thread-dev</build_depends>
-    <build_depends>libboost-date-time-dev</build_depends>
-
-    <depends>libboost-thread</depends>
-    <depends>libboost-date-time</depends>
-  </stack>
-
-For more details on the individual tags see :ref:`stack_xml`.
+The specification for package.xml is in `REP 127 <http://www.ros.org/reps/rep-0127.html>`_.
 
 CMakeLists.txt
 ^^^^^^^^^^^^^^
@@ -66,8 +56,8 @@ The basic case (``ros_comm``)::
 
   cmake_minimum_required(VERSION 2.8)
 
-  # find_package(catkin REQUIRED)
-  # catkin_stack()
+  find_package(catkin REQUIRED)
+  catkin_stack()
 
   # optional find_package(... [REQUIRED])
 
@@ -82,6 +72,7 @@ The basic case (``ros_comm``)::
     add_subdirectory(${subdir})
   endforeach()
 
+.. todo:: This is not how the CMakeLists.txt of ros_comm actually looks like anymore.
 
 .. rubric:: cmake_minimum_required
 
@@ -90,9 +81,15 @@ necessary when building in a workspace (as the first CMakeLists.txt
 has already been read), but necessary when building e.g. in a
 packaging context.
 
+.. rubric:: find_package(catkin REQUIRED)
+
+This provides all catkin macros.
+
 .. rubric:: catkin_stack
 
-Find the catkin package first and then call :cmake:macro:`catkin_stack`.
+Call :cmake:macro:`catkin_stack` to read the data declared in
+package.xml.  This also implicitly calls find_package on all
+dependencies declared in the package.xml.
 
 .. rubric:: find_package [optional]
 
@@ -103,7 +100,7 @@ This is standard CMake.
 
 .. rubric:: catkin_python_setup
 
-Call :cmake:macro:`catkin_python_setup` if the project contains a 
+Call :cmake:macro:`catkin_python_setup` if the project contains a
 setup.py / Python code which should installed.
 
 .. rubric:: add_subdirectory
@@ -114,11 +111,16 @@ refers to a target defined in ``proj1``, then ``proj1`` must come
 first in the ordering.
 
 
-package
+Package
 -------
 
-Each package (as added by ``add_subdirectory`` in the stack) Will
-contain a ``CMakeLists.txt``.  Basic case::
+Each package (as added by ``add_subdirectory`` in the package)
+contains a ``CMakeLists.txt``.
+
+CMakeLists.txt
+^^^^^^^^^^^^^^
+
+Basic case::
 
   project(rostime)
   find_package(catkin REQUIRED COMPONENTS cpp_common)
@@ -169,33 +171,31 @@ For ``catkin``, you may use the aggregate
 ``find_package(catkin COMPONENTS ...)`` method, this will be more
 succinct than a bunch of individual ``find_package`` calls.
 
-You may want to ``find_package`` of stack-wide components up at the
+You may want to ``find_package`` of package-wide components up at the
 top level, and then find_package more specific components in the
 packages that use them.
 
 .. rubric:: catkin_project
 
 :cmake:macro:`catkin_project` defines information dependent projects
-(i.e. include directories, libraries to link against and depending 
+(i.e. include directories, libraries to link against and depending
 projects).
 
 You will want to ``include_directories(${ROS_INCLUDE_DIRS})``
 and other folders where necessary.
 
-.. rubric:: source files
+.. todo:: more detail required here
 
-Add all source files to a list.  For better readability one file per
-line with `alphabetic order <standards.html#keep-lists-sorted>`_.
 
 .. rubric:: add_library
 
-Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
+Using ``${PROJECT_NAME}`` wherever possible to avoid repeating the
 project name.  This is standard CMake.  Explicitly use ``SHARED`` for
 building a shared library.
 
 .. rubric:: target_link_libraries
 
-Using ``${PROJECT_NAME}`` where ever possible to avoid repeating the
+Using ``${PROJECT_NAME}`` wherever possible to avoid repeating the
 project name.  This is standard CMake.  Explicitly link against all
 necessary libraries, i.e. ``ROS_LIBRARIES``.
 

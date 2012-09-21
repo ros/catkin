@@ -5,6 +5,9 @@ Pre- and Post-installation Disk Layout reference
 
 .. rubric:: Source directory
 
+This page describes the intended layout of build and install folders, in particular with respect to the Filesystem Hierarchy standard (FHS).
+
+
 e.g. for project 'proj'::
 
   src/
