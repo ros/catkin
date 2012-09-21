@@ -53,4 +53,12 @@ macro(catkin_package)
   # install package.xml
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/package.xml
     DESTINATION share/${PROJECT_NAME})
+
+  # automatically chain dependencies for meta-packages
+  if(${_CATKIN_CURRENT_PACKAGE_IS_META})
+    set(_CATKIN_PACKAGE_EXPORT_CALLED_INTERNALLY TRUE)
+    find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_DEPENDS})
+    catkin_package_export(DEPENDS ${${PROJECT_NAME}_DEPENDS})
+    unset(_CATKIN_PACKAGE_EXPORT_CALLED_INTERNALLY)
+  endif()
 endmacro()

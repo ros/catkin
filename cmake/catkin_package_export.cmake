@@ -9,7 +9,8 @@
 # .. note:: It must be called once for each package.  Best practice
 #   is to call this macro early in your root CMakeLists.txt,
 #   immediately after calling ``project()``,
-#   ``find_package(catkin REQUIRED)`` and ``catkin_package()``.
+#   ``find_package(catkin REQUIRED)`` and ``catkin_package()``.  For
+#   meta packages this function must not be called.
 #
 # :param INCLUDE_DIRS: ``CMAKE_CURRENT_SOURCE_DIR``-relative paths to
 #   C/C++ includes
@@ -86,6 +87,11 @@ function(catkin_package_export)
   # verify that catkin_package() has been called before
   if(NOT _CATKIN_CURRENT_PACKAGE)
     message(FATAL_ERROR "catkin_package_export() _CATKIN_CURRENT_PACKAGE is not set.  You must call catkin_package() in the directory containing package.xml before you can call catkin_package_export().")
+  endif()
+
+  # verify that this function is not called for meta-packges (except from catkin_package())
+  if(_CATKIN_CURRENT_PACKAGE_IS_META AND NOT _CATKIN_PACKAGE_EXPORT_CALLED_INTERNALLY)
+    message(FATAL_ERROR "catkin_package_export() must not be called manually for the meta-package '${PROJECT_NAME}'.  Remove the invocation from the CMakeLists.txt.")
   endif()
 
   parse_arguments(PROJECT

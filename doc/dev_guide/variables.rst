@@ -19,28 +19,28 @@ They only contain relative paths and are supposed to be relative to the ``${CMAK
 
 **Project specific**
 
-.. cmake:data:: CATKIN_PROJECT_BIN_DESTINATION
+.. cmake:data:: CATKIN_PACKAGE_BIN_DESTINATION
 
    This is set to ``${CATKIN_GLOBAL_LIBEXEC_DESTINATION}/${PROJECT_NAME}``.
 
-.. cmake:data:: CATKIN_PROJECT_ETC_DESTINATION
+.. cmake:data:: CATKIN_PACKAGE_ETC_DESTINATION
 
    This is set to ``${CATKIN_GLOBAL_ETC_DESTINATION}/${PROJECT_NAME}``.
 
-.. cmake:data:: CATKIN_PROJECT_INCLUDE_DESTINATION
+.. cmake:data:: CATKIN_PACKAGE_INCLUDE_DESTINATION
 
    This is set to ``${CATKIN_GLOBAL_INCLUDE_DESTINATION}/${PROJECT_NAME}``.
 
-.. cmake:data:: CATKIN_PROJECT_LIB_DESTINATION
+.. cmake:data:: CATKIN_PACKAGE_LIB_DESTINATION
 
    This is set to ``${CATKIN_GLOBAL_LIB_DESTINATION}``.
    All libraries go into a global folder.  Still use this variable instead of ``CATKIN_GLOBAL_LIB_DESTINATION`` for project libraries.
 
-.. cmake:data:: CATKIN_PROJECT_PYTHON_DESTINATION
+.. cmake:data:: CATKIN_PACKAGE_PYTHON_DESTINATION
 
    This is set to ``${CATKIN_GLOBAL_PYTHON_DESTINATION}/${PROJECT_NAME}``.
 
-.. cmake:data:: CATKIN_PROJECT_SHARE_DESTINATION
+.. cmake:data:: CATKIN_PACKAGE_SHARE_DESTINATION
 
    This is set to ``${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}``.
 
@@ -65,13 +65,13 @@ They only contain relative paths and are supposed to be relative to the ``${CMAK
 .. cmake:data:: CATKIN_GLOBAL_LIB_DESTINATION
 
    This is set to ``lib``.
-   This variable should not be used directly, use ``CATKIN_PROJECT_LIB_DESTINATION`` instead.
+   This variable should not be used directly, use ``CATKIN_PACKAGE_LIB_DESTINATION`` instead.
 
 .. cmake:data:: CATKIN_GLOBAL_LIBEXEC_DESTINATION
 
    This is set to ``lib``.
    On non-Debian distributions it could be set to ``libexec``.
-   This variable should not be used directly, use ``CATKIN_PROJECT_BIN_DESTINATION`` instead.
+   This variable should not be used directly, use ``CATKIN_PACKAGE_BIN_DESTINATION`` instead.
 
 .. cmake:data:: CATKIN_GLOBAL_PYTHON_DESTINATION
 

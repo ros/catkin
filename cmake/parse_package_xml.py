@@ -23,5 +23,7 @@ values['depends'] = ';'.join([d.name for d in (package.build_depends + package.b
 
 with open(sys.argv[2], 'w') as ofile:
     print(r'set(_CATKIN_CURRENT_PACKAGE "%s")' % package.name, file=ofile)
+    is_meta_package = 'meta_package' in [e.tagname for e in package.exports]
+    print(r'set(_CATKIN_CURRENT_PACKAGE_IS_META "%s")' % str(is_meta_package), file=ofile)
     for k, v in values.items():
         print('set(%s_%s "%s")' % (package.name, k.upper(), v), file=ofile)
