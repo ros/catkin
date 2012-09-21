@@ -5,8 +5,6 @@ find_package(catkin REQUIRED)
 find_package(genmsg REQUIRED)
 find_package(std_msgs REQUIRED)
 
-catkin_stack()
-
 
 foreach(subdir
     quux_msgs

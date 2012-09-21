@@ -11,5 +11,4 @@ add_executable(nolangs_exec
 install(TARGETS nolangs_exec
   RUNTIME DESTINATION bin)
 
-catkin_stack()
 catkin_project(nolangs)

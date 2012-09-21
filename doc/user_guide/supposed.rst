@@ -57,7 +57,6 @@ The basic case (``ros_comm``)::
   cmake_minimum_required(VERSION 2.8)
 
   find_package(catkin REQUIRED)
-  catkin_stack()
 
   # optional find_package(... [REQUIRED])
 
@@ -85,16 +84,10 @@ packaging context.
 
 This provides all catkin macros.
 
-.. rubric:: catkin_stack
-
-Call :cmake:macro:`catkin_stack` to read the data declared in
-package.xml.  This also implicitly calls find_package on all
-dependencies declared in the package.xml.
-
 .. rubric:: find_package [optional]
 
 The ``# optional find_package`` line is for anything that is common to
-all subprojects and not handled by catkin_stack.  Consider using
+all subprojects.  Consider using
 `REQUIRED <standards.html#find-package-required>`_ whenever possible.
 This is standard CMake.
 
