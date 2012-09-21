@@ -2,6 +2,9 @@ function(catkin_generate_environment)
   # buildspace
   set(SETUP_DIR ${CATKIN_BUILD_PREFIX})
 
+  # generate empty file to prevent searching for packages in binary dir
+  file(WRITE "${CMAKE_BINARY_DIR}/CATKIN_NO_SUBDIRS" "")
+
   # create workspace marker
   set(sourcespaces "${CMAKE_SOURCE_DIR}")
   if(EXISTS "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE")
@@ -14,6 +17,7 @@ function(catkin_generate_environment)
     set(sourcespaces ${existing_sourcespaces})
   endif()
   file(WRITE "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE" "${sourcespaces}")
+
   # generate relay-script for setup.py
   set(PYTHON_SCRIPT ${catkin_EXTRAS_DIR}/templates/setup.py)
   configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in

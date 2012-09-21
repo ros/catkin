@@ -42,7 +42,7 @@ def find_package_paths(basepath):
     """
     Crawls the filesystem to find package.xml files.
 
-    When a subfolder contains a file ``.CATKIN_NO_SUBDIRS`` its
+    When a subfolder contains a file ``CATKIN_NO_SUBDIRS`` its
     subdirectories are ignored.
 
     :param basepath: The path to search in, ``str``
@@ -57,7 +57,7 @@ def find_package_paths(basepath):
                 paths.append(os.path.relpath(dirpath, basepath))
             del dirnames[:]
             continue
-        elif '.CATKIN_NO_SUBDIRS' in filenames:
+        elif 'CATKIN_NO_SUBDIRS' in filenames:
             del dirnames[:]
             continue
         for dirname in dirnames:
