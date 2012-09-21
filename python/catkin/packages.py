@@ -82,7 +82,7 @@ def find_packages(basepath):
         package = parse_package(os.path.join(basepath, path))
         if package.name in packages:
             raise RuntimeError('Two packages found with the same name "%s":\n- %s\n- %s' % (package.name, path.filename, packages[package.name].filename))
-        packages[package.name] = package
+        packages[path] = package
     return packages
 
 
