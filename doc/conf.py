@@ -52,9 +52,16 @@ copyright = u'2010, Willow Garage -- ' + ' Version ' + dochash + ", " + ' '.join
 # built documents.
 #
 # The short X.Y version.
-import rospkg.stack
+import inspect
+import os
+catkin_path, _tmp = os.path.split( inspect.getfile( inspect.currentframe() ) )
+catkin_path, _tmp = os.path.split( catkin_path )
+cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(catkin_path, "python")))
+if cmd_subfolder not in sys.path:
+     sys.path.insert(0, cmd_subfolder)
+from catkin import package_version
 try:
-    version = rospkg.stack.parse_stack_file('../stack.xml').version
+    version = package_version.get_version(catkin_path)
 except Exception, e:
     print >> sys.stderr, 'Could not extract version from your stack.xml:\n%s' % e
     sys.exit(-1)
