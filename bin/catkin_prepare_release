@@ -5,21 +5,24 @@ import argparse
 import os
 import sys
 
+from catkin_pkg.packages import find_packages, verify_equal_package_versions
+
 try:
-    from catkin.package_version import bump_version, get_version
+    from catkin.package_version import bump_version
     from catkin.workspace_vcs import get_repository_type, vcs_remotes
 except ImportError:
     # find the import relatively to make it work before installing catkin
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.package_version import bump_version, get_version
+    from catkin.package_version import bump_version
     from catkin.workspace_vcs import get_repository_type, vcs_remotes
 
-parser = argparse.ArgumentParser(description='Outputs the commands to bump the version number, commit the modified package.xml and create a tag in the repository.')
+parser = argparse.ArgumentParser(description='Outputs the commands to bump the version number, commit the modified package.xml files and create a tag in the repository.')
 args = parser.parse_args()
 
 path = '.'
 try:
-    old_version = get_version(path)
+    packages = find_packages(path)
+    old_version = verify_equal_package_versions(packages.values())
     new_version = bump_version(old_version, 'patch')
 except Exception as e:
     print(str(e), file=sys.stderr)
@@ -39,7 +42,8 @@ cmd = '%s --bump patch %s' % (script, path)
 print(cmd)
 
 # commit modified package.xml
-cmd = '%s commit -m "%s" %s' % (vcs_type, new_version, os.path.join(path, 'package.xml'))
+package_xmls = [os.path.join(p, 'package.xml') for p in packages.keys()]
+cmd = '%s commit -m "%s" %s' % (vcs_type, new_version, ' '.join(package_xmls))
 print(cmd)
 # push changes
 if vcs_type in ['bzr', 'git', 'hg']:
@@ -63,6 +67,6 @@ elif vcs_type == 'svn':
     else:
         print('Could not determine base URL of SVN repository "%s"' % url, file=sys.stderr)
         exit(1)
-    tag_url = '%s/tags/%s-%s' % (base_url, os.path.basename(os.path.abspath(path)), new_version)
+    tag_url = '%s/tags/%s' % (base_url, new_version)
     cmd = 'svn cp -m "tagging %s" %s %s' % (new_version, url, tag_url)
     print(cmd)

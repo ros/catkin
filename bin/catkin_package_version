@@ -5,20 +5,23 @@ import argparse
 import os
 import sys
 
+from catkin_pkg.packages import find_packages, verify_equal_package_versions
+
 try:
-    from catkin.package_version import bump_version, get_version, update_version
+    from catkin.package_version import bump_version, update_versions
 except ImportError:
     # find the import relatively to make it work before installing catkin
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.package_version import bump_version, get_version, update_version
+    from catkin.package_version import bump_version, update_versions
 
-parser = argparse.ArgumentParser(description='Show or bump the version number in package.xml.')
-parser.add_argument('path', nargs='?', default='.', help='The path to the package.xml (default: .)')
+parser = argparse.ArgumentParser(description='Show or bump the version number in package.xml files.')
+parser.add_argument('path', nargs='?', default='.', help='The path to a parent folder which contains package.xml files (default: .)')
 parser.add_argument('--bump', choices=('major', 'minor', 'patch'), help='Which part of the version number to bump?')
 args = parser.parse_args()
 
 try:
-    version = get_version(args.path)
+    packages = find_packages(args.path)
+    version = verify_equal_package_versions(packages.values())
 except Exception as e:
     print(str(e), file=sys.stderr)
     sys.exit(1)
@@ -31,7 +34,7 @@ else:
     # bump the version number
     try:
         new_version = bump_version(version, args.bump)
-        update_version(args.path, new_version)
+        update_versions(packages.keys(), new_version)
     except Exception as e:
         print(str(e), file=sys.stderr)
         sys.exit(1)
