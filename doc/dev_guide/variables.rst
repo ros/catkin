@@ -8,13 +8,13 @@ Build space
 
 .. cmake:data:: CATKIN_BUILD_PREFIX
 
-   This is set to ``${CMAKE_BINARY_DIR}/buildspace`` by either ``catkin/CMakeLists.txt`` or ``catkin/cmake/catkinConfig.cmake`` and is the analogue to ``CMAKE_PREFIX_PATH``.
-   Since the layout of the both folders ``CATKIN_BUILD_PREFIX`` and ``CMAKE_PREFIX_PATH`` is identical you can append any of the above install destinations to the build prefix.
+   This is set to ``${CMAKE_BINARY_DIR}/buildspace`` by ``catkin/all.cmake`` and is the analogue to ``CMAKE_PREFIX_PATH``.
+   Since the layout of the both folders ``CATKIN_BUILD_PREFIX`` and ``CMAKE_PREFIX_PATH`` is identical you can append any of the following install destinations to the build prefix.
 
 Install destinations
 --------------------
 
-All destination variable are meant to be used with the CMake ``install()`` macro as an ``DESTINATION`` argument.
+All destination variables are meant to be used with the CMake ``install()`` macro as an ``DESTINATION`` argument.
 They only contain relative paths and are supposed to be relative to the ``${CMAKE_INSTALL_PREFIX}`` (or ``${CATKIN_BUILD_PREFIX}``).
 
 **Project specific**
@@ -34,7 +34,7 @@ They only contain relative paths and are supposed to be relative to the ``${CMAK
 .. cmake:data:: CATKIN_PACKAGE_LIB_DESTINATION
 
    This is set to ``${CATKIN_GLOBAL_LIB_DESTINATION}``.
-   All libraries go into a global folder.  Still use this variable instead of ``CATKIN_GLOBAL_LIB_DESTINATION`` for project libraries.
+   All libraries go into a global folder.  Still use this variable instead of ``CATKIN_GLOBAL_LIB_DESTINATION`` for package libraries.
 
 .. cmake:data:: CATKIN_PACKAGE_PYTHON_DESTINATION
 

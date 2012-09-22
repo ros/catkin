@@ -5,9 +5,10 @@ Introduction
 
 Catkin helps building ROS packages by leveraging
 the CMake tool that has for years been the most used C++ build
-framework. The focus of catkin is C++ and python based packages.
+framework. The focus of catkin is C++ and Python based packages.
 
-Users experienced with CMake should feel right at home with catkin.
+Users which have experience with CMake should feel right at home
+with catkin.
 
 .. contents::
 

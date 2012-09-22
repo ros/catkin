@@ -16,24 +16,24 @@ Once you have done so, choose a location on your disk to use as a
 workspace for the ROS packages you will use. For this guide we will
 choose `~/groovy_overlay`::
 
-  $ mkdir groovy_overlay
-  $ cd groovy_overlay
-  $ mkdir src
-  $ cd src
-  $ catkin_init_workspace
+   $ mkdir groovy_overlay
+   $ cd groovy_overlay
+   $ mkdir src
+   $ cd src
+   $ catkin_init_workspace
 
 The last command creates a CMakeLists.txt link in `src`.
 We now have an empty catkin workspace. As usual with CMake, we create
 a build folder where all build output will go to (e.g. compiled files)::
 
-  $ cd ~/groovy_overlay
-  $ mkdir build
+   $ cd ~/groovy_overlay
+   $ mkdir build
 
 Next, even though we have not added any package to our workspace, we
 can still check and configure our workspace::
 
-  $ cd build
-  $ cmake ../src
+   $ cd build
+   $ cmake ../src
 
 This generates several folders and files in our build folder. 
 
@@ -54,7 +54,7 @@ to the folder `~/groovy_overlay/build/buildspace`. This is achieved by
 files that the CMake command generated in `buildspace`. You can set up
 your environment by calling::
 
-  $ source ~/groovy_overlay/build/buildspace/setup.sh
+   $ source ~/groovy_overlay/build/buildspace/setup.sh
 
 You can add this command to your .bashrc if you want it to be executed
 every time you open a shell.
@@ -62,8 +62,8 @@ every time you open a shell.
 Once you have added projects to your workspace, you can build
 the projects like this::
 
-  $ cd ~/groovy_overlay/build
-  $ make -j8
+   $ cd ~/groovy_overlay/build
+   $ make -j8
 
 The `-j8` option tells make to use 8 jobs, making full use of 8 CPU cores. If you have more or less, adjust the parameter.
 
@@ -76,10 +76,10 @@ users on other operating systems may need to properly install packages.
 
 As with standard CMake, you do so by specifying an install path in CMake::
 
-  $ cd ~/groovy_overlay/build
-  $ cmake ../src -DCMAKE_PREFIX_PATH=~/groovy_overlay/install
-  $ make -j8
-  $ make install
+   $ cd ~/groovy_overlay/build
+   $ cmake ../src -DCMAKE_PREFIX_PATH=~/groovy_overlay/install
+   $ make -j8
+   $ make install
 
 You can use anything as an install path, but for system-wide
 installation, you will neet root privileges. Do not use `/opt/ros` as
@@ -89,7 +89,8 @@ Debian packages.
 Uninstalling
 ------------
 
-Unless you ran `make install` with a system prefix, you can always cleanly remove all packages by deleting the `build` folder.
+Unless you ran `make install` with a system prefix, you can always
+cleanly remove all packages by deleting the `build` folder.
 
 By default, the only safe way to uninstall individual packages is to
 delete the `buildspace` folder, delete the sources of the packages,

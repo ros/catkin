@@ -26,17 +26,17 @@ spawn a subshell (using the current login shell, or ``$SHELL``) in the
 development environment.
 
 .. warning:: That ``env.sh`` executes a subshell means that your shell
-             initialization files will be read `after` the environment
-             is set by catkin's env hooks; this means that what these
-             files want to do may get clobbered.  If you want this
-             entering- and exiting of subshells mechanism to work
-             correctly, be careful what you do in your ``.bashrc`` or
-             ``.zshrc``.  Understand what your shell does when it is
-             invoked both interactively and non-interactively.  The
-             simpler mechanism is simply to 'source' the appropriate
-             ``setup`` file, provided you are satisfied with the
-             irreversible changes that these files make to your
-             current environment.  All depends on your workflow.
+   initialization files will be read `after` the environment
+   is set by catkin's env hooks; this means that what these
+   files want to do may get clobbered.  If you want this
+   entering- and exiting of subshells mechanism to work
+   correctly, be careful what you do in your ``.bashrc`` or
+   ``.zshrc``.  Understand what your shell does when it is
+   invoked both interactively and non-interactively.  The
+   simpler mechanism is simply to 'source' the appropriate
+   ``setup`` file, provided you are satisfied with the
+   irreversible changes that these files make to your
+   current environment.  All depends on your workflow.
 
 .. rubric:: Environment hooks
 
@@ -50,5 +50,3 @@ okay with them.
 
 **NOTE**: These environment hooks are only for variable settings.
 Shell aliases and functions
-
-

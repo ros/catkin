@@ -53,8 +53,9 @@ Then /stick/stick/package.xml looks like this::
 
     <url type="website">http://www.example.com/stick</url>
 
-    <!-- This is a metapackage, so it just run-depends on all its child
-         packages. -->
+    <build_depend>pickage</build_depend>
+
+    <!-- a former stack depends only on all its child packages -->
     <run_depend>pickage</run_depend>
     <run_depend>peckage</run_depend>
 
