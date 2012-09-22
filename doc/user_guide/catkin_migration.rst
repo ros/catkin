@@ -7,6 +7,64 @@ designed to be backwards compatible to catkin in Fuerte.
 
 To update an already catkinized ROS stack from the Fuerte-version of catkin to Groovy the following steps are necessary:
 
+Make a meta-package for the stack.
+----------------------------------
+
+The latest version of Catkin does not support the idea of a "stack" of packages which get wrapped up together into a
+Debian (or similar) installable package.  Instead, catkin packages now get built into separate installable Debian
+(or similar) packages.  To maintain compatibility with software which has a dependency on the stack name, you need to
+make a new catkin package which is a "metapackage".  This package has the same name as the stack and contains no
+source code, only a list of dependencies containing all the packages which used to be in the stack.
+
+For example, say our old stack was named "stick" and it had 2 packages: "pickage" and "peckage".  The directories
+would look like this::
+
+  /stick/stack.xml
+  /stick/CMakeLists.xml
+  /stick/pickage/... (pickage files)
+  /stick/peckage/... (peckage files)
+
+The new version adds a new "stick" metapackage subdirectory under /stick, along with a package.xml and CMakeLists.txt
+file::
+
+  /stick/stick/package.xml
+  /stick/stick/CMakeLists.txt
+  /stick/pickage/... (pickage files)
+  /stick/peckage/... (peckage files)
+
+The contents of the /stick/stick/CMakeLists.txt file should look like this::
+
+  cmake_minimum_required(VERSION 2.8)
+  project(stick)
+  find_package(catkin REQUIRED)
+  catkin_package()
+
+Note that the name of the metapackage ("stick") is stored once in here, but no other changes are needed for
+a metapackage.
+
+Then /stick/stick/package.xml looks like this::
+
+  <package>
+    <name>stick</name>
+    <version>0.1.1</version>
+    <description>Meta-package relevant to sticks.</description>
+    <maintainer email="coder@example.com">Lucy Coder</maintainer>
+    <license>BSD</license>
+
+    <url type="website">http://www.example.com/stick</url>
+
+    <!-- This is a metapackage, so it just run-depends on all its child
+         packages. -->
+    <run_depend>pickage</run_depend>
+    <run_depend>peckage</run_depend>
+
+    <export>
+      <metapackage/>
+    </export>
+  </package>
+
+The rest of these instructions refer to changes within regular (not meta-) catkin packages.
+
 Update `CMakeLists.txt`` files
 ------------------------------
 
@@ -16,8 +74,11 @@ Update `CMakeLists.txt`` files
 
   Do not search a component called ``catkin``.
 
-* ``catkin_project()`` must be called for each ROS package and that
-  should be done directly after ``find_package``-ing catkin.
+* ``catkin_package()`` (with no arguments) must be called directly after ``find_package``-ing catkin.
+
+* ``catkin_package_export(...)`` must be called after that to declare exports from this package.  Unlike the old
+  ``catkin_project()`` macro, ``catkin_package()`` and ``catkin_package_export()`` don't need the name of the package
+  they are a part of.
 
 * Switch to renamed catkin functions:
 
