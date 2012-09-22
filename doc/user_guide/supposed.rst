@@ -26,7 +26,7 @@ This directory must contain a symlink::
 which triggers catkin's topological sort via inspection of ``package.xml``.
 
 Package
------
+-------
 
 .. todo:: The separation into packages and packages is going to be
    dropped, then this page needs to be changed accordingly.
@@ -41,7 +41,7 @@ A typical "package" contains, at the top level::
 .. _package.xml:
 
 package.xml
-^^^^^^^^^
+^^^^^^^^^^^
 
 Used by catkin's dependency-sorting to determine what order to
 traverse cmake projects in (when in a catkin workspace) and by

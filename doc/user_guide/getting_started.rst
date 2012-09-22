@@ -23,7 +23,7 @@ choose `~/groovy_overlay`::
   $ catkin_init_workspace
 
 The last command creates a CMakeLists.txt link in `src`.
-We now have an empty catkin workspace. As usual with cmake, we create
+We now have an empty catkin workspace. As usual with CMake, we create
 a build folder where all build output will go to (e.g. compiled files)::
 
   $ cd ~/groovy_overlay
@@ -51,7 +51,7 @@ build results as if they had already been installed.
 To use the `buildspace`, your environment needs to be set up, that
 means several variables like PATH, PYTHONPATH, etc. need to also point
 to the folder `~/groovy_overlay/build/buildspace`. This is achieved by
-files that the cmake command generated in `buildspace`. You can set up
+files that the CMake command generated in `buildspace`. You can set up
 your environment by calling::
 
   $ source ~/groovy_overlay/build/buildspace/setup.sh
@@ -74,7 +74,7 @@ With Catkin, you do not need to properly install files on Ubuntu, as
 you can use the buildspace more conveniently. However expert users or
 users on other operating systems may need to properly install packages.
 
-As with standard cmake, you do so by specifying an install path in cmake::
+As with standard CMake, you do so by specifying an install path in CMake::
 
   $ cd ~/groovy_overlay/build
   $ cmake ../src -DCMAKE_PREFIX_PATH=~/groovy_overlay/install

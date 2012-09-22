@@ -5,7 +5,7 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
-BUILDDIR      = _build
+BUILDDIR      = build
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -37,7 +37,7 @@ clean:
 	-rm -rf $(BUILDDIR)/*
 
 cmakeapi:
-	./generate_cmake_rst.py -o dev_guide/cmake.rst  ../cmake
+	./generate_cmake_rst.py -o dev_guide/generated_cmake_api.rst  ../cmake
 
 html: cmakeapi
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
@@ -134,10 +134,9 @@ doctest: python read file
 
 upload: html
 	# set write permission for group so that everybody can overwrite existing files on the webserver
-	chmod -R g+w _build/html/
+	chmod -R g+w $(BUILDDIR)/html/
 	# set sticky-bit for group on folders so that the group "www" is kept when overwriting existing files on the webserver
-	find _build/html/ -type d | xargs chmod g+s
-	#scp -pr _build/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/api/catkin
-	#scp -pr _build/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/fuerte/api/catkin
-	scp -pr _build/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/groovy/api/catkin
-
+	find $(BUILDDIR)/html/ -type d | xargs chmod g+s
+	#scp -pr $(BUILDDIR)/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/api/catkin
+	#scp -pr $(BUILDDIR)/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/fuerte/api/catkin
+	scp -pr $(BUILDDIR)/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/groovy/api/catkin

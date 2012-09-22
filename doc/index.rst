@@ -2,7 +2,7 @@ Catkin
 ======
 
 `Catkin <http://en.wikipedia.org/wiki/Catkin>`_ is a collection of
-cmake macros and associated code used to build 
+CMake macros and associated code used to build 
 `ROS <http://www.ros.org>`_ packages.
 
 It has been introduced as part of the `Fuerte <http://ros.org/wiki/fuerte>`_ release.
@@ -23,7 +23,7 @@ Code & tickets
 
 
 Contents
-----------
+--------
 
 .. toctree::
    :maxdepth: 2

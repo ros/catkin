@@ -13,7 +13,7 @@ stacks.
 
 Install CMake and ROS bootstrap tools::
 
-  $ sudo apt-get install cmake python-rosdep python-rospkg python-rosinstall
+  $ sudo apt-get install cmake catkin_pkg python-rosdep python-rosinstall
 
 Pick a temp directory::
 

@@ -18,9 +18,9 @@ which contains bourne-shell variable settings.
 .. index:: setup.bash ; environment
 .. index:: setup.zsh ; environment
 
-``env.sh``, pointed to by the cmake variable :cmake:data:`CATKIN_ENV`
+``env.sh``, pointed to by the CMake variable :cmake:data:`CATKIN_ENV`
 is special; it executes its arguments in the environment created by
-``setup.sh`` and returns.  Any custom commands executed by cmake
+``setup.sh`` and returns.  Any custom commands executed by CMake
 should do so via this script.  If executed without arguments, it will
 spawn a subshell (using the current login shell, or ``$SHELL``) in the
 development environment.

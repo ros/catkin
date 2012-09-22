@@ -1,18 +1,18 @@
 Design sketch
 =============
 
-* There is only one invocation of cmake (and make) to build a source
-  directory containing N stacks.
+* There is only one invocation of CMake (and make) to build a source
+  directory containing N packages.
 
-* There is no search of ROS_PACKAGE_PATH: the stacks/packages to be
-  built are the subdirectories (not recursive) of the
+* There is no search of ROS_PACKAGE_PATH: the packages to be built
+  are the subdirectories (potentially recursive) of the
   ``CMAKE_SOURCE_DIR``.
 
-* Catkin does not differentiate between stacks or packages: it simply
-  examines the subdirectories of ``CMAKE_SOURCE_DIR`` for buildable
-  projects (indicated by the presence of a file :ref:`stack.xml`).  It
-  determines the dependency ordering of stacks by examining these
-  files.
+* Catkin does only knows about packages: it simply examines the
+  subdirectories under ``CMAKE_SOURCE_DIR`` for buildable
+  projects (indicated by the presence of a file ``package.xml`` (see
+  `REP 127 <http://www.ros.org/reps/rep-0127.html>`_).  It determines
+  the dependency ordering of packages by examining these files.
 
 * The ability to build only specific targets or sets of targets are
   provided through cmake's "natural" mechanisms.
@@ -22,10 +22,10 @@ Design sketch
 * The build does not depend on any compiled code (i.e. ``rospack``)
   for ease of compiling on windows, cross-compiling for ARM, etc.
 
-* Packages use standard cmake macros, modulo a few that are provided
+* Packages use standard CMake macros, modulo a few that are provided
   by catkin.
 
-* The build system depends only on python and cmake.
+* The build system depends only on CMake and Python.
 
 * Downloading, untarring, patching and especially the wanton use of
   ``sed`` and/or handcoded Makefiles is considered to be in the very
@@ -38,11 +38,12 @@ Main trickery
 
 .. rubric:: Dependency ordering of stacks
 
-During the cmake run the main source directory is scanned for stacks
-to build.  Actually cmake does not care if it is a stack or a package;
+During the CMake run the main source directory is scanned for stacks
+to build.  Actually CMake does not care if it is a stack or a package;
 it cares that the directory has something there that indicates that
-it is buildable, and what its dependencies are... that, is :ref:`stack.xml`.  Catkin
-topologically sorts this and reads the files in order.
+it is buildable, and what its dependencies are... that, is
+``package.xml``.  Catkin topologically sorts this and reads the files
+in order.
 
 .. rubric:: Generation of ``find_package`` infrastructure
 
@@ -53,7 +54,7 @@ can build with their dependencies in the same buildspace, or already
 installed on the system.  Different versions of these files are
 created for use in the buildspace, and in the installation.  The
 stress-test for this scheme is message generation; different language
-generators must implement a specific cmake interface which is used by
+generators must implement a specific CMake interface which is used by
 ``genmsg``.  See also :ref:`find_package_internals`.
 
 .. rubric:: Python path forwarding
@@ -72,7 +73,7 @@ directory.
 
 .. rubric:: Environment generation
 
-When cmake runs, it knows the locations of the ``CMAKE_BINARY_DIR``
+When CMake runs, it knows the locations of the ``CMAKE_BINARY_DIR``
 and so forth, it generates an environment file (in
 ``CMAKE_BINARY_DIR``).  Projects may extend this environment via
 :cmake:macro:`catkin_add_env_hooks`.

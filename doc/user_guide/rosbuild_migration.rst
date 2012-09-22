@@ -28,8 +28,10 @@ catkin are:
 
 1. Create a catkin workspace to hold your migrated projects
 2. Move any project to catkin workspace once all their dependencies are catkinized
+
 .. 3. In each stack, update the manifests (``stack.xml``...)
 .. 4. Create a top-level ``CMakeLists.txt`` for the stack...
+
 5. For each folder containing a ``manifest.xml`` file:
 
  a. Replace the exported explicit compiler and linker flags with a dynamic pkg-config invocation:

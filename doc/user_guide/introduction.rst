@@ -4,10 +4,10 @@ Introduction
 .. highlight:: catkin-sh
 
 Catkin helps building ROS packages by leveraging
-the cmake tool that has for years been the most used C++ build
+the CMake tool that has for years been the most used C++ build
 framework. The focus of catkin is C++ and python based packages.
 
-Users experienced with cmake should feel right at home with catkin.
+Users experienced with CMake should feel right at home with catkin.
 
 .. contents::
 
@@ -34,7 +34,7 @@ genmsg, the framework of defining ROS messages with references to
 messages in other ROS packages.
 
 Finally Catkin provides a way to compile C++ sources from several
-independent packages faster than by using only cmake on each project
+independent packages faster than by using only CMake on each project
 individually.
 
 
@@ -51,11 +51,11 @@ stacks and packages as well as a comparison of the workflow steps.
 
    rosbuild_migration
 
-If you have used cmake before using catkin
+If you have used CMake before using catkin
 ------------------------------------------
 
 To get all catkin benefits you will need to learn a few catkin macros
-on top of cmake macros.
+on top of CMake macros.
 
 Also you need to be aware of some restrictions catkin imposes on
 CMakeLists.txt files.
@@ -119,9 +119,8 @@ What's different between rosbuild and catkin?
 Main differences between rosbuild and catkin:
 
 - rosbuild has no ``install`` target; catkin does
- - catkin stacks can be properly installed on a variety of operating systems
- - catkin stacks must declare, in a whitelist fashion, what programs and files will be installed
-
+- catkin stacks can be properly installed on a variety of operating systems
+- catkin stacks must declare, in a whitelist fashion, what programs and files will be installed
 - rosbuild relies heavily on ``bash`` and ``make``; catkin uses only CMake and Python (and therefore is more portable)
 - rosbuild wraps standard CMake commands; catkin does not
 
@@ -129,11 +128,8 @@ Main differences between rosbuild and catkin:
 
 - rosbuild always does in-source builds; catkin supports both in-source and out-of-source builds (out-of-source is recommended)
 
-.. todo:: The separation into stacks and packages is going to be
-   dropped, then this page needs to be changed accordingly.
-
-- rosbuild uses ``manifest.xml`` for per-package dependency information; catkin uses ``stack.xml`` for per-stack dependency information
-- rosbuild use per-package dependency information to assemble compile and link flags; catkin uses per-stack dependency only to determine traversal order
-- rosbuild provides a ``make`` interface to each package; catkin provides a ``cmake`` interface to each stack
+- rosbuild uses ``manifest.xml``; catkin uses ``package.xml``
+- rosbuild requires to export compile and link flags in the manifest manually; catkin declares exported include directories, libraries and dependencies in CMake using ``catkin_package_export()``
+- rosbuild provides a ``make`` interface to each package; catkin provides a ``cmake`` interface to each package but enables to build multiple packages in a workspace at once
 
  - as a result: rosbuild packages are built one-by-one, each with a separate invocation of ``make``; catkin stacks can be built in a fully parallel fashion, with a single build command (which is often, but does not have to be ``make``)
