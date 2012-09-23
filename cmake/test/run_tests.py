@@ -16,8 +16,11 @@ args = parser.parse_args()
 
 # if result file exists remove it before test execution
 if os.path.exists(args.results):
-    print('-- run_tests.py: remove old result "%s"' % args.results)
     os.remove(args.results)
+# if placeholder (indicating previous failure) exists remove it before test execution
+placeholder = os.path.join(os.path.dirname(args.results), 'MISSING-%s' % os.path.basename(args.results))
+if os.path.exists(placeholder):
+    os.remove(placeholder)
 
 print('-- run_tests.py: execute commands%s%s' % (' with working directory "%s"' % args.working_dir if args.working_dir is not None else '', (''.join(['\n  %s' % cmd for cmd in args.command]))))
 for cmd in args.command:
@@ -38,7 +41,6 @@ if os.path.exists(args.results):
             print('Invalid XML in result file "%s" (even after trying to tidy it) ' % args.results)
 else:
     # if result file does not exist create placeholder which indicates failure
-    placeholder = os.path.join(os.path.dirname(args.results), 'MISSING-%s' % os.path.basename(args.results))
     print('Cannot find results, writing failure results to "%s"' % placeholder)
     # create folder if necessary
     if not os.path.exists(os.path.dirname(args.results)):
