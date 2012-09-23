@@ -11,12 +11,15 @@
 # :param path: a relative or absolute directory to search for
 #   nosetests in or a relative or absolute file containing tests
 # :type path: string
-# :param WORKING_DIRECTORY: the working directory when executing the
-#   tests
-# :type WORKING_DIRECTORY: string
+# :param DEPENDENCIES: the targets which must be built before executing
+#   the test
+# :type DEPENDENCIES: list of strings
 # :param TIMEOUT: the timeout for individual tests in seconds
 #   (default: 60)
 # :type TIMEOUT: integer
+# :param WORKING_DIRECTORY: the working directory when executing the
+#   tests
+# :type WORKING_DIRECTORY: string
 #
 # @public
 #
@@ -26,7 +29,7 @@ function(catkin_add_nosetests path)
     return()
   endif()
 
-  parse_arguments(_nose "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
+  parse_arguments(_nose "DEPENDENCIES;TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(NOT _nose_TIMEOUT)
     set(_nose_TIMEOUT 60)
   endif()
@@ -61,7 +64,7 @@ function(catkin_add_nosetests path)
     set(tests "${_path_name}")
   endif()
   set(cmd ${cmd} "${NOSETESTS} --process-timeout=${_nose_TIMEOUT} ${tests} --with-xunit --xunit-file=${output_path}/nosetests-${output_file_name}.xml${_covarg}")
-  catkin_run_tests_target("nosetests" ${output_file_name} "nosetests-${output_file_name}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_nose_WORKING_DIRECTORY})
+  catkin_run_tests_target("nosetests" ${output_file_name} "nosetests-${output_file_name}.xml" COMMAND ${cmd} DEPENDENCIES ${_nose_DEPENDENCIES} WORKING_DIRECTORY ${_nose_WORKING_DIRECTORY})
 endfunction()
 
 function(add_nosetests)

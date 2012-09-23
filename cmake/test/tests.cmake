@@ -34,7 +34,7 @@ endif()
 # catkin_add_*test() functions.
 #
 function(catkin_run_tests_target type name xunit_filename)
-  parse_arguments(_testing "COMMAND;WORKING_DIRECTORY" "" ${ARGN})
+  parse_arguments(_testing "COMMAND;DEPENDENCIES;WORKING_DIRECTORY" "" ${ARGN})
   if(_testing_DEFAULT_ARGS)
     message(FATAL_ERROR "catkin_run_tests_target() called with unused arguments: ${_testing_DEFAULT_ARGS}")
   endif()
@@ -66,10 +66,12 @@ function(catkin_run_tests_target type name xunit_filename)
   add_custom_target(run_tests_${PROJECT_NAME}_${type}_${name}
     COMMAND ${cmd})
   add_dependencies(run_tests_${PROJECT_NAME}_${type} run_tests_${PROJECT_NAME}_${type}_${name})
+  if(_testing_DEPENDENCIES)
+    add_dependencies(run_tests_${PROJECT_NAME}_${type}_${name} ${_testing_DEPENDENCIES})
+  endif()
   # hidden test target which depends on building all tests and cleaning test results
   add_custom_target(.run_tests_${PROJECT_NAME}_${type}_${name}
     COMMAND ${cmd})
   add_dependencies(.run_tests_${PROJECT_NAME}_${type} .run_tests_${PROJECT_NAME}_${type}_${name})
-  add_dependencies(.run_tests_${PROJECT_NAME}_${type}_${name} clean_test_results)
-  add_dependencies(.run_tests_${PROJECT_NAME}_${type}_${name} tests)
+  add_dependencies(.run_tests_${PROJECT_NAME}_${type}_${name} clean_test_results tests ${_testing_DEPENDENCIES})
 endfunction()

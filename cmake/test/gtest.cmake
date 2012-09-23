@@ -12,11 +12,11 @@
 # :param source_files: a list of source files used to build the test
 #   executable
 # :type source_files: list of strings
+# :param TIMEOUT: currently not supported
+# :type TIMEOUT: integer
 # :param WORKING_DIRECTORY: the working directory when executing the
 #   executable
-# :type FILE_PREFIX: string
-# :param TIMEOUT: currently not supported
-# :type FILE_PREFIX: integer
+# :type WORKING_DIRECTORY: string
 #
 # @public
 #
@@ -47,7 +47,7 @@ function(catkin_add_gtest target)
   # XXX we DONT use rosunit to call the executable to get process control, #1629, #3112
   get_target_property(_target_path ${target} RUNTIME_OUTPUT_DIRECTORY)
   set(cmd "${_target_path}/${target} --gtest_output=xml:${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/gtest-${target}.xml")
-  catkin_run_tests_target("gtest" ${target} "gtest-${target}.xml" COMMAND ${cmd} WORKING_DIRECTORY ${_gtest_WORKING_DIRECTORY})
+  catkin_run_tests_target("gtest" ${target} "gtest-${target}.xml" COMMAND ${cmd} DEPENDENCIES ${target} WORKING_DIRECTORY ${_gtest_WORKING_DIRECTORY})
 endfunction()
 
 function(add_gtest)
