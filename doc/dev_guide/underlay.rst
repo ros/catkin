@@ -14,7 +14,7 @@ packages.
 
 Install CMake and ROS bootstrap tools::
 
-   $ sudo apt-get install cmake catkin_pkg python-rosdep python-rosinstall
+   $ sudo apt-get install cmake python-catkin-pkg python-rosdep python-rosinstall
 
 Pick a temp directory::
 
