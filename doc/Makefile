@@ -34,6 +34,7 @@ help:
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
 clean:
+	-rm dev_guide/generated_cmake_api.rst
 	-rm -rf $(BUILDDIR)/*
 
 cmakeapi:
