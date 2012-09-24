@@ -288,5 +288,9 @@ function(_catkin_package)
     DESTINATION share/${PROJECT_NAME}/cmake
   )
 
+  # install package.xml
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/package.xml
+    DESTINATION share/${_CATKIN_CURRENT_PACKAGE})
+
   # XXXX generate manifest.xml for backward compatibility
 endfunction()
