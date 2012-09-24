@@ -17,6 +17,17 @@ done
 if [ -n "$1" ] ; then echo "$0 takes no arguments"; exit 1 ; fi
 
 
+echo "!!!!!!!!!!!!!!! DO NOT PROCEED UNLESS YOU KNOW WHAT YOU ARE DOING !!!!!!!!!"
+echo "This script runs git clean (which removes untracked files forever) and runs sudo commands to install linux packages."
+echo -n "Please confirm (y or n) :"
+read CONFIRM
+case $CONFIRM in
+    y|Y|YES|yes|Yes) ;;
+    *) echo Aborting - you entered $CONFIRM
+        exit
+        ;;
+esac
+
 TOP=$(dirname $0)
 work=`pwd`
 distro=$(lsb_release -cs)
