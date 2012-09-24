@@ -21,13 +21,12 @@ def main():
     # verify that workspace folder exists
     workspace = os.path.abspath(args.workspace)
     if not os.path.isdir(workspace):
-        print('Workspace "%s" does not exist' % workspace, file=sys.stderr)
-        exit(1)
+        parser.error('Workspace "%s" does not exist' % workspace)
 
     try:
         init_workspace(workspace)
     except Exception as e:
-        print(str(e), file=sys.stderr)
+        sys.stderr.write(str(e))
         exit(2)
 
 

@@ -24,14 +24,13 @@ def main():
     # verify that workspace folder exists
     test_results_dir = os.path.abspath(args.test_results_dir)
     if not os.path.isdir(test_results_dir):
-        print('Test results directory "%s" does not exist' % test_results_dir, file=sys.stderr)
-        exit(1)
+        sys.exit('Test results directory "%s" does not exist' % test_results_dir)
 
     try:
         results = test_results(test_results_dir)
         print_summary(results)
     except Exception as e:
-        print(str(e), file=sys.stderr)
+        sys.stderr.write(str(e))
         exit(2)
 
 

@@ -45,7 +45,7 @@ def main():
             if output != '':
                 print(output)
         except Exception as e:
-            print(str(e), file=sys.stderr)
+            sys.exit(str(e))
 
 
 if __name__ == '__main__':

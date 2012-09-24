@@ -20,20 +20,20 @@ def main():
     parser.add_argument('--only-names', action='store_true', help='Only output the project names')
     args = parser.parse_args()
 
+    # verify reasonable argument combination
+    if args.only_folders and args.only_names:
+        parser.error('Use either "--only-folders" or "--only-names" but not both')
+
     # verify that workspace folder exists
     workspace = os.path.abspath(args.workspace)
     if not os.path.isdir(workspace):
-        print('Workspace "%s" does not exist' % workspace, file=sys.stderr)
-        exit(1)
-
-    # verify reasonable argument combination
-    if args.only_folders and args.only_names:
-        print('Use either "--only-folders" or "--only-names" but not both', file=sys.stderr)
-        exit(2)
+        sys.exit('Workspace "%s" does not exist' % workspace)
 
     ordered_projects = topological_order(workspace)
     if not ordered_projects:
-        print('Workspace "%s" seems to not contain any projects.  Have you passed the correct path to a catkin workspace?' % workspace, file=sys.stderr)
+        sys.stderr.write('Workspace "%s" seems to not contain any projects.'
+                         ' Have you passed the correct path to a '
+                         'catkin workspace?' % workspace)
         exit(3)
 
     for (path, package) in ordered_projects:

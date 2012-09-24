@@ -38,8 +38,12 @@ def main():
             elif len(results) == 0:
                 raise RuntimeError('Could not find any path, checked the following paths:\n%s' % '\n'.join(checked))
             print(results[0])
-            exit(0)
-        print('\n'.join(results))
+        else:
+            print('\n'.join(results))
+
     except Exception as e:
-        print(str(e), file=sys.stderr)
-        exit(1)
+        sys.exit(str(e))
+
+
+if __name__ == '__main__':
+    main()

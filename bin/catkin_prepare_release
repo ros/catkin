@@ -26,16 +26,13 @@ def main():
         old_version = verify_equal_package_versions(packages.values())
         new_version = bump_version(old_version, 'patch')
     except Exception as e:
-        print(str(e), file=sys.stderr)
-        sys.exit(1)
+        sys.exit(str(e))
 
     vcs_type = get_repository_type(path)
     if vcs_type is None:
-        print('Could not determine repository type of "%s"' % path, file=sys.stderr)
-        exit(1)
+        sys.exit('Could not determine repository type of "%s"' % path)
 
-    print('Execute the following commands:')
-    print('')
+    print('Execute the following commands:\n')
 
     # bump version number
     script = os.path.relpath(os.path.join(os.path.dirname(__file__), 'catkin_package_version'))
@@ -66,7 +63,7 @@ def main():
         elif os.path.dirname(url).endswidth('/branches'):
             base_url = os.path.dirname(url)[:9]
         else:
-            print('Could not determine base URL of SVN repository "%s"' % url, file=sys.stderr)
+            sys.stderr.write('Could not determine base URL of SVN repository "%s"' % url)
             exit(1)
         tag_url = '%s/tags/%s' % (base_url, new_version)
         cmd = 'svn cp -m "tagging %s" %s %s' % (new_version, url, tag_url)

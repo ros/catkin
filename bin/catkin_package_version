@@ -24,8 +24,7 @@ def main():
         packages = find_packages(args.path)
         version = verify_equal_package_versions(packages.values())
     except Exception as e:
-        print(str(e), file=sys.stderr)
-        sys.exit(1)
+        sys.exit(str(e))
 
     # only print the version number
     if args.bump is None:
@@ -37,8 +36,7 @@ def main():
             new_version = bump_version(version, args.bump)
             update_versions(packages.keys(), new_version)
         except Exception as e:
-            print(str(e), file=sys.stderr)
-            sys.exit(1)
+            sys.exit(str(e))
         print('%s -> %s' % (version, new_version))
 
 
