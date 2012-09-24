@@ -1,4 +1,22 @@
-#!/usr/bin/env bash -ex
+#! /usr/bin/env bash -ex
+
+ARGS=$(getopt -o "h" --long "help" \
+  -n $0 -- "$@")
+if [ $? != 0 ] ; then exit 1 ; fi
+eval set -- "$ARGS"
+
+while true ; do
+	case "$1" in
+    # -- is artefact from getopt
+		--) shift ; break ;;
+		-h|--help) echo "$0 iterates over all catkin projects and runs git buildpackage with suitable options, installs dependencies" ; exit 0 ;;
+		*) echo "Internal error!" ; exit 1 ;;
+	esac
+done
+
+if [ -n "$1" ] ; then echo "$0 takes no arguments"; exit 1 ; fi
+
+
 TOP=$(dirname $0)
 work=`pwd`
 distro=$(lsb_release -cs)
