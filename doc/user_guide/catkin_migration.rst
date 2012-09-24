@@ -75,11 +75,8 @@ Update `CMakeLists.txt`` files
 
   Do not search a component called ``catkin``.
 
-* ``catkin_package()`` (with no arguments) must be called directly after ``find_package``-ing catkin.
-
-* ``catkin_package_export(...)`` must be called after that to declare exports from this package.  Unlike the old
-  ``catkin_project()`` macro, ``catkin_package()`` and ``catkin_package_export()`` don't need the name of the package
-  they are a part of.
+* ``catkin_package(...)`` should be called near the beginning of the CMake, directly after ``find_package``-ing catkin and other dependencies.
+  Unlike the old ``catkin_project()`` macro, ``catkin_package()`` doesn't need the name of the package it is part of.
 
 * Switch to renamed catkin functions:
 

@@ -9,7 +9,6 @@ if(NOT DEFINED CATKIN_TOPLEVEL)
 endif()
 
 catkin_package()
-catkin_package_export()
 
 # for backward compatibility we provide ROSConfig(-version).cmake files
 assert(CATKIN_BUILD_PREFIX)

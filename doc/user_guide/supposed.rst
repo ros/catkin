@@ -57,8 +57,7 @@ The basic case::
    find_package(catkin REQUIRED [COMPONENTS otherpkg ...])
    # find_package(...)
 
-   catkin_package()
-   catkin_package_export(
+   catkin_package(
       INCLUDE_DIRS include
       LIBRARIES ${PROJECT_NAME}
       DEPENDS otherpkg)
@@ -121,13 +120,11 @@ The variables ``find_package`` defines are also standard CMake.
 
 .. rubric:: catkin_package
 
-This parses the ``package.xml`` and generates find_package and
-pkg-config infrastructure code.
-
-.. rubric:: catkin_package_export
-
 It declares what dependent packages need as include directories,
-libraries and transitive dependencies.
+libraries and transitive dependencies which is used to generate
+find_package and pkg-config infrastructure code.  Furthermore it
+parses the ``package.xml`` and provides some of the information as
+CMake variables.
 
 .. rubric:: include_directories
 

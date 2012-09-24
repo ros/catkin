@@ -53,6 +53,7 @@ function(catkin_workspace)
     foreach(index RANGE ${range})
       list(GET CATKIN_ORDERED_PACKAGE_PATHS ${index} path)
       message(STATUS "+++ add_subdirectory(${path})")
+      # ensure that no current package name is set
       unset(_CATKIN_CURRENT_PACKAGE)
       add_subdirectory(${path})
     endforeach()

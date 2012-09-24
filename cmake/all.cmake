@@ -68,7 +68,7 @@ foreach(filename
     catkin_add_env_hooks
     catkin_generate_environment
     catkin_package
-    catkin_package_export
+    catkin_package_xml
     catkin_workspace
     debug_message
     em_expand
