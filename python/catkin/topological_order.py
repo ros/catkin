@@ -15,6 +15,7 @@ class PackageData:
         self.build_depends = set([d.name for d in (package.build_depends + package.buildtool_depends)])
         message_generators = [e.content for e in package.exports if e.tagname == 'message_generator']
         self.message_generator = message_generators[0] if message_generators else None
+        self.is_metapackage = 'metapackage' in [e.tagname for e in package.exports]
 
     def __repr__(self):
         return 'name=%s path=%s build_depends=%s message_generator=%s\n' % (self.name, self.path, self.build_depends, self.message_generator)
