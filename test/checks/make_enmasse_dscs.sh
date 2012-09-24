@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/usr/bin/env bash -ex
 
 # this script deletes all of /opt/ros/fuerte and then runs cmake + gendebian
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # generated from catkin/cmake/em/setup.sh.em
 
 # Sets various the enviroment variables and sources additional enviroment hooks.

@@ -34,7 +34,7 @@ for key, value in env_after.items():
 
 non_windows = platform.system() != 'Windows'
 if non_windows:
-    print('#!/bin/sh')
+    print('#!/usr/bin/env sh')
 else:
     print('@echo off')
 

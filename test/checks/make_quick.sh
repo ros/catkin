@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/usr/bin/env bash -ex
 
 # helper script that make installs ros fuerte core stacks
 # using cmake and make to /opt/ros/fuerte

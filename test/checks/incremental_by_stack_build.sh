@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/usr/bin/env bash -ex
 
 # Helper script to use an existing catkin workspace and call
 # cmake, make install, for each package inside

@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/usr/bin/env bash -ex
 
 TOP=$(cd `dirname $0` ; pwd)
 CATKIN_DEB_SNAPSHOT_VERSION=-$(date +%Y%m%d-%H%M%z)
