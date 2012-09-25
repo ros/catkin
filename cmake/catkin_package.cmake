@@ -218,6 +218,12 @@ function(_catkin_package)
     )
   endforeach()
 
+  # generate manifest.xml for project
+  configure_file(${catkin_EXTRAS_DIR}/templates/manifest.xml.in
+    ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/manifest.xml
+    @ONLY
+  )
+
   #
   # INSTALLSPACE
   #
@@ -288,9 +294,10 @@ function(_catkin_package)
     DESTINATION share/${PROJECT_NAME}/cmake
   )
 
-  # install package.xml
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/package.xml
-    DESTINATION share/${_CATKIN_CURRENT_PACKAGE})
-
-  # XXXX generate manifest.xml for backward compatibility
+  # install package.xml (and manifest.xml for backward compatibility)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/package.xml
+    ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/manifest.xml
+    DESTINATION share/${PROJECT_NAME}
+  )
 endfunction()
