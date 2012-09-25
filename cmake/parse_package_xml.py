@@ -8,14 +8,11 @@ from catkin_pkg.package import parse_package
 package = parse_package(sys.argv[1])
 
 values = {}
-values['version'] = package.version
+values['VERSION'] = package.version
 
-values['maintainer'] = ', '.join([str(m) for m in package.maintainers])
-
-# need to turn the depends into semicolon separated list
-values['depends'] = ';'.join([d.name for d in (package.build_depends + package.buildtool_depends)])
+values['MAINTAINER'] = ', '.join([str(m) for m in package.maintainers])
 
 with open(sys.argv[2], 'w') as ofile:
     print(r'set(_CATKIN_CURRENT_PACKAGE "%s")' % package.name, file=ofile)
     for k, v in values.items():
-        print('set(%s_%s "%s")' % (package.name, k.upper(), v), file=ofile)
+        print('set(%s_%s "%s")' % (package.name, k, v), file=ofile)

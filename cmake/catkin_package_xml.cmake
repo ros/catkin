@@ -15,7 +15,6 @@
 # :outvar <packagename>_VERSION: the version number
 # :outvar <packagename>_MAINTAINER: the name and email of the
 #   maintainer(s)
-# :outvar <packagename>_DEPENDS: the build dependencies
 # :outvar _CATKIN_CURRENT_PACKAGE: the name of the package from the
 #   manifest
 #
