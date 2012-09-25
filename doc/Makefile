@@ -140,4 +140,4 @@ upload: html
 	find $(BUILDDIR)/html/ -type d | xargs chmod g+s
 	#scp -pr $(BUILDDIR)/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/api/catkin
 	#scp -pr $(BUILDDIR)/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/fuerte/api/catkin
-	scp -pr $(BUILDDIR)/html/ wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/groovy/api/catkin
+	scp -pr $(BUILDDIR)/html/ root@wgs32.willowgarage.com:/var/www/www.ros.org/html/doc/groovy/api/catkin
