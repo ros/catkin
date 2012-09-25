@@ -5,75 +5,49 @@ import os
 import sys
 import re
 
-try:
-    from catkin.templates import instantiate_templates, create_files
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.templates import PackageTemplate, instantiate_templates, create_files
+from catkin_pkg.templates import create_package_files, PackageTemplate
 
 """This script creates the skeletton of a catkin package"""
 
-
-class PackageTemplate:
-    
-    def __init__(self,
-                 name=None,
-                 dependencies=[],
-                 version='0.0.0',
-                 description=None,
-                 description_brief=None,
-                 license_name='',
-                 authors=None,
-                 unary=False):
-        self.name = name
-        if name is None or name.strip() == '':
-            raise ValueError('Package name must not be empty')
-        namecheck = re.findall('[a-z][a-z0-9_]*', name)
-        if namecheck is None or \
-                len(namecheck) != 1 or \
-                namecheck[0] != name:
-            raise ValueError('Package name %s does not follow naming conventions' % name)
-        components = dependencies
-        self.version = version
-        self.description = description or 'Description of name'
-        self.description_brief = description_brief
-        self.dependencies = dependencies
-        self.components = components or []
-        self.license_name = license_name
-        self.authors = authors
-        self.unary = unary
-
-
-    
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Creates a new catkin package')
-    parser.add_argument('name', nargs=1, help='The name for the package')
-    parser.add_argument('dependencies', nargs='*', help='Package Dependencies')
-    parser.add_argument('-V', '--pkg_version', action='store', help='Initial Package version')
-    parser.add_argument('-d', '--brief', action='store', help='Brief Description')
-    parser.add_argument('-D', '--description', action='store', help='Description')
-    parser.add_argument('-l', '--license_name', action='store', help='Name for License, (e.g. BSD, GPL...)')
-    parser.add_argument('-a', '--authors', action='store', help='Authors')
-    parser.add_argument('-u', '--unary', action='store_true', help='Unary Stack/Package')
+    parser = argparse.ArgumentParser(
+        description='Creates a new catkin package')
+    parser.add_argument('name',
+                        nargs=1,
+                        help='The name for the package')
+    parser.add_argument('license',
+                        nargs=1,
+                        help='The license for the package, elg BSD, MIT, GPLv3')
+    parser.add_argument('dependencies',
+                        nargs='*',
+                        help='Package Dependencies')
+    parser.add_argument('-V', '--pkg_version',
+                        action='store',
+                        help='Initial Package version')
+    parser.add_argument('-D', '--description',
+                        action='store',
+                        help='Description')
+    parser.add_argument('-l', '--additional_license',
+                        action='append',
+                        help='Name for License, (e.g. BSD, MIT, GPLv3...)')
+    parser.add_argument('-a', '--authors',
+                        action='store',
+                        help='Authors')
     args = parser.parse_args()
 
     try:
         package_name = args.name[0]
-        # interpreter attributes will be globals in template pseudomodule empy
-        package_template = PackageTemplate(
+        licenses = (list(args.license or []))
+        licenses.extend(args.additional_license or [])
+        package = PackageTemplate(
             name=package_name,
-            version=args.pkg_version,
-            description_brief=args.brief,
+            version=args.pkg_version or '0.0.0',
             description=args.description,
-            dependencies=args.dependencies,
-            license_name=args.license_name,
-            authors=args.authors,
-            unary=args.unary)
-        templates_source_dir = os.path.join(os.path.dirname(__file__),
-                                            '..', 'templates', 'package')
-        globaldict = {'CATKIN_PACKAGE': package_template}
-        newfiles = instantiate_templates(templates_source_dir, globaldict)
-        create_files(newfiles, os.path.join(os.getcwd(), package_name))
+            # build_depends=args.dependencies,
+            licenses=licenses,
+            authors=args.authors or [],
+            urls=[])
+        create_package_files(os.path.join(os.getcwd(), package_name), package)
+        print('Success')
     except ValueError as vae:
         parser.error(str(vae))
