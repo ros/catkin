@@ -3,5 +3,5 @@ cmake_minimum_required(VERSION 2.8)
 # project(noproject)
 find_package(catkin)
 
-catkin_project(noproject)
+catkin_package()
 
