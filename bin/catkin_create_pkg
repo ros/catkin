@@ -5,7 +5,8 @@ import os
 import sys
 import re
 
-from catkin_pkg.templates import create_package_files, PackageTemplate
+from catkin_pkg.package_templates import create_package_files, PackageTemplate
+from catkin_pkg.package import Person, Url, Export, Dependency
 
 """This script creates the skeletton of a catkin package"""
 
@@ -15,9 +16,6 @@ if __name__ == '__main__':
     parser.add_argument('name',
                         nargs=1,
                         help='The name for the package')
-    parser.add_argument('license',
-                        nargs=1,
-                        help='The license for the package, elg BSD, MIT, GPLv3')
     parser.add_argument('dependencies',
                         nargs='*',
                         help='Package Dependencies')
@@ -27,25 +25,42 @@ if __name__ == '__main__':
     parser.add_argument('-D', '--description',
                         action='store',
                         help='Description')
-    parser.add_argument('-l', '--additional_license',
+    parser.add_argument('-l', '--license',
                         action='append',
                         help='Name for License, (e.g. BSD, MIT, GPLv3...)')
-    parser.add_argument('-a', '--authors',
-                        action='store',
-                        help='Authors')
+    parser.add_argument('-a', '--author',
+                        action='append',
+                        help='A single author, may be used multiple times')
+    parser.add_argument('-m', '--maintainer',
+                        action='append',
+                        help='A single maintainer, may be used multiple times')
+
     args = parser.parse_args()
 
     try:
         package_name = args.name[0]
-        licenses = (list(args.license or []))
-        licenses.extend(args.additional_license or [])
+        licenses = args.license or []
+        if not licenses:
+            licenses = ["TODO"]
+        maintainer_names = args.maintainer
+        if not maintainer_names:
+            import getpass
+            maintainer_names = [getpass.getuser()]
+        maintainers = []
+        for maintainer_name in maintainer_names:
+            maintainers.append(Person(maintainer_name, '%s@todo.todo' % maintainer_name))
+        dependencies = []
+        for dep in args.dependencies:
+            dependencies.append(Dependency(dep))
         package = PackageTemplate(
             name=package_name,
             version=args.pkg_version or '0.0.0',
             description=args.description,
-            # build_depends=args.dependencies,
+            build_depends=dependencies,
+            components=args.dependencies,
             licenses=licenses,
-            authors=args.authors or [],
+            authors=args.author or [],
+            maintainers=maintainers,
             urls=[])
         create_package_files(os.path.join(os.getcwd(), package_name), package)
         print('Success')
