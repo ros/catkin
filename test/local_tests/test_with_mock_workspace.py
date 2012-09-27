@@ -30,7 +30,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
         dstdir = os.path.join(self.workspacedir, 'nolangs')
         shutil.copytree(os.path.join(MOCK_DIR, 'src', 'nolangs'), dstdir)
 
-        out = self.cmake(CATKIN_WHITELIST_STACKS='nolangs',
+        out = self.cmake(CATKIN_WHITELIST_PACKAGES='nolangs',
                          CATKIN_DPKG_BUILDPACKAGE_FLAGS='-d;-S;-us;-uc')
         self.assertTrue(os.path.exists(self.builddir + "/nolangs"))
         self.assertFalse(os.path.exists(self.builddir + "/std_msgs"))
@@ -52,7 +52,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
         dstdir = os.path.join(self.workspacedir, 'noproject')
         shutil.copytree(os.path.join(MOCK_DIR, 'src-fail', 'noproject'), dstdir)
         # test with whitelist
-        out = self.cmake(CATKIN_WHITELIST_STACKS='catkin')
+        out = self.cmake(CATKIN_WHITELIST_PACKAGES='catkin')
         out = succeed(MAKE_CMD + ["install"], cwd=self.builddir)
 
         shutil.rmtree(self.builddir)
@@ -63,7 +63,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
                          expect=fail)
         print("failed as expected, out=", out)
 
-        assert 'catkin_project() CATKIN_CURRENT_STACK is not set.' in out
+        assert 'catkin_project() CATKIN_CURRENT_PACKAGE is not set.' in out
         # assert 'You must call project() with the same name before.' in out
 
     # Test was not finished apparently
