@@ -23,14 +23,14 @@ REM   - prepends current to all variables
 REM   - sources current environment hooks
 
 REM bin folder of workspace prepended to PATH
-set PATH_dir=/bin
+set PATH_dir=/@CATKIN_GLOBAL_BIN_DESTINATION
 REM lib/pythonX.Y/..-packages folder of workspace prepended to PYTHONPATH
 REM the path suffix is calculated in catkin/cmake/python.cmake
 set PYTHONPATH_dir=/@PYTHON_INSTALL_DIR
 REM include folder of workspace prepended to CPATH
 set CPATH_dir=/include
 REM lib folder of workspace prepended to (DY)LD_LIBRARY_PATH
-set LD_LIBRARY_PATH_dir=/lib
+set LD_LIBRARY_PATH_dir=/@CATKIN_GLOBAL_LIB_DESTINATION
 REM folder of workspace prepended to CMAKE_PREFIX_PATH
 set CMAKE_PREFIX_PATH_dir=""
 REM lib/pkgconfig folder of workspace prepended to PKG_CONFIG_PATH

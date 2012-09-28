@@ -1,4 +1,3 @@
-# XXX reenable later
 set(programs
   catkin_find
   catkin_init_workspace
@@ -11,16 +10,14 @@ set(programs
   #catkin-build-debs-of-workspace
 )
 
-# install all programs
-install(PROGRAMS
-  ${programs}
-  DESTINATION bin
-)
-
 # generate relay-script for each program
 foreach(program ${programs})
   set(EXECUTABLE ${catkin_SOURCE_DIR}/bin/${program})
   configure_file(${catkin_EXTRAS_DIR}/templates/script.sh.in
-    ${CATKIN_BUILD_PREFIX}/bin/${program}
+    ${CATKIN_BUILD_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${program}
     @ONLY)
 endforeach()
+
+# install all programs
+install(PROGRAMS ${programs}
+  DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

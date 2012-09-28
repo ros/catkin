@@ -33,9 +33,9 @@ CMAKE_PREFIX_PATH_dir=""
 # include folder of workspace prepended to CPATH
 CPATH_dir=/include
 # lib folder of workspace prepended to (DY)LD_LIBRARY_PATH
-LD_LIBRARY_PATH_dir=/lib
+LD_LIBRARY_PATH_dir=/@CATKIN_GLOBAL_LIB_DESTINATION
 # bin folder of workspace prepended to PATH
-PATH_dir=/bin
+PATH_dir=/@CATKIN_GLOBAL_BIN_DESTINATION
 # lib/pkgconfig folder of workspace prepended to PKG_CONFIG_PATH
 PKG_CONFIG_PATH_dir=/lib/pkgconfig
 # lib/pythonX.Y/..-packages folder of workspace prepended to PYTHONPATH

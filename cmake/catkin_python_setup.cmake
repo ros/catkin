@@ -98,7 +98,7 @@ function(catkin_python_setup)
       endif()
       set(PYTHON_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/${script})
       configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
-        ${CATKIN_BUILD_PREFIX}/bin/${name}
+        ${CATKIN_BUILD_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${name}
         @ONLY)
     endforeach()
   endif()
