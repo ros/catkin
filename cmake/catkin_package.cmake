@@ -122,11 +122,17 @@ function(_catkin_package)
     set(${PROJECT_NAME}_DIR "" CACHE PATH "" FORCE)
   endif()
 
-  # filter out DEPENDS which have not been find_package()-ed before
+  # check DEPENDS
   foreach(depend ${PROJECT_DEPENDS})
+    # filter out DEPENDS which have not been find_package()-ed before
     if(NOT ${depend}_FOUND)
       message(WARNING "catkin_package(${PROJECT_NAME}) depends on '${depend}' which has not been find_package()-ed before")
       list(REMOVE_ITEM PROJECT_DEPENDS ${depend})
+    endif()
+    # verify that all DEPENDS are listed as runtime dependencies
+    list(FIND ${PROJECT_NAME}_RUN_DEPENDS ${depend} _index)
+    if(_index EQUAL -1)
+      message(FATAL_ERROR "catkin_package(${PROJECT_NAME}) depends on '${depend}' which must therefore be listed as a run dependency in the package.xml")
     endif()
   endforeach()
 
