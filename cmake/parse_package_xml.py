@@ -12,6 +12,7 @@ values['VERSION'] = '"%s"' % package.version
 
 values['MAINTAINER'] = '"%s"' % (', '.join([str(m) for m in package.maintainers]))
 
+values['BUILD_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.build_depends])
 values['RUN_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.run_depends])
 
 with open(sys.argv[2], 'w') as ofile:
