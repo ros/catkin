@@ -17,8 +17,52 @@ except ImportError:
     from catkin.workspace_vcs import get_repository_type, vcs_remotes
 
 
+def get_commands(path, packages, vcs_type, new_version, svn_url=None):
+    result = []
+
+    # bump version number
+    script = os.path.relpath(os.path.join(os.path.dirname(__file__), 'catkin_package_version'))
+    cmd = '%s --bump patch %s' % (script, path)
+    result.append(cmd)
+
+    # commit modified package.xml
+    package_xmls = [os.path.join(p, 'package.xml') for p in packages.keys()]
+    cmd = '%s commit -m "%s" %s' % (vcs_type, new_version, ' '.join(package_xmls))
+    result.append(cmd)
+    # push changes
+    if vcs_type in ['bzr', 'git', 'hg']:
+        cmd = '%s push' % vcs_type
+        result.append(cmd)
+
+    # tag version
+    if vcs_type in ['bzr', 'git', 'hg']:
+        cmd = '%s tag %s' % (vcs_type, new_version)
+        result.append(cmd)
+        cmd = '%s push' % vcs_type
+        if vcs_type == 'git':
+            cmd += ' --tags'
+        result.append(cmd)
+    elif vcs_type == 'svn':
+        TRUNK = '/trunk'
+        BRANCHES = '/branches'
+        TAGS = '/tags'
+        if svn_url.endswith(TRUNK):
+            base_url = svn_url[:-len(TRUNK)]
+        elif os.path.dirname(svn_url).endswith(BRANCHES):
+            base_url = os.path.dirname(svn_url)[:-len(BRANCHES)]
+        elif os.path.dirname(svn_url).endswith(TAGS):
+            base_url = os.path.dirname(svn_url)[:-len(TAGS)]
+        else:
+            sys.exit('Could not determine base URL of SVN repository "%s"' % url)
+        tag_url = '%s/tags/%s' % (base_url, new_version)
+        cmd = 'svn cp -m "tagging %s" %s %s' % (new_version, svn_url, tag_url)
+        result.append(cmd)
+    return result
+
+
 def main():
-    parser = argparse.ArgumentParser(description='Outputs the commands to bump the version number, commit the modified package.xml files and create a tag in the repository.')
+    parser = argparse.ArgumentParser(
+        description='Outputs the commands to bump the version number, commit the modified package.xml files and create a tag in the repository.')
     parser.parse_args()
 
     path = '.'
@@ -30,45 +74,20 @@ def main():
         sys.exit(str(e))
 
     vcs_type = get_repository_type(path)
+    url = None
     if vcs_type is None:
-        sys.exit('Could not determine repository type of "%s"' % path)
-
-    print('Execute the following commands:\n')
-
-    # bump version number
-    script = os.path.relpath(os.path.join(os.path.dirname(__file__), 'catkin_package_version'))
-    cmd = '%s --bump patch %s' % (script, path)
-    print(cmd)
-
-    # commit modified package.xml
-    package_xmls = [os.path.join(p, 'package.xml') for p in packages.keys()]
-    cmd = '%s commit -m "%s" %s' % (vcs_type, new_version, ' '.join(package_xmls))
-    print(cmd)
-    # push changes
-    if vcs_type in ['bzr', 'git', 'hg']:
-        cmd = '%s push' % vcs_type
-        print(cmd)
-
-    # tag version
-    if vcs_type in ['bzr', 'git', 'hg']:
-        cmd = '%s tag %s' % (vcs_type, new_version)
-        print(cmd)
-        cmd = '%s push' % vcs_type
-        if vcs_type == 'git':
-            cmd += ' --tags'
-        print(cmd)
+        sys.exit(
+            'Could not determine repository type of "%s"' % path)
     elif vcs_type == 'svn':
         url = vcs_remotes(path, 'svn')[5:]
-        if url.endswith('/trunk'):
-            base_url = url[:-6]
-        elif os.path.dirname(url).endswidth('/branches'):
-            base_url = os.path.dirname(url)[:9]
-        else:
-            sys.stderr.write('Could not determine base URL of SVN repository "%s"' % url)
-            exit(1)
-        tag_url = '%s/tags/%s' % (base_url, new_version)
-        cmd = 'svn cp -m "tagging %s" %s %s' % (new_version, url, tag_url)
-        print(cmd)
+
+    commands = get_commands(path=path,
+                            packages=packages,
+                            vcs_type=vcs_type,
+                            new_version=new_version,
+                            svn_url=url)
+    print('Execute the following commands:\n')
+    print('\n'.join(commands))
 
 
 if __name__ == '__main__':
