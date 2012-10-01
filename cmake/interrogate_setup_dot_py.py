@@ -6,20 +6,42 @@ import sys
 
 from argparse import ArgumentParser
 
-def samefile(path1, path2):
+
+def _get_locations(pkgs, package_dir):
     """
-    This is a cross-platform implementation for posixpath's
-    os.path.samefile.
+    based on setuptools logic and the package_dir dict, builds a dict
+    of location roots for each pkg in pkgs.
+    See http://docs.python.org/distutils/setupscript.html
+    :returns: a dict {pkgname: root} for each pkgname in pkgs (and each of their parents)
     """
-    try:
-        result = os.path.samefile(path1, path2)
-    except AttributeError:
-        # This is a rather naive implementation.
-        # It will break except in the simplest of cases
-        # but suffices for catkin on windows.
-        result = os.path.normcase(os.path.normpath(path1)) == \
-                 os.path.normcase(os.path.normpath(path2))
-    return result
+    # package_dir contains a dict {package_name: relativepath}
+    # Example {'': 'src', 'foo': 'lib', 'bar': 'lib2'}
+    #
+    # '' means where to look for any package unless a parent package
+    # is listed so package bar.pot is expected at lib2/bar/pot,
+    # whereas package sup.dee is expected at src/sup/dee
+    #
+    # if package_dir does not state anything about a package,
+    # setuptool expects the package folder to be in the root of the
+    # project
+    locations = {}
+    allprefix = package_dir.get('', '')
+    for pkg in pkgs:
+        parent_location = None
+        splits = pkg.split('.')
+        # we iterate over compound name from parent to child
+        # so once we found parent, children just append to their parent
+        for key_len in range(len(splits)):
+            key = '.'.join(splits[:key_len + 1])
+            if key not in locations:
+                if key in package_dir:
+                    locations[key] = package_dir[key]
+                elif parent_location is not None:
+                    locations[key] = parent_location
+                else:
+                    locations[key] = allprefix
+            parent_location = locations[key]
+    return locations
 
 
 def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
@@ -34,37 +56,36 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
     result.append(r'set(%s_VERSION "%s")' % (package_name, version))
     result.append(r'set(%s_SCRIPTS "%s")' % (package_name,
                                      ';'.join(scripts)))
-    allprefix = package_dir.get('', None)
 
-    # Remove packages with '.' separators.  setuptools requires
-    # specifying submodules.  The symlink approach of catkin does not
-    # work with submodules.  In the common case, this does not matter
-    # as the submodule is within the containing module.  We verify
-    # this assumption, and if it passes, we remove submodule packages.
-    if not allprefix:
-        for pkg in pkgs:
-            splits = pkg.split('.')
-            # hack: ignore write-combining setup.py files for msg and srv
-            # files
-            if len(splits) > 1 and splits[1] not in ['msg', 'srv']:
-                top_level = splits[0]
-                top_level_dir = package_dir[top_level]
-                expected_dir = os.path.join(top_level_dir,
-                                            os.path.join(splits[1:]))
-                actual_dir = package_dir[pkg]
-                if not samefile(expected_dir, actual_dir):
-                    raise RuntimeError(
-                        "catkin_export_python does not support setup.py files that combine across multiple directories")
+    # Remove packages with '.' separators.
+    #
+    # setuptools allows specifying submodules in other folders than
+    # their parent
+    #
+    # The symlink approach of catkin does not work with such submodules.
+    # In the common case, this does not matter as the submodule is
+    # within the containing module.  We verify this assumption, and if
+    # it passes, we remove submodule packages.
+    locations = _get_locations(pkgs, package_dir)
+    for pkgname, location in locations.items():
+        if not '.' in pkgname:
+            continue
+        splits = pkgname.split('.')
+        # hack: ignore write-combining setup.py files for msg and srv files
+        if splits[1] in ['msg', 'srv']:
+            continue
+        # check every child has the same root folder as its parent
+        parent_name = '.'.join(splits[:1])
+        if location != locations[parent_name]:
+            raise RuntimeError(
+                "catkin_export_python does not support setup.py files that combine across multiple directories: %s in %s, %s in %s" % (pkgname, location, parent_name, locations[parent_name]))
 
     # If checks pass, remove all submodules
     pkgs = [p for p in pkgs if '.' not in p]
 
     resolved_pkgs = []
     for pkg in pkgs:
-        if allprefix:
-            resolved_pkgs += [os.path.join(allprefix, pkg)]
-        else:
-            resolved_pkgs += [package_dir[pkg]]
+        resolved_pkgs += [os.path.join(locations[pkg], pkg)]
 
     result.append(r'set(%s_PACKAGES "%s")' % (package_name, ';'.join(pkgs)))
     result.append(r'set(%s_PACKAGE_DIRS "%s")' % (package_name, ';'.join(resolved_pkgs).replace("\\", "/")))
@@ -119,8 +140,8 @@ def main():
     # print("Interrogating setup.py for package %s into %s " % (PACKAGE_NAME, OUTFILE),
     #      file=sys.stderr)
 
-    dummy = Dummy(package_name = args.package_name,
-                  outfile = args.outfile)
+    dummy = Dummy(package_name=args.package_name,
+                  outfile=args.outfile)
 
     sys.modules['setuptools'] = dummy
     sys.modules['distutils.core'] = dummy
