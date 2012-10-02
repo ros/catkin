@@ -1,6 +1,6 @@
-<stack>
-  <name>nolangs</name>
-  <version>3.4.5</version>
+<package>
+  <name>badly_specified_changelog</name>
+  <version>0.0.0</version>
   <description/>
   <author>Somebody</author>
   <maintainer email="Somebody@somewhere.org">Somebody</maintainer>
@@ -9,7 +9,4 @@
   <url/>
 
   <build_depends>catkin</build_depends>
-  <build_depends>gencpp</build_depends>
-  <build_depends>genmsg</build_depends>
-  <build_depends>genpy</build_depends>
-</stack>
+</package>

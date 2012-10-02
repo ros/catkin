@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(quux_user)
+find_package(catkin REQUIRED)
 
+catkin_package()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 find_package(quux_msgs)

@@ -1,0 +1,12 @@
+<package>
+  <name>noproject</name>
+  <version>3.4.5</version>
+  <description/>
+  <author>Somebody</author>
+  <maintainer email="Somebody@somewhere.org">Somebody</maintainer>
+  <license>Unknown</license>
+  <copyright>Someone</copyright>
+  <url/>
+
+  <build_depends>catkin</build_depends>
+</package>
