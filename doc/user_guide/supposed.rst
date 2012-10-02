@@ -67,8 +67,6 @@ The basic case::
    include_directories(include ${Boost_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
    link_directories(${catkin_LINK_DIRS})
 
-   include_directories()
-
    set(${PROJECT_NAME}_SRCS
       src/duration.cpp
       src/rate.cpp
