@@ -5,8 +5,8 @@ import rospkg.stack
 from mock import Mock, patch
 
 try:
-    from catkin.topological_order import _sort_projects, get_message_generators, \
-        ProjectData, _topological_order_projects
+    from catkin.topological_order import _sort_packages, \
+        get_message_generators, PackageData, _topological_order_packages
 except ImportError as impe:
     raise ImportError(
         'Please adjust your pythonpath before running this test: %s' % str(impe))
@@ -14,25 +14,32 @@ except ImportError as impe:
 
 class TopoTest(unittest.TestCase):
 
-    def test_project_data(self):
-        mock_rospkg = Mock()
+    def test_package_data_init(self):
+
         mockproject = Mock()
         mockproject1 = Mock()
         mockproject2 = Mock()
+        mockproject3 = Mock()
+        mockproject4 = Mock()
+        mockexport = Mock()
+        mockexport.tagname = 'message_generator'
+        mockexport.content = 'foolang'
         mockproject.build_depends = [mockproject1, mockproject2]
-        with patch('rospkg.stack') as mock_rospkgstack:
-            mock_rospkg.stack = mock_rospkgstack
-            mock_rospkgstack.parse_stack_file.return_value = mockproject
-            pd = ProjectData('foo/bar', rospkg_arg=mock_rospkg)
-        self.assertEqual(pd.name, mockproject.name)
-        self.assertEqual(pd.path, os.path.dirname('foo/bar'))
-        self.assertEqual(pd.message_generator, mockproject.message_generator)
-        self.assertEqual(pd.build_depends, set([mockproject1.name, mockproject2.name]))
+        mockproject.buildtool_depends = [mockproject3, mockproject4]
+        mockproject.exports = [mockexport]
+
+        def mock_parse_package_arg(path):
+            return mockproject
+        pd = PackageData('foo/bar', parse_package_arg=mock_parse_package_arg)
+        self.assertEqual(mockproject.name, pd.name)
+        self.assertEqual('foo/bar', pd.path)
+        self.assertEqual(mockexport.content, pd.message_generator)
+        self.assertEqual(set([mockproject1.name, mockproject2.name, mockproject3.name, mockproject4.name]), pd.build_depends)
         self.assertIsNotNone(str(pd))
 
-    def test_sort_projects(self):
+    def test_sort_packages(self):
         projects = {}
-        sprojects = _sort_projects(projects)
+        sprojects = _sort_packages(projects)
         self.assertEqual([], sprojects)
 
         mock1 = Mock()
@@ -48,7 +55,7 @@ class TopoTest(unittest.TestCase):
         mock3.message_generator = False
 
         projects = {'baz': mock3, 'bar': mock2, 'foo': mock1}
-        sprojects = _sort_projects(projects)
+        sprojects = _sort_packages(projects)
         self.assertEqual([['foo', mock1], ['bar', mock2], [None, 'baz']], sprojects)
 
     def test_get_message_generators(self):
@@ -66,28 +73,28 @@ class TopoTest(unittest.TestCase):
         gens = get_message_generators(projects)
         self.assertEqual(['foo'], gens)
 
-    def test_topological_order_projects(self):
+    def test_topological_order_packages(self):
         plist = []
-        self.assertEqual([], _topological_order_projects(plist))
+        self.assertEqual([], _topological_order_packages(plist))
 
-        p1 = Mock('catkin.topological_order.ProjectData')
+        p1 = Mock('catkin.topological_order.PackageData')
         p1.name = 'p1'
         p1.build_depends = set(['p3', 'px'])
         p1.message_generator = Mock()
 
-        p2 = Mock('catkin.topological_order.ProjectData')
+        p2 = Mock('catkin.topological_order.PackageData')
         p2.name = 'p2'
         p2.build_depends = set(['p1', 'p3'])
         p2.message_generator = Mock()
 
-        p3 = Mock('catkin.topological_order.ProjectData')
+        p3 = Mock('catkin.topological_order.PackageData')
         p3.name = 'p3'
         p3.build_depends = set()
         p3.message_generator = Mock()
 
-        p4 = Mock('catkin.topological_order.ProjectData')
+        p4 = Mock('catkin.topological_order.PackageData')
         p4.name = 'catkin'
 
         plist = [p1, p2, p3]
         self.assertEqual([['p3', p3], ['p1', p1], ['p2', p2]],
-                         _topological_order_projects(plist))
+                         _topological_order_packages(plist))

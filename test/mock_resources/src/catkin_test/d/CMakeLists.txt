@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 project(d)
-catkin_project(d
+find_package(catkin REQUIRED)
+
+catkin_package(
   INCLUDE_DIRS include
   LIBRARIES d
   )
 
-find_package(catkin REQUIRED)
 find_package(c)
 find_package(b)
 find_package(a)

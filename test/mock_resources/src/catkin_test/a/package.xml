@@ -1,0 +1,19 @@
+<package>
+  <name>a</name>
+  <version>3.4.5</version>
+  <description/>
+  <author>Somebody</author>
+  <maintainer email="Somebody@somewhere.org">Somebody</maintainer>
+  <license>Unknown</license>
+  <url/>
+
+  <build_depends>catkin</build_depends>
+  <build_depends>gencpp</build_depends>
+  <build_depends>genmsg</build_depends>
+  <build_depends>genpy</build_depends>
+  <build_depends>std_msgs</build_depends>
+  <build_depends>ros_comm</build_depends>
+  <export>
+  </export>
+
+</package>

@@ -1,7 +1,7 @@
-- git:
-    uri: 'git://github.com/willowgarage/catkin-debs.git'
-    local-name: catkin-debs
-    version: master
+# - git:
+#     uri: 'git://github.com/willowgarage/catkin-debs.git'
+#     local-name: catkin_debs
+#     version: master
 
 - git:
     uri: 'git://github.com/ros/genmsg.git'
