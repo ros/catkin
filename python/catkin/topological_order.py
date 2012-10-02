@@ -112,4 +112,4 @@ def _topological_order_packages(package_data_list, whitelisted=None, blacklisted
 
 
 def get_message_generators(ordered_packages):
-    return [name for (name, data) in ordered_packages if data.message_generator]
+    return [name for (name, data) in ordered_packages if hasattr(data, 'message_generator') and data.message_generator]
