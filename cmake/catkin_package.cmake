@@ -109,12 +109,9 @@ macro(catkin_package)
 endmacro()
 
 function(_catkin_package)
-  parse_arguments(PROJECT
-    "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS;DEPENDS"
-    ""
-    ${ARGN})
-  if(PROJECT_DEFAULT_ARGS)
-    message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_DEFAULT_ARGS}")
+  _parse_arguments_with_repeated_keywords(PROJECT "" "" "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS" "DEPENDS" ${ARGN})
+  if(PROJECT_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_UNPARSED_ARGUMENTS}")
   endif()
 
   # unset previously found directory of this package, so that this package overlays the other cleanly
@@ -122,27 +119,53 @@ function(_catkin_package)
     set(${PROJECT_NAME}_DIR "" CACHE PATH "" FORCE)
   endif()
 
-  # filter out DEPENDS which have not been find_package()-ed before
+  # split DEPENDS with multiple packages into separate items
+  set(PROJECT_DEPENDENCIES "")
   foreach(depend ${PROJECT_DEPENDS})
-    if(NOT ${depend}_FOUND)
-      message(WARNING "catkin_package(${PROJECT_NAME}) depends on '${depend}' which has not been find_package()-ed before")
-      list(REMOVE_ITEM PROJECT_DEPENDS ${depend})
+    string(REPLACE " " ";" depend_list ${depend})
+    # check if the second argument is the COMPONENTS keyword
+    list(LENGTH depend_list count)
+    set(second_item "")
+    if(${count} GREATER 1)
+      list(GET depend_list 1 second_item)
+    endif()
+    if("${second_item}" STREQUAL "COMPONENTS")
+      # pass dependencies with components as is
+      list(APPEND PROJECT_DEPENDENCIES ${depend})
+    else()
+      # split multiple names (without components) into separate dependencies
+      foreach(dep ${depend_list})
+        list(APPEND PROJECT_DEPENDENCIES ${dep})
+      endforeach()
     endif()
   endforeach()
 
-  # find catkin-only packages in DEPENDS list for use in .pc files
+  # filter out dependencies which have not been find_package()-ed before
+  foreach(depend ${PROJECT_DEPENDENCIES})
+    string(REPLACE " " ";" depend_list ${depend})
+    list(GET depend_list 0 depend_name)
+    if(NOT ${depend_name}_FOUND)
+      message(WARNING "catkin_package(${PROJECT_NAME}) depends on '${depend_name}' which has not been find_package()-ed before")
+      list(REMOVE_ITEM PROJECT_DEPENDENCIES ${depend})
+    endif()
+  endforeach()
+
+  # extract all catkin packages from dependencies
   set(PROJECT_CATKIN_DEPENDS "")
-  foreach(depend ${PROJECT_DEPENDS})
-    if(${${depend}_FOUND_CATKIN_PROJECT})
-      list(APPEND PROJECT_CATKIN_DEPENDS ${depend})
-      # verify that all catkin depends are listed as build- and runtime dependencies
-      list(FIND ${PROJECT_NAME}_BUILD_DEPENDS ${depend} _index)
+  foreach(depend ${PROJECT_DEPENDENCIES})
+    string(REPLACE " " ";" depend_list ${depend})
+    # check if dependency is a catkin package
+    list(GET depend_list 0 depend_name)
+    if(${${depend_name}_FOUND_CATKIN_PROJECT})
+      list(APPEND PROJECT_CATKIN_DEPENDS ${depend_name})
+      # verify that all catkin dependencies are listed as build- and runtime dependencies
+      list(FIND ${PROJECT_NAME}_BUILD_DEPENDS ${depend_name} _index)
       if(_index EQUAL -1)
-        message(FATAL_ERROR "catkin_package(${PROJECT_NAME}) depends on catkin package '${depend}' which must therefore be listed as a build dependency in the package.xml")
+        message(FATAL_ERROR "catkin_package(${PROJECT_NAME}) depends on catkin package '${depend_name}' which must therefore be listed as a build dependency in the package.xml")
       endif()
-      list(FIND ${PROJECT_NAME}_RUN_DEPENDS ${depend} _index)
+      list(FIND ${PROJECT_NAME}_RUN_DEPENDS ${depend_name} _index)
       if(_index EQUAL -1)
-        message(FATAL_ERROR "catkin_package(${PROJECT_NAME}) depends on catkin package '${depend}' which must therefore be listed as a run dependency in the package.xml")
+        message(FATAL_ERROR "catkin_package(${PROJECT_NAME}) depends on catkin package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
       endif()
     endif()
   endforeach()
@@ -236,7 +259,7 @@ function(_catkin_package)
 
   # absolute path to include dir under install prefix if any include dir is set
   set(PROJECT_ABSOLUTE_INCLUDE_DIRS "")
-  if(${PROJECT_INCLUDE_DIRS})
+  if(NOT "X${PROJECT_INCLUDE_DIRS}" STREQUAL "X")
     set(PROJECT_ABSOLUTE_INCLUDE_DIRS ${PKG_INCLUDE_PREFIX}/include)
   endif()
 
@@ -300,4 +323,132 @@ function(_catkin_package)
     ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/manifest.xml
     DESTINATION share/${PROJECT_NAME}
   )
+endfunction()
+
+
+# The following function is derived from CMake's cmake_parse_arguments function.
+# The support of repeated keywords has been added for catkin_package().
+# For each keyword a list variable is returned where each item contains all arguments separated by a whitespace.
+# The original license of the file is: 
+#=============================================================================
+# Copyright 2010 Alexander Neundorf <neundorf@kde.org>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# Full CMake Copyright notice
+#
+# Copyright 2000-2009 Kitware, Inc., Insight Software Consortium. All rights
+# reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# Redistributions of source code must retain the above copyright notice, this
+# list of conditions and the following disclaimer.
+#
+# Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
+# and/or other materials provided with the distribution.
+#
+# Neither the names of Kitware, Inc., the Insight Software Consortium, nor
+# the names of their contributors may be used to endorse or promote products
+# derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+function(_parse_arguments_with_repeated_keywords prefix _optionNames _singleArgNames _multiArgNames _repeatMultiArgNames)
+  # first set all result variables to empty/FALSE
+  foreach(arg_name ${_singleArgNames} ${_multiArgNames} ${_repeatSingleArgNames} ${_repeatMultiArgNames})
+    set(${prefix}_${arg_name})
+  endforeach(arg_name)
+
+  foreach(option ${_optionNames})
+    set(${prefix}_${option} FALSE)
+  endforeach(option)
+
+  set(${prefix}_UNPARSED_ARGUMENTS)
+
+  set(insideValues FALSE)
+  set(currentArgName)
+
+  # now iterate over all arguments and fill the result variables
+  foreach(currentArg ${ARGN})
+    list(FIND _optionNames "${currentArg}" optionIndex)  # ... then this marks the end of the arguments belonging to this keyword
+    list(FIND _singleArgNames "${currentArg}" singleArgIndex)  # ... then this marks the end of the arguments belonging to this keyword
+    list(FIND _multiArgNames "${currentArg}" multiArgIndex)  # ... then this marks the end of the arguments belonging to this keyword
+    list(FIND _repeatMultiArgNames "${currentArg}" repeatMultiArgIndex)  # ... then this marks the end of the arguments belonging to this keyword
+
+    if(${optionIndex} EQUAL -1  AND  ${singleArgIndex} EQUAL -1  AND  ${multiArgIndex} EQUAL -1  AND  ${repeatMultiArgIndex} EQUAL -1)
+      if(insideValues)
+        if("${insideValues}" STREQUAL "SINGLE")
+          set(${prefix}_${currentArgName} ${currentArg})
+          set(insideValues FALSE)
+        elseif("${insideValues}" STREQUAL "MULTI")
+          list(APPEND ${prefix}_${currentArgName} ${currentArg})
+        elseif("${insideValues}" STREQUAL "REPEAT")
+          # get and pop last element from list
+          list(REVERSE ${prefix}_${currentArgName})
+          list(GET ${prefix}_${currentArgName} 0 _items)
+          list(REMOVE_AT ${prefix}_${currentArgName} 0)
+          list(REVERSE ${prefix}_${currentArgName})
+          # append value to element
+          set(_items "${_items} ${currentArg}")
+          # append element as string to list
+          list(APPEND ${prefix}_${currentArgName} "${_items}")
+        endif()
+      else(insideValues)
+        list(APPEND ${prefix}_UNPARSED_ARGUMENTS ${currentArg})
+      endif(insideValues)
+    else()
+      if(NOT ${optionIndex} EQUAL -1)
+        set(${prefix}_${currentArg} TRUE)
+        set(insideValues FALSE)
+      elseif(NOT ${singleArgIndex} EQUAL -1)
+        set(currentArgName ${currentArg})
+        set(${prefix}_${currentArgName})
+        set(insideValues "SINGLE")
+      elseif(NOT ${multiArgIndex} EQUAL -1)
+        set(currentArgName ${currentArg})
+        set(${prefix}_${currentArgName})
+        set(insideValues "MULTI")
+      elseif(NOT ${repeatMultiArgIndex} EQUAL -1)
+        set(currentArgName ${currentArg})
+        # use space since empty items are not supported
+        list(APPEND ${prefix}_${currentArgName} " ")
+        set(insideValues "REPEAT")
+      endif()
+    endif()
+
+  endforeach(currentArg)
+
+  # propagate the result variables to the caller:
+  foreach(arg_name ${_singleArgNames} ${_multiArgNames} ${_optionNames})
+    set(${prefix}_${arg_name}  ${${prefix}_${arg_name}} PARENT_SCOPE)
+  endforeach(arg_name)
+  # strip spaces from the items of all repeated arguments
+  foreach(arg_name ${_repeatMultiArgNames})
+    set(stripped "")
+    foreach(items ${${prefix}_${arg_name}})
+      string(STRIP "${items}" items)
+      list(APPEND stripped "${items}")
+    endforeach()
+    set(${prefix}_${arg_name}  ${stripped} PARENT_SCOPE)
+  endforeach(arg_name)
+  set(${prefix}_UNPARSED_ARGUMENTS ${${prefix}_UNPARSED_ARGUMENTS} PARENT_SCOPE)
+
 endfunction()
