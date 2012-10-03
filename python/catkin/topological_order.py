@@ -96,10 +96,6 @@ def _topological_order_packages(package_data_list, whitelisted=None, blacklisted
             sys.exit(1)
         packages[data.name] = data
 
-    # remove catkin from list of packages
-    if 'catkin' in packages:
-        del packages['catkin']
-
     # remove external dependencies from the list
     if packages:
         all_build_depends = reduce(set.union, [p.build_depends for p in packages.values()])
