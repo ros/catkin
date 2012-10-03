@@ -32,7 +32,7 @@
 # @public
 #
 function(catkin_add_env_hooks file_prefix)
-  parse_arguments(ARG "DIRECTORY;SHELLS" "SKIP_INSTALL" ${ARGN})
+  cmake_parse_arguments(ARG "SKIP_INSTALL" "DIRECTORY" "SHELLS" ${ARGN})
 
   # create directory if necessary
   if(NOT IS_DIRECTORY ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d)

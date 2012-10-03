@@ -28,9 +28,9 @@ macro(catkin_package_xml)
     message(FATAL_ERROR "catkin_package_xml() PROJECT_NAME is not set. You must call project() before you can call catkin_package_xml().")
   endif()
 
-  parse_arguments(_PACKAGE_XML "DIRECTORY" "" ${ARGN})
-  if(_PACKAGE_XML_DEFAULT_ARGS)
-    message(FATAL_ERROR "catkin_package_xml() called with unused arguments: ${_PACKAGE_XML_DEFAULT_ARGS}")
+  cmake_parse_arguments(_PACKAGE_XML "" "DIRECTORY" "" ${ARGN})
+  if(_PACKAGE_XML_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "catkin_package_xml() called with unused arguments: ${_PACKAGE_XML_UNPARSED_ARGUMENTS}")
   endif()
   # set default directory
   if(NOT _PACKAGE_XML_DIRECTORY)

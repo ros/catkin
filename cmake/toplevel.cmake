@@ -1,7 +1,7 @@
 # toplevel CMakeLists.txt for a catkin workspace
 # catkin/cmake/toplevel.cmake
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 
 # optionally provide a cmake file in the workspace to override arbitrary stuff
 include(workspace.cmake OPTIONAL)

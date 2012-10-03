@@ -9,7 +9,7 @@ frequent errors, follow the standards below.
 The following line should always appear like this in this order
 without other commands in between::
 
-  cmake_minimum_required(VERSION 2.8)
+  cmake_minimum_required(VERSION 2.8.3)
   project(myproject)
   find_package(catkin REQUIRED <COMPONENTS ...>)
   catkin_project(${PROJECT_NAME} <...>)

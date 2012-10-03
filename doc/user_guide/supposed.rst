@@ -51,7 +51,7 @@ CMakeLists.txt
 
 The basic case::
 
-   cmake_minimum_required(VERSION 2.8)
+   cmake_minimum_required(VERSION 2.8.3)
    project(pkgname)
 
    find_package(catkin REQUIRED [COMPONENTS otherpkg ...])

@@ -61,6 +61,9 @@ if(NOT PROJECT_NAME)
   project(catkin_internal)
 endif()
 
+# include CMake functions
+include(CMakeParseArguments)
+
 # functions/macros: list_append_unique, safe_execute_process
 # python-integration: catkin_python_setup.cmake, interrogate_setup_dot_py.py, templates/__init__.py.in, templates/script.py.in, templates/python_distutils_install.bat.in, templates/python_distutils_install.sh.in, templates/safe_execute_install.cmake.in
 foreach(filename

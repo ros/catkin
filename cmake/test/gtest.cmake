@@ -27,7 +27,7 @@ function(catkin_add_gtest target)
   endif()
 
   # XXX look for optional TIMEOUT argument, #2645
-  parse_arguments(_gtest "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
+  cmake_parse_arguments(_gtest "" "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(_gtest_TIMEOUT)
     message(WARNING "TIMEOUT argument to catkin_add_gtest() is ignored")
   endif()
@@ -35,7 +35,7 @@ function(catkin_add_gtest target)
   # create the executable, with basic + gtest build flags
   include_directories(${GTEST_INCLUDE_DIRS})
   link_directories(${GTEST_LIBRARY_DIRS})
-  add_executable(${target} EXCLUDE_FROM_ALL ${_gtest_DEFAULT_ARGS})
+  add_executable(${target} EXCLUDE_FROM_ALL ${_gtest_UNPARSED_ARGUMENTS})
   assert(GTEST_LIBRARIES)
   target_link_libraries(${target} ${GTEST_LIBRARIES} ${THREADS_LIBRARY})
 

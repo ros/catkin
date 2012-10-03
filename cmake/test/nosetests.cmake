@@ -29,7 +29,7 @@ function(catkin_add_nosetests path)
     return()
   endif()
 
-  parse_arguments(_nose "DEPENDENCIES;TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
+  cmake_parse_arguments(_nose "" "TIMEOUT;WORKING_DIRECTORY" "DEPENDENCIES" ${ARGN})
   if(NOT _nose_TIMEOUT)
     set(_nose_TIMEOUT 60)
   endif()

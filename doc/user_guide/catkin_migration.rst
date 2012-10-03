@@ -34,7 +34,7 @@ file::
 
 The contents of the /stick/stick/CMakeLists.txt file should look like this::
 
-  cmake_minimum_required(VERSION 2.8)
+  cmake_minimum_required(VERSION 2.8.3)
   project(stick)
   find_package(catkin REQUIRED)
   catkin_package()

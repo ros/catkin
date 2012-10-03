@@ -2,7 +2,16 @@
 # parse_arguments() taken from
 # http://www.itk.org/Wiki/CMakeMacroParseArguments
 #
+# @deprecated use CMakeParseArguments instead
+#
 macro(parse_arguments prefix arg_names option_names)
+  message(WARNING "parse_arguments(prefix args options ${ARGN}) is deprecated. Use the corresponding CMake function instead:")
+  message("  call 'include(CMakeParseArguments)' to include the CMake function")
+  message("  Update the signature:")
+  message("  instead of 'parse_arguments(prefix option_names arg_names ${ARGN})'")
+  message("  it is 'cmake_parse_arguments(prefix option_names single_arg_names multi_arg_names ${ARGN}))")
+  message("  and the variable containing not matched arguments must be changed form 'prefix_DEFAULT_ARGS' to 'prefix_UNPARSED_ARGUMENTS'")
+
   set(DEFAULT_ARGS)
   foreach(arg_name ${arg_names})
     set(${prefix}_${arg_name})

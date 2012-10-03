@@ -34,9 +34,9 @@ endif()
 # catkin_add_*test() functions.
 #
 function(catkin_run_tests_target type name xunit_filename)
-  parse_arguments(_testing "COMMAND;DEPENDENCIES;WORKING_DIRECTORY" "" ${ARGN})
-  if(_testing_DEFAULT_ARGS)
-    message(FATAL_ERROR "catkin_run_tests_target() called with unused arguments: ${_testing_DEFAULT_ARGS}")
+  cmake_parse_arguments(_testing "" "WORKING_DIRECTORY" "COMMAND;DEPENDENCIES" ${ARGN})
+  if(_testing_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "catkin_run_tests_target() called with unused arguments: ${_testing_UNPARSED_ARGUMENTS}")
   endif()
 
   # create meta target to trigger all tests of a project
