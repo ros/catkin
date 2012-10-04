@@ -50,7 +50,7 @@ They only contain relative paths and are supposed to be relative to the ``${CMAK
 
    This is set to ``bin``.
    This destination should only be used for the core ROS binaries.
-   If you are unsure if you should use this destination use ``PROJECT_LIBEXEC_DESTINATION`` instead.
+   If you are unsure if you should use this destination use ``CATKIN_PACKAGE_LIBEXEC_DESTINATION`` instead.
 
 .. cmake:data:: CATKIN_GLOBAL_ETC_DESTINATION
 
@@ -60,7 +60,7 @@ They only contain relative paths and are supposed to be relative to the ``${CMAK
 
    This is set to ``include``.
    This destination should only be used when installing headers which are not in a subfolder which matches the project name.
-   Else you should use the destination ``PROJECT_LIBEXEC_DESTINATION`` instead.
+   Else you should use the destination ``CATKIN_PACKAGE_INCLUDE_DESTINATION`` instead.
 
 .. cmake:data:: CATKIN_GLOBAL_LIB_DESTINATION
 
