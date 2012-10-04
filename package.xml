@@ -29,4 +29,8 @@
   <run_depend>python-catkin-pkg</run_depend>
   <run_depend>python-empy</run_depend>
   <run_depend>python-nose</run_depend>
+
+  <export>
+    <rosdoc config="rosdoc.yaml"/>
+  </export>
 </package>
