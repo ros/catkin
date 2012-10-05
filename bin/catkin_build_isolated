@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+import argparse
+import os
+import sys
+
+try:
+    from catkin.builder import build_workspace_in_isolation
+except ImportError:
+    # find the import relatively to make it work before installing catkin
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
+    from catkin.builder import build_workspace_in_isolation
+
+parser = argparse.ArgumentParser(description='Builds all catkin packages in isolation in topological order.')
+parser.add_argument('sourcespace', nargs='?', default='.', help='The path to an existing folder (default: .)')
+parser.add_argument('buildspace', nargs='?', default='.', help='The path where the build folder is created (default: .)')
+args = parser.parse_args()
+
+# verify that sourcespace folder exists
+sourcespace = os.path.abspath(args.sourcespace)
+if not os.path.isdir(sourcespace):
+    print('Sourcespace "%s" does not exist' % sourcespace, file=sys.stderr)
+    exit(1)
+
+build_workspace_in_isolation(sourcespace, args.buildspace)

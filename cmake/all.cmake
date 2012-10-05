@@ -120,16 +120,17 @@ if(CMAKE_HOST_UNIX) # true for linux, apple, mingw-cross and cygwin
 else()
   set(script_ext bat)
 endif()
+if(CATKIN_STATIC_ENV)
+  # static environment avoid to call env script at all and uses current environment including the knowledge about the effects of the local setup.sh without evaluating it
+  message(STATUS "Generating static environment")
+  set(CATKIN_STATIC_ENV TRUE CACHE BOOL "Generate static environment")
+endif()
 # take snapshot of the modifications the env script causes
 # to reproduce the same changes with a static script in a fraction of the time
-safe_execute_process(COMMAND ${PYTHON_EXECUTABLE}
-  ${catkin_EXTRAS_DIR}/env_caching.py
-  ${CATKIN_BUILD_PREFIX}/env.${script_ext}
-  --python ${PYTHON_EXECUTABLE}
-  OUTPUT_VARIABLE SCRIPT)
-configure_file(${catkin_EXTRAS_DIR}/templates/script.in
-  ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/env_cached.${script_ext}
-  @ONLY)
+em_expand(${catkin_EXTRAS_DIR}/templates/env_cached.context.py.in
+  ${CMAKE_BINARY_DIR}/catkin_generated/env_cached.buildspace.context.py
+  ${catkin_EXTRAS_DIR}/em/env_cached.em
+  ${CMAKE_BINARY_DIR}/catkin_generated/env_cached.${script_ext})
 # environment to call external processes
 set(CATKIN_ENV ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/env_cached.${script_ext} CACHE INTERNAL "catkin environment")
 
