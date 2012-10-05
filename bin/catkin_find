@@ -16,7 +16,7 @@ group.add_argument('--etc', action='store_true', help='Search in "etc(/PROJECT)"
 group.add_argument('--include', action='store_true', help='Search in "include(/PROJECT)" folder')
 group.add_argument('--lib', action='store_true', help='Search in "lib" folder')
 group.add_argument('--libexec', action='store_true', help='Search in "lib/PROJECT" folder')
-group.add_argument('--share', action='store_true', help='Search in "share(/PROJECT)" folder')
+group.add_argument('--share', action='store_true', help='Search in "share(/PROJECT)" folder (and source of PROJECT if not installed)')
 args = parser.parse_args()
 
 try:
