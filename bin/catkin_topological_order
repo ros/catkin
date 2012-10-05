@@ -6,11 +6,10 @@ import os
 import sys
 
 try:
-    from catkin.topological_order import topological_order
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.topological_order import topological_order
+    from catkin_pkg.topological_order import topological_order
+except ImportError as e:
+    e.args = ['%s\nCould not find Python module "catkin_pkg". Have you installed the Debian package "python-catkin-pkg"?' % (e.message)]
+    raise
 
 parser = argparse.ArgumentParser(description='Outputs the catkin projects of a workspace in topological order.')
 parser.add_argument('workspace', nargs='?', default='.', help='The path to a workspace (default: .)')
@@ -34,10 +33,10 @@ if not ordered_projects:
     print('Workspace "%s" seems to not contain any projects.  Have you passed the correct path to a catkin workspace?' % workspace, file=sys.stderr)
     exit(3)
 
-for (name, data) in ordered_projects:
+for (path, package) in ordered_projects:
     if args.only_folders:
-        print('%s' % data.path)
+        print('%s' % path)
     elif args.only_names:
-        print('%s' % name)
+        print('%s' % package.name)
     else:
-        print('%s %s' % (name, data.path))
+        print('%s %s' % (package.name, path))
