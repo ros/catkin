@@ -1,4 +1,5 @@
 set(programs
+  catkin_build_isolated
   catkin_find
   catkin_init_workspace
   catkin_package_version
