@@ -1,6 +1,6 @@
 from __future__ import print_function
 import os
-
+from catkin.workspace import get_source_paths, get_workspaces
 
 # OUT is always a list of folders
 #
@@ -28,40 +28,36 @@ def find_in_workspaces(search_dirs=None, project=None, path=None):
     '''
 
     # define valid search folders
-    valid_global_search_dirs = ['bin', 'etc', 'include', 'lib', 'share']
-    valid_project_search_dirs = ['etc', 'include', 'libexec', 'share']
+    valid_global_search_dirs = set(['bin', 'etc', 'include', 'lib', 'share'])
+    valid_project_search_dirs = set(['etc', 'include', 'libexec', 'share'])
 
     # make search folders a list
-    if search_dirs is None:
-        search_dirs = []
-    if not isinstance(search_dirs, list):
-        search_dirs = [search_dirs]
+    search_dirs = list(search_dirs or [])
 
     # determine valid search folders
-    all_valid_search_dirs = set(valid_global_search_dirs) | set(valid_project_search_dirs)
-    if not all_valid_search_dirs >= set(search_dirs):
-        raise RuntimeError('Unsupported search folders: %s' % ', '.join(['"%s"' % i for i in search_dirs if i not in all_valid_search_dirs]))
+    all_valid_search_dirs = valid_global_search_dirs.union(
+        valid_project_search_dirs)
 
-    valid_search_dirs = valid_global_search_dirs if project is None else valid_project_search_dirs
-    if not set(valid_search_dirs) >= set(search_dirs):
-        raise RuntimeError('Searching %s a project can not be combined with the search folders %s' % ('without' if project is None else 'for', ', '.join(['"%s"' % i for i in search_dirs if i not in valid_search_dirs])))
-    if not search_dirs:
+    diff_dirs = search_dirs.difference(all_valid_search_dirs)
+    if len(diff_dirs) > 0:
+        raise RuntimeError('Unsupported search folders: ' +
+                           ', '.join(['"%s"' % i for i in diff_dirs]))
+    valid_search_dirs = (valid_global_search_dirs
+                         if project is None
+                         else valid_project_search_dirs)
+
+    diff_dirs = search_dirs.difference(valid_search_dirs)
+    if len(diff_dirs) > 0:
+        msg = 'Searching %s a project can not be combined with the search folders:' % ('without' if project is None else 'for')
+        raise RuntimeError(msg + ', '.join(['"%s"' % i for i in diff_dirs]))
+
+    if search_dirs is None:
         search_dirs = valid_search_dirs
 
     # collect candidate paths
     paths = []
-    env_name = 'CMAKE_PREFIX_PATH'
-    # get all cmake prefix paths
-    workspaces = [workspace for workspace in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
-    # remove non-workspaces
-    workspaces = [workspace for workspace in workspaces if os.path.exists(os.path.join(workspace, '.CATKIN_WORKSPACE'))]
+    workspaces = get_workspaces()
     for workspace in workspaces:
-        # determine source spaces
-        filename = os.path.join(workspace, '.CATKIN_WORKSPACE')
-        data = ''
-        with open(filename) as f:
-            data = f.read()
-        source_paths = data.split(';') if data != '' else []
 
         for sub in search_dirs:
             # search in workspace
@@ -74,6 +70,7 @@ def find_in_workspaces(search_dirs=None, project=None, path=None):
 
             # for search in share also consider source spaces
             if project is not None and sub == 'share':
+                source_paths = get_source_paths(workspace)
                 for source_path in source_paths:
                     p = os.path.join(source_path, project)
                     if path is not None:

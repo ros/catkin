@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os
 import shutil
-
+from catkin.workspace import get_source_paths, get_workspaces
 
 def _symlink_or_copy(src, dst):
     """
@@ -58,19 +58,12 @@ def init_workspace(workspace_dir):
 
     # search for toplevel file in all workspaces
     if src_file_path is None:
-        # get all cmake prefix paths
-        env_name = 'CMAKE_PREFIX_PATH'
-        paths = [path for path in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
-        # remove non-workspace paths
-        workspaces = [path for path in paths if os.path.isfile(os.path.join(path, '.CATKIN_WORKSPACE'))]
+        workspaces = get_workspaces()
         for workspace in workspaces:
-            data = ''
-            filename = os.path.join(workspace, '.CATKIN_WORKSPACE')
-            with open(filename) as f:
-                data = f.read()
-            if data == '':
+            source_paths = get_source_paths(workspace)
+            if len(source_paths) == 0:
                 # try from install space
-                src = os.path.join(workspace, 'share', 'catkin', 'cmake', 'toplevel.cmake')
+                src = os.path.join(workspace, 'catkin', 'cmake', 'toplevel.cmake')
                 if os.path.isfile(src):
                     src_file_path = src
                     break
@@ -78,7 +71,7 @@ def init_workspace(workspace_dir):
                     checked.append(src)
             else:
                 # try from all source spaces
-                for source_path in data.split(';'):
+                for source_path in source_paths:
                     src = os.path.join(source_path, 'catkin', 'cmake', 'toplevel.cmake')
                     if os.path.isfile(src):
                         src_file_path = src
