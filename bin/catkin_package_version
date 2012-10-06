@@ -14,28 +14,33 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
     from catkin.package_version import bump_version, update_versions
 
-parser = argparse.ArgumentParser(description='Show or bump the version number in package.xml files.')
-parser.add_argument('path', nargs='?', default='.', help='The path to a parent folder which contains package.xml files (default: .)')
-parser.add_argument('--bump', choices=('major', 'minor', 'patch'), help='Which part of the version number to bump?')
-args = parser.parse_args()
+def main():
+    parser = argparse.ArgumentParser(description='Show or bump the version number in package.xml files.')
+    parser.add_argument('path', nargs='?', default='.', help='The path to a parent folder which contains package.xml files (default: .)')
+    parser.add_argument('--bump', choices=('major', 'minor', 'patch'), help='Which part of the version number to bump?')
+    args = parser.parse_args()
 
-try:
-    packages = find_packages(args.path)
-    version = verify_equal_package_versions(packages.values())
-except Exception as e:
-    print(str(e), file=sys.stderr)
-    sys.exit(1)
-
-# only print the version number
-if args.bump is None:
-    print(version)
-
-else:
-    # bump the version number
     try:
-        new_version = bump_version(version, args.bump)
-        update_versions(packages.keys(), new_version)
+        packages = find_packages(args.path)
+        version = verify_equal_package_versions(packages.values())
     except Exception as e:
         print(str(e), file=sys.stderr)
         sys.exit(1)
-    print('%s -> %s' % (version, new_version))
+
+    # only print the version number
+    if args.bump is None:
+        print(version)
+
+    else:
+        # bump the version number
+        try:
+            new_version = bump_version(version, args.bump)
+            update_versions(packages.keys(), new_version)
+        except Exception as e:
+            print(str(e), file=sys.stderr)
+            sys.exit(1)
+        print('%s -> %s' % (version, new_version))
+
+
+if __name__ == '__main__':
+    main()

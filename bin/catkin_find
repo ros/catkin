@@ -6,36 +6,40 @@ import sys
 
 from catkin.find_in_workspaces import find_in_workspaces
 
-parser = argparse.ArgumentParser(description='Searches the catkin workspaces for project-specific files/folders.')
-parser.add_argument('project', nargs='?', help='The project to find a path for')
-parser.add_argument('path', nargs='?', help='The relative path of a project file/folder (a prefix is sufficient)')
-parser.add_argument('--first-only', action='store_true', help='Flag if only the first result should be returned (default is all)')
-group = parser.add_argument_group('Search folders', 'Restrict the folders to search in')
-group.add_argument('--bin', action='store_true', help='Search in "bin" folder')
-group.add_argument('--etc', action='store_true', help='Search in "etc(/PROJECT)" folder')
-group.add_argument('--include', action='store_true', help='Search in "include(/PROJECT)" folder')
-group.add_argument('--lib', action='store_true', help='Search in "lib" folder')
-group.add_argument('--libexec', action='store_true', help='Search in "lib/PROJECT" folder')
-group.add_argument('--share', action='store_true', help='Search in "share(/PROJECT)" folder (and source of PROJECT if not installed)')
-args = parser.parse_args()
 
-try:
-    # keep order of folders to search in
-    search_dirs = []
-    all_search_dirs = ['--bin', '--etc', '--include', '--lib', '--libexec', '--share']
-    for arg in sys.argv[1:]:
-        if arg in all_search_dirs:
-            search_dirs.append(arg[2:])
-    (results, checked) = find_in_workspaces(search_dirs, args.project, args.path)
+def parse_args(args=sys.argv[1:]):
+    parser = argparse.ArgumentParser(description='Searches the catkin workspaces for project-specific files/folders.')
+    parser.add_argument('project', nargs='?', help='The project to find a path for')
+    parser.add_argument('path', nargs='?', help='The relative path of a project file/folder (a prefix is sufficient)')
+    parser.add_argument('--first-only', action='store_true', help='Flag if only the first result should be returned (default is all)')
+    group = parser.add_argument_group('Search folders', 'Restrict the folders to search in')
+    group.add_argument('--bin', action='store_true', help='Search in "bin" folder')
+    group.add_argument('--etc', action='store_true', help='Search in "etc(/PROJECT)" folder')
+    group.add_argument('--include', action='store_true', help='Search in "include(/PROJECT)" folder')
+    group.add_argument('--lib', action='store_true', help='Search in "lib" folder')
+    group.add_argument('--libexec', action='store_true', help='Search in "lib/PROJECT" folder')
+    group.add_argument('--share', action='store_true', help='Search in "share(/PROJECT)" folder (and source of PROJECT if not installed)')
+    args = parser.parse_args()
 
-    if args.first_only:
-        if len(results) > 1:
-            raise RuntimeError('Could not find unique path, the following paths are matching:\n%s' % '\n'.join(results))
-        elif len(results) == 0:
-            raise RuntimeError('Could not find any path, checked the following paths:\n%s' % '\n'.join(checked))
-        print(results[0])
-        exit(0)
-    print('\n'.join(results))
-except Exception as e:
-    print(str(e), file=sys.stderr)
-    exit(1)
+def main():
+    args = parse_args()
+    try:
+        # keep order of folders to search in
+        search_dirs = []
+        all_search_dirs = ['--bin', '--etc', '--include', '--lib', '--libexec', '--share']
+        for arg in sys.argv[1:]:
+            if arg in all_search_dirs:
+                search_dirs.append(arg[2:])
+        (results, checked) = find_in_workspaces(search_dirs, args.project, args.path)
+
+        if args.first_only:
+            if len(results) > 1:
+                raise RuntimeError('Could not find unique path, the following paths are matching:\n%s' % '\n'.join(results))
+            elif len(results) == 0:
+                raise RuntimeError('Could not find any path, checked the following paths:\n%s' % '\n'.join(checked))
+            print(results[0])
+            exit(0)
+        print('\n'.join(results))
+    except Exception as e:
+        print(str(e), file=sys.stderr)
+        exit(1)

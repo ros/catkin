@@ -12,15 +12,20 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
     from catkin.builder import build_workspace_in_isolation
 
-parser = argparse.ArgumentParser(description='Builds all catkin packages in isolation in topological order.')
-parser.add_argument('sourcespace', nargs='?', default='.', help='The path to an existing folder (default: .)')
-parser.add_argument('buildspace', nargs='?', default='.', help='The path where the build folder is created (default: .)')
-args = parser.parse_args()
 
-# verify that sourcespace folder exists
-sourcespace = os.path.abspath(args.sourcespace)
-if not os.path.isdir(sourcespace):
-    print('Sourcespace "%s" does not exist' % sourcespace, file=sys.stderr)
-    exit(1)
+def main():
+    parser = argparse.ArgumentParser(description='Builds all catkin packages in isolation in topological order.')
+    parser.add_argument('sourcespace', nargs='?', default='.', help='The path to an existing folder (default: .)')
+    parser.add_argument('buildspace', nargs='?', default='.', help='The path where the build folder is created (default: .)')
+    args = parser.parse_args()
 
-build_workspace_in_isolation(sourcespace, args.buildspace)
+    # verify that sourcespace folder exists
+    sourcespace = os.path.abspath(args.sourcespace)
+    if not os.path.isdir(sourcespace):
+        sys.exit('Sourcespace "%s" does not exist' % sourcespace)
+
+    build_workspace_in_isolation(sourcespace, args.buildspace)
+
+
+if __name__ == '__main__':
+    main()

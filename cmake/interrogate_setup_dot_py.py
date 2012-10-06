@@ -83,21 +83,26 @@ class Dummy:
     pass
 
 
-d = Dummy()
-setattr(d, 'setup', mysetup)
+def main():
+    dummy = Dummy()
+    setattr(dummy, 'setup', mysetup)
 
-sys.modules['setuptools'] = d
-sys.modules['distutils.core'] = d
+    sys.modules['setuptools'] = dummy
+    sys.modules['distutils.core'] = dummy
 
-# find the imports in setup.py relatively to make it work before installing catkin
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
+    # find the imports in setup.py relatively to make it work before installing catkin
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
 
-# print("executing %s" % sys.argv[2])
+    # print("executing %s" % sys.argv[2])
 
-# be sure you're in the directory containing
-# setup.py so the sys.path manipulation works,
-# so the import of __version__ works
-os.chdir(os.path.dirname(os.path.abspath(sys.argv[2])))
+    # be sure you're in the directory containing
+    # setup.py so the sys.path manipulation works,
+    # so the import of __version__ works
+    os.chdir(os.path.dirname(os.path.abspath(sys.argv[2])))
 
-with open(sys.argv[2], 'r') as fh:
-    exec(fh.read())
+    with open(sys.argv[2], 'r') as fh:
+        exec(fh.read())
+
+
+if __name__ == '__main__':
+    main()
