@@ -12,6 +12,7 @@ def _get_locations(pkgs, package_dir):
     based on setuptools logic and the package_dir dict, builds a dict
     of location roots for each pkg in pkgs.
     See http://docs.python.org/distutils/setupscript.html
+
     :returns: a dict {pkgname: root} for each pkgname in pkgs (and each of their parents)
     """
     # package_dir contains a dict {package_name: relativepath}
@@ -47,6 +48,7 @@ def _get_locations(pkgs, package_dir):
 def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
     """
     Generates lines to add to a cmake file which will set variables
+
     :param version: str, format 'int.int.int'
     :param scripts: [list of str]: relative paths to scripts
     :param package_dir: {modulename: path}
@@ -127,6 +129,9 @@ class Dummy:
 
 
 def main():
+    """
+    Script main, parses arguments and invokes Dummy.setup indirectly.
+    """
     parser = ArgumentParser(description='Utility to read setup.py values from cmake macros. Creates a file with CMake set commands setting variables.')
     parser.add_argument('package_name', help='Name of catkin package')
     parser.add_argument('setupfile_path', help='Full path to setup.py')
