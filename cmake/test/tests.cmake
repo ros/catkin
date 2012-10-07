@@ -62,7 +62,7 @@ function(catkin_run_tests_target type name xunit_filename)
   endif()
   assert(CATKIN_ENV)
   set(cmd ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
-    ${catkin_EXTRAS_DIR}/test/run_tests.py --results ${results} ${working_dir_arg} ${_testing_COMMAND})
+    ${catkin_EXTRAS_DIR}/test/run_tests.py ${results} ${working_dir_arg} ${_testing_COMMAND})
   add_custom_target(run_tests_${PROJECT_NAME}_${type}_${name}
     COMMAND ${cmd})
   add_dependencies(run_tests_${PROJECT_NAME}_${type} run_tests_${PROJECT_NAME}_${type}_${name})

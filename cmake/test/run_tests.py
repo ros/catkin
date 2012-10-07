@@ -3,18 +3,19 @@
 from __future__ import print_function
 import argparse
 import os
+import sys
 import subprocess
 from xml.etree.ElementTree import ElementTree, ParseError
 
 from catkin.tidy_xml import tidy_xml
 
 
-def main():
+def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(description='Runs the test command passed as an argument and verifies that the expected result file has been generated.')
     parser.add_argument('command', nargs='+', help='The test command to execute')
-    parser.add_argument('--results', help='The path to the xunit result file')
+    parser.add_argument('results', help='The path to the xunit result file')
     parser.add_argument('--working-dir', nargs='?', help='The working directory for the executed command')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # if result file exists remove it before test execution
     if os.path.exists(args.results):
