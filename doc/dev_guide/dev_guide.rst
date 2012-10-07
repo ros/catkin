@@ -15,6 +15,7 @@ catkin itself and advanced users.
    code_generation
    generated_cmake_api
    maintainer
+   api/index
    glossary
 
 Installation
