@@ -35,44 +35,48 @@ import os
 import re
 
 # unit test suites are not good about screening out illegal unicode characters (#603)
+# recipe from http://boodebr.org/main/python/all-about-python-and-unicode#UNI_XML
+# code copied from rosunit/src/junitxml.py
 RE_XML_ILLEGAL = u'([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \
                  u'|' + \
                  u'([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
                  (unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
                   unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
                   unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff))
-_safe_xml_regex = re.compile(RE_XML_ILLEGAL)
+_SAFE_XML_REGEX = re.compile(RE_XML_ILLEGAL)
 
 
 def tidy_xml(filename):
     '''
-    read in file, screen out unsafe unicode characters, write back file
+    read in file, screen out unsafe unicode characters, write back file in utf-8
+
+    :param filename: str
+    :returns: False if unable to read from file
     '''
     if not os.path.isfile(filename):
-        raise Exception('file does not exist')
+        raise ValueError('file does not exist')
 
-    # this is ugly, but the files in question that are problematic
-    # do not declare unicode type
-    try:
-        f = codecs.open(filename, 'r', 'utf-8')
-        data = f.read()
-        f.close()
-    except ValueError:
-        if f is not None:
-            f.close()
+    # try first utf-8 then iso. This is ugly, but the files in
+    # question that are problematic do not declare unicode type
+    data = None
+    for ftype in ['utf-8', 'iso8859-1']:
+        fhand = None
         try:
-            f = codecs.open(filename, 'r', 'iso8859-1')
-            data = f.read()
-            f.close()
+            fhand = codecs.open(filename, 'r', ftype)
+            data = fhand.read()
+            break
         except ValueError:
-            if f is not None:
-                f.close()
-            return False
+            continue
+        finally:
+            if fhand is not None:
+                fhand.close()
 
-    for match in _safe_xml_regex.finditer(data):
+    if data is None:
+        return False
+
+    for match in _SAFE_XML_REGEX.finditer(data):
         data = data[:match.start()] + '?' + data[match.end():]
 
-    f = open(filename, 'w')
-    f.write(data.encode('utf-8'))
-    f.close()
+    with open(filename, 'w') as fhand:
+        fhand.write(data.encode('utf-8'))
     return True
