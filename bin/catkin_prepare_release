@@ -16,9 +16,10 @@ except ImportError:
     from catkin.package_version import bump_version
     from catkin.workspace_vcs import get_repository_type, vcs_remotes
 
+
 def main():
     parser = argparse.ArgumentParser(description='Outputs the commands to bump the version number, commit the modified package.xml files and create a tag in the repository.')
-    args = parser.parse_args()
+    parser.parse_args()
 
     path = '.'
     try:
