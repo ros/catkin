@@ -15,7 +15,7 @@ def main():
     parser.add_argument('--results', help='The path to the xunit result file')
     parser.add_argument('--working-dir', nargs='?', help='The working directory for the executed command')
     args = parser.parse_args()
-    
+
     # if result file exists remove it before test execution
     if os.path.exists(args.results):
         os.remove(args.results)
@@ -23,24 +23,28 @@ def main():
     placeholder = os.path.join(os.path.dirname(args.results), 'MISSING-%s' % os.path.basename(args.results))
     if os.path.exists(placeholder):
         os.remove(placeholder)
-    
-    print('-- run_tests.py: execute commands%s%s' % (' with working directory "%s"' % args.working_dir if args.working_dir is not None else '', (''.join(['\n  %s' % cmd for cmd in args.command]))))
+
+    work_dir_msg = ' with working directory "%s"' % args.working_dir if args.working_dir is not None else ''
+    cmds_msg = ''.join(['\n  %s' % cmd for cmd in args.command])
+    print('-- run_tests.py: execute commands%s%s' % (work_dir_msg, cmds_msg))
+
     for cmd in args.command:
         subprocess.call(cmd, cwd=args.working_dir, shell=True)
-    
+
     print('-- run_tests.py: verify result "%s"' % args.results)
-    
+
     if os.path.exists(args.results):
         # if result file exists ensure that it contains valid xml
         try:
             root = ElementTree(None, args.results)
-        except ParseError as e:
+        except ParseError as e1:
             #print('Invalid XML in result file "%s"' % args.results)
             tidy_xml(args.results)
             try:
                 root = ElementTree(None, args.results)
-            except ParseError as e:
-                print('Invalid XML in result file "%s" (even after trying to tidy it) ' % args.results)
+            except ParseError as pe2:
+                print('Invalid XML in result file "%s" (even after '
+                      'trying to tidy it): %s ' % (args.results, str(pe2)))
     else:
         # if result file does not exist create placeholder which indicates failure
         print('Cannot find results, writing failure results to "%s"' % placeholder)
