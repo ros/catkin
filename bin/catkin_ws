@@ -12,35 +12,41 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
     from catkin.workspace_vcs import find_repositories, vcs_branch, vcs_diff, vcs_pull, vcs_push, vcs_remotes, vcs_status
 
-parser = argparse.ArgumentParser(description='Perform a VCS command on all repositories in the current directory.')
-parser.add_argument('path', nargs='?', default='.', help='The parent path of the repositories (default: .)')
-parser.add_argument('command', choices=('branch', 'diff', 'pull', 'remotes', 'status'), help='The command to execute')
-args = parser.parse_args()
 
-repositories = find_repositories(args.path)
+def main():
+    parser = argparse.ArgumentParser(description='Perform a VCS command on all repositories in the current directory.')
+    parser.add_argument('path', nargs='?', default='.', help='The parent path of the repositories (default: .)')
+    parser.add_argument('command', choices=('branch', 'diff', 'pull', 'remotes', 'status'), help='The command to execute')
+    args = parser.parse_args()
 
-if args.command == 'branch':
-    vcs_command = vcs_branch
-elif args.command == 'diff':
-    vcs_command = vcs_diff
-elif args.command == 'pull':
-    vcs_command = vcs_pull
-elif args.command == 'push':
-    vcs_command = vcs_push
-elif args.command == 'remotes':
-    vcs_command = vcs_remotes
-elif args.command == 'status':
-    vcs_command = vcs_status
-else:
-    raise RuntimeError('Unknown command "%s"' % args.command)
+    repositories = find_repositories(args.path)
 
-for subfolder in sorted(repositories.keys()):
-    vcs_type = repositories[subfolder]
-    print('===  %s (%s) ===' % (subfolder, vcs_type))
-    try:
-        output = vcs_command(os.path.join(args.path, subfolder), vcs_type)
-        output = output.rstrip(os.linesep)
-        if output != '':
-            print(output)
-    except Exception as e:
-        print(str(e), file=sys.stderr)
+    if args.command == 'branch':
+        vcs_command = vcs_branch
+    elif args.command == 'diff':
+        vcs_command = vcs_diff
+    elif args.command == 'pull':
+        vcs_command = vcs_pull
+    elif args.command == 'push':
+        vcs_command = vcs_push
+    elif args.command == 'remotes':
+        vcs_command = vcs_remotes
+    elif args.command == 'status':
+        vcs_command = vcs_status
+    else:
+        raise RuntimeError('Unknown command "%s"' % args.command)
+
+    for subfolder in sorted(repositories.keys()):
+        vcs_type = repositories[subfolder]
+        print('===  %s (%s) ===' % (subfolder, vcs_type))
+        try:
+            output = vcs_command(os.path.join(args.path, subfolder), vcs_type)
+            output = output.rstrip(os.linesep)
+            if output != '':
+                print(output)
+        except Exception as e:
+            sys.exit(str(e))
+
+
+if __name__ == '__main__':
+    main()

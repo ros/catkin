@@ -12,18 +12,23 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
     from catkin.init_workspace import init_workspace
 
-parser = argparse.ArgumentParser(description='Initializes a catkin workspace by creating a top-level CMakeLists.txt.')
-parser.add_argument('workspace', nargs='?', default='.', help='The path to an existing folder (default: .)')
-args = parser.parse_args()
 
-# verify that workspace folder exists
-workspace = os.path.abspath(args.workspace)
-if not os.path.isdir(workspace):
-    print('Workspace "%s" does not exist' % workspace, file=sys.stderr)
-    exit(1)
+def main():
+    parser = argparse.ArgumentParser(description='Initializes a catkin workspace by creating a top-level CMakeLists.txt.')
+    parser.add_argument('workspace', nargs='?', default='.', help='The path to an existing folder (default: .)')
+    args = parser.parse_args()
 
-try:
-    init_workspace(workspace)
-except Exception as e:
-    print(str(e), file=sys.stderr)
-    exit(2)
+    # verify that workspace folder exists
+    workspace = os.path.abspath(args.workspace)
+    if not os.path.isdir(workspace):
+        parser.error('Workspace "%s" does not exist' % workspace)
+
+    try:
+        init_workspace(workspace)
+    except Exception as e:
+        sys.stderr.write(str(e))
+        exit(2)
+
+
+if __name__ == '__main__':
+    main()
