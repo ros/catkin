@@ -12,22 +12,27 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
     from catkin.test_results import print_summary, test_results
 
-env_name = 'CATKIN_TEST_RESULTS_DIR'
-test_results_dir = os.environ[env_name] if env_name in os.environ else False
 
-parser = argparse.ArgumentParser(description='Outputs a summary of the test results.')
-parser.add_argument('test_results_dir', nargs='?' if test_results_dir else None, default=test_results_dir, help='The path to the test results (necessary when the environment variable "%s" is not defined)' % env_name)
-args = parser.parse_args()
+def main():
+    env_name = 'CATKIN_TEST_RESULTS_DIR'
+    test_results_dir = os.environ[env_name] if env_name in os.environ else False
 
-# verify that workspace folder exists
-test_results_dir = os.path.abspath(args.test_results_dir)
-if not os.path.isdir(test_results_dir):
-    print('Test results directory "%s" does not exist' % test_results_dir, file=sys.stderr)
-    exit(1)
+    parser = argparse.ArgumentParser(description='Outputs a summary of the test results.')
+    parser.add_argument('test_results_dir', nargs='?' if test_results_dir else None, default=test_results_dir, help='The path to the test results (necessary when the environment variable "%s" is not defined)' % env_name)
+    args = parser.parse_args()
 
-try:
-    results = test_results(test_results_dir)
-    print_summary(results)
-except Exception as e:
-    print(str(e), file=sys.stderr)
-    exit(2)
+    # verify that workspace folder exists
+    test_results_dir = os.path.abspath(args.test_results_dir)
+    if not os.path.isdir(test_results_dir):
+        sys.exit('Test results directory "%s" does not exist' % test_results_dir)
+
+    try:
+        results = test_results(test_results_dir)
+        print_summary(results)
+    except Exception as e:
+        sys.stderr.write(str(e))
+        exit(2)
+
+
+if __name__ == '__main__':
+    main()
