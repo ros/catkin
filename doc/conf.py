@@ -12,6 +12,7 @@
 # serve to show the default.
 
 import os
+import sys
 import subprocess
 from xml.etree.ElementTree import ElementTree
 
@@ -21,8 +22,13 @@ from xml.etree.ElementTree import ElementTree
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.ifconfig', 'sphinx.ext.todo', 'sphinx.ext.graphviz',
               'sphinx.ext.intersphinx',
-              'catkin_sphinx.ShLexer', 'catkin_sphinx.cmake']
+              'catkin_sphinx.ShLexer', 'catkin_sphinx.cmake',
+              'sphinx.ext.autodoc', 'sphinx.ext.viewcode']
 todo_include_todos = True
+
+# include path to python files hidden in cmake folder
+sys.path.insert(0, '../cmake')
+sys.path.insert(0, '../python')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
