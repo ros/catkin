@@ -7,10 +7,8 @@ import sys
 
 try:
     from catkin_pkg.topological_order import topological_order
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin_pkg.topological_order import topological_order
+except ImportError as impe:
+    sys.exit("ERROR Cannot find a module of catkin_pkg, make sure it is up to date and on the PYTHONPATH, see catkin install instructions: %s" % impe)
 
 
 def main():
