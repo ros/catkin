@@ -24,6 +24,8 @@ def get_source_paths(workspace):
     # determine source spaces
     data = ''
     filename = os.path.join(workspace, CATKIN_WORKSPACE_MARKER_FILE)
+    if not os.path.isfile(filename):
+        raise ValueError('Not a catkin workspace: "%s", missing file %s' % (workspace, filename))
     with open(filename) as f:
         data = f.read()
 
