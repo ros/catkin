@@ -32,13 +32,13 @@ def init_workspace(workspace_dir):
     It installs ``manifest.xml`` to ``share/${PROJECT_NAME}``.
 
     .. note:: The symlink is absolute when catkin is found outside
-    the workspace_dir (since that indicates a different workspace and
-    it may change relative location to the workspace referenced as a
-    parameter). The symlink is relative when catkin is part of the
-    to-be-initialized workspace.
+      the workspace_dir (since that indicates a different workspace
+      and it may change relative location to the workspace referenced
+      as a parameter). The symlink is relative when catkin is part of
+      the to-be-initialized workspace.
 
     :param workspace_dir: the path to the workspace where the
-    CMakeLists.txt should be created
+      CMakeLists.txt should be created
     :type workspace_dir: string
     """
     # verify that destination file does not exist
