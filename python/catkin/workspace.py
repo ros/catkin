@@ -1,6 +1,8 @@
 from __future__ import print_function
 import os
 
+CATKIN_WORKSPACE_MARKER_FILE = '.CATKIN_WORKSPACE'
+
 
 def get_workspaces():
     """
@@ -10,7 +12,7 @@ def get_workspaces():
     env_name = 'CMAKE_PREFIX_PATH'
     paths = [path for path in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
     # remove non-workspace paths
-    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, '.CATKIN_WORKSPACE'))]
+    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_WORKSPACE_MARKER_FILE))]
     return workspaces
 
 
@@ -21,7 +23,7 @@ def get_source_paths(workspace):
     """
     # determine source spaces
     data = ''
-    filename = os.path.join(workspace, '.CATKIN_WORKSPACE')
+    filename = os.path.join(workspace, CATKIN_WORKSPACE_MARKER_FILE)
     with open(filename) as f:
         data = f.read()
 
