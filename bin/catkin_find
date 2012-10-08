@@ -3,8 +3,15 @@
 from __future__ import print_function
 import argparse
 import sys
+import os
 
-from catkin.find_in_workspaces import find_in_workspaces
+try:
+    from catkin.find_in_workspaces import find_in_workspaces
+except ImportError:
+    # find the import relatively to make it work before installing catkin
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
+    from catkin.find_in_workspaces import find_in_workspaces
+
 
 
 def parse_args(args=sys.argv[1:]):
@@ -12,26 +19,27 @@ def parse_args(args=sys.argv[1:]):
     parser.add_argument('project', nargs='?', help='The project to find a path for')
     parser.add_argument('path', nargs='?', help='The relative path of a project file/folder (a prefix is sufficient)')
     parser.add_argument('--first-only', action='store_true', help='Flag if only the first result should be returned (default is all)')
+
     group = parser.add_argument_group('Search folders', 'Restrict the folders to search in')
-    group.add_argument('--bin', action='store_true', help='Search in "bin" folder')
-    group.add_argument('--etc', action='store_true', help='Search in "etc(/PROJECT)" folder')
-    group.add_argument('--include', action='store_true', help='Search in "include(/PROJECT)" folder')
-    group.add_argument('--lib', action='store_true', help='Search in "lib" folder')
-    group.add_argument('--libexec', action='store_true', help='Search in "lib/PROJECT" folder')
-    group.add_argument('--share', action='store_true', help='Search in "share(/PROJECT)" folder (and source of PROJECT if not installed)')
-    return parser.parse_args()
+    for foldername, subfolder_help in {'bin': 'Search in "bin" folder',
+                                       'etc': 'Search in "etc(/PROJECT)" folder',
+                                       'include': 'Search in "include(/PROJECT)" folder',
+                                       'lib': 'Search in "lib" folder',
+                                       'libexec': 'Search in "lib/PROJECT" folder',
+                                       'share': 'Search in "share(/PROJECT)" folder (and source of PROJECT if not installed)'}.items():
+        group.add_argument('--%s' % foldername,
+                           dest='install_folders',
+                           action='append_const',
+                           const=foldername,
+                           help=subfolder_help)
+    return parser.parse_args(args=args)
 
 
 def main():
     args = parse_args()
     try:
         # keep order of folders to search in
-        search_dirs = []
-        all_search_dirs = ['--bin', '--etc', '--include', '--lib', '--libexec', '--share']
-        for arg in sys.argv[1:]:
-            if arg in all_search_dirs:
-                search_dirs.append(arg[2:])
-        (results, checked) = find_in_workspaces(search_dirs, args.project, args.path)
+        (results, checked) = find_in_workspaces(args.install_folders, args.project, args.path)
 
         if args.first_only:
             if len(results) > 1:
