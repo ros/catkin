@@ -2,6 +2,46 @@ from __future__ import print_function
 import os
 from catkin.workspace import get_source_paths, get_workspaces
 
+
+def _get_valid_search_dirs(search_dirs, project):
+    """
+    compares param collection of search dirs with valid names, raises ValueError if invalid.
+    maintains the order of param if any. If project is given other names are allowed than without.
+
+    :param search_dirs: collection of foldernames (basename) to search for
+    :param project: the project to search in or None
+    :raises: ValueError
+    """
+    # define valid search folders
+    valid_global_search_dirs = ['bin', 'etc', 'include', 'lib', 'share']
+    valid_project_search_dirs = ['etc', 'include', 'libexec', 'share']
+
+    valid_search_dirs = (valid_global_search_dirs
+                         if project is None
+                         else valid_project_search_dirs)
+    if search_dirs is None:
+        search_dirs = valid_search_dirs
+    else:
+        # make search folders a list
+        search_dirs = list(search_dirs)
+
+        # determine valid search folders
+        all_valid_search_dirs = set(valid_global_search_dirs).union(
+            set(valid_project_search_dirs))
+
+        # check folder name is known at all
+        diff_dirs = set(search_dirs).difference(all_valid_search_dirs)
+        if len(diff_dirs) > 0:
+            raise ValueError('Unsupported search folders: ' +
+                             ', '.join(['"%s"' % i for i in diff_dirs]))
+        # check foldername works with project arg
+        diff_dirs = set(search_dirs).difference(valid_search_dirs)
+        if len(diff_dirs) > 0:
+            msg = 'Searching %s a project can not be combined with the search folders:' % ('without' if project is None else 'for')
+            raise ValueError(msg + ', '.join(['"%s"' % i for i in diff_dirs]))
+    return search_dirs
+
+
 # OUT is always a list of folders
 #
 # IN: project=None
@@ -26,34 +66,7 @@ def find_in_workspaces(search_dirs=None, project=None, path=None):
     Note: the search might return multiple paths for a 'share' from build- and source-space.
     :returns: List of paths, ``list``
     '''
-
-    # define valid search folders
-    valid_global_search_dirs = set(['bin', 'etc', 'include', 'lib', 'share'])
-    valid_project_search_dirs = set(['etc', 'include', 'libexec', 'share'])
-
-    # make search folders a list
-    search_dirs = list(search_dirs or [])
-
-    # determine valid search folders
-    all_valid_search_dirs = valid_global_search_dirs.union(
-        valid_project_search_dirs)
-
-    diff_dirs = search_dirs.difference(all_valid_search_dirs)
-    if len(diff_dirs) > 0:
-        raise RuntimeError('Unsupported search folders: ' +
-                           ', '.join(['"%s"' % i for i in diff_dirs]))
-    valid_search_dirs = (valid_global_search_dirs
-                         if project is None
-                         else valid_project_search_dirs)
-
-    diff_dirs = search_dirs.difference(valid_search_dirs)
-    if len(diff_dirs) > 0:
-        msg = 'Searching %s a project can not be combined with the search folders:' % ('without' if project is None else 'for')
-        raise RuntimeError(msg + ', '.join(['"%s"' % i for i in diff_dirs]))
-
-    if search_dirs is None:
-        search_dirs = valid_search_dirs
-
+    search_dirs = _get_valid_search_dirs(search_dirs, project)
     # collect candidate paths
     paths = []
     workspaces = get_workspaces()
