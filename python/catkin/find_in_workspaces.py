@@ -54,7 +54,7 @@ def _get_valid_search_dirs(search_dirs, project):
 #      except for s == 'share', cand is a list of two paths: ws[0] + s + project (+ path) and ws[1] + project (+ path)
 #      add cand to result list if it exists
 #      is not defined for s in ['bin', 'lib'], bailing out
-def find_in_workspaces(search_dirs=None, project=None, path=None):
+def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=get_workspaces()):
     '''
     Find all paths which match the search criteria.
     All workspaces are searched in order.
@@ -64,14 +64,14 @@ def find_in_workspaces(search_dirs=None, project=None, path=None):
     :param project: The project name to search for (not possible with the global search_in folders 'bin' and 'lib'), ``str``
     :param path: The path, ``str``
     Note: the search might return multiple paths for a 'share' from build- and source-space.
+    :param _workspaces: (optional, used for unit tests), the list of workspaces to use.
     :returns: List of paths, ``list``
     '''
     search_dirs = _get_valid_search_dirs(search_dirs, project)
     # collect candidate paths
     paths = []
-    workspaces = get_workspaces()
-    for workspace in workspaces:
 
+    for workspace in (_workspaces or []):
         for sub in search_dirs:
             # search in workspace
             p = os.path.join(workspace, sub if sub != 'libexec' else 'lib')
