@@ -4,6 +4,15 @@ from xml.etree.ElementTree import ElementTree
 
 
 def read_junit(filename):
+    """
+    parses xml file expected to follow junit/gtest conventions
+    see http://code.google.com/p/googletest/wiki/AdvancedGuide#Generating_an_XML_Report
+
+    :param filename: str junit xml file name
+    :returns: num_tests, num_errors, num_failures
+    :raises ParseError: if xml is not well-formed
+    :raises IOError: if filename does not exist
+    """
     tree = ElementTree()
     root = tree.parse(filename)
     num_tests = int(root.attrib['tests'])
@@ -13,6 +22,13 @@ def read_junit(filename):
 
 
 def test_results(test_results_dir):
+    '''
+    Collects test results by parsing all xml files in given path,
+    attempting to interpret them as junit results.
+
+    :param test_results_dir: str foldername
+    :returns: dict {rel_path, (num_tests, num_errors, num_failures)}
+    '''
     results = {}
     for dirpath, dirnames, filenames in os.walk(test_results_dir):
         # do not recurse into folders starting with a dot
@@ -30,6 +46,13 @@ def test_results(test_results_dir):
 
 
 def print_summary(results, show_stable=False, show_unstable=True):
+    """
+    print summary to stdout
+
+    :param results: dict as from test_results()
+    :param show_stable: print tests without failures extra
+    :param show_stable: print tests with failures extra
+    """
     sum_tests = sum_errors = sum_failures = 0
     for name in sorted(results.keys()):
         (num_tests, num_errors, num_failures) = results[name]
