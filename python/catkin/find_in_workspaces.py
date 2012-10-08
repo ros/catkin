@@ -72,14 +72,13 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
     search_dirs = _get_valid_search_dirs(search_dirs, project)
     # collect candidate paths
     paths = []
-
     for workspace in (_workspaces or []):
         for sub in search_dirs:
             # search in workspace
             p = os.path.join(workspace, sub if sub != 'libexec' else 'lib')
-            if project is not None:
+            if project:
                 p = os.path.join(p, project)
-            if path is not None:
+            if path:
                 p = os.path.join(p, path)
             paths.append(p)
 
