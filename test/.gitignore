@@ -1,6 +1,8 @@
 debbuild
 pkgbuild
+tmp/*
 src/catkin_test/debian
+tmp/*
 scratch
 SCRATCH
 PREFIX

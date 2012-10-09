@@ -1,0 +1,12 @@
+<stack>
+  <name>badly_specified_changelog</name>
+  <version>0.0.0</version>
+  <description/>
+  <author>Somebody</author>
+  <maintainer email="Somebody@somewhere.org">Somebody</maintainer>
+  <license>Unknown</license>
+  <copyright>Someone</copyright>
+  <url/>
+
+  <build_depends>catkin</build_depends>
+</stack>
