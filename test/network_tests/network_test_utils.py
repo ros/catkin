@@ -4,23 +4,23 @@ from test.utils import AbstractCatkinWorkspaceTest, TEMP_DIR, rosinstall, \
     create_catkin_workspace
 
 
-class AbstractUnstableTest(AbstractCatkinWorkspaceTest):
+class AbstractFuerteTest(AbstractCatkinWorkspaceTest):
 
     """
-    Parent class for any Test case that download latest ros core
+    Parent class for any Test case that download fuerte ros core
     stacks from github to build custom stacks against that
     """
 
     def __init__(self, testCaseName, name):
         # for ROS core integration tests, we reuse the same sources
         # (to save download time), keep in test folder
-        super(AbstractUnstableTest, self).__init__(
+        super(AbstractFuerteTest, self).__init__(
             testCaseName, os.path.join(TEMP_DIR, name))
 
     def setupWorkspaceContents(self):
         rosinstall(self.workspacedir,
                    os.path.join(os.path.dirname(__file__),
-                                'test.rosinstall'))
+                                'test_fuerte.rosinstall'))
         create_catkin_workspace(self.workspacedir)
 
     def tearDown(self):

@@ -1,7 +1,6 @@
 from __future__ import print_function
 
-from sys import version_info
-
+import sys
 import os
 import shutil
 
@@ -13,8 +12,8 @@ import tempfile
 # ubuntudist = platform.dist()[2]
 
 PYTHON_INSTALL_PATH = os.path.join('lib',
-                                   'python%u.%u' % (version_info[0],
-                                                    version_info[1]),
+                                   'python%u.%u' % (sys.version_info[0],
+                                                    sys.version_info[1]),
                                    'dist-packages')
 
 
@@ -50,10 +49,16 @@ def run(args, **kwargs):
     Call to Popen, returns (errcode, stdout, stderr)
     """
     print("run:", args)
-    p = subprocess.Popen(args,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT,
-                         cwd=kwargs.get('cwd', None))
+    try:
+        p = subprocess.Popen(args,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT,
+                             cwd=kwargs.get('cwd', None),
+                             env=kwargs.get('env', None)
+                             )
+    except:
+        sys.stderr.write("Failed to run command '%s'" % ' '.join(args))
+        raise
     print("P==", p.__dict__)
     (stdout, stderr) = p.communicate()
     return (p.returncode, stdout, stderr)
@@ -132,7 +137,8 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
             self.rootdir = tempfile.mkdtemp()
         self.directories['root'] = self.rootdir
         self.builddir = os.path.join(self.rootdir, "build")
-        self.buildspace = os.path.join(self.builddir, 'buildspace')
+        # buildspace separated starting with groovy
+        self.buildspace = self.builddir
         self.workspacedir = os.path.join(self.rootdir, "src")
         self.installdir = os.path.join(self.rootdir, "install")
         if not os.path.exists(self.builddir):
@@ -155,6 +161,7 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
               installdir=None,
               prefix_path=None,
               expect=succeed,
+              env=os.environ,
               **kwargs):
         """
         invokes cmake
@@ -192,7 +199,8 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
         if not os.path.isdir(this_builddir):
             os.makedirs(this_builddir)
         cmd = ["cmake", this_srcdir] + args
-        o = expect(cmd, cwd=this_builddir)
+        cenv=os.environ.copy()
+        o = expect(cmd, cwd=this_builddir, env=env)
         if (expect == succeed):
             self.assertTrue(os.path.isfile(this_builddir + "/CMakeCache.txt"))
             self.assertTrue(os.path.isfile(this_builddir + "/Makefile"))

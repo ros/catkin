@@ -5,7 +5,7 @@ import sys
 import unittest
 from test.utils import *
 from . import network_test_utils
-from network_test_utils import AbstractUnstableTest
+# from network_test_utils import AbstractUnstableTest
 
 
 # Tests below currently fail due to missing stack typelibxml

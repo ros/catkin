@@ -6,23 +6,23 @@ import tempfile
 from test.utils import MOCK_DIR, PYTHON_INSTALL_PATH, \
     MAKE_CMD, succeed, assert_exists, create_catkin_workspace
 from . import network_test_utils
-from network_test_utils import AbstractUnstableTest
+from network_test_utils import AbstractFuerteTest
 
 
-class SimpleUnstableTest(AbstractUnstableTest):
+class SimpleFuerteTest(AbstractFuerteTest):
 
     def __init__(self, testCaseName):
-        super(SimpleUnstableTest, self).__init__(testCaseName, 'unstable_test')
+        super(SimpleFuerteTest, self).__init__(testCaseName, 'fuerte_test')
 
     def setUp(self):
-        super(SimpleUnstableTest, self).setUp()
+        super(SimpleFuerteTest, self).setUp()
         # a bit dirty here, tester needs to manually delete
-        # test/tmp/unstable_test/build folder. But else, tests take
+        # test/tmp/fuerte_test/build folder. But else, tests take
         # too long
         if not os.path.exists(os.path.join(self.builddir, "Makefile")):
             self.cmake()
         # if make fails due to DistributionNotFound,
-        # tester needs to manually delete test/tmp/unstable_test/src
+        # tester needs to manually delete test/tmp/fuerte_test/src
         succeed(MAKE_CMD, cwd=self.builddir)
 
         succeed(MAKE_CMD + ["install"], cwd=self.builddir)
@@ -37,9 +37,11 @@ class SimpleUnstableTest(AbstractUnstableTest):
         assert_exists(self.buildspace,
                       'bin',
                       'etc',
-                      'include',
                       'lib',
-                      'share')
+                      # only in groovy
+                      # 'include',
+                      # 'share'
+                      )
 
         assert_exists(self.installdir,
                       'bin',
@@ -57,17 +59,27 @@ class SimpleUnstableTest(AbstractUnstableTest):
             other_src_dir = os.path.join(other_root_dir, 'src')
             create_catkin_workspace(other_src_dir)
             other_build_dir = os.path.join(other_root_dir, 'build')
-            other_buildspace_dir = os.path.join(other_build_dir, 'buildspace')
+            other_install_dir = os.path.join(other_root_dir, 'install')
             shutil.copytree(os.path.join(self.workspacedir, 'common_msgs'),
                             os.path.join(other_src_dir, 'common_msgs'))
-            out = self.cmake(cwd=other_build_dir,
-                             srcdir=other_src_dir)
-            out = succeed(MAKE_CMD, cwd=other_build_dir)
-            assert_exists(other_buildspace_dir,
-                          PYTHON_INSTALL_PATH + '/nav_msgs/msg/_GridCells.py',
-                          'include/nav_msgs/GridCells.h')
+            cenv=os.environ.copy()
+            
+            cenv['PYTHONPATH']="%s:%s" % (os.path.join(self.installdir, 'lib', 'python2.7', 'dist-packages'), cenv['PYTHONPATH'])
 
-            out = succeed(MAKE_CMD + ['install'], cwd=other_build_dir)
+            prefix_path_ext=[]
+            for package in ['genmsg', 'genpy', 'gencpp']:
+                prefix_path_ext.append(os.path.join(self.installdir, 'share', package, 'cmake'))
+            out = self.cmake(cwd=other_build_dir,
+                             env=cenv,
+                             # installdir=other_install_dir,
+                             prefix_path=':'.join(prefix_path_ext),
+                             srcdir=other_src_dir)
+            out = succeed(MAKE_CMD, cwd=other_build_dir, env=cenv)
+            assert_exists(other_build_dir,
+                          'gen/py/nav_msgs/msg/_GridCells.py',
+                          'gen/cpp/nav_msgs/GridCells.h')
+
+            out = succeed(MAKE_CMD + ['install'], cwd=other_build_dir, env=cenv)
 
             assert_exists(self.installdir,
                           'include/geometry_msgs/PointStamped.h',
@@ -88,16 +100,24 @@ class SimpleUnstableTest(AbstractUnstableTest):
             other_src_dir = os.path.join(other_root_dir, 'src')
             create_catkin_workspace(other_src_dir)
             other_build_dir = os.path.join(other_root_dir, 'build')
-            other_buildspace_dir = os.path.join(other_build_dir, 'buildspace')
+            
             other_install_dir = os.path.join(other_root_dir, 'install')
             shutil.copytree(os.path.join(MOCK_DIR, 'src', 'catkin_test'),
                             os.path.join(other_src_dir, 'catkin_test'))
+            cenv=os.environ.copy()
+            
+            cenv['PYTHONPATH']="%s:%s" % (os.path.join(self.installdir, 'lib', 'python2.7', 'dist-packages'), cenv['PYTHONPATH'])
+            prefix_path_ext=[]
+            for package in ['genmsg', 'genpy', 'gencpp']:
+                prefix_path_ext.append(os.path.join(self.installdir, 'share', package, 'cmake'))
+
             self.cmake(cwd=other_build_dir,
+                       env=cenv,
                        srcdir=other_src_dir,
                        installdir=other_install_dir)
-            succeed(MAKE_CMD, cwd=other_build_dir)
+            succeed(MAKE_CMD, cwd=other_build_dir, env=cenv)
 
-            assert_exists(other_buildspace_dir,
+            assert_exists(other_build_dir,
                           "lib/liba.so",
                           "lib/libb.so",
                           "lib/libc-one.so",
@@ -106,12 +126,9 @@ class SimpleUnstableTest(AbstractUnstableTest):
             assert_exists(other_build_dir,
                           # "bin/nolangs_exec",
                           "catkin_test/quux_user/bin/quux_srv-exec")
-            assert_exists(other_buildspace_dir,
-                          PYTHON_INSTALL_PATH + "/a",
-                          # PYTHON_INSTALL_PATH + "/b",
-                          # PYTHON_INSTALL_PATH + "/c",
-                          # PYTHON_INSTALL_PATH + "/d",
-                          PYTHON_INSTALL_PATH + "/a/__init__.py")
+            assert_exists(other_build_dir,
+                          "gen/py/a",
+                          "gen/py/a/__init__.py")
 
             # "DESTDIR="
             succeed(MAKE_CMD + ["install"],
