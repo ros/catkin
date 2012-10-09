@@ -51,10 +51,6 @@ class MockTest(AbstractCatkinWorkspaceTest):
         # create workspace with just catkin and 'noproject' project
         dstdir = os.path.join(self.workspacedir, 'noproject')
         shutil.copytree(os.path.join(MOCK_DIR, 'src-fail', 'noproject'), dstdir)
-        # test with whitelist
-        out = self.cmake(CATKIN_WHITELIST_STACKS='catkin')
-        out = succeed(MAKE_CMD + ["install"], cwd=self.builddir)
-
         shutil.rmtree(self.builddir)
         # fail if we try to build noproject stack
         os.makedirs(self.builddir)
@@ -63,7 +59,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
                          expect=fail)
         print("failed as expected, out=", out)
 
-        assert 'catkin_project() CATKIN_CURRENT_STACK is not set.' in out
+        assert 'catkin_stack() PROJECT_NAME is not set.' in out, out
         # assert 'You must call project() with the same name before.' in out
 
     # Test was not finished apparently
