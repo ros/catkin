@@ -42,7 +42,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
 
         assert_exists(self.installdir,
                       "bin/nolangs_exec",
-                      "share/nolangs/cmake/nolangsConfig.cmake")
+                      "share/nolangs/cmake/nolangs-config.cmake")
 
         # also test make help
         succeed(MAKE_CMD + ["help"], cwd=self.builddir)
