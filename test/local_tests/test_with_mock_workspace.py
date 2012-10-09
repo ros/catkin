@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-import sys
 import os
 import shutil
-import unittest
-from test.utils import AbstractCatkinWorkspaceTest, MOCK_DIR, MAKE_CMD, succeed, assert_exists, fail
+from test.utils import AbstractCatkinWorkspaceTest, MOCK_DIR, \
+    MAKE_CMD, succeed, assert_exists, fail
 
 
 class MockTest(AbstractCatkinWorkspaceTest):
@@ -37,7 +36,8 @@ class MockTest(AbstractCatkinWorkspaceTest):
         self.assertFalse(os.path.exists(self.builddir + "/std_msgs"))
         self.assertFalse(os.path.exists(self.builddir + "/genmsg"))
         out = succeed(MAKE_CMD, cwd=self.builddir)
-        self.assertTrue(os.path.exists(self.builddir + "/nolangs/bin/nolangs_exec"))
+        self.assertTrue(os.path.exists(self.builddir +
+                                       "/nolangs/bin/nolangs_exec"))
         out = succeed(MAKE_CMD + ["install"], cwd=self.builddir)
 
         assert_exists(self.installdir,
@@ -66,11 +66,11 @@ class MockTest(AbstractCatkinWorkspaceTest):
         assert 'catkin_project() CATKIN_CURRENT_STACK is not set.' in out
         # assert 'You must call project() with the same name before.' in out
 
-
     # Test was not finished apparently
     # def test_help_bad_changelog(self):
     #     self.cmake(CATKIN_ENABLE_DEBBUILDING='TRUE',
     #           CMAKE_PREFIX_PATH=diskprefix,
-    #           srcdir=os.path.join(MOCK_DIR, 'src-fail', 'badly_specified_changelog'),
+    #           srcdir=os.path.join(MOCK_DIR,
+    #                               'src-fail', 'badly_specified_changelog'),
     #           CATKIN='YES')
     #     succeed(MAKE_CMD + ['help'], cwd=self.builddir)
