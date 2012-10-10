@@ -2,8 +2,10 @@ import os
 import unittest
 import tempfile
 import shutil
+from mock import Mock
 
 try:
+    import catkin.find_in_workspaces
     from catkin.find_in_workspaces import find_in_workspaces, _get_valid_search_dirs
     from catkin.workspace import CATKIN_WORKSPACE_MARKER_FILE
 except ImportError as impe:
@@ -67,35 +69,59 @@ class FindInWorkspaceTest(unittest.TestCase):
 
     def test_with_sourcepath(self):
         def create_mock_workspace(root_dir, ws):
-            ws1 = os.path.join(root_dir, ws)
-            p1 = os.path.join(ws1, "p1")
-            p1inc = os.path.join(p1, "include")
-            p1share = os.path.join(p1, "share")
-            os.makedirs(ws1)
-            os.makedirs(p1)
-            os.makedirs(p1inc)
-            os.makedirs(p1share)
-            with open(os.path.join(ws1, CATKIN_WORKSPACE_MARKER_FILE), 'w') as fhand:
-                fhand.write('loc1;loc2')
+            ws = os.path.join(root_dir, ws)
+            bs = os.path.join(ws, 'buildspace')
+            src = os.path.join(ws, 'src')
+            inc = os.path.join(bs, "include")
+            etc = os.path.join(bs, "etc")
+            p1inc = os.path.join(inc, "p1")
+            p1etc = os.path.join(etc, "p1")
+            p1src = os.path.join(src, "p1")
 
+            os.makedirs(ws)
+            os.makedirs(bs)
+            os.makedirs(inc)
+            os.makedirs(etc)
+            os.makedirs(src)
+            os.makedirs(p1src)
+            os.makedirs(p1inc)
+            os.makedirs(p1etc)
+
+            with open(os.path.join(bs, CATKIN_WORKSPACE_MARKER_FILE), 'w') as fhand:
+                fhand.write(src)
         try:
             root_dir = tempfile.mkdtemp()
+            # monkey-patch catkin_pkg
+            backup = catkin.find_in_workspaces.find_packages
+            mock1 = Mock()
+            mock1.name = 'p1'
+            def mock_find_packages(basepath):
+                return {'p1': mock1}
+            catkin.find_in_workspaces.find_packages = mock_find_packages
+
             create_mock_workspace(root_dir, 'ws1')
             create_mock_workspace(root_dir, 'ws2')
 
-            (existing, paths) = find_in_workspaces(['share', 'etc'], 'foo', 'foopath', _workspaces=[os.path.join(root_dir, 'ws1')])
-            self.assertEqual([os.path.join(root_dir, 'ws1', 'share', 'foo', 'foopath'),
-                              'loc1/foo/foopath',
-                              'loc2/foo/foopath',
-                              os.path.join(root_dir, 'ws1', 'etc', 'foo', 'foopath')], paths)
+            (existing, paths) = find_in_workspaces(['include', 'etc'], 'foo', 'foopath', _workspaces=[os.path.join(root_dir, 'ws1/buildspace')])
+            self.assertEqual([os.path.join(root_dir, 'ws1', 'buildspace', 'include', 'foo', 'foopath'),
+                              os.path.join(root_dir, 'ws1', 'buildspace', 'etc', 'foo', 'foopath')], paths)
             self.assertEqual([], existing)
 
-            (existing, paths) = find_in_workspaces(['share', 'etc'], 'p1', None, _workspaces=[os.path.join(root_dir, 'ws1')])
-            self.assertEqual([os.path.join(root_dir, 'ws1', 'share', 'p1'),
-                              'loc1/p1',
-                              'loc2/p1',
-                              os.path.join(root_dir, 'ws1', 'etc', 'p1')], paths)
-            self.assertEqual([], existing)
+            (existing, paths) = find_in_workspaces(['share', 'etc'], 'p1', None, _workspaces=[os.path.join(root_dir, 'ws1/buildspace')])
+            self.assertEqual([os.path.join(root_dir, 'ws1', 'buildspace', 'share', 'p1'),
+                              # share means also search in src
+                              os.path.join(root_dir, 'ws1', 'src', 'p1'),
+                              os.path.join(root_dir, 'ws1', 'buildspace', 'etc', 'p1')], paths)
+            self.assertEqual([os.path.join(root_dir, 'ws1', 'src', 'p1'), os.path.join(root_dir, 'ws1', 'buildspace', 'etc', 'p1')], existing)
 
+            ## OVERLAY ws2 > ws1
+            (existing, paths) = find_in_workspaces(['share', 'etc'], 'p1', None, _workspaces=[os.path.join(root_dir, 'ws2/buildspace'), os.path.join(root_dir, 'ws1/buildspace')])
+            self.assertEqual([os.path.join(root_dir, 'ws2', 'buildspace', 'share', 'p1'),
+                              # share means also search in src
+                              os.path.join(root_dir, 'ws2', 'src', 'p1'),
+                              os.path.join(root_dir, 'ws2', 'buildspace', 'etc', 'p1')], paths)
+            self.assertEqual([os.path.join(root_dir, 'ws2', 'src', 'p1'), os.path.join(root_dir, 'ws2', 'buildspace', 'etc', 'p1')], existing)
+            
         finally:
             shutil.rmtree(root_dir)
+            catkin.find_in_workspaces.find_packages = backup
