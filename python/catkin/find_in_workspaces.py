@@ -64,12 +64,15 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
 
     :param search_dir: The list of subfolders to search in (default contains all valid values: 'bin', 'etc', 'lib', 'libexec', 'share'), ``list``
     :param project: The project name to search for (optional, not possible with the global search_in folders 'bin' and 'lib'), ``str``
-    :param path: The path, ``str``
+    :param path: The path inside the project to search for. May only be not-None if project is not None. ``str``
     :param _workspaces: (optional, used for unit tests), the list of workspaces to use.
     :raises ValueError: if search_dirs contains an invalid folder name
     :returns: List of paths, ``list``
     '''
     search_dirs = _get_valid_search_dirs(search_dirs, project)
+    if path and not project:
+        # should never happen, bug in client code
+        raise RuntimeError('Cannot look for path without project')
     # collect candidate paths
     paths = []
     for workspace in (_workspaces or []):

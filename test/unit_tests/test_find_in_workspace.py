@@ -52,14 +52,15 @@ class FindInWorkspaceTest(unittest.TestCase):
                                'baz/include/foo/foopath',
                                'baz/etc/foo/foopath',
                                'baz/lib/foo/foopath']), (existing, paths))
-
-        (existing, paths) = find_in_workspaces(['share', 'etc', 'lib'], None, 'foopath', _workspaces=['bar', 'baz'])
-        self.assertEqual(([], ['bar/share/foopath',
-                               'bar/etc/foopath',
-                               'bar/lib/foopath',
-                               'baz/share/foopath',
-                               'baz/etc/foopath',
-                               'baz/lib/foopath']), (existing, paths))
+        ## invalid tests case, search with path with no project given
+        # (existing, paths) = find_in_workspaces(['share', 'etc', 'lib'], None, 'foopath', _workspaces=['bar', 'baz'])
+        # self.assertEqual(([], ['bar/share/foopath',
+        #                        'bar/etc/foopath',
+        #                        'bar/lib/foopath',
+        #                        'baz/share/foopath',
+        #                        'baz/etc/foopath',
+        #                        'baz/lib/foopath']), (existing, paths))
+        self.assertRaises(RuntimeError, find_in_workspaces, None, None, 'foopath')
         (existing, paths) = find_in_workspaces(None, None, None, _workspaces=['bar'])
         self.assertEqual(([], ['bar/bin', 'bar/etc', 'bar/include', 'bar/lib', 'bar/share']), (existing, paths))
 
