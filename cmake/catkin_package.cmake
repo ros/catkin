@@ -241,14 +241,15 @@ function(_catkin_package)
     )
   endforeach()
 
-  execute_process(COMMAND catkin_plugins --depends ${PROJECT_NAME}
+  execute_process(COMMAND ${catkin_SOURCE_DIR}/bin/catkin_plugins --depends ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE EXTRA_PLUGIN_DEPENDS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   
-  execute_process(COMMAND catkin_plugins --exports ${PROJECT_NAME}
+  execute_process(COMMAND ${catkin_SOURCE_DIR}/bin/catkin_plugins --exports ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE EXTRA_PLUGIN_EXPORTS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   
+  message(STATUS "${catkin_SOURCE_DIR}/bin/catkin_plugins --exports ${CMAKE_CURRENT_SOURCE_DIR}")
   #message(STATUS "Plugins for package ${PROJECT_NAME} detected.  Adding dependencies ${EXTRA_PLUGIN_DEPENDS} and exports ${EXTRA_PLUGIN_EXPORTS}")
 
   # generate manifest.xml for project
