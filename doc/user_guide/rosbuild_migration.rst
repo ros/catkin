@@ -15,40 +15,41 @@ stacks will eventually be decommissioned in the future.
 Since catkinized packages cannot depend on rosbuild packages, the
 migration has to start with core stacks and move on along the
 dependency chain. This is the motivation for the wet/dry metaphor
-alon a rising tide.
+along a rising tide.
 
 Quick start guide
 .................
 
-.. todo:: The separation into stacks and packages is going to be
-   dropped, then this page needs to be changed accordingly.
-
 At a high level, the key steps to convert a ROS stack from rosbuild to
-catkin are:
+catkin packages are:
 
 1. Create a catkin workspace to hold your migrated projects
-2. Move any project to catkin workspace once all their dependencies are catkinized
+2. Move any project to this catkin workspace once all its dependencies are catkinized
+3. Convert your stack into a meta-package, unless it was a unary rosbuild stack (Unary rosbuild stacks are stacks with just one package, those will become one catkin package)
 
-.. 3. In each stack, update the manifests (``stack.xml``...)
-.. 4. Create a top-level ``CMakeLists.txt`` for the stack...
+ 2. create a catkin package in your old stack folder and name it like the stack, this is going to be the meta-package (as an example, see ros_comm/ros_comm)
+ 3. add all other packages of the old stack as run_depend tags of the meta-package in the package.xml
+ 4. remove the stack.xml, the information from it moves into the package.xml of the meta-package
+ 5. What previously was your 'stack' folder should not contain only packages and at most one meta-package.
 
 5. For each folder containing a ``manifest.xml`` file:
 
- a. Replace the exported explicit compiler and linker flags with a dynamic pkg-config invocation:
-
-   ``<cpp cflags="`pkg-config --cflags PACKAGE_NAME`" lflags="`pkg-config --libs PACKAGE_NAME`"/>``
-
-This allows rosbuild packages to depend on catkinized packages.
-
- b. Create a CMakeLists.txt file containing a ``catkin_project(PACKAGE_NAME)`` invocation...
- c. Combine ``rosdep`` keys from ``manifest.xml`` files into ``stack.xml`` as ``build_depends`` and ``depends`` keys...
+ a. rename the ``manifest.xml`` to ``package.xml``
+ b. add a name tag with the name of the package, which should also be the folder name
+ c. If missing, create a CMakeLists.txt file containing a ``catkin_project()`` invocation
 
 4. In each ``CMakeLists.txt``:
 
- a. Switch from rosbuild macros to the underlying CMake commands
+ a. If rosbuild macros were used, switch from rosbuild macros to the underlying CMake commands
+ b. Declare how your targets (c++ binaries) shall be installed
 
 Detailed migration guide
 ........................
+
+rosbuld wrapped several CMake macros with macros named
+``rosbuild_...``. Catkin attempts to not wrap commands,
+so you will be using the standard cmake macros, with only
+a few added catkin macros if necessary.
 
 - Macro migration:
 

@@ -129,7 +129,7 @@ Main differences between rosbuild and catkin:
 
 - rosbuild always does in-source builds; catkin supports both in-source and out-of-source builds (out-of-source is recommended)
 
-- rosbuild uses ``manifest.xml``; catkin uses ``package.xml``
+- rosbuild uses ``manifest.xml``; catkin uses ``package.xml`` (since groovy)
 - rosbuild requires to export compile and link flags in the manifest manually; catkin declares exported include directories, libraries and dependencies in CMake using ``catkin_package()``
 - rosbuild provides a ``make`` interface to each package; catkin provides a ``cmake`` interface to each package but enables to build multiple packages in a workspace at once
 
