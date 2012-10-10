@@ -48,7 +48,8 @@ def main():
                 raise RuntimeError('Could not find any path, checked the following paths:\n%s' % '\n'.join(checked))
             print(results[0])
         else:
-            print('\n'.join(results))
+            if len(results) > 0:
+                print('\n'.join(results))
 
     except Exception as e:
         sys.exit(str(e))
