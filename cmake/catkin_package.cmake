@@ -241,7 +241,18 @@ function(_catkin_package)
     )
   endforeach()
 
+  execute_process(COMMAND catkin_plugins --depends ${PROJECT_NAME}
+    OUTPUT_VARIABLE EXTRA_PLUGIN_DEPENDS
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  
+  execute_process(COMMAND catkin_plugins --exports ${PROJECT_NAME}
+    OUTPUT_VARIABLE EXTRA_PLUGIN_EXPORTS
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  
+  #message(STATUS "Plugins for package ${PROJECT_NAME} detected.  Adding dependencies ${EXTRA_PLUGIN_DEPENDS} and exports ${EXTRA_PLUGIN_EXPORTS}")
+
   # generate manifest.xml for project
+  #set(EXTRA_EXPORT_FLAGS "<nodelet plugin=\"\${prefix}/test/test_nodelets.xml\"/>")
   configure_file(${catkin_EXTRAS_DIR}/templates/manifest.xml.in
     ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/manifest.xml
     @ONLY

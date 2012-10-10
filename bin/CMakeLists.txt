@@ -3,6 +3,7 @@ set(programs
   catkin_find
   catkin_init_workspace
   catkin_package_version
+  catkin_plugins
   catkin_prepare_release
   catkin_test_results
   catkin_topological_order

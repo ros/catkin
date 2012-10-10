@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+import argparse
+import sys
+import os
+
+from catkin_pkg.packages import find_packages
+from catkin.workspace import get_workspaces
+
+#TODO catkin can probably invoke this with the full path to the package.xml
+
+def parse_args(args=sys.argv[1:]):
+    parser = argparse.ArgumentParser(description='Provides the plugin xml exports for the named package\' package.xml to be inserted into the generated manifest.xml.')
+    parser.add_argument('project', help='The project to find plugins for')
+    parser.add_argument('--exports', dest="exports", action="store_true", help='Generate the exports')
+    parser.add_argument('--depends', dest="depends", action="store_true", help='Generate the necessary depends')
+    args = parser.parse_args(args=args)
+    if not (args.exports or args.depends ):
+        parser.error("exports or depends options required")
+    return args
+
+
+
+
+
+def main():
+    args = parse_args()
+
+
+    plugins = []
+
+    try:
+        workspaces = get_workspaces()
+        
+
+        for w in workspaces:
+            packages = find_packages(w).itervalues()
+            for p in packages:
+                if p.name == args.project:
+                    for e in p.exports:
+                        if 'plugin' in e.attributes:
+                            plugins.append(e)
+
+        for p in plugins:
+            if args.exports:
+                print('<%s plugin="%s"/>' % (p.tagname, p.attributes['plugin']) )
+            elif args.depends:
+                if p.tagname != args.project:
+                    print('<depends package="%s"/>' % p.tagname)
+
+
+    except Exception as e:
+        sys.exit(str(e))
+
+
+if __name__ == '__main__':
+    main()
