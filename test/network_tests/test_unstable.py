@@ -134,5 +134,5 @@ class SimpleUnstableTest(AbstractUnstableTest):
             # succeed([other_build_dir + "/env.sh", "python -c 'import a'"])
             # succeed([other_build_dir + "/env.sh", "python -c 'import b'"])
         finally:
-            pass
-            # shutil.rmtree(other_root_dir)
+            # pass
+            shutil.rmtree(other_root_dir)
