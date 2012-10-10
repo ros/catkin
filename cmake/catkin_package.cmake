@@ -241,11 +241,17 @@ function(_catkin_package)
     )
   endforeach()
 
-  execute_process(COMMAND ${catkin_SOURCE_DIR}/bin/catkin_plugins --depends ${CMAKE_CURRENT_SOURCE_DIR}
+
+  if (BUILDSPACE)
+    set(CATKIN_PLUGINS_PATH ${catkin_SOURCE_DIR}/bin/catkin_plugins)
+  else(BUILDSPACE)
+    set(CATKIN_PLUGINS_PATH ${CATKIN_GLOBAL_BIN_DESTINATION}/catkin_plugins)
+  endif(BUILDSPACE)
+  execute_process(COMMAND ${CATKIN_PLUGINS_PATH} --depends ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE EXTRA_PLUGIN_DEPENDS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   
-  execute_process(COMMAND ${catkin_SOURCE_DIR}/bin/catkin_plugins --exports ${CMAKE_CURRENT_SOURCE_DIR}
+  execute_process(COMMAND ${CATKIN_PLUGINS_PATH} --exports ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE EXTRA_PLUGIN_EXPORTS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   
