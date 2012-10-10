@@ -32,12 +32,14 @@ e.g. for package 'pkg'::
          srv/
             PkgSrv.srv
 
+.. todo:: Mention what happens with a ``manifest.xml`` file for backward compatibility with rosbuild
+
 .. rubric:: Build directory
 
 ::
 
    build/
-      CATKIN_NO_SUBDIRS           # an empty file to guide catkin not search in subfolders for package.xml files
+      CATKIN_NO_SUBDIRS           # an empty file to guide catkin to not search in subfolders for package.xml files
       CMakeCache.txt
       cmake_install.cmake
       Makefile
@@ -99,7 +101,7 @@ The layout of the install directory follows the `Filesystem Hierarchy Standard (
                               # very similar to the buildspace folder
                               # therefore in the following only the differences are mentioned
 
-      CATKIN_WORKSPACE        # identifies folder as a catkin workspace
+      .CATKIN_WORKSPACE        # identifies folder as a catkin workspace
                               # the file is empty which indicates that it is an installspace
 
       lib/

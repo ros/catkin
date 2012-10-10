@@ -12,7 +12,7 @@ without other commands in between::
   cmake_minimum_required(VERSION 2.8.3)
   project(myproject)
   find_package(catkin REQUIRED <COMPONENTS ...>)
-  catkin_project(${PROJECT_NAME} <...>)
+  catkin_project(<...>)
 
 
 **Use ${PROJECT_NAME} wherever possible**
@@ -22,20 +22,20 @@ repeating the project name manually or using fixed names.
 
 You can use ${PROJECT_NAME} as prefix for variable names as well, as shown in examples below.
 
-Dont do this::
+After you defined your project name like this::
 
-  project(myproject)
-  catkin_project(myproject)
+   project(myproject)
+
+dont do this::
+
   catkin_add_gtest(test ...)
   add_executable(myproject ...)
   set(use_feature 42 CACHED STRING "description")
   option(use_feature "on or off" OFF)
   macro(xyz) ...
 
-Do this::
+do this instead::
 
-  project(myproject)
-  catkin_project(${PROJECT_NAME})
   catkin_add_gtest(${PROJECT_NAME}_test ...)
   add_executable(${PROJECT_NAME} ...)
   set(${PROJECT_NAME}_use_feature 42 CACHED STRING "description")

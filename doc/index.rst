@@ -14,6 +14,14 @@ modified and is used by a large set of packages.
 This version of the documentation is specific to the
 `Groovy <http://ros.org/wiki/groovy>`_ release (or later).
 
+Key benefits of catkin:
+
+* Standard compliance (FHS, Cmake)
+* Convenient and fast configuration of multiple projects
+* Fast build of multiple projects
+* Support for C++ and python projects
+* Build-space can be used like an install-space (since groovy)
+
 Code & tickets
 --------------
 
