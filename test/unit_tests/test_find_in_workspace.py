@@ -16,7 +16,8 @@ except ImportError as impe:
 class FindInWorkspaceTest(unittest.TestCase):
 
     def test_get_valid_search_dirs(self):
-        self.assertEqual([], _get_valid_search_dirs([], None))
+        self.assertEqual(['bin', 'etc', 'include', 'lib', 'share'], _get_valid_search_dirs([], None))
+        self.assertEqual(['bin', 'etc', 'include', 'lib', 'share'], _get_valid_search_dirs(None, None))
         self.assertEqual(['etc', 'include', 'libexec', 'share'],
                          _get_valid_search_dirs(None, 'foo'))
         self.assertEqual(['bin', 'etc', 'include', 'lib', 'share'],
@@ -121,6 +122,16 @@ class FindInWorkspaceTest(unittest.TestCase):
                               os.path.join(root_dir, 'ws2', 'src', 'p1'),
                               os.path.join(root_dir, 'ws2', 'buildspace', 'etc', 'p1')], paths)
             self.assertEqual([os.path.join(root_dir, 'ws2', 'src', 'p1'), os.path.join(root_dir, 'ws2', 'buildspace', 'etc', 'p1')], existing)
+
+            (existing, paths) = find_in_workspaces([], 'p1', None, _workspaces=[os.path.join(root_dir, 'ws2/buildspace'), os.path.join(root_dir, 'ws1/buildspace')])
+            self.assertEqual([os.path.join(root_dir, 'ws2', 'buildspace', 'etc', 'p1'),
+                              os.path.join(root_dir, 'ws2', 'buildspace', 'include', 'p1'),
+                              os.path.join(root_dir, 'ws2', 'buildspace', 'lib', 'p1'),
+                              os.path.join(root_dir, 'ws2', 'buildspace', 'share', 'p1'),
+
+                              # share means also search in src
+                              os.path.join(root_dir, 'ws2', 'src', 'p1')], paths)
+            self.assertEqual([os.path.join(root_dir, 'ws2', 'buildspace', 'etc', 'p1'), os.path.join(root_dir, 'ws2', 'buildspace', 'include', 'p1'), os.path.join(root_dir, 'ws2', 'src', 'p1')], existing)
             
         finally:
             shutil.rmtree(root_dir)
