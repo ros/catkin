@@ -1,0 +1,79 @@
+# Using catkin from source instead
+# - git:
+#     uri: 'git://github.com/ros/catkin.git'
+#     local-name: catkin
+#     version: fuerte-devel
+
+
+- git:
+    uri: 'git://github.com/ros/genmsg.git'
+    local-name: genmsg
+    version: fuerte-devel
+
+- git:
+    uri: 'git://github.com/ros/gencpp.git'
+    local-name: gencpp
+    version: fuerte-devel
+
+- git:
+    uri: 'git://github.com/ros/genlisp.git'
+    local-name: genlisp
+    version: fuerte-devel
+
+- git:
+    uri: 'git://github.com/ros/genpy.git'
+    local-name: genpy
+    version: fuerte-devel
+
+- git:
+    uri: 'git://github.com/ros/langs.git'
+    local-name: langs
+    version: fuerte-devel
+
+# - git:
+#     uri: 'git://github.com/ros/langs-dev.git'
+#     local-name: langs-dev
+#     version: master
+
+- git:
+    uri: 'git://github.com/ros/std_msgs.git'
+    local-name: std_msgs
+    version: fuerte-devel
+
+- git:
+    uri: 'git://github.com/ros/roscpp_core.git'
+    local-name: roscpp_core
+    version: fuerte-devel
+
+# - git:
+#     uri: 'git://github.com/ros/ros_comm.git'
+#     local-name: ros_comm
+#     version: fuerte-devel
+
+# - git:
+#     uri: 'git://github.com/ros/ros_tutorials.git'
+#     local-name: ros_tutorials
+#     version: fuerte-devel
+
+- svn:
+    uri: 'https://code.ros.org/svn/ros/stacks/ros/branches/ros-1.8'
+    local-name: ros
+
+- git:
+    uri: 'git://github.com/ros/common_msgs.git'
+    local-name: common_msgs
+    version: fuerte-devel
+
+- hg:
+    local-name: rospack
+    uri: https://kforge.ros.org/rosrelease/rospack
+    version: fuerte-devel
+
+- svn:
+    local-name: rx
+    uri: https://code.ros.org/svn/ros/stacks/rx/trunk
+
+# - hg:
+#     local-name: actionlib
+#     uri: https://kforge.ros.org/common/actionlib
+#     version: fuerte-devel
