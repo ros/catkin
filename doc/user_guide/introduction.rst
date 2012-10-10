@@ -20,8 +20,7 @@ The ROS ecosystem has a philosophy of federated development. Many
 teams around the world develop their own modular ROS
 packages. Building, installing, packaging and deploying those packages
 is a common chore, and the catkin macros make all these tasks easier,
-and provide a standard so that it becomes easier to use code by other
-teams.
+and provide a standard so that it becomes easier to use share code.
 
 By encouraging best practice standards, ROS packages should in the
 future become more portable and maintainable. Catkin encourages to
@@ -78,6 +77,20 @@ processed, in what way, to generate, compile, link, and/or install a chunk
 of code.  As it processes files, the build system is specifically
 responsible for managing dependencies: it must understand which parts of the
 system depend which other parts, and process them in the appropriate order.
+
+What is CMake?
+..............
+
+`CMake <http://www.cmake.org/>` is a long-lived open source build
+system, mostly used for C/C++ projects. CMake defines a high-level
+macro language in which to define build projects. From this, cmake
+generates lower-level build files like Makefiles, depending on the
+environment. As a result, CMake is more portable than other
+traditional C++ build systems which are tied to just one
+environment. Additionally CMake provides several convenience tools
+like graphical UIs for configuration of project builds.
+
+In Cmake, you define your builds in files called ``CMakeLists.txt``
 
 What is rosbuild?
 .................

@@ -15,12 +15,14 @@ Design sketch
    the dependency ordering of packages by examining these files.
 
 * The ability to build only specific targets or sets of targets are
-   provided through cmake's "natural" mechanisms.
+   provided through cmake's "natural" mechanisms
+   (Meaning ``$ make foo`` only builds target foo)
 
 * The build does not modify the source directories in any way.
 
 * The build does not depend on any compiled code (i.e. ``rospack``)
    for ease of compiling on windows, cross-compiling for ARM, etc.
+   (but may depend on python scripts)
 
 * Packages use standard CMake macros, modulo a few that are provided
    by catkin.
@@ -32,6 +34,10 @@ Design sketch
    poorest taste.  Exception: for now, Sphinx-generated Makefiles used
    to generate documentation are okay.
 
+* The build process creates a buildpace folder that has the same
+  layout as an installation, so development cycles do not need to
+  invoke ``make install`` frequently, if the developer decides
+  to use that buildspace directly.
 
 Main trickery
 -------------
@@ -39,9 +45,9 @@ Main trickery
 .. rubric:: Dependency ordering of packages
 
 During the CMake run the main source directory is scanned for
-packages to build.  Each package indicates that it is buildable, and
+packages to build. Each package indicates that it is buildable, and
 what its dependencies in the ``package.xml`` file.  Catkin considers
-the ``build`` and ``buildtool`` dependencies as specified in  the 
+the ``build`` and ``buildtool`` dependencies as specified in  the
 `REP 127 <http://www.ros.org/reps/rep-0127.html>`_, topologically
 sorts the packages and calls ``add_subdirectory()`` on each package
 in order.
