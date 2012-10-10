@@ -47,7 +47,7 @@ def main():
                 print('<%s plugin="%s"/>' % (p.tagname, p.attributes['plugin']) )
             elif args.depends:
                 if p.tagname != args.project:
-                    print('<depends package="%s"/>' % p.tagname)
+                    print('<depend package="%s"/>' % p.tagname)
 
 
     except Exception as e:
