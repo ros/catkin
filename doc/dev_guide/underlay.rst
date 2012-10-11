@@ -1,12 +1,12 @@
-How to bootstrap a ROS core workspace
-=====================================
+How to bootstrap ROS from source
+================================
 
 .. highlight:: catkin-sh
 
-This page explains how to create a catkin and ROS underlay. An
-underlay is a build from source (with an optional installation) of
+This page explains the preferred way to create a catkin and ROS underlay.
+An underlay is a build from source (with an optional installation) of
 catkin and the base ROS packages.  It has to be manually updated and
-maintained, but enable to modify these packages.
+maintained, but enables to modify these packages.
 
 This is required for systems where the Debian packages cannot be
 installed (e.g. Windows, MacOS), or for developers of the base ROS
