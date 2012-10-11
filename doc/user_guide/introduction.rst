@@ -20,8 +20,7 @@ The ROS ecosystem has a philosophy of federated development. Many
 teams around the world develop their own modular ROS
 packages. Building, installing, packaging and deploying those packages
 is a common chore, and the catkin macros make all these tasks easier,
-and provide a standard so that it becomes easier to use code by other
-teams.
+and provide a standard so that it becomes easier to use share code.
 
 By encouraging best practice standards, ROS packages should in the
 future become more portable and maintainable. Catkin encourages to
@@ -79,6 +78,20 @@ of code.  As it processes files, the build system is specifically
 responsible for managing dependencies: it must understand which parts of the
 system depend which other parts, and process them in the appropriate order.
 
+What is CMake?
+..............
+
+`CMake <http://www.cmake.org/>` is a long-lived open source build
+system, mostly used for C/C++ projects. CMake defines a high-level
+macro language in which to define build projects. From this, cmake
+generates lower-level build files like Makefiles, depending on the
+environment. As a result, CMake is more portable than other
+traditional C++ build systems which are tied to just one
+environment. Additionally CMake provides several convenience tools
+like graphical UIs for configuration of project builds.
+
+In Cmake, you define your builds in files called ``CMakeLists.txt``
+
 What is rosbuild?
 .................
 
@@ -129,7 +142,7 @@ Main differences between rosbuild and catkin:
 
 - rosbuild always does in-source builds; catkin supports both in-source and out-of-source builds (out-of-source is recommended)
 
-- rosbuild uses ``manifest.xml``; catkin uses ``package.xml``
+- rosbuild uses ``manifest.xml``; catkin uses ``package.xml`` (since groovy)
 - rosbuild requires to export compile and link flags in the manifest manually; catkin declares exported include directories, libraries and dependencies in CMake using ``catkin_package()``
 - rosbuild provides a ``make`` interface to each package; catkin provides a ``cmake`` interface to each package but enables to build multiple packages in a workspace at once
 

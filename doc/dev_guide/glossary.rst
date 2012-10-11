@@ -15,7 +15,7 @@ Glossary
       ``find_package()`` in "config mode".
 
    dry
-      a stack/package/whatever not yet converted to catkin.
+      a rosbuild stack or package not yet converted to catkin.
 
    Environment files
       The `setup.sh`, `setup.zsh` and `setup.bash` files generated

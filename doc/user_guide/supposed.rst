@@ -49,7 +49,7 @@ The specification for package.xml is in `REP 127 <http://www.ros.org/reps/rep-01
 CMakeLists.txt
 ^^^^^^^^^^^^^^
 
-The basic case::
+The basic case of creating a C++ library::
 
    cmake_minimum_required(VERSION 2.8.3)
    project(pkgname)

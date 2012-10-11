@@ -5,16 +5,36 @@ Catkin still changes a lot, so a migration from catkin in fuerte to
 catkin in groovy is necessary. Changes to catkin in Groovy are not
 designed to be backwards compatible to catkin in Fuerte.
 
-To update an already catkinized ROS stack from the Fuerte-version of catkin to Groovy the following steps are necessary:
+The main difference to know is that in fuerte, the atomic unit of
+build was a stack declared in a ``stack.xml`` file, whereas in groovy,
+``stacks`` do no exist anymore, and the atomic unit is a package
+declared in a ``package.xml`` file.
 
-Make a meta-package for the stack.
-----------------------------------
+If in fuerte you had a stack with several subprojects acting as
+packages, this should be migrated to one meta-package and several
+packages for groovy. If instead you had a stack with sources, this 
+can become a single catkin package.
 
-The latest version of Catkin does not support the idea of a "stack" of packages which get wrapped up together into a
-Debian (or similar) installable package.  Instead, catkin packages now get built into separate installable Debian
-(or similar) packages.  To maintain compatibility with software which has a dependency on the stack name, you need to
-make a new catkin package which is a "metapackage".  This package has the same name as the stack and contains no
-source code, only a list of dependencies containing all the packages which used to be in the stack.
+Meta-packages are not required for packages, they may just be helpful
+to define a relationship between packages, and for installing your
+packages it might be easier to just give the name of a meta-package
+than to list all your packages.
+
+To update an already catkinized ROS stack from the Fuerte-version of
+catkin to Groovy the following steps are necessary:
+
+Make a meta-package for the stack
+---------------------------------
+
+The version of Catkin for ROS groovy does not support the idea of a
+"stack" of packages which get wrapped up together into a Debian (or
+similar) installable package. Instead, catkin packages now get built
+into separate installable Debian (or similar) packages.  To maintain
+compatibility with software which has a dependency on the stack name,
+you need to make a new catkin package which is a "metapackage".  This
+package has the same name as the stack and contains no source code,
+only a list of dependencies containing all the packages which used to
+be in the stack.
 
 For example, say our old stack was named "stick" and it had 2 packages: "pickage" and "peckage".  The directories
 would look like this::
@@ -31,6 +51,8 @@ file::
   /stick/stick/CMakeLists.txt
   /stick/pickage/... (pickage files)
   /stick/peckage/... (peckage files)
+
+.. todo:: ros_comm does not define any CMakeLists.txt, do we need this?
 
 The contents of the /stick/stick/CMakeLists.txt file should look like this::
 
@@ -66,10 +88,23 @@ Then /stick/stick/package.xml looks like this::
 
 The rest of these instructions refer to changes within regular (not meta-) catkin packages.
 
-Update `CMakeLists.txt`` files
-------------------------------
+Migrate packages
+----------------
 
-* Instead of ``find_package(ROS ...)`` use ``find_package(catkin ...)``.
+In fuerte, catkin had no strong notion of packages, only stacks, and
+package manifests were at most kept for backwards compatibility with
+rosbuild. In groovy, it was decided to instead drop the notion of
+stacks (for meta-packages), and make packages the atomic unit of build.
+
+1. Rename ``manifest.xml`` to ``package.xml``, or create new ``package.xml``.
+2. Adapt the contents of ``package.xml``
+
+ * add a name tag
+ * add a maintainer tag
+
+3. Create/Update `CMakeLists.txt`` files
+
+ * Instead of ``find_package(ROS ...)`` use ``find_package(catkin ...)``.
 
   Make sure to update the corresponding variables like ``ROS_INLCUDE_DIRS`` to ``catkin_INCLUDE_DIRS``.
 
