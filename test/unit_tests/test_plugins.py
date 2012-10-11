@@ -4,14 +4,14 @@ import unittest
 from mock import Mock
 
 import imp
-imp.load_source('catkin_plugins',
+imp.load_source('create_plugin_xml',
                 os.path.join(os.path.dirname(__file__),
-                             '..', '..', 'cmake', 'catkin_plugins.py'))
+                             '..', '..', 'cmake', 'create_plugin_xml.py'))
 
-from catkin_plugins import _get_output
+from create_plugin_xml import _get_output
 
 
-class CatkinPluginsTest(unittest.TestCase):
+class PluginXmlTest(unittest.TestCase):
 
     def test_get_output(self):
         package = Mock()
