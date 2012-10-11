@@ -27,10 +27,10 @@ def _get_output(package, exports=True, depends=False):
 
     for plugin in plugins:
         if exports:
-            output.append('<%s plugin="%s"/>' % (plugin.tagname, plugin.attributes['plugin']))
+            output.append('    <%s plugin="%s"/>' % (plugin.tagname, plugin.attributes['plugin']))
         elif depends:
             if plugin.tagname != package.name:
-                output.append('<depend package="%s"/>' % plugin.tagname)
+                output.append('  <depend package="%s"/>' % plugin.tagname)
     return output
 
 
