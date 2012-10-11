@@ -251,10 +251,10 @@ function(_catkin_package)
     OUTPUT_VARIABLE EXTRA_PLUGIN_EXPORTS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   
-  message(STATUS "Plugins for package ${PROJECT_NAME} detected.  Adding dependencies ${EXTRA_PLUGIN_DEPENDS} and exports ${EXTRA_PLUGIN_EXPORTS} into the manifest.")
-
+  if (EXTRA_PLUGIN_EXPORTS)
+    message(STATUS "Plugins for package ${PROJECT_NAME} detected.  Adding dependencies ${EXTRA_PLUGIN_DEPENDS} and exports ${EXTRA_PLUGIN_EXPORTS} into the manifest.")
+  endif(EXTRA_PLUGIN_EXPORTS)
   # generate manifest.xml for project
-  #set(EXTRA_EXPORT_FLAGS "<nodelet plugin=\"\${prefix}/test/test_nodelets.xml\"/>")
   configure_file(${catkin_EXTRAS_DIR}/templates/manifest.xml.in
     ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/manifest.xml
     @ONLY

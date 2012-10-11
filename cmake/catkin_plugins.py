@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+
+
+
 from __future__ import print_function
 import argparse
 import sys
@@ -7,10 +10,9 @@ import os
 
 from catkin_pkg.package import parse_package
 
-#TODO catkin can probably invoke this with the full path to the package.xml
 
 def parse_args(args=sys.argv[1:]):
-    parser = argparse.ArgumentParser(description='Provides the plugin xml exports for the named package\' package.xml to be inserted into the generated manifest.xml.')
+    parser = argparse.ArgumentParser(description='Provides the plugin xml exports for the package.xml found in the path to be inserted into the generated manifest.xml.')
     parser.add_argument('file', help='The project to find plugins for')
     parser.add_argument('--exports', dest="exports", action="store_true", help='Generate the exports')
     parser.add_argument('--depends', dest="depends", action="store_true", help='Generate the necessary depends')
@@ -28,9 +30,7 @@ def main():
 
     plugins = []
     try:
-        #sys.stderr.write("Starting processing\n")
         package = parse_package(args.file)
-        #sys.stderr.write("working on package %s" % package)
         for e in package.exports:
             if 'plugin' in e.attributes:
                 plugins.append(e)
