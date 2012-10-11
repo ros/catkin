@@ -4,6 +4,18 @@ Design sketch
 * There is only one invocation of CMake (and make) to build a source
    directory containing N packages.
 
+* This install target obeys the environment variable ``DESTDIR`` for
+  ease of packaging.
+
+* Build Parameters:
+
+ * The standard set of CMake variables, especially
+   ``CMAKE_INSTALL_PREFIX``, ``CMAKE_BUILD_TYPE``,
+   ``CMAKE_TOOLCHAIN_FILE`` etc.
+ * Assorted others as needed by individual packages, i.e. to
+   enable/disable certain features or dependencies.
+
+
 * There is no search of ROS_PACKAGE_PATH: the packages to be built
    are the subdirectories (potentially recursive) of the
    ``CMAKE_SOURCE_DIR``.
