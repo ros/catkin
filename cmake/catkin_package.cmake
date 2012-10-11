@@ -241,6 +241,18 @@ function(_catkin_package)
     )
   endforeach()
 
+  set(CREATE_PLUGIN_XML_PATH ${catkin_EXTRAS_DIR}/create_plugin_xml.py)
+  execute_process(COMMAND ${CREATE_PLUGIN_XML_PATH} --depends ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE EXTRA_PLUGIN_DEPENDS
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  
+  execute_process(COMMAND ${CREATE_PLUGIN_XML_PATH} --exports ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE EXTRA_PLUGIN_EXPORTS
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  
+  if (EXTRA_PLUGIN_EXPORTS)
+    message(STATUS "Plugins for package ${PROJECT_NAME} detected.  Adding dependencies ${EXTRA_PLUGIN_DEPENDS} and exports ${EXTRA_PLUGIN_EXPORTS} into the manifest.")
+  endif(EXTRA_PLUGIN_EXPORTS)
   # generate manifest.xml for project
   configure_file(${catkin_EXTRAS_DIR}/templates/manifest.xml.in
     ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/manifest.xml
