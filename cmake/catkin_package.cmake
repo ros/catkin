@@ -242,11 +242,7 @@ function(_catkin_package)
   endforeach()
 
 
-  if (BUILDSPACE)
-    set(CATKIN_PLUGINS_PATH ${catkin_SOURCE_DIR}/bin/catkin_plugins)
-  else(BUILDSPACE)
-    set(CATKIN_PLUGINS_PATH ${CATKIN_GLOBAL_BIN_DESTINATION}/catkin_plugins)
-  endif(BUILDSPACE)
+  set(CATKIN_PLUGINS_PATH ${catkin_EXTRAS_DIR}/catkin_plugins.py)
   execute_process(COMMAND ${CATKIN_PLUGINS_PATH} --depends ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE EXTRA_PLUGIN_DEPENDS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -255,8 +251,7 @@ function(_catkin_package)
     OUTPUT_VARIABLE EXTRA_PLUGIN_EXPORTS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   
-  message(STATUS "${catkin_SOURCE_DIR}/bin/catkin_plugins --exports ${CMAKE_CURRENT_SOURCE_DIR}")
-  #message(STATUS "Plugins for package ${PROJECT_NAME} detected.  Adding dependencies ${EXTRA_PLUGIN_DEPENDS} and exports ${EXTRA_PLUGIN_EXPORTS}")
+  message(STATUS "Plugins for package ${PROJECT_NAME} detected.  Adding dependencies ${EXTRA_PLUGIN_DEPENDS} and exports ${EXTRA_PLUGIN_EXPORTS} into the manifest.")
 
   # generate manifest.xml for project
   #set(EXTRA_EXPORT_FLAGS "<nodelet plugin=\"\${prefix}/test/test_nodelets.xml\"/>")
