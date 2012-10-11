@@ -241,13 +241,12 @@ function(_catkin_package)
     )
   endforeach()
 
-
-  set(CATKIN_PLUGINS_PATH ${catkin_EXTRAS_DIR}/catkin_plugins.py)
-  execute_process(COMMAND ${CATKIN_PLUGINS_PATH} --depends ${CMAKE_CURRENT_SOURCE_DIR}
+  set(CREATE_PLUGIN_XML_PATH ${catkin_EXTRAS_DIR}/create_plugin_xml.py)
+  execute_process(COMMAND ${CREATE_PLUGIN_XML_PATH} --depends ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE EXTRA_PLUGIN_DEPENDS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   
-  execute_process(COMMAND ${CATKIN_PLUGINS_PATH} --exports ${CMAKE_CURRENT_SOURCE_DIR}
+  execute_process(COMMAND ${CREATE_PLUGIN_XML_PATH} --exports ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE EXTRA_PLUGIN_EXPORTS
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   
