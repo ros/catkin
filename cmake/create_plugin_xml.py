@@ -22,12 +22,12 @@ def _get_output(package, exports=True, depends=False):
     output = []
     plugins = []
     for export in package.exports:
-        if 'plugin' in export.attributes:
+        if 'plugin' in export.attributes or export.tagname == 'rosbuild':
             plugins.append(export)
 
     for plugin in plugins:
         if exports:
-            output.append('    <%s plugin="%s"/>' % (plugin.tagname, plugin.attributes['plugin']))
+            output.append( '    %s' % str(plugin) )
         elif depends:
             if plugin.tagname != package.name:
                 output.append('  <depend package="%s"/>' % plugin.tagname)
