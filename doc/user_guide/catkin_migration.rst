@@ -11,20 +11,20 @@ build was a stack declared in a ``stack.xml`` file, whereas in groovy,
 declared in a ``package.xml`` file.
 
 If in fuerte you had a stack with several subprojects acting as
-packages, this should be migrated to one meta-package and several
+packages, this should be migrated to one metapackage and several
 packages for groovy. If instead you had a stack with sources, this 
 can become a single catkin package.
 
-Meta-packages are not required for packages, they may just be helpful
+Metapackages are not required for packages, they may just be helpful
 to define a relationship between packages, and for installing your
-packages it might be easier to just give the name of a meta-package
+packages it might be easier to just give the name of a metapackage
 than to list all your packages.
 
 To update an already catkinized ROS stack from the Fuerte-version of
 catkin to Groovy the following steps are necessary:
 
-Make a meta-package for the stack
----------------------------------
+Make a metapackage for the stack
+--------------------------------
 
 The version of Catkin for ROS groovy does not support the idea of a
 "stack" of packages which get wrapped up together into a Debian (or
@@ -44,32 +44,20 @@ would look like this::
   /stick/pickage/... (pickage files)
   /stick/peckage/... (peckage files)
 
-The new version adds a new "stick" metapackage subdirectory under /stick, along with a package.xml and CMakeLists.txt
-file::
+The new version adds a new "stick" metapackage subdirectory under /stick, along with a package.xml file::
 
   /stick/stick/package.xml
-  /stick/stick/CMakeLists.txt
   /stick/pickage/... (pickage files)
   /stick/peckage/... (peckage files)
 
-.. todo:: ros_comm does not define any CMakeLists.txt, do we need this?
+.. note:: Metapackages do not have a CMakeLists.txt file.
 
-The contents of the /stick/stick/CMakeLists.txt file should look like this::
-
-  cmake_minimum_required(VERSION 2.8.3)
-  project(stick)
-  find_package(catkin REQUIRED)
-  catkin_package()
-
-Note that the name of the metapackage ("stick") is stored once in here, but no other changes are needed for
-a metapackage.
-
-Then /stick/stick/package.xml looks like this::
+The contents of the /stick/stick/package.xml looks like this::
 
   <package>
     <name>stick</name>
     <version>0.1.1</version>
-    <description>Meta-package relevant to sticks.</description>
+    <description>Metapackage relevant to sticks.</description>
     <maintainer email="coder@example.com">Lucy Coder</maintainer>
     <license>BSD</license>
 
@@ -94,7 +82,7 @@ Migrate packages
 In fuerte, catkin had no strong notion of packages, only stacks, and
 package manifests were at most kept for backwards compatibility with
 rosbuild. In groovy, it was decided to instead drop the notion of
-stacks (for meta-packages), and make packages the atomic unit of build.
+stacks (for metapackages), and make packages the atomic unit of build.
 
 1. Rename ``manifest.xml`` to ``package.xml``, or create new ``package.xml``.
 2. Adapt the contents of ``package.xml``

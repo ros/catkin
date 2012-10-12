@@ -101,7 +101,7 @@ The layout of the install directory follows the `Filesystem Hierarchy Standard (
                               # very similar to the buildspace folder
                               # therefore in the following only the differences are mentioned
 
-      .CATKIN_WORKSPACE        # identifies folder as a catkin workspace
+      .CATKIN_WORKSPACE       # identifies folder as a catkin workspace
                               # the file is empty which indicates that it is an installspace
 
       lib/

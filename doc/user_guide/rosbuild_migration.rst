@@ -25,18 +25,18 @@ catkin packages are:
 
 1. Create a catkin workspace to hold your migrated projects
 2. Move any project to this catkin workspace once all its dependencies are catkinized
-3. Convert your stack into a meta-package, unless it was a unary rosbuild stack (Unary rosbuild stacks are stacks with just one package, those will become one catkin package)
+3. Convert your stack into a metapackage, unless it was a unary rosbuild stack (Unary rosbuild stacks are stacks with just one package, those will become one catkin package)
 
- 2. create a catkin package in your old stack folder and name it like the stack, this is going to be the meta-package (as an example, see ros_comm/ros_comm)
- 3. add all other packages of the old stack as run_depend tags of the meta-package in the package.xml
- 4. remove the stack.xml, the information from it moves into the package.xml of the meta-package
- 5. What previously was your 'stack' folder should not contain only packages and at most one meta-package.
+ 2. create a catkin package in your old stack folder and name it like the stack, this is going to be the metapackage (as an example, see ros_comm/ros_comm)
+ 3. add all other packages of the old stack as run_depend tags of the metapackage in the package.xml
+ 4. remove the stack.xml, the information from it moves into the package.xml of the metapackage
+ 5. What previously was your 'stack' folder should not contain only packages and at most one metapackage.
 
 5. For each folder containing a ``manifest.xml`` file:
 
  a. rename the ``manifest.xml`` to ``package.xml``
  b. add a name tag with the name of the package, which should also be the folder name
- c. If missing, create a CMakeLists.txt file containing a ``catkin_project()`` invocation
+ c. If missing, create a CMakeLists.txt file containing a ``catkin_package()`` invocation
 
 4. In each ``CMakeLists.txt``:
 

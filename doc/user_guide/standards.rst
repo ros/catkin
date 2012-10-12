@@ -4,7 +4,7 @@ CMake coding standards
 In order to make your ROS packages most maintainable and avoid several
 frequent errors, follow the standards below.
 
-**Call catkin_project early**
+**Call catkin_package early**
 
 The following line should always appear like this in this order
 without other commands in between::
@@ -12,7 +12,7 @@ without other commands in between::
   cmake_minimum_required(VERSION 2.8.3)
   project(myproject)
   find_package(catkin REQUIRED <COMPONENTS ...>)
-  catkin_project(<...>)
+  catkin_package(<...>)
 
 
 **Use ${PROJECT_NAME} wherever possible**
