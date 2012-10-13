@@ -27,4 +27,6 @@ class PluginXmlTest(unittest.TestCase):
         package.exports = [e1, e2]
         package.depends = [d1, d2]
         result = _get_output(package, False, True)
-        self.assertEqual(['<depend package="e2"/>'], result)
+        self.assertEqual(['  <depend package="e2"/>'], result)
+        result = _get_output(package, True, False)
+        self.assertEqual(['    %s' % str(e2)], result)
