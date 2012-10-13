@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import argparse
+import os
+import sys
+import re
+
+from catkin_pkg.package_templates import create_package_files, PackageTemplate
+from catkin_pkg.package import Person, Url, Export, Dependency
+
+"""This script creates the skeletton of a catkin package"""
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Creates a new catkin package')
+    parser.add_argument('name',
+                        nargs=1,
+                        help='The name for the package')
+    parser.add_argument('dependencies',
+                        nargs='*',
+                        help='Package Dependencies')
+    parser.add_argument('-V', '--pkg_version',
+                        action='store',
+                        help='Initial Package version')
+    parser.add_argument('-D', '--description',
+                        action='store',
+                        help='Description')
+    parser.add_argument('-l', '--license',
+                        action='append',
+                        help='Name for License, (e.g. BSD, MIT, GPLv3...)')
+    parser.add_argument('-a', '--author',
+                        action='append',
+                        help='A single author, may be used multiple times')
+    parser.add_argument('-m', '--maintainer',
+                        action='append',
+                        help='A single maintainer, may be used multiple times')
+
+    args = parser.parse_args()
+
+    try:
+        package_name = args.name[0]
+        licenses = args.license or []
+        if not licenses:
+            licenses = ["TODO"]
+        maintainer_names = args.maintainer
+        if not maintainer_names:
+            import getpass
+            maintainer_names = [getpass.getuser()]
+        maintainers = []
+        for maintainer_name in maintainer_names:
+            maintainers.append(Person(maintainer_name, '%s@todo.todo' % maintainer_name))
+        dependencies = []
+        for dep in args.dependencies:
+            dependencies.append(Dependency(dep))
+        package = PackageTemplate(
+            name=package_name,
+            version=args.pkg_version or '0.0.0',
+            description=args.description,
+            build_depends=dependencies,
+            components=args.dependencies,
+            licenses=licenses,
+            authors=args.author or [],
+            maintainers=maintainers,
+            urls=[])
+        create_package_files(os.path.join(os.getcwd(), package_name), package)
+        print('Success')
+    except ValueError as vae:
+        parser.error(str(vae))
