@@ -82,6 +82,14 @@
 macro(catkin_package)
   debug_message(10 "catkin_package() called in file ${CMAKE_CURRENT_LIST_FILE}")
 
+  # verify that project() has been called before
+  if(NOT PROJECT_NAME)
+    message(FATAL_ERROR "catkin_package() PROJECT_NAME is not set. You must call project() before you can call catkin_package().")
+  endif()
+  if(PROJECT_NAME STREQUAL Project)
+message(FATAL_ERROR "catkin_package() PROJECT_NAME is not set. The variable is set to 'Project', which is not an allowed project name. You must call project() before you can call catkin_package().")
+  endif()
+
   # call catkin_package_xml() if it has not been called manually before
   if(NOT _CATKIN_CURRENT_PACKAGE)
     catkin_package_xml()

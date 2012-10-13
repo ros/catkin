@@ -63,7 +63,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
                          expect=fail)
         print("failed as expected, out=", out)
 
-        assert 'catkin_project() CATKIN_CURRENT_PACKAGE is not set.' in out
+        self.assertTrue('catkin_package() PROJECT_NAME is not set.' in out, out)
         # assert 'You must call project() with the same name before.' in out
 
     def test_plugin(self):
