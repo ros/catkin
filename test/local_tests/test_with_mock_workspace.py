@@ -80,9 +80,12 @@ class MockTest(AbstractCatkinWorkspaceTest):
         with open(manifest_file, 'r') as fhand:
             contents = fhand.read()
         self.assertTrue('''  <depend package="fooexp"/>
-  <depend package="barexp"/>''' in contents, contents)
+  <depend package="barexp"/>
+  <depend package="dooexp"/>''' in contents, contents)
+        # attribs sorted in catkin_pkg
         self.assertTrue('''    <fooexp plugin="foo"/>
-    <barexp plugin="bar"/>''' in contents, contents)
+    <barexp plugin="bar"/>
+    <dooexp attrib2="42" plugin="doo"/>''' in contents, contents)
 
     # Test was not finished apparently
     # def test_help_bad_changelog(self):
