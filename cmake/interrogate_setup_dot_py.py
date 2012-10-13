@@ -54,10 +54,10 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
     :param package_dir: {modulename: path}
     :pkgs: [list of str] python_packages declared in catkin package
     """
+    prefix = '%s_SETUP_PY' % package_name
     result = []
-    result.append(r'set(%s_VERSION "%s")' % (package_name, version))
-    result.append(r'set(%s_SCRIPTS "%s")' % (package_name,
-                                     ';'.join(scripts)))
+    result.append(r'set(%s_VERSION "%s")' % (prefix, version))
+    result.append(r'set(%s_SCRIPTS "%s")' % (prefix, ';'.join(scripts)))
 
     # Remove packages with '.' separators.
     #
@@ -89,8 +89,8 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
     for pkg in pkgs:
         resolved_pkgs += [os.path.join(locations[pkg], pkg)]
 
-    result.append(r'set(%s_PACKAGES "%s")' % (package_name, ';'.join(pkgs)))
-    result.append(r'set(%s_PACKAGE_DIRS "%s")' % (package_name, ';'.join(resolved_pkgs).replace("\\", "/")))
+    result.append(r'set(%s_PACKAGES "%s")' % (prefix, ';'.join(pkgs)))
+    result.append(r'set(%s_PACKAGE_DIRS "%s")' % (prefix, ';'.join(resolved_pkgs).replace("\\", "/")))
     return result
 
 

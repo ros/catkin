@@ -71,13 +71,18 @@ function(catkin_python_setup)
     safe_execute_process(COMMAND ${cmd})
     include(${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/setup_py_interrogation.cmake)
 
+    # verify that version from setup.py is equal to version from package.xml
+    if(DEFINED {${PROJECT_NAME}_VERSION AND NOT "${${PROJECT_NAME}_SETUP_PY_VERSION}" STREQUAL "${${PROJECT_NAME}_VERSION}")
+      message(FATAL_ERROR "catkin_python_setup() version in setup.py (${${PROJECT_NAME}_SETUP_PY_VERSION}) differs from version in package.xml (${${PROJECT_NAME}_VERSION})")
+    endif()
+
     # generate relaying __init__.py for each python package
-    if(${PROJECT_NAME}_PACKAGES)
-      list(LENGTH ${PROJECT_NAME}_PACKAGES pkgs_count)
+    if(${PROJECT_NAME}_SETUP_PY_PACKAGES)
+      list(LENGTH ${PROJECT_NAME}_SETUP_PY_PACKAGES pkgs_count)
       math(EXPR pkgs_range "${pkgs_count} - 1")
       foreach(index RANGE ${pkgs_range})
-        list(GET ${PROJECT_NAME}_PACKAGES ${index} pkg)
-        list(GET ${PROJECT_NAME}_PACKAGE_DIRS ${index} pkg_dir)
+        list(GET ${PROJECT_NAME}_SETUP_PY_PACKAGES ${index} pkg)
+        list(GET ${PROJECT_NAME}_SETUP_PY_PACKAGE_DIRS ${index} pkg_dir)
         get_filename_component(name ${pkg_dir} NAME)
         if(NOT ("${pkg}" STREQUAL "${name}"))
           message(FATAL_ERROR "The package name '${pkg}' differs from the basename of the path '${pkg_dir}' in project '${PROJECT_NAME}'")
@@ -91,7 +96,7 @@ function(catkin_python_setup)
     endif()
 
     # generate relay-script for each python script
-    foreach(script ${${PROJECT_NAME}_SCRIPTS})
+    foreach(script ${${PROJECT_NAME}_SETUP_PY_SCRIPTS})
       get_filename_component(name ${script} NAME)
       if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${script})
         message(FATAL_ERROR "The script '${name}' as listed in 'setup.py' of '${PROJECT_NAME}' doesn't exist")
