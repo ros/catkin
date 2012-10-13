@@ -5,11 +5,10 @@
   <author>Somebody</author>
   <maintainer email="Somebody@somewhere.org">Somebody</maintainer>
   <license>Unknown</license>
-  <copyright>Someone</copyright>
   <url/>
 
-  <build_depends>catkin</build_depends>
-  <build_depends>gencpp</build_depends>
-  <build_depends>genmsg</build_depends>
-  <build_depends>genpy</build_depends>
+  <build_depend>catkin</build_depend>
+  <build_depend>gencpp</build_depend>
+  <build_depend>genmsg</build_depend>
+  <build_depend>genpy</build_depend>
 </package>
