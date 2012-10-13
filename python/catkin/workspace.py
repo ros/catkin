@@ -8,7 +8,7 @@ def get_workspaces(_environ=os.environ):
     """
     Based on CMAKE_PREFIX_PATH return all catkin workspaces
 
-    :param _environ: environment module to use
+    :param _environ: environment module to use, ``dict``
     """
     # get all cmake prefix paths
     env_name = 'CMAKE_PREFIX_PATH'
@@ -22,6 +22,8 @@ def get_source_paths(workspace):
     """
     reads catkin workspace files and returns the list of all declared
     source paths
+
+    :param workspace: path to catkin workspace folder, ``str``
     """
     # determine source spaces
     data = ''

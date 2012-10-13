@@ -5,8 +5,7 @@
   <author>Somebody</author>
   <maintainer email="Somebody@somewhere.org">Somebody</maintainer>
   <license>Unknown</license>
-  <copyright>Someone</copyright>
   <url/>
 
-  <build_depends>catkin</build_depends>
+  <build_depend>catkin</build_depend>
 </package>

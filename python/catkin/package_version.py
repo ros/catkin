@@ -48,7 +48,7 @@ def update_versions(paths, new_version):
 
     :param paths: list of string, folder names
     :param new_version: version string "int.int.int"
-    :raises RuntimeError:
+    :raises RuntimeError: if any one package.xml cannot be updated
     """
     files = {}
     for path in paths:
