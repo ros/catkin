@@ -12,5 +12,6 @@
   <export>
     <fooexp plugin='foo'/>
     <barexp plugin='bar'/>
+    <dooexp plugin='doo' attrib2='42'/>
   </export>
 </package>
