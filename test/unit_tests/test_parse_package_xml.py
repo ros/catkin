@@ -15,9 +15,12 @@ from parse_package_xml import _get_output, main
 class ParsePackageXmlTest(unittest.TestCase):
 
     def test_get_output(self):
-        pack = Mock(maintainers=['m1', 'm2'], build_depends=['bd1', 'bd2'], run_depends=['rd1', 'rd2'], version='0.1.2')
-        # mock name param is different
+        pack = Mock()
         pack.name = 'foopack'
+        pack.version = '0.1.2'
+        pack.maintainers = ['m1', 'm2']
+        pack.build_depends = ['bd1', 'bd2']
+        pack.run_depends = ['rd1', 'rd2']
         result = _get_output(pack)
         self.assertEqual(['set(_CATKIN_CURRENT_PACKAGE "foopack")',
                           'set(foopack_RUN_DEPENDS "rd1" "rd2")',

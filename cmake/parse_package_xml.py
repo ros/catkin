@@ -12,9 +12,8 @@ def _get_output(package):
     returns a list of strings with cmake commands to execute to set cmake variables
 
     :param package: Package object
-    :returns: list of str, line to output
+    :returns: list of str, lines to output
     """
-    output = []
     values = {}
     values['VERSION'] = '"%s"' % package.version
 
@@ -22,6 +21,8 @@ def _get_output(package):
 
     values['BUILD_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.build_depends])
     values['RUN_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.run_depends])
+
+    output = []
     output.append(r'set(_CATKIN_CURRENT_PACKAGE "%s")' % package.name)
     for k, v in values.items():
         output.append('set(%s_%s %s)' % (package.name, k, v))
