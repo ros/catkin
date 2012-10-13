@@ -84,10 +84,10 @@ macro(catkin_package)
 
   # verify that project() has been called before
   if(NOT PROJECT_NAME)
-    message(FATAL_ERROR "catkin_package() PROJECT_NAME is not set. You must call project() before you can call catkin_package().")
+    message(FATAL_ERROR "catkin_package() PROJECT_NAME is not set. You must call project() before calling catkin_package().")
   endif()
-  if(PROJECT_NAME STREQUAL Project)
-message(FATAL_ERROR "catkin_package() PROJECT_NAME is not set. The variable is set to 'Project', which is not an allowed project name. You must call project() before you can call catkin_package().")
+  if(PROJECT_NAME STREQUAL "Project")
+    message(FATAL_ERROR "catkin_package() PROJECT_NAME is set to 'Project', which is not a valid project name. You must call project() before calling catkin_package().")
   endif()
 
   # call catkin_package_xml() if it has not been called manually before
