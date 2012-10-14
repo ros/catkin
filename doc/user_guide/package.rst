@@ -6,9 +6,7 @@ Packages
 .. TODO:: Using catkin_create_pkg to create a package
 
 A catkin package is a folder with a valid ``package.xml`` and a
-``CMakeLists.txt`` file. Putting it another way, a catkin package is a
-CMake project with an additional ``package.xml`` file. The package.xml
-file is the 'Package Manifest'.
+``CMakeLists.txt`` file (unless it is a meta-package).
 
 .. _package.xml:
 
@@ -30,8 +28,8 @@ A small example is::
     <description>An example package</description>
     <maintainer email="JohnDoe@ros.com">John Doe</maintainer>
     <license>BSD</license>
-    <author>John Doe</author>
     <url type="website">http://www.ros.org/wiki/example</url>
+    <author>John Doe</author>
     <build_depend>ros</build_depend>
     <build_depend>roscpp</build_depend>
     <run_depend>ros</run_depend>
