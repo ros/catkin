@@ -107,8 +107,8 @@ To get a summary of the test results call::
 
 Again, if catkin is already installed and not part of the workspace you just omit the path to the script.
 
-Setup environment to run anthing
---------------------------------
+Setup environment to run anything
+---------------------------------
 
 In order to setup the environment that you can run arbitrary code from the workspace the ``setup.bash/*`` must be sourced::
 
@@ -119,7 +119,7 @@ In order to setup the environment that you can run arbitrary code from the works
    $ source /path/to/install/setup.bash
 
 After that the core ROS binaries are on the PATH and you can use rosrun/roslaunch to start arbitrary programs.
-The setup script does a best effort to provide you with a clean environment and tries to unset everything catkin-releated (which has been set by a previous invocation of any setup script) before adding its own paths.
+The setup script does a best effort to provide you with a clean environment and tries to unset everything catkin-related (which has been set by a previous invocation of any setup script) before adding its own paths.
 
 Chain workspaces
 ----------------
