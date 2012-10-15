@@ -7,13 +7,26 @@ import sys
 
 '''This file provides setup.sh with commands to query catkin workspaces'''
 
-def get_reversed_workspaces(value):
-    '''Return a newline separated list of workspaces in CMAKE_PREFIX_PATH in reverse order and remove any occurrences of VALUE.'''
+CATKIN_WORKSPACE_MARKER_FILE = '.CATKIN_WORKSPACE'
+
+
+def get_workspaces():
+    """
+    Based on CMAKE_PREFIX_PATH return all catkin workspaces
+
+    :param _environ: environment module to use, ``dict``
+    """
+    # get all cmake prefix paths
     env_name = 'CMAKE_PREFIX_PATH'
-    paths = [path for path in reversed(os.environ[env_name].split(os.pathsep))] if env_name in os.environ and os.environ[env_name] != '' else []
-    paths = [path for path in paths if os.path.exists(os.path.join(path, '.CATKIN_WORKSPACE'))]
-    if value is not None:
-        paths = [path for path in paths if path != value]
+    paths = [path for path in os.environ.get(env_name, '').split(os.pathsep) if path]
+    # remove non-workspace paths
+    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_WORKSPACE_MARKER_FILE))]
+    return workspaces
+
+
+def get_reversed_workspaces(exclude=None):
+    '''Return a newline separated list of workspaces in CMAKE_PREFIX_PATH in reverse order and remove any occurrences of EXCLUDE.'''
+    paths = [p for p in reversed(get_workspaces()) if p != exclude]
     return '\n'.join(paths)
 
 
