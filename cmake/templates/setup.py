@@ -30,18 +30,21 @@ def get_reversed_workspaces(exclude=None):
     return '\n'.join(paths)
 
 
-def prefix_env(name, value):
-    '''Return the prefix to prepend VALUE to the environment variable NAME without duplicate or empty items.'''
-    items = os.environ[name].split(os.pathsep) if name in os.environ and os.environ[name] != '' else []
-    prefix = []
-    values = [v for v in value.split(os.pathsep) if v != '']
-    for v in values:
-        if v not in items and v not in prefix:
-            prefix.append(v)
-    prefix = os.pathsep.join(prefix)
-    if prefix != '' and items:
-        prefix += os.pathsep
-    return prefix
+def prefix_env(name, new_paths_str):
+    '''
+    Return the prefix to prepend to the environment variable NAME, adding any path in NEW_PATHS_STR without creating duplicate or empty items.
+    '''
+    environ_paths = [i for i in os.environ.get(name, '').split(os.pathsep) if i]
+    checked_paths = []
+    new_paths = [v for v in new_paths_str.split(os.pathsep) if v != '']
+    for path in new_paths:
+        # exclude any path already in env and any path we already added
+        if path not in environ_paths and path not in checked_paths:
+            checked_paths.append(path)
+    prefix_str = os.pathsep.join(checked_paths)
+    if prefix_str != '' and environ_paths:
+        prefix_str += os.pathsep
+    return prefix_str
 
 
 def remove_from_env(name, value):

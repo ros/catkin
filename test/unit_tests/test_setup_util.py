@@ -9,7 +9,7 @@ imp.load_source('setup_util',
                              '..', '..', 'cmake', 'templates', 'setup.py'))
 
 import setup_util
-from setup_util import get_reversed_workspaces, CATKIN_WORKSPACE_MARKER_FILE
+from setup_util import get_reversed_workspaces, prefix_env, CATKIN_WORKSPACE_MARKER_FILE
 
 
 class SetupUtilTest(unittest.TestCase):
@@ -40,3 +40,21 @@ class SetupUtilTest(unittest.TestCase):
             shutil.rmtree(rootdir)
             setup_util.os.environ = os.environ
 
+    def test_prefix_env(self):
+        try:
+            mock_env = {}
+            setup_util.os.environ = mock_env
+            self.assertEqual('',
+                             prefix_env('varname', ''))
+            self.assertEqual(os.pathsep.join(['foo', 'bar']),
+                             prefix_env('varname', 'foo:bar'))
+            mock_env = {'varname': os.pathsep.join(['baz', 'bar', 'bam'])}
+            setup_util.os.environ = mock_env
+            self.assertEqual('',
+                             prefix_env('varname', ''))
+            self.assertEqual('foo' + os.pathsep,
+                             prefix_env('varname', 'foo:bar'))
+            self.assertEqual(os.pathsep.join(['foo', 'lim']) + os.pathsep,
+                             prefix_env('varname', 'foo:lim:foo:lim'))
+        finally:
+            setup_util.os.environ = os.environ
