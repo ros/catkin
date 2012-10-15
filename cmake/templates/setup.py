@@ -47,19 +47,19 @@ def prefix_env(name, new_paths_str):
     return prefix_str
 
 
-def remove_from_env(name, value):
-    '''For each catkin workspace in CMAKE_PREFIX_PATH remove the first subfolder VALUE from env[NAME] and return the updated value of the environment variable.'''
-    items = os.environ[name].split(os.pathsep) if name in os.environ and os.environ[name] != '' else []
-    env_name = 'CMAKE_PREFIX_PATH'
-    paths = [path for path in os.environ[env_name].split(os.pathsep)] if env_name in os.environ and os.environ[env_name] != '' else []
-    for path in paths:
-        if not os.path.exists(os.path.join(path, '.CATKIN_WORKSPACE')):
-            continue
+def remove_from_env(name, subfolder):
+    '''
+    For each catkin workspace in CMAKE_PREFIX_PATH remove the first subfolder SUBFOLDER from env[NAME] and return the updated value of the environment variable.
+
+    :param subfolder: str subfoldername that may start with '/'
+    '''
+    env_paths = [path for path in os.environ.get(name, '').split(os.pathsep) if path]
+    for ws_path in get_workspaces():
         try:
-            items.remove(path + value)
+            env_paths.remove(os.path.join(ws_path, subfolder.lstrip('/')))
         except ValueError:
             pass
-    return os.pathsep.join(items)
+    return os.pathsep.join(env_paths)
 
 
 def _parse_arguments():
