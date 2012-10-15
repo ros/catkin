@@ -5,6 +5,7 @@ import argparse
 import os
 import sys
 
+'''This file provides setup.sh with commands to query catkin workspaces'''
 
 def get_reversed_workspaces(value):
     '''Return a newline separated list of workspaces in CMAKE_PREFIX_PATH in reverse order and remove any occurrences of VALUE.'''
