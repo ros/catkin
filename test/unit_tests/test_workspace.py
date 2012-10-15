@@ -7,6 +7,7 @@ try:
     from catkin.workspace import get_workspaces, get_source_paths
 
     from catkin.workspace import CATKIN_WORKSPACE_MARKER_FILE
+    import catkin.workspace
 except ImportError as impe:
     raise ImportError(
         'Please adjust your pythonpath before running this test: %s' % str(impe))
@@ -25,15 +26,19 @@ class WorkspaceTest(unittest.TestCase):
                 fhand.write('loc1;loc2')
             with open(os.path.join(ws2, CATKIN_WORKSPACE_MARKER_FILE), 'w') as fhand:
                 fhand.write('loc3;loc4')
-            self.assertEqual([], get_workspaces(_environ={}))
-            self.assertEqual([], get_workspaces(_environ={'CMAKE_PREFIX_PATH': ''}))
-            self.assertEqual([], get_workspaces(_environ={}))
-            self.assertEqual([ws1], get_workspaces(_environ={'CMAKE_PREFIX_PATH': ws1}))
-            self.assertEqual([], get_workspaces(_environ={}))
-            self.assertEqual([], get_workspaces(_environ={'CMAKE_PREFIX_PATH': 'nowhere'}))
-            self.assertEqual([ws2, ws1], get_workspaces(_environ={'CMAKE_PREFIX_PATH': ws2 + os.pathsep + ws1}))
+            catkin.workspace.os.environ = {}
+            self.assertEqual([], get_workspaces())
+            catkin.workspace.os.environ = {'CMAKE_PREFIX_PATH': ''}
+            self.assertEqual([], get_workspaces())
+            catkin.workspace.os.environ = {'CMAKE_PREFIX_PATH': ws1}
+            self.assertEqual([ws1], get_workspaces())
+            catkin.workspace.os.environ = {'CMAKE_PREFIX_PATH': 'nowhere'}
+            self.assertEqual([], get_workspaces())
+            catkin.workspace.os.environ = {'CMAKE_PREFIX_PATH': ws2 + os.pathsep + ws1}
+            self.assertEqual([ws2, ws1], get_workspaces())
         finally:
             shutil.rmtree(root_dir)
+            catkin.workspace.os.environ = os.environ
 
     def test_get_source_paths(self):
         try:
