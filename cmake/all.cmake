@@ -1,3 +1,10 @@
+find_package(catkin QUIET)
+if(DEFINED catkin_VERSION)
+  message(STATUS "Using catkin ${catkin_VERSION}")
+else()
+  message(STATUS "Using catkin from source")
+endif()
+
 # prevent multiple inclusion
 if(DEFINED _CATKIN_ALL_INCLUDED_)
   message(FATAL_ERROR "catkin/cmake/all.cmake included multiple times")
