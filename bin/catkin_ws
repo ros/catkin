@@ -16,7 +16,7 @@ except ImportError:
 def main():
     parser = argparse.ArgumentParser(description='Perform a VCS command on all repositories in the current directory.')
     parser.add_argument('path', nargs='?', default='.', help='The parent path of the repositories (default: .)')
-    parser.add_argument('command', choices=('branch', 'diff', 'pull', 'remotes', 'status'), help='The command to execute')
+    parser.add_argument('command', choices=('branch', 'diff', 'pull', 'push', 'remotes', 'status'), help='The command to execute')
     args = parser.parse_args()
 
     repositories = find_repositories(args.path)
