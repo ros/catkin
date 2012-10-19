@@ -15,6 +15,9 @@ if(NOT DEFINED CMAKE_PREFIX_PATH)
     string(REPLACE ":" ";" CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
   endif()
 endif()
+if(CMAKE_PREFIX_PATH)
+  message(STATUS "Using CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+endif()
 
 # list of unique catkin workspaces based on CMAKE_PREFIX_PATH
 set(CATKIN_WORKSPACES "")
@@ -26,6 +29,9 @@ foreach(path ${CMAKE_PREFIX_PATH})
     endif()
   endif()
 endforeach()
+if(CATKIN_WORKSPACES)
+  message(STATUS "This workspace overlays: ${CATKIN_WORKSPACES}")
+endif()
 
 # save original CMAKE_PREFIX_PATH for environment generation
 set(CMAKE_PREFIX_PATH_WITHOUT_BUILDSPACE ${CMAKE_PREFIX_PATH})
@@ -97,6 +103,10 @@ foreach(filename
   )
   include(${catkin_EXTRAS_DIR}/${filename}.cmake)
 endforeach()
+
+# output catkin version for debugging
+_catkin_package_xml(${CMAKE_BINARY_DIR}/catkin/catkin_generated/version DIRECTORY ${catkin_EXTRAS_DIR}/..)
+message(STATUS "catkin ${catkin_VERSION}")
 
 # set global install destinations
 set(CATKIN_GLOBAL_BIN_DESTINATION bin)

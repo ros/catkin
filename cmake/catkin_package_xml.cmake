@@ -28,31 +28,37 @@ macro(catkin_package_xml)
     message(FATAL_ERROR "catkin_package_xml() PROJECT_NAME is not set. You must call project() before you can call catkin_package_xml().")
   endif()
 
-  cmake_parse_arguments(_PACKAGE_XML "" "DIRECTORY" "" ${ARGN})
-  if(_PACKAGE_XML_UNPARSED_ARGUMENTS)
-    message(FATAL_ERROR "catkin_package_xml() called with unused arguments: ${_PACKAGE_XML_UNPARSED_ARGUMENTS}")
-  endif()
-  # set default directory
-  if(NOT _PACKAGE_XML_DIRECTORY)
-    set(_PACKAGE_XML_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  endif()
-
   # ensure that function is not called multiple times per package
   if(DEFINED _CATKIN_CURRENT_PACKAGE)
     message(FATAL_ERROR "catkin_package_xml(): in '${CMAKE_CURRENT_LIST_FILE}', _CATKIN_CURRENT_PACKAGE is already set (to: ${_CATKIN_CURRENT_PACKAGE}).  Did you called catkin_package_xml() multiple times?")
   endif()
 
-  # stamp and parse package.xml
-  stamp(${_PACKAGE_XML_DIRECTORY}/package.xml)
-  safe_execute_process(COMMAND ${PYTHON_EXECUTABLE}
-    ${catkin_EXTRAS_DIR}/parse_package_xml.py
-    ${_PACKAGE_XML_DIRECTORY}/package.xml
-    ${PROJECT_BINARY_DIR}/catkin_generated/package.cmake)
-  # load extracted variable into cmake
-  include(${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/package.cmake)
+  _catkin_package_xml(${CMAKE_CURRENT_BINARY_DIR}/catkin_generated ${ARGN})
 
   # verify that the package name from package.xml equals the project() name
   if(NOT _CATKIN_CURRENT_PACKAGE STREQUAL PROJECT_NAME)
     message(FATAL_ERROR "catkin_package_xml() package name '${_CATKIN_CURRENT_PACKAGE}'  in '${_PACKAGE_XML_DIRECTORY}/package.xml' does not match current PROJECT_NAME '${PROJECT_NAME}'.  You must call project() with the same package name before.")
   endif()
+endmacro()
+
+macro(_catkin_package_xml dest_dir)
+  cmake_parse_arguments(_PACKAGE_XML "" "DIRECTORY" "" ${ARGN})
+  if(_PACKAGE_XML_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "catkin_package_xml() called with unused arguments: ${_PACKAGE_XML_UNPARSED_ARGUMENTS}")
+  endif()
+
+  # set default directory
+  if(NOT _PACKAGE_XML_DIRECTORY)
+    set(_PACKAGE_XML_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
+
+  # stamp and parse package.xml
+  stamp(${_PACKAGE_XML_DIRECTORY}/package.xml)
+  file(MAKE_DIRECTORY ${dest_dir})
+  safe_execute_process(COMMAND ${PYTHON_EXECUTABLE}
+    ${catkin_EXTRAS_DIR}/parse_package_xml.py
+    ${_PACKAGE_XML_DIRECTORY}/package.xml
+    ${dest_dir}/package.cmake)
+  # load extracted variable into cmake
+  include(${dest_dir}/package.cmake)
 endmacro()

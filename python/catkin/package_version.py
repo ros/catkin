@@ -42,6 +42,22 @@ def _replace_version(package_str, new_version):
     return new_package_str
 
 
+def _check_for_version_comment(package_str, new_version):
+    """
+    checks if a comment is present behind the version tag and return it
+
+    :param package_str: str contents of package.xml
+    :param version: str version number
+    :returns: str comment if available, else None
+    """
+    version_tag = '>%s</version>' % new_version
+    pattern = '%s[ \t]*%s *(.+) *%s' % (re.escape(version_tag), re.escape('<!--'), re.escape('-->'))
+    comment = re.search(pattern, package_str)
+    if comment:
+        comment = comment.group(1)
+    return comment
+
+
 def update_versions(paths, new_version):
     """
     bulk replace of version: searches for package.xml files directly in given folders and replaces version tag within.
@@ -57,6 +73,9 @@ def update_versions(paths, new_version):
             package_str = f.read()
         try:
             new_package_str = _replace_version(package_str, new_version)
+            comment = _check_for_version_comment(new_package_str, new_version)
+            if comment:
+                print('NOTE: The package manifest "%s" contains a comment besides the version tag:\n  %s' % (path, comment))
         except RuntimeError as rue:
             raise RuntimeError('Could not bump version number in file %s: %s' % (package_path, str(rue)))
         files[package_path] = new_package_str

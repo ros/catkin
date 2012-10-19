@@ -12,8 +12,8 @@ from catkin.tidy_xml import tidy_xml
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(description='Runs the test command passed as an argument and verifies that the expected result file has been generated.')
-    parser.add_argument('command', nargs='+', help='The test command to execute')
     parser.add_argument('results', help='The path to the xunit result file')
+    parser.add_argument('command', nargs='+', help='The test command to execute')
     parser.add_argument('--working-dir', nargs='?', help='The working directory for the executed command')
     args = parser.parse_args(argv)
 
@@ -37,15 +37,14 @@ def main(argv=sys.argv[1:]):
     if os.path.exists(args.results):
         # if result file exists ensure that it contains valid xml
         try:
-            root = ElementTree(None, args.results)
-        except ParseError as e1:
+            ElementTree(None, args.results)
+        except ParseError:
             #print('Invalid XML in result file "%s"' % args.results)
             tidy_xml(args.results)
             try:
-                root = ElementTree(None, args.results)
-            except ParseError as pe2:
-                print('Invalid XML in result file "%s" (even after '
-                      'trying to tidy it): %s ' % (args.results, str(pe2)))
+                ElementTree(None, args.results)
+            except ParseError as e:
+                print('Invalid XML in result file "%s" (even after trying to tidy it): %s ' % (args.results, str(e)))
     else:
         # if result file does not exist create placeholder which indicates failure
         print('Cannot find results, writing failure results to "%s"' % placeholder)
