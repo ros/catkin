@@ -11,6 +11,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import catkin_sphinx
 import os
 import sys
 import subprocess
@@ -108,7 +109,8 @@ pygments_style = 'sphinx'
 # -- Options for HTML output ---------------------------------------------------
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [os.path.join(os.path.expanduser('~'), 'sphinx'), 'themes']
+html_theme_path = [os.path.join(os.path.dirname(catkin_sphinx.__file__),
+                                'theme')]
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.

@@ -117,7 +117,7 @@ stacks (for metapackages), and make packages the atomic unit of build.
 
 * Remove manually ``install()`` invocations for ``stack.xml`` and ``manifest.xml`` files (this is handled by catkin automatically).
 
-* After creating a GTest target using ``catkin_add_gtest(target ...)`` you should test for the existance of the target before trying to use it (i.e. by calling ``target_link_libraries(target ..,)``)::
+* After creating a GTest target using ``catkin_add_gtest(target ...)`` you should test for the existence of the target before trying to use it (i.e. by calling ``target_link_libraries(target ..,)``)::
 
   % if(TARGET target)
   %   target_link_libraries(target ...)
