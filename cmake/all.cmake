@@ -107,6 +107,8 @@ endforeach()
 # output catkin version for debugging
 _catkin_package_xml(${CMAKE_BINARY_DIR}/catkin/catkin_generated/version DIRECTORY ${catkin_EXTRAS_DIR}/..)
 message(STATUS "catkin ${catkin_VERSION}")
+# ensure that no current package name is set
+unset(_CATKIN_CURRENT_PACKAGE)
 
 # set global install destinations
 set(CATKIN_GLOBAL_BIN_DESTINATION bin)
