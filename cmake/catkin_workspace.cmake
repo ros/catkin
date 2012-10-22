@@ -56,11 +56,16 @@ function(catkin_workspace)
 
       list(GET CATKIN_ORDERED_PACKAGE_PATHS ${index} path)
       list(GET CATKIN_ORDERED_PACKAGES_IS_META ${index} is_meta)
+      list(GET CATKIN_ORDERED_PACKAGES ${index} name)
       if(NOT ${is_meta})
         message(STATUS "+++ add_subdirectory(${path})")
         add_subdirectory(${path})
       else()
-        message(STATUS "+++ skip meta-package '${path}'")
+        message(STATUS "+++ metapackage '${path}'")
+        install(FILES
+          ${path}/package.xml
+          DESTINATION share/${name}
+        )
       endif()
     endforeach()
   endif()
