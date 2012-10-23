@@ -60,35 +60,69 @@ a few added catkin macros if necessary.
 
  - Build macros:
 
+  - ``rosbuild_init()`` -> remove this
   - ``rosbuild_add_library(...)`` -> ``add_library(...)``
   - ``rosbuild_add_executable(...)`` -> ``add_executable(...)``
   - ``rosbuild_add_compile_flags(target added_flags)`` -> ``set_target_properties(target PROPERTIES COMPILE_FLAGS new_flags)``
   - ``rosbuild_remove_compile_flags(target removed_flags)`` -> ``set_target_properties(target PROPERTIES COMPILE_FLAGS new_flags)``
   - ``rosbuild_add_link_flags(target added_flags)`` -> ``set_target_properties(target PROPERTIES LINK_FLAGS new_flags)``
   - ``rosbuild_remove_link_flags(target removed_flags)`` -> ``set_target_properties(target PROPERTIES LINK_FLAGS new_flags)``
-  - ``rosbuild_add_boost_directories(); rosbuild_link_boost(target components)`` -> ``find_package(Boost REQUIRED COMPONENTS components); include_directories(${Boost_INCLUDE_DIRS}); target_link_libraries(target ${Boost_LIBRARIES})``
+  - ``rosbuild_add_boost_directories(); rosbuild_link_boost(target components)`` ->
+   - once in CMakeLists.txt with all components::
+
+     ``find_package(Boost REQUIRED COMPONENTS components)``
+     ``include_directories(${Boost_INCLUDE_DIRS})``
+   - for each target::
+
+     ``target_link_libraries(target ${Boost_LIBRARIES})``
   - ``rosbuild_add_openmp_flags()`` -> ``find_package(OpenMP)``, then do other stuff
-  - ``rosbuild_invoke_rospack()`` -> don't do this
-  - ``rosbuild_find_ros_package()`` -> don't do this
-  - ``rosbuild_find_ros_stack()`` -> don't do this
+  - ``rosbuild_invoke_rospack()`` -> don't do this, use find_package to locate ROS packages as well
+  - ``rosbuild_find_ros_package()`` -> don't do this, use find_package to locate ROS packages as well
+  - ``rosbuild_find_ros_stack()`` -> don't do this, stacks are obsolete, use find_package to find packages instead
   - ``rosbuild_check_for_sse()`` -> look around online and find an example of how to find SSE
   - ``rosbuild_include(package module)`` -> ``include(module)`` (might require some initial work to find the path to the module)
   - ``rosbuild_add_lisp_executable()`` -> no support for this currently
 
+  - ``rosbuild_add_swigpy_library(target lib src1 src2)`` ->
+
  - Test macros:
 
   - ``rosbuild_add_gtest(...)`` -> ``catkin_add_gtest(...)``
-  - rosbuild_add_gtest_labeled
-  - rosbuild_add_gtest_future
-  - rosbuild_add_gtest_build_flags
-  - ``rosbuild_add_pyunit`` -> migrate to ``catkin_add_nosetests(...)``
-  - rosbuild_add_pyunit_labeled
-  - rosbuild_add_pyunit_future
-  - rosbuild_add_rostest
-  - rosbuild_add_rostest_labeled
-  - rosbuild_add_rostest_future
-  - rosbuild_add_roslaunch_check
-  - rosbuild_declare_test
-  - rosbuild_count_cores
-  - rosbuild_check_for_display
-  - rosbuild_check_for_vm
+  - rosbuild_add_gtest_labeled -> don't do this, use add_gtest
+  - rosbuild_add_gtest_future -> don't do this, just comment out tests
+  - rosbuild_add_gtest_build_flags -> TODO
+  - ``rosbuild_add_pyunit`` -> ``catkin_add_nosetests(...)``
+  - rosbuild_add_pyunit_labeled -> ``catkin_add_nosetests``
+  - rosbuild_add_pyunit_future -> ``catkin_add_nosetests``
+  - rosbuild_add_rostest -> TODO
+  - rosbuild_add_rostest_labeled -> TODO
+  - rosbuild_add_rostest_future -> TODO
+  - rosbuild_add_roslaunch_check -> TODO
+  - rosbuild_declare_test -> TODO
+  - rosbuild_count_cores -> TODO
+  - rosbuild_check_for_display -> TODO
+  - rosbuild_check_for_vm -> TODO
+
+- Message / service macros
+
+ - ``rosbuild_add_generated_msgs(...)`` -> ``add_message_files(DIRECTORY msg FILES ...)``
+ - ``rosbuild_add_generated_srvs`` -> ``add_service_files(DIRECTORY srv FILES ...)``
+ - ``rosbuild_genmsg()`` ->  , ``generate_messages()``
+ - ``rosbuild_gensrv`` -> ``generate_messages()``
+
+- Version macros
+
+ - ``rosbuild_get_stack_version`` -> obsolete
+ - ``rosbuild_get_package_version`` -> obsolete
+
+- Data macros
+
+ - ``rosbuild_download_data(url filename [md5sum])`` -> TODO
+ - ``rosbuild_download_test_data`` -> ``download_test_data``
+ - ``rosbuild_untar_file`` -> TODO
+
+- Special targets
+
+ - ``rosbuild_premsgsrvgen`` -> TODO
+ - ``rosbuild_precompile`` -> TODO
+ - ``rosbuild_make_distribution`` -> TODO
