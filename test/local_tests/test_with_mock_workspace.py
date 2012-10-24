@@ -66,27 +66,6 @@ class MockTest(AbstractCatkinWorkspaceTest):
         self.assertTrue('catkin_package() PROJECT_NAME is not set.' in out, out)
         # assert 'You must call project() with the same name before.' in out
 
-    def test_plugin(self):
-        # create workspace with just catkin and 'plugin_test' project
-        dstdir = os.path.join(self.workspacedir, 'plugin_test')
-        shutil.copytree(os.path.join(MOCK_DIR, 'src', 'plugin_test'), dstdir)
-        shutil.rmtree(self.builddir)
-        # fail if we try to build plugin_test stack
-        os.makedirs(self.builddir)
-
-        out = self.cmake(CMAKE_PREFIX_PATH=self.installdir)
-        manifest_file = os.path.join(self.buildspace, 'share', 'plugin_test', 'manifest.xml')
-        self.assertTrue(os.path.exists(manifest_file))
-        with open(manifest_file, 'r') as fhand:
-            contents = fhand.read()
-        self.assertTrue('''  <depend package="fooexp"/>
-  <depend package="barexp"/>
-  <depend package="dooexp"/>''' in contents, contents)
-        # attribs sorted in catkin_pkg
-        self.assertTrue('''    <fooexp plugin="foo"/>
-    <barexp plugin="bar"/>
-    <dooexp attrib2="42" plugin="doo"/>''' in contents, contents)
-
     # Test was not finished apparently
     # def test_help_bad_changelog(self):
     #     self.cmake(CATKIN_ENABLE_DEBBUILDING='TRUE',
