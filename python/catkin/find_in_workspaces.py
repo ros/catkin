@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os
 from catkin.workspace import get_source_paths, get_workspaces
-
+from catkin_pkg.packages import find_packages
 
 def _get_valid_search_dirs(search_dirs, project):
     """
@@ -19,7 +19,7 @@ def _get_valid_search_dirs(search_dirs, project):
     valid_search_dirs = (valid_global_search_dirs
                          if project is None
                          else valid_project_search_dirs)
-    if search_dirs is None:
+    if not search_dirs:
         search_dirs = valid_search_dirs
     else:
         # make search folders a list
@@ -64,33 +64,48 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
 
     :param search_dir: The list of subfolders to search in (default contains all valid values: 'bin', 'etc', 'lib', 'libexec', 'share'), ``list``
     :param project: The project name to search for (optional, not possible with the global search_in folders 'bin' and 'lib'), ``str``
-    :param path: The path, ``str``
+    :param path: The path inside the project to search for. May only be not-None if project is not None. ``str``
     :param _workspaces: (optional, used for unit tests), the list of workspaces to use.
     :raises ValueError: if search_dirs contains an invalid folder name
     :returns: List of paths, ``list``
     '''
     search_dirs = _get_valid_search_dirs(search_dirs, project)
+    if path and not project:
+        # should never happen, bug in client code
+        raise RuntimeError('Cannot look for path without project')
     # collect candidate paths
     paths = []
+    # in overlay case, only return results in upmost project
+    project_found = False
     for workspace in (_workspaces or []):
         for sub in search_dirs:
             # search in workspace
             p = os.path.join(workspace, sub if sub != 'libexec' else 'lib')
             if project:
                 p = os.path.join(p, project)
-            if path:
-                p = os.path.join(p, path)
+                if os.path.isdir(p):
+                    project_found = True
+                if path:
+                    p = os.path.join(p, path)
             paths.append(p)
 
             # for search in share also consider source spaces
             if project is not None and sub == 'share':
                 source_paths = get_source_paths(workspace)
                 for source_path in source_paths:
-                    p = os.path.join(source_path, project)
-                    if path is not None:
-                        p = os.path.join(p, path)
-                    paths.append(p)
-
+                    packages = find_packages(source_path)
+                    for pack_path, package in packages.items():
+                        pack_path = os.path.join(source_path, pack_path)
+                        if package.name == project:
+                            project_found = True
+                            if path is not None:
+                                pack_path = os.path.join(pack_path, path)
+                            paths.append(pack_path)
+                            break
+                    if project_found:
+                        break
+        if project_found:
+            break
     # find all existing candidates
     existing = [p for p in paths if os.path.exists(p)]
     return (existing, paths)
