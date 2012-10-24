@@ -156,8 +156,5 @@ if(CATKIN_BUILD_BINARY_PACKAGE AND NOT "${PROJECT_NAME}" STREQUAL "catkin")
 endif()
 catkin_add_env_hooks(05.catkin-test-results SHELLS bat sh DIRECTORY ${catkin_EXTRAS_DIR}/env-hooks ${catkin_skip_install_env_hooks})
 
-foreach(filename
-    catkin_python_setup # requires stamp and environment files
-  )
-  include(${catkin_EXTRAS_DIR}/${filename}.cmake)
-endforeach()
+# requires stamp and environment files
+include(${catkin_EXTRAS_DIR}/catkin_python_setup.cmake)
