@@ -11,18 +11,11 @@ catkin's own documentation), you'll need to setup your environment.
 Setup
 -----
 
-#. Get ``catkin-sphinx``::
+#. Install ``python-catkin-sphinx`` via apt-get::
 
-       git clone git://github.com/ros/catkin-sphinx.git
+       sudo apt-get install python-catkin-sphinx
 
-#. Build and install it::
-
-       cd catkin-sphinx
-       sudo python setup.py install
-
-#. Copy ``ros-theme`` to your Sphinx configuration directory::
-
-       cp -a theme/ros-theme ~/sphinx
+#. Alternatively the package is also available via PyPi for non-Debian platforms.
 
 Now you can build documentation for projects that use the ``ros-theme``.  For
 example, to build catkin's documentation::
