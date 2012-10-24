@@ -88,7 +88,7 @@ a few added catkin macros if necessary.
  - Test macros:
 
   - ``rosbuild_add_gtest(...)`` -> ``catkin_add_gtest(...)``
-  - rosbuild_add_gtest_labeled -> don't do this, use add_gtest
+  - rosbuild_add_gtest_labeled -> don't do this, use catkin_add_gtest
   - rosbuild_add_gtest_future -> don't do this, just comment out tests
   - rosbuild_add_gtest_build_flags -> TODO
   - ``rosbuild_add_pyunit`` -> ``catkin_add_nosetests(...)``
