@@ -124,7 +124,7 @@ binary installations, and an end-user who wants to use an installed ROS
 system.
 
 catkin works by adding some macros and functions to CMake, but does not wrap
-standard CMake commands.  It does relatively litle magic, preferring to
+standard CMake commands.  It does relatively little magic, preferring to
 make things explicit.  And it supports an ``install`` target.
 
 What's different between rosbuild and catkin?

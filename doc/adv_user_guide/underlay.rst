@@ -1,12 +1,12 @@
-How to bootstrap a ROS core workspace
-=====================================
+How to bootstrap ROS from source
+================================
 
 .. highlight:: catkin-sh
 
-This page explains how to create a catkin and ROS underlay. An
-underlay is a build from source (with an optional installation) of
+This page explains the preferred way to create a catkin and ROS underlay.
+An underlay is a build from source (with an optional installation) of
 catkin and the base ROS packages.  It has to be manually updated and
-maintained, but enable to modify these packages.
+maintained, but enables to modify these packages.
 
 This is required for systems where the Debian packages cannot be
 installed (e.g. Windows, MacOS), or for developers of the base ROS
@@ -107,8 +107,8 @@ To get a summary of the test results call::
 
 Again, if catkin is already installed and not part of the workspace you just omit the path to the script.
 
-Setup environment to run anthing
---------------------------------
+Setup environment to run anything
+---------------------------------
 
 In order to setup the environment that you can run arbitrary code from the workspace the ``setup.bash/*`` must be sourced::
 
@@ -119,7 +119,7 @@ In order to setup the environment that you can run arbitrary code from the works
    $ source /path/to/install/setup.bash
 
 After that the core ROS binaries are on the PATH and you can use rosrun/roslaunch to start arbitrary programs.
-The setup script does a best effort to provide you with a clean environment and tries to unset everything catkin-releated (which has been set by a previous invocation of any setup script) before adding its own paths.
+The setup script does a best effort to provide you with a clean environment and tries to unset everything catkin-related (which has been set by a previous invocation of any setup script) before adding its own paths.
 
 Chain workspaces
 ----------------

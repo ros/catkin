@@ -7,6 +7,7 @@ User Guide
    introduction
    getting_started
    supposed
+   package
    rosbuild_migration
    catkin_migration
    find_package
