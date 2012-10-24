@@ -4,7 +4,7 @@ import os
 CATKIN_WORKSPACE_MARKER_FILE = '.CATKIN_WORKSPACE'
 
 
-def get_workspaces(_environ=os.environ):
+def get_workspaces():
     """
     Based on CMAKE_PREFIX_PATH return all catkin workspaces
 
@@ -12,7 +12,7 @@ def get_workspaces(_environ=os.environ):
     """
     # get all cmake prefix paths
     env_name = 'CMAKE_PREFIX_PATH'
-    paths = [path for path in _environ[env_name].split(os.pathsep)] if env_name in _environ and _environ[env_name] != '' else []
+    paths = [path for path in os.environ.get(env_name, '').split(os.pathsep) if path]
     # remove non-workspace paths
     workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_WORKSPACE_MARKER_FILE))]
     return workspaces
