@@ -61,11 +61,7 @@ function(catkin_workspace)
         message(STATUS "+++ add_subdirectory(${path})")
         add_subdirectory(${path})
       else()
-        message(STATUS "+++ metapackage '${path}'")
-        install(FILES
-          ${path}/package.xml
-          DESTINATION share/${name}
-        )
+        message(STATUS "+++ skipping metapackage '${path}'")
       endif()
     endforeach()
   endif()
