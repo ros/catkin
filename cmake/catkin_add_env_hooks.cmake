@@ -63,4 +63,7 @@ function(catkin_add_env_hooks file_prefix)
         DESTINATION etc/catkin/profile.d)
     endif()
   endforeach()
+
+  # refresh environment cache
+  safe_execute_process(COMMAND ${GENERATE_ENVIRONMENT_CACHE_COMMAND})
 endfunction()

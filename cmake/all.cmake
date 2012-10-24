@@ -140,13 +140,17 @@ endif()
 # take snapshot of the modifications the env script causes
 # to reproduce the same changes with a static script in a fraction of the time
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/catkin_generated/tmp)
-em_expand(${catkin_EXTRAS_DIR}/templates/env_cached.context.py.in
-  ${CMAKE_BINARY_DIR}/catkin_generated/env_cached.buildspace.context.py
-  ${catkin_EXTRAS_DIR}/em/env_cached.em
-  ${CMAKE_BINARY_DIR}/catkin_generated/tmp/env_cached.${script_ext})
-file(COPY ${CMAKE_BINARY_DIR}/catkin_generated/tmp/env_cached.${script_ext}
-  DESTINATION ${CMAKE_BINARY_DIR}/catkin_generated
-  FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+em_expand(${catkin_EXTRAS_DIR}/templates/generate_cached_env.context.py.in
+  ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.buildspace.context.py
+  ${catkin_EXTRAS_DIR}/em/generate_cached_env.py.em
+  ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.py)
+set(_command_option "")
+if(CATKIN_STATIC_ENV)
+  set(_command_option "--static")
+endif()
+set(GENERATE_ENVIRONMENT_CACHE_COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.py ${_command_option})
+# the script is generated once here and refreshed by every call to catkin_add_env_hooks()
+safe_execute_process(COMMAND ${GENERATE_ENVIRONMENT_CACHE_COMMAND})
 # environment to call external processes
 set(CATKIN_ENV ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/env_cached.${script_ext} CACHE INTERNAL "catkin environment")
 
