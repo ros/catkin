@@ -108,25 +108,37 @@ Workspace
 ^^^^^^^^^
 
 1. *toplevel.cmake*: The top-level CMakeLists.txt is loaded by Catkin, this should be a symbolic link to catin/cmake/toplevel.cmake.
+
  1. This optionally includes a user-defined `´workspace.cmake``
  2. attempts to find catkin's sources by traversing locations in this oder:
+
   a. In the source folder direct subfolder 'catkin' (using ${CMAKE_SOURCE_DIR}/catkin)
   b. Workspace folders listed in CMAKE_PREFIX_PATH
+
  3. loads catkin macros from the first catkin location found that way
+
   1. *all.cmake*:
+
    1. set global destination variables
    1. set CATKIN_WORKSPACES based on CMAKE_PREFIX_PATH entries
    1. enables new cmake policies
    1. invokes catkin_generate_environment()
+
     1. *catkin_generate_environment*:
+
      1. creates workspace marker file .CATKIN_WORKSPACE
      2. creates environment setup files
+
  4. exits with catkin_workspace()
+
 2. *catkin_workspace.cmake*:
+
  1. creates output folders (lib, bin, ...) in build folder
  2. generates helper scripts (python cmake) in build/catkin_generated
  3. invokes generated helper-script order_packages.cmake
+
   1. *order_packages.cmake*: This writes into variables the list of packages in this workspace, ordered by dependencies
+
  4. loads CMakeLists.txt in each package in sequence
 
 package
@@ -137,20 +149,32 @@ cmake project is allowed, so we sketch here only the case when the catkin
 macros are used as intended.
 
 1. *CMakeLists.txt*: catkin_package() is called
+
  2. *catkin_package.cmake*:
+
   3. invoke find_package(catkin [COMPONENTS ...])
+
    1. TODO
+
   2. invokes catkin_package_xml()
+
    1. *catkin_package_xml.cmake* parse package.xml and sets cmake variable accordingly (version, maintainer, dependencies)
    2. sets package-wide destination variables for usage by the user
    3. sets global variable ${PROJECT_NAME}_DIR
    4. evaluates arguments to catkin_package()
    5. generates files in buildspace and build folder
+
     a. buildspace is a folder mimicking an installation
+
      1. generates a manifest.xml file for rosbuild backwards compatibility
      2. generates .pc, XXXConfig.cmake, Config-version.cmake, ... files
+
     b. build folder contains files that will be installed by moving to install prefix
+
      1. generates .pc, XXXConfig.cmake, Config-version.cmake, ... files
+
    6. Declares files to be commonly installed
+
   3. (optionally) invole catkin_python_setup()
+
    1. TODO

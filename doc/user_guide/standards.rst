@@ -7,7 +7,7 @@ frequent errors, follow the standards below.
 Do care about the style your cmake code is written in.
 For inspiration, look at the guideline examples here:
 `CMake Style recommendations <http://www.cmake.org/cgi-bin/viewcvs.cgi/Modules/readme.txt?root=CMake&view=markup>`_
-`KDE cmake coding guidelines<http://techbase.kde.org/Policies/CMake_Coding_Style>`_
+`KDE cmake coding guidelines <http://techbase.kde.org/Policies/CMake_Coding_Style>`_
 
 **Call catkin_package early**
 

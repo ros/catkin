@@ -68,6 +68,7 @@ a few added catkin macros if necessary.
   - ``rosbuild_add_link_flags(target added_flags)`` -> ``set_target_properties(target PROPERTIES LINK_FLAGS new_flags)``
   - ``rosbuild_remove_link_flags(target removed_flags)`` -> ``set_target_properties(target PROPERTIES LINK_FLAGS new_flags)``
   - ``rosbuild_add_boost_directories(); rosbuild_link_boost(target components)`` ->
+
    - once in CMakeLists.txt with all components::
 
      ``find_package(Boost REQUIRED COMPONENTS components)``
@@ -75,6 +76,7 @@ a few added catkin macros if necessary.
    - for each target::
 
      ``target_link_libraries(target ${Boost_LIBRARIES})``
+
   - ``rosbuild_add_openmp_flags()`` -> ``find_package(OpenMP)``, then do other stuff
   - ``rosbuild_invoke_rospack()`` -> don't do this, use find_package to locate ROS packages as well
   - ``rosbuild_find_ros_package()`` -> don't do this, use find_package to locate ROS packages as well
