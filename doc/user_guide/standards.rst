@@ -138,7 +138,7 @@ Do not set
 Always quote variable that represent a string::
 
   set(myvar "foo")
-  if ("${myvar}" STREQUAL "bar")
+  if("${myvar}" STREQUAL "bar")
   # ...
   endif()
 
@@ -146,7 +146,7 @@ Do not quote variable that are booleans::
 
   set(mybvar ON)
   set(mybvar OFF)
-  if (${myvar})
+  if(${myvar})
   # ...
   endif()
 
@@ -161,12 +161,12 @@ When storing paths in variables, do NOT have the cmake variables end up with a s
 
 Use if(DEFINED varname) to check if a variable is set::
 
-  if (DEFINED myvar)
+  if(DEFINED myvar)
   #  ...
   endif()
 
 Use if(varname) to check it a variable has a non-empty value::
 
-  if (myvar)
+  if(myvar)
   #  ...
   endif()
