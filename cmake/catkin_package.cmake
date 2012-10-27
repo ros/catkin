@@ -160,6 +160,8 @@ function(_catkin_package)
 
   # extract all catkin packages from dependencies
   set(PROJECT_CATKIN_DEPENDS "")
+  set(PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS "")
+  set(PROJECT_NON_CATKIN_DEPENDS_LIBRARIES "")
   foreach(depend ${PROJECT_DEPENDENCIES})
     string(REPLACE " " ";" depend_list ${depend})
     # check if dependency is a catkin package
@@ -175,6 +177,9 @@ function(_catkin_package)
       if(_index EQUAL -1)
         message(FATAL_ERROR "catkin_package(${PROJECT_NAME}) depends on catkin package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
       endif()
+    elseif(${${depend_name}_FOUND})
+      list(APPEND PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS ${${depend_name}_INCLUDE_DIRS})
+      list(APPEND PROJECT_NON_CATKIN_DEPENDS_LIBRARIES ${${depend_name}_LIBRARIES})
     endif()
   endforeach()
 
@@ -186,6 +191,15 @@ function(_catkin_package)
   foreach(workspace ${CATKIN_WORKSPACES})
     list_append_unique(lib_paths ${workspace}/lib)
   endforeach()
+
+  # merge explicitly listed libraries and libraries from non-catkin but find_package()-ed packages
+  set(PKG_CONFIG_LIBRARIES "")
+  if(PROJECT_LIBRARIES)
+    list(APPEND PKG_CONFIG_LIBRARIES ${PROJECT_LIBRARIES})
+  endif()
+  if(PROJECT_NON_CATKIN_DEPENDS_LIBRARIES)
+    list(APPEND PKG_CONFIG_LIBRARIES ${PROJECT_NON_CATKIN_DEPENDS_LIBRARIES})
+  endif()
 
   #
   # BUILDSPACE
@@ -209,6 +223,9 @@ function(_catkin_package)
     endif()
     list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${include})
   endforeach()
+  if(PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS)
+    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS})
+  endif()
 
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
