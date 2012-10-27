@@ -50,9 +50,9 @@ e.g. for package 'pkg'::
                                   # it contains a semicolon separated list of source folders if the workspace is a buildspace
          env.sh
          setup.bash
-         setup.py
          setup.sh
          setup.zsh
+         setup_util.py
 
          bin/                     # just "anointed" central binaries (i.e. rosrun)
 

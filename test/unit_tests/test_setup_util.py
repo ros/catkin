@@ -6,7 +6,7 @@ import shutil
 import imp
 imp.load_source('setup_util',
                 os.path.join(os.path.dirname(__file__),
-                             '..', '..', 'cmake', 'templates', 'setup.py'))
+                             '..', '..', 'cmake', 'templates', 'setup_util.py'))
 
 import setup_util
 from setup_util import get_reversed_workspaces, prefix_env, remove_from_env, CATKIN_WORKSPACE_MARKER_FILE

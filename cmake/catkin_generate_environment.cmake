@@ -18,10 +18,10 @@ function(catkin_generate_environment)
   endif()
   file(WRITE "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE" "${sourcespaces}")
 
-  # generate relay-script for setup.py
-  set(PYTHON_SCRIPT ${catkin_EXTRAS_DIR}/templates/setup.py)
+  # generate relay-script for setup_util.py
+  set(PYTHON_SCRIPT ${catkin_EXTRAS_DIR}/templates/setup_util.py)
   configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
-    ${CATKIN_BUILD_PREFIX}/setup.py
+    ${CATKIN_BUILD_PREFIX}/setup_util.py
     @ONLY)
 
   if(NOT MSVC)
@@ -68,9 +68,9 @@ function(catkin_generate_environment)
     install(FILES
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.CATKIN_WORKSPACE
       DESTINATION ${CMAKE_INSTALL_PREFIX})
-    # install setup.py
+    # install setup_util.py
     install(PROGRAMS
-      ${catkin_EXTRAS_DIR}/templates/setup.py
+      ${catkin_EXTRAS_DIR}/templates/setup_util.py
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
 
