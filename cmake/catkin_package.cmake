@@ -278,8 +278,11 @@ function(_catkin_package)
 
   # absolute path to include dir under install prefix if any include dir is set
   set(PROJECT_ABSOLUTE_INCLUDE_DIRS "")
-  if(NOT "X${PROJECT_INCLUDE_DIRS}" STREQUAL "X")
+  if(NOT "${PROJECT_INCLUDE_DIRS}" STREQUAL "")
     set(PROJECT_ABSOLUTE_INCLUDE_DIRS ${PKG_INCLUDE_PREFIX}/include)
+  endif()
+  if(PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS)
+    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS})
   endif()
 
   # prepend library path of this workspace
