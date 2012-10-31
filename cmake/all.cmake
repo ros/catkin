@@ -139,7 +139,6 @@ if(CATKIN_STATIC_ENV)
 endif()
 # take snapshot of the modifications the env script causes
 # to reproduce the same changes with a static script in a fraction of the time
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/catkin_generated/tmp)
 em_expand(${catkin_EXTRAS_DIR}/templates/generate_cached_env.context.py.in
   ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.buildspace.context.py
   ${catkin_EXTRAS_DIR}/em/generate_cached_env.py.em

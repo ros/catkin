@@ -60,7 +60,7 @@ set(@PROJECT_NAME@_CONFIG_INCLUDED TRUE)
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(@PROJECT_NAME@_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "X@PROJECT_ABSOLUTE_INCLUDE_DIRS@" STREQUAL "X")
+if(NOT "@PROJECT_ABSOLUTE_INCLUDE_DIRS@" STREQUAL "")
   set(@PROJECT_NAME@_INCLUDE_DIRS "")
   foreach(idir @PROJECT_ABSOLUTE_INCLUDE_DIRS@)
     if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})

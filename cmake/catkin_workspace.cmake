@@ -51,9 +51,6 @@ function(catkin_workspace)
     list(LENGTH CATKIN_ORDERED_PACKAGES count)
     math(EXPR range "${count} - 1")
     foreach(index RANGE ${range})
-      # ensure that no current package name is set
-      unset(_CATKIN_CURRENT_PACKAGE)
-
       list(GET CATKIN_ORDERED_PACKAGE_PATHS ${index} path)
       list(GET CATKIN_ORDERED_PACKAGES_IS_META ${index} is_meta)
       list(GET CATKIN_ORDERED_PACKAGES ${index} name)
