@@ -13,7 +13,7 @@ except ImportError:
 
 
 parser = argparse.ArgumentParser(description='Generate cached environment script.')
-parser.add_argument('--static', help='The flag to skip sourcing the env script and generate a static environment')
+parser.add_argument('--static', action='store_true', help='The flag to skip sourcing the env script and generate a static environment')
 args = parser.parse_args()
 
 if not args.static:
