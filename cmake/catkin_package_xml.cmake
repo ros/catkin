@@ -18,6 +18,9 @@
 # :outvar _CATKIN_CURRENT_PACKAGE: the name of the package from the
 #   manifest
 #
+# .. note:: It is calling ``catkin_destinations()`` which will provide
+#   additional output variables.
+#
 # @public
 #
 macro(catkin_package_xml)
@@ -39,6 +42,8 @@ macro(catkin_package_xml)
   if(NOT _CATKIN_CURRENT_PACKAGE STREQUAL PROJECT_NAME)
     message(FATAL_ERROR "catkin_package_xml() package name '${_CATKIN_CURRENT_PACKAGE}'  in '${_PACKAGE_XML_DIRECTORY}/package.xml' does not match current PROJECT_NAME '${PROJECT_NAME}'.  You must call project() with the same package name before.")
   endif()
+
+  catkin_destinations()
 endmacro()
 
 macro(_catkin_package_xml dest_dir)

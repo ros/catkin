@@ -75,6 +75,7 @@ include(CMakeParseArguments)
 foreach(filename
     assert
     catkin_add_env_hooks
+    catkin_destinations
     catkin_generate_environment
     catkin_package
     catkin_package_xml
