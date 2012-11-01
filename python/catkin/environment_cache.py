@@ -8,8 +8,11 @@ import sys
 def generate_environment_script(env_script):
     """
     Generates script code to cache environment changes of a script.
+    This code assumes that the script does nothing else than changing
+    variables that contain colon separated lists of PATHs, by
+    replacing or prepending.
 
-    :param env_script: str The script which changes the environment
+    :param env_script: str The path to the script which changes the environment
     :returns: list script lines
     """
     code = []
@@ -44,7 +47,7 @@ def generate_environment_script(env_script):
     _append_comment(code, 'modified environment variables')
     for key in sorted(modified.keys()):
         (old_value, new_value) = modified[key]
-        if new_value.endswith(old_value):
+        if new_value.endswith(os.pathsep + old_value):
             variable = ('$%s' if _is_not_windows() else '%%%s%%') % key
             _set_variable(code, key, new_value[:-len(old_value)] + variable)
         else:
