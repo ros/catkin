@@ -1,7 +1,11 @@
 # generated from catkin/cmake/em/order_packages.cmake.em
 @{
 import os
-from catkin_pkg.topological_order import topological_order
+try:
+    from catkin_pkg.topological_order import topological_order
+except ImportError as impe:
+    raise RuntimeError("ERROR Cannot find a module of catkin_pkg, make sure it is up to date and on the PYTHONPATH, see catkin install instructions: %s" % impe)
+# vars defined in order_packages.context.py.in
 ordered_packages = topological_order(os.path.normpath(source_root_dir), whitelisted_packages, blacklisted_packages)
 fatal_error = False
 }@
