@@ -7,15 +7,15 @@
   <license>Unknown</license>
   <url/>
 
-  <build_depends>catkin</build_depends>
-  <build_depends>gencpp</build_depends>
-  <build_depends>genmsg</build_depends>
-  <build_depends>genpy</build_depends>
-  <build_depends>cpp_common</build_depends>
-  <build_depends>rostime</build_depends>
-  <build_depends>roscpp_traits</build_depends>
-  <build_depends>roscpp_serialization</build_depends>
-  <build_depends>sensor_msgs</build_depends>
+  <build_depend>catkin</build_depend>
+  <build_depend>gencpp</build_depend>
+  <build_depend>genmsg</build_depend>
+  <build_depend>genpy</build_depend>
+  <build_depend>cpp_common</build_depend>
+  <build_depend>rostime</build_depend>
+  <build_depend>roscpp_traits</build_depend>
+  <build_depend>roscpp_serialization</build_depend>
+  <build_depend>sensor_msgs</build_depend>
   <export>
   </export>
 

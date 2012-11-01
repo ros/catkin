@@ -63,7 +63,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
                          expect=fail)
         print("failed as expected, out=", out)
 
-        self.assertTrue('catkin_package() PROJECT_NAME is not set.' in out, out)
+        self.assertTrue("catkin_package() PROJECT_NAME is set to 'Project'" in out, out)
         # assert 'You must call project() with the same name before.' in out
 
     # Test was not finished apparently
