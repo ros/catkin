@@ -30,17 +30,20 @@ class RunTestsTest(unittest.TestCase):
             with open(placeholder, 'r') as fhand:
                 contents = fhand.read()
             self.assertTrue(results_file in contents)
+            os.remove(placeholder)
             ###
             main([results_file,
                   "echo '<testsuite></testsuite>' > %s" % results_file,
                   '--working-dir', rootdir])
             self.assertTrue(os.path.exists(results_file))
             self.assertFalse(os.path.exists(placeholder))
+            os.remove(results_file)
             ### no working dir given
-            main(["echo '<testsuite></testsuite>' > %s" % results_file,
-                  results_file])
+            main([results_file,
+                  "echo '<testsuite></testsuite>' > %s" % results_file])
             self.assertTrue(os.path.exists(results_file))
             self.assertFalse(os.path.exists(placeholder))
+            os.remove(results_file)
             ### make sure resultsfile is deleted
             main([results_file,
                   'true',
