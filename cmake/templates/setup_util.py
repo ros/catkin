@@ -56,7 +56,7 @@ def remove_from_env(name, subfolder):
     env_paths = [path for path in os.environ.get(name, '').split(os.pathsep) if path]
     for ws_path in get_workspaces():
         try:
-            env_paths.remove(os.path.join(ws_path, subfolder.lstrip('/')))
+            env_paths.remove(ws_path + subfolder)
         except ValueError:
             pass
     return os.pathsep.join(env_paths)
