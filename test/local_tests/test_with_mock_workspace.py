@@ -6,6 +6,15 @@ from test.utils import AbstractCatkinWorkspaceTest, MOCK_DIR, \
     MAKE_CMD, succeed, assert_exists, fail
 
 
+import em
+import sys
+import stat
+import unittest
+import tempfile
+
+
+
+
 class MockTest(AbstractCatkinWorkspaceTest):
     """
     This test case uses workspaces with catkin projects from the
@@ -74,3 +83,38 @@ class MockTest(AbstractCatkinWorkspaceTest):
     #                               'src-fail', 'badly_specified_changelog'),
     #           CATKIN='YES')
     #     succeed(MAKE_CMD + ['help'], cwd=self.builddir)
+
+    def test_env_cached_static(self):
+        # hack to fix empy nosetests clash
+        sys.stdout = em.ProxyFile(sys.stdout)
+        dstdir = os.path.join(self.workspacedir, 'catkin_test')
+        shutil.copytree(os.path.join(MOCK_DIR, 'src', 'catkin_test'), dstdir)
+        template_file = os.path.join(os.path.dirname(__file__), '..', '..', 'cmake', 'em', 'order_packages.cmake.em')
+        with open (template_file, 'r') as fhand:
+            template = fhand.read()
+        gdict = {'CATKIN_STATIC_ENV': True,
+                 'CATKIN_BUILD_PREFIX': '/foo',
+                 'CMAKE_PREFIX_PATH': ['/bar'],
+                 'CATKIN_GLOBAL_LIB_DESTINATION': '/glob-dest/lib',
+                 'CATKIN_GLOBAL_BIN_DESTINATION': '/glob-dest/bin',
+                 'PYTHON_INSTALL_DIR': '/foo/dist-packages'}
+        result = em.expand(template, gdict,
+                           source_root_dir=self.workspacedir,
+                           whitelisted_packages=None,
+                           blacklisted_packages=None)
+        self.assertTrue('set(CATKIN_ORDERED_PACKAGES "")' in result, result)
+        self.assertTrue('set(CATKIN_ORDERED_PACKAGE_PATHS "")' in result, result)
+        self.assertTrue('set(CATKIN_ORDERED_PACKAGES_IS_META "")' in result, result)
+        self.assertTrue('set(CATKIN_MESSAGE_GENERATORS' in result, result)
+
+        self.assertTrue("""\
+list(APPEND CATKIN_ORDERED_PACKAGES "catkin_test")
+list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "catkin_test/catkin_test")
+list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "True")""" in result, result)
+        self.assertTrue("""\
+list(APPEND CATKIN_ORDERED_PACKAGES "a")
+list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "catkin_test/a")
+list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "False")""" in result, result)
+        # catkin itself filtered out
+        self.assertFalse('list(APPEND CATKIN_ORDERED_PACKAGES "catkin"' in result, result)
+        self.assertEqual(28, len(result.splitlines()))
