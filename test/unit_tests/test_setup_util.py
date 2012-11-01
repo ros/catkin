@@ -60,33 +60,62 @@ class SetupUtilTest(unittest.TestCase):
             setup_util.os.environ = os.environ
 
     def test_remove_from_env(self):
+        altsep = os.path.altsep
         try:
             mock_env = {}
             rootdir = tempfile.mkdtemp()
             setup_util.os.environ = mock_env
+            # foows
             foows = os.path.join(rootdir, 'foo')
             foolib = os.path.join(foows, 'lib')
             os.makedirs(foows)
             with open(os.path.join(foows, '.CATKIN_WORKSPACE'), 'w') as fhand:
                 fhand.write('')
+            # barws
             barws = os.path.join(rootdir, 'bar')
             barlib = os.path.join(barws, 'lib')
             os.makedirs(barws)
             with open(os.path.join(barws, '.CATKIN_WORKSPACE'), 'w') as fhand:
                 fhand.write('')
+            # mock_env with one ws in CPP
+            varname = 'varname'
+            wsvarname = 'workspaces'
+            mock_env = {varname: os.pathsep.join([foolib, barlib]),
+                        'CMAKE_PREFIX_PATH': barws}
+            setup_util.os.environ = mock_env
+            # since workspace foo is not in CMAKE_PREFIX_PATH, it remains in varname
+            self.assertEqual(foolib, remove_from_env(varname, '/lib'))
+
+            # mock_env with both ws in CPP
+            mock_env = {varname: os.pathsep.join([foolib, barlib]),
+                        wsvarname: os.pathsep.join([foows, barws]),
+                        'CMAKE_PREFIX_PATH': os.pathsep.join([foows, barws])}
+            setup_util.os.environ = mock_env
+
+            self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env(varname, ''))
+            self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env(varname, 'nolib'))
+            self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env(varname, '/nolib'))
+            # self.assertEqual('', remove_from_env(varname, 'lib'))
+            self.assertEqual('', remove_from_env(varname, '/lib'))
+            self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env(varname, ''))
+            self.assertEqual('', remove_from_env(wsvarname, ''))
+
+            # nows: not a workspace
             nows = os.path.join(rootdir, 'nows')
             nowslib = os.path.join(nows, 'lib')
+            nowslib = os.path.join(nows, 'include')
             os.makedirs(nows)
-            setup_util.os.environ = mock_env
-            mock_env = {'varname': os.pathsep.join([foolib, barlib])}
-            setup_util.os.environ = mock_env
-            self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env('varname', ''))
-            self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env('varname', 'child1'))
 
-            mock_env = {'varname': os.pathsep.join([foolib, nowslib, barlib, foolib]), 'CMAKE_PREFIX_PATH': os.pathsep.join([foows, barws])}
+            mock_env = {'varname': os.pathsep.join([foolib, nowslib, barlib, foolib]),
+                        'CMAKE_PREFIX_PATH': os.pathsep.join([foows, barws])}
             setup_util.os.environ = mock_env
-            # check nows/lib remains, and second mention of foolib
+            # checks nows/lib remains, and second mention of foolib
+            self.assertEqual(os.pathsep.join([nowslib, foolib]), remove_from_env('varname', '/lib'))
             self.assertEqual(os.pathsep.join([nowslib, foolib]), remove_from_env('varname', 'lib'))
 
+            # windows pathsep
+            os.path.altsep = '\\'
+            self.assertEqual(os.pathsep.join([nowslib, foolib]), remove_from_env('varname', '\\lib'))
         finally:
             setup_util.os.environ = os.environ
+            os.path.altsep = altsep
