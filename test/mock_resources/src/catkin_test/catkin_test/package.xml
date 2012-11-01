@@ -7,12 +7,12 @@
   <license>Unknown</license>
   <url/>
 
-  <run_depends>catkin</run_depends>
-  <run_depends>gencpp</run_depends>
-  <run_depends>genmsg</run_depends>
-  <run_depends>genpy</run_depends>
-  <run_depends>std_msgs</run_depends>
-  <run_depends>ros_comm</run_depends>
+  <run_depend>catkin</run_depend>
+  <run_depend>gencpp</run_depend>
+  <run_depend>genmsg</run_depend>
+  <run_depend>genpy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>ros_comm</run_depend>
   <export>
     <metapackage/>
   </export>
