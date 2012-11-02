@@ -11,6 +11,20 @@ endif()
 # define buildspace
 set(CATKIN_BUILD_PREFIX "${CMAKE_BINARY_DIR}/buildspace")
 
+# create workspace marker
+set(_sourcespaces "${CMAKE_SOURCE_DIR}")
+if(EXISTS "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE")
+  # prepend to existing list of sourcespaces
+  file(READ "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE" _existing_sourcespaces)
+  list(FIND _existing_sourcespaces "${CMAKE_SOURCE_DIR}" _index)
+  if(_index EQUAL -1)
+    list(INSERT _existing_sourcespaces 0 ${CMAKE_SOURCE_DIR})
+  endif()
+  set(_sourcespaces ${_existing_sourcespaces})
+endif()
+file(WRITE "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE" "${_sourcespaces}")
+
+
 # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
 # or CMAKE_PREFIX_PATH from the environment
 if(NOT DEFINED CMAKE_PREFIX_PATH)
@@ -89,6 +103,7 @@ foreach(filename
     empy
     find_program_required
     list_append_unique
+    list_insert_in_workspace_order
     parse_arguments
     safe_execute_process
     stamp

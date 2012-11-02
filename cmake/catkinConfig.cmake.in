@@ -89,6 +89,8 @@ foreach(component ${catkin_FIND_COMPONENTS})
     list_append_unique(catkin_LIBRARY_DIRS ${${component}_LIBRARY_DIRS})
   endif()
 endforeach()
+list_insert_in_workspace_order(catkin_INCLUDE_DIRS ${catkin_INCLUDE_DIRS})
+list_insert_in_workspace_order(catkin_LIBRARY_DIRS ${catkin_LIBRARY_DIRS})
 
 # decrement recursion counter
 math(EXPR _CATKIN_FIND_ "${_CATKIN_FIND_} - 1")
