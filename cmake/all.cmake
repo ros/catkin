@@ -8,6 +8,9 @@ if(NOT DEFINED catkin_EXTRAS_DIR)
   message(FATAL_ERROR "catkin_EXTRAS_DIR is not set")
 endif()
 
+# define buildspace
+set(CATKIN_BUILD_PREFIX "${CMAKE_BINARY_DIR}/buildspace")
+
 # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
 # or CMAKE_PREFIX_PATH from the environment
 if(NOT DEFINED CMAKE_PREFIX_PATH)
@@ -16,6 +19,8 @@ if(NOT DEFINED CMAKE_PREFIX_PATH)
   endif()
 endif()
 if(CMAKE_PREFIX_PATH)
+  # skip buildspace if it is in CMAKE_PREFIX_PATH so that it is not part of CATKIN_WORKSPACES
+  list(REMOVE_ITEM CMAKE_PREFIX_PATH ${CATKIN_BUILD_PREFIX})
   message(STATUS "Using CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 endif()
 
@@ -36,8 +41,6 @@ endif()
 # save original CMAKE_PREFIX_PATH for environment generation
 set(CMAKE_PREFIX_PATH_WITHOUT_BUILDSPACE ${CMAKE_PREFIX_PATH})
 
-# define buildspace
-set(CATKIN_BUILD_PREFIX "${CMAKE_BINARY_DIR}/buildspace")
 # prepend buildspace to CMAKE_PREFIX_PATH
 list(INSERT CMAKE_PREFIX_PATH 0 ${CATKIN_BUILD_PREFIX})
 
