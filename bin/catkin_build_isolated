@@ -17,6 +17,7 @@ def main():
     parser = argparse.ArgumentParser(description='Builds all catkin packages in isolation in topological order.')
     parser.add_argument('sourcespace', nargs='?', default='.', help='The path to an existing folder (default: .)')
     parser.add_argument('buildspace', nargs='?', default='.', help='The path where the build folder is created (default: .)')
+    parser.add_argument('--install', action='store_true', help='Flag if each workspace should be installed')
     args = parser.parse_args()
 
     # verify that sourcespace folder exists
@@ -24,7 +25,7 @@ def main():
     if not os.path.isdir(sourcespace):
         sys.exit('Sourcespace "%s" does not exist' % sourcespace)
 
-    build_workspace_in_isolation(sourcespace, args.buildspace)
+    build_workspace_in_isolation(sourcespace, args.buildspace, args.install)
 
 
 if __name__ == '__main__':
