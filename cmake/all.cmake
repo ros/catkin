@@ -158,6 +158,9 @@ if(CATKIN_STATIC_ENV)
 endif()
 # take snapshot of the modifications the env script causes
 # to reproduce the same changes with a static script in a fraction of the time
+set(OUTPUT_SCRIPT_DIR ${CMAKE_BINARY_DIR}/catkin_generated)
+set(PREPEND_SPACE_DIR ${CATKIN_BUILD_PREFIX})
+set(CUSTOM_PREFIX_PATH ${CMAKE_PREFIX_PATH})
 em_expand(${catkin_EXTRAS_DIR}/templates/generate_cached_env.context.py.in
   ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.buildspace.context.py
   ${catkin_EXTRAS_DIR}/em/generate_cached_env.py.em
@@ -170,7 +173,22 @@ set(GENERATE_ENVIRONMENT_CACHE_COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/
 # the script is generated once here and refreshed by every call to catkin_add_env_hooks()
 safe_execute_process(COMMAND ${GENERATE_ENVIRONMENT_CACHE_COMMAND})
 # environment to call external processes
-set(CATKIN_ENV ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/env_cached.${script_ext} CACHE INTERNAL "catkin environment")
+set(CATKIN_ENV ${CMAKE_BINARY_DIR}/catkin_generated/env_cached.${script_ext} CACHE INTERNAL "catkin environment")
+
+if(CATKIN_STATIC_ENV)
+  # generate cached env script for installspace when requesting a static environment
+  set(OUTPUT_SCRIPT_DIR ${CMAKE_BINARY_DIR}/catkin_generated/installspace)
+  set(PREPEND_SPACE_DIR ${CMAKE_INSTALL_PREFIX})
+  set(CUSTOM_PREFIX_PATH ${CATKIN_WORKSPACES})
+  em_expand(${catkin_EXTRAS_DIR}/templates/generate_cached_env.context.py.in
+    ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.installspace.context.py
+    ${catkin_EXTRAS_DIR}/em/generate_cached_env.py.em
+    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/generate_cached_env.py)
+  set(cmd ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/catkin_generated/installspace/generate_cached_env.py ${_command_option})
+  safe_execute_process(COMMAND ${cmd})
+  install(PROGRAMS ${OUTPUT_SCRIPT_DIR}/env_cached.${script_ext}
+    DESTINATION .)
+endif()
 
 # add additional environment hooks
 if(CATKIN_BUILD_BINARY_PACKAGE AND NOT "${PROJECT_NAME}" STREQUAL "catkin")

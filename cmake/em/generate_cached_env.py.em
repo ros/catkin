@@ -19,7 +19,7 @@ args = parser.parse_args()
 if not args.static:
     code = generate_environment_script('@ENV_SCRIPT')
 else:
-    code = generate_static_environment_script('@CATKIN_BUILD_PREFIX', @CMAKE_PREFIX_PATH, '@PYTHON_INSTALL_DIR')
+    code = generate_static_environment_script('@PREPEND_SPACE_DIR', @CMAKE_PREFIX_PATH, '@PYTHON_INSTALL_DIR')
 
 with open('@OUTPUT_SCRIPT', 'w') as f:
     #print('Generate script for cached environment "%s"' % '@OUTPUT_SCRIPT')

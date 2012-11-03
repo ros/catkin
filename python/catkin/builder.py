@@ -14,6 +14,7 @@ def build_workspace_in_isolation(sourcespace_dir, buildspace_parent_dir, install
         os.makedirs(buildspace_dir)
 
     last_env_to_source = None
+    last_space_dir = None
     for path, package in packages:
         if 'metapackage' in [e.tagname for e in package.exports]:
             print('\n+++ Skipping metapackage "%s"' % path)
@@ -23,7 +24,7 @@ def build_workspace_in_isolation(sourcespace_dir, buildspace_parent_dir, install
         if not os.path.exists(package_build_dir):
             os.mkdir(package_build_dir)
         if install:
-            package_install_dir = os.path.join(package_build_dir, '__install')
+            package_install_dir = package_build_dir + '__install'
             if not os.path.exists(package_install_dir):
                 os.mkdir(package_install_dir)
 
@@ -39,10 +40,16 @@ def build_workspace_in_isolation(sourcespace_dir, buildspace_parent_dir, install
 
         if not install:
             last_env_to_source = os.path.join(package_build_dir, 'catkin_generated', 'env_cached.sh')
+            last_space_dir = os.path.join(package_build_dir, 'buildspace')
         else:
             cmd = ['make', 'install']
             _run_command_with_env(cmd, package_build_dir, last_env_to_source)
-            last_env_to_source = os.path.join(package_install_dir, 'env.sh')
+            last_env_to_source = os.path.join(package_install_dir, 'env_cached.sh')
+            last_space_dir = package_install_dir
+
+    if last_space_dir:
+        print('\n+++ DONE')
+        print('\n+++ The latest overlay is: %s' % last_space_dir)
 
 
 def _run_command_with_env(cmd, cwd, env_to_source=None):
