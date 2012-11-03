@@ -193,6 +193,9 @@ function(_catkin_package)
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
   list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
   set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
+  if("${PROJECT_NAME}" STREQUAL "catkin")
+    set(PKG_CMAKE_DIR "${catkin_EXTRAS_DIR}")
+  endif()
 
   # ensure that output folder exists
   file(MAKE_DIRECTORY ${CATKIN_BUILD_PREFIX}/lib/pkgconfig)
