@@ -206,6 +206,34 @@ function(_catkin_package)
     ${catkin_EXTRAS_DIR}/em/pkg.pc.em
     ${CATKIN_BUILD_PREFIX}/lib/pkgconfig/${PROJECT_NAME}.pc)
 
+  # generate buildspace cfg-extras for project
+  set(PKG_CFG_EXTRAS "")
+  foreach(extra ${PROJECT_CFG_EXTRAS})
+    set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
+    if (EXISTS ${base})
+      list(APPEND PKG_CFG_EXTRAS ${base})
+    elseif(EXISTS ${base}.em OR EXISTS ${base}.buildspace.em)
+      if(EXISTS ${base}.em)
+        set(em_template ${base}.em)
+      else()
+        set(em_template ${base}.buildspace.em)
+      endif()
+      em_expand(${catkin_EXTRAS_DIR}/templates/cfg-extras.context.py.in
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${extra}.buildspace.context.cmake.py
+        ${em_template}
+        ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+    elseif(EXISTS ${base}.in)
+      configure_file(${base}.in
+        ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
+        @ONLY
+      )
+      list(APPEND PKG_CFG_EXTRAS ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+    else()
+      message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}', 'cmake/${extra}.em', 'cmake/${extra}.buildspace.em' or 'cmake/${extra}.in' must exist.")
+    endif()
+  endforeach()
+
   # generate buildspace config for project
   set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
   if(NOT EXISTS ${infile})
@@ -221,16 +249,6 @@ function(_catkin_package)
     ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config-version.cmake
     @ONLY
   )
-
-  # generate buildspace cfg-extras for project
-  foreach(extra ${PROJECT_CFG_EXTRAS})
-    assert_file_exists(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra}.in "Nonexistent extra")
-    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra}.in
-    configure_file(cmake/${extra}.in
-      ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
-      @ONLY
-    )
-  endforeach()
 
   #
   # INSTALLSPACE
@@ -268,6 +286,40 @@ function(_catkin_package)
     DESTINATION lib/pkgconfig
   )
 
+  # generate and install cfg-extras for project
+  set(PKG_CFG_EXTRAS "")
+  set(installable_cfg_extras "")
+  foreach(extra ${PROJECT_CFG_EXTRAS})
+    set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
+    if (EXISTS ${base})
+      list(APPEND installable_cfg_extras ${base})
+    elseif(EXISTS ${base}.em OR EXISTS ${base}.installspace.em)
+      if(EXISTS ${base}.em)
+        set(em_template ${base}.em)
+      else()
+        set(em_template ${base}.installspace.em)
+      endif()
+      em_expand(${catkin_EXTRAS_DIR}/templates/cfg-extras.context.py.in
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${extra}.installspace.context.cmake.py
+        ${em_template}
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
+      list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
+    elseif(EXISTS ${base}.in)
+      configure_file(${base}.in
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra}
+        @ONLY
+      )
+      list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
+    else()
+      message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}', 'cmake/${extra}.em', 'cmake/${extra}.installspace.em' or 'cmake/${extra}.in' must exist.")
+    endif()
+    list(APPEND PKG_CFG_EXTRAS ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+  endforeach()
+  install(FILES
+    ${installable_cfg_extras}
+    DESTINATION share/${PROJECT_NAME}/cmake
+  )
+
   # generate config for project
   set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
   if(NOT EXISTS ${infile})
@@ -288,21 +340,10 @@ function(_catkin_package)
     @ONLY
   )
 
-  # generate cfg-extras for project
-  set(installable_cfg_extras "")
-  foreach(extra ${PROJECT_CFG_EXTRAS})
-    list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
-    configure_file(cmake/${extra}.in
-      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra}
-      @ONLY
-    )
-  endforeach()
-
   # install config, config-version and cfg-extras for project
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
-    ${installable_cfg_extras}
     DESTINATION share/${PROJECT_NAME}/cmake
   )
 

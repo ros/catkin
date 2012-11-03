@@ -129,6 +129,6 @@ if(@PROJECT_NAME@_LIBRARIES)
   _remove_duplicate_libraries(@PROJECT_NAME@_LIBRARIES @PROJECT_NAME@_LIBRARIES)
 endif()
 
-foreach(extra @PROJECT_CFG_EXTRAS@)
-  include("@PKG_CMAKE_DIR@/${extra}")
+foreach(extra @PKG_CFG_EXTRAS@)
+  include(${extra})
 endforeach()
