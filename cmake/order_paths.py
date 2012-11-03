@@ -18,6 +18,11 @@ def main():
 
     ordered_paths = order_paths(args.paths_to_order, args.prefixes)
 
+    # create directory if necessary
+    outdir = os.path.dirname(args.outfile)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
     with open(args.outfile, 'w') as fh:
         fh.write('set(ORDERED_PATHS "%s")' % ';'.join(ordered_paths))
 

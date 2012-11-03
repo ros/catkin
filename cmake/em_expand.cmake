@@ -7,6 +7,12 @@ macro(em_expand context_in context_out em_file_in file_out)
 
   stamp(${em_file_in})
 
+  # create directory if necessary
+  get_filename_component(_folder_out ${file_out} PATH)
+  if(NOT IS_DIRECTORY ${_folder_out})
+    file(MAKE_DIRECTORY ${_folder_out})
+  endif()
+
   debug_message(2 "Evaluate template '${em_file_in}' to '${file_out}' (with context from '${context_out}')")
   assert(EMPY_EXECUTABLE)
   set(command ${EMPY_EXECUTABLE})
