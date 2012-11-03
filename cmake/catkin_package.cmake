@@ -115,7 +115,7 @@ function(_catkin_package)
     string(REPLACE " " ";" depend_list ${depend})
     list(GET depend_list 0 depend_name)
     if(NOT ${depend_name}_FOUND)
-      message(WARNING "catkin_package(${PROJECT_NAME}) depends on '${depend_name}' which has not been find_package()-ed before")
+      message(WARNING "catkin_package() depends on '${depend_name}' which has not been find_package()-ed before")
       list(REMOVE_ITEM PROJECT_DEPENDENCIES ${depend})
     endif()
   endforeach()
@@ -133,11 +133,11 @@ function(_catkin_package)
       # verify that all catkin dependencies are listed as build- and runtime dependencies
       list(FIND ${PROJECT_NAME}_BUILD_DEPENDS ${depend_name} _index)
       if(_index EQUAL -1)
-        message(FATAL_ERROR "catkin_package(${PROJECT_NAME}) depends on catkin package '${depend_name}' which must therefore be listed as a build dependency in the package.xml")
+        message(FATAL_ERROR "catkin_package() depends on catkin package '${depend_name}' which must therefore be listed as a build dependency in the package.xml")
       endif()
       list(FIND ${PROJECT_NAME}_RUN_DEPENDS ${depend_name} _index)
       if(_index EQUAL -1)
-        message(FATAL_ERROR "catkin_package(${PROJECT_NAME}) depends on catkin package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
+        message(FATAL_ERROR "catkin_package() depends on catkin package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
       endif()
     elseif(${${depend_name}_FOUND})
       list(APPEND PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS ${${depend_name}_INCLUDE_DIRS})
@@ -167,6 +167,7 @@ function(_catkin_package)
   # BUILDSPACE
   #
 
+  # used in the cmake extra files
   set(BUILDSPACE TRUE)
   set(INSTALLSPACE FALSE)
 
@@ -181,7 +182,7 @@ function(_catkin_package)
     elseif(IS_DIRECTORY ${PKG_INCLUDE_PREFIX}/${idir})
       set(include ${PKG_INCLUDE_PREFIX}/${idir})
     else()
-      message(FATAL_ERROR "catkin_package include dir '${idir}' is neither an absolute directory nor exists relative to '${CMAKE_CURRENT_SOURCE_DIR}'")
+      message(FATAL_ERROR "catkin_package() include dir '${idir}' is neither an absolute directory nor exists relative to '${CMAKE_CURRENT_SOURCE_DIR}'")
     endif()
     list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${include})
   endforeach()
@@ -235,6 +236,7 @@ function(_catkin_package)
   # INSTALLSPACE
   #
 
+  # used in the cmake extra files
   set(BUILDSPACE FALSE)
   set(INSTALLSPACE TRUE)
 
