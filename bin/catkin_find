@@ -39,16 +39,15 @@ def main():
     args = parse_args()
     try:
         # keep order of folders to search in
-        (results, checked) = find_in_workspaces(args.install_folders, args.project, args.path)
+        checked = []
+        results = find_in_workspaces(args.install_folders, args.project, args.path, first_match_only=args.first_only, considered_paths=checked)
 
         if args.first_only:
             if len(results) > 1:
                 raise RuntimeError('Could not find unique path, the following paths are matching:\n%s' % '\n'.join(results))
             elif len(results) == 0:
                 raise RuntimeError('Could not find any path, checked the following paths:\n%s' % '\n'.join(checked))
-            print(results[0])
-        else:
-            print('\n'.join(results))
+        print('\n'.join(results))
 
     except Exception as e:
         sys.exit(str(e))

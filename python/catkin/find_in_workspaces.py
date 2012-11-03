@@ -54,7 +54,7 @@ def _get_valid_search_dirs(search_dirs, project):
 #      except for s == 'share', cand is a list of two paths: ws[0] + s + project (+ path) and ws[1] + project (+ path)
 #      add cand to result list if it exists
 #      is not defined for s in ['bin', 'lib'], bailing out
-def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=get_workspaces()):
+def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=get_workspaces(), considered_paths=None, first_matching_workspace_only=False, first_match_only=False):
     '''
     Find all paths which match the search criteria.
     All workspaces are searched in order.
@@ -70,27 +70,44 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
     :returns: List of paths, ``list``
     '''
     search_dirs = _get_valid_search_dirs(search_dirs, project)
-    # collect candidate paths
+
     paths = []
-    for workspace in (_workspaces or []):
-        for sub in search_dirs:
-            # search in workspace
-            p = os.path.join(workspace, sub if sub != 'libexec' else 'lib')
-            if project:
-                p = os.path.join(p, project)
-            if path:
-                p = os.path.join(p, path)
-            paths.append(p)
+    existing_paths = []
+    try:
+        for workspace in (_workspaces or []):
+            for sub in search_dirs:
+                # search in workspace
+                p = os.path.join(workspace, sub if sub != 'libexec' else 'lib')
+                if project:
+                    p = os.path.join(p, project)
+                if path:
+                    p = os.path.join(p, path)
+                paths.append(p)
+                if os.path.exists(p):
+                    existing_paths.append(p)
+                    if first_match_only:
+                        raise StopIteration
 
-            # for search in share also consider source spaces
-            if project is not None and sub == 'share':
-                source_paths = get_source_paths(workspace)
-                for source_path in source_paths:
-                    p = os.path.join(source_path, project)
-                    if path is not None:
-                        p = os.path.join(p, path)
-                    paths.append(p)
+                # for search in share also consider source spaces
+                if project is not None and sub == 'share':
+                    source_paths = get_source_paths(workspace)
+                    for source_path in source_paths:
+                        p = os.path.join(source_path, project)
+                        if path is not None:
+                            p = os.path.join(p, path)
+                        paths.append(p)
+                        if os.path.exists(p):
+                            existing_paths.append(p)
+                            if first_match_only:
+                                raise StopIteration
 
-    # find all existing candidates
-    existing = [p for p in paths if os.path.exists(p)]
-    return (existing, paths)
+            if first_matching_workspace_only and existing_paths:
+                break
+
+    except StopIteration:
+        pass
+
+    if considered_paths is not None:
+        considered_paths.extend(paths)
+
+    return existing_paths
