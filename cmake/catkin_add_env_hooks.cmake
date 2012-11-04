@@ -45,22 +45,71 @@ function(catkin_add_env_hooks file_prefix)
 
   foreach(shell ${ARG_SHELLS})
     set(ENV_HOOK ${file_prefix}.${shell})
-    assert_file_exists(${ARG_DIRECTORY}/${ENV_HOOK}.in "User-supplied environment file '${ARG_DIRECTORY}/${ENV_HOOK}.in' missing")
-
+    set(base ${ARG_DIRECTORY}/${ENV_HOOK})
+ 
     # generate environment hook for buildspace
-    set(BUILDSPACE true)
-    set(INSTALLSPACE false)
-    configure_file(${ARG_DIRECTORY}/${ENV_HOOK}.in
-      ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
+    if (EXISTS ${base})
+      # copy plain file
+      file(COPY ${base} DESTINATION ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d)
+    elseif(EXISTS ${base}.em OR EXISTS ${base}.buildspace.em)
+      # evaluate em template
+      set(BUILDSPACE True)
+      set(INSTALLSPACE False)
+      if(EXISTS ${base}.em)
+        set(em_template ${base}.em)
+      else()
+        set(em_template ${base}.buildspace.em)
+      endif()
+      em_expand(${catkin_EXTRAS_DIR}/templates/env-hook.context.py.in
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${ENV_HOOK}.buildspace.context.py
+        ${em_template}
+        ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
+    elseif(EXISTS ${base}.in)
+      # evaluate in template
+      set(BUILDSPACE true)
+      set(INSTALLSPACE false)
+      configure_file(${base}.in
+        ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK}
+        @ONLY)
+    else()
+      message(FATAL_ERROR "catkin_add_env_hooks() could not find environment hook.  Either '${base}', '${base}.em', '${base}.buildspace.em' or '${base}.in' must exist.")
+    endif()
 
     # generate and install environment hook for installspace
-    set(BUILDSPACE false)
-    set(INSTALLSPACE true)
-    configure_file(${ARG_DIRECTORY}/${ENV_HOOK}.in
-      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK})
-    if(NOT ${ARG_SKIP_INSTALL})
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
-        DESTINATION etc/catkin/profile.d)
+    if (EXISTS ${base})
+      # install plain file
+      if(NOT ${ARG_SKIP_INSTALL})
+        install(FILES ${base}
+          DESTINATION etc/catkin/profile.d)
+      endif()
+    elseif(EXISTS ${base}.em OR EXISTS ${base}.installspace.em)
+      # evaluate em template and install
+      set(BUILDSPACE False)
+      set(INSTALLSPACE True)
+      if(EXISTS ${base}.em)
+        set(em_template ${base}.em)
+      else()
+        set(em_template ${base}.installspace.em)
+      endif()
+      em_expand(${catkin_EXTRAS_DIR}/templates/env-hook.context.py.in
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${ENV_HOOK}.installspace.context.py
+        ${em_template}
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK})
+      if(NOT ${ARG_SKIP_INSTALL})
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
+          DESTINATION etc/catkin/profile.d)
+      endif()
+    elseif(EXISTS ${base}.in)
+      # evaluate in template and install
+      set(BUILDSPACE false)
+      set(INSTALLSPACE true)
+      configure_file(${base}.in
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
+        @ONLY)
+      if(NOT ${ARG_SKIP_INSTALL})
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
+          DESTINATION etc/catkin/profile.d)
+      endif()
     endif()
   endforeach()
 
