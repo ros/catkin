@@ -1,6 +1,7 @@
 from __future__ import print_function
 import os
 from catkin.workspace import get_source_paths, get_workspaces
+from catkin_pkg.packages import find_packages
 
 
 def _get_valid_search_dirs(search_dirs, project):
@@ -92,14 +93,17 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
                 if project is not None and sub == 'share':
                     source_paths = get_source_paths(workspace)
                     for source_path in source_paths:
-                        p = os.path.join(source_path, project)
-                        if path is not None:
-                            p = os.path.join(p, path)
-                        paths.append(p)
-                        if os.path.exists(p):
-                            existing_paths.append(p)
-                            if first_match_only:
-                                raise StopIteration
+                        packages = find_packages(source_path)
+                        matching_packages = [p for p, pkg in packages.iteritems() if pkg.name == project]
+                        if matching_packages:
+                            p = os.path.join(source_path, matching_packages[0])
+                            if path is not None:
+                                p = os.path.join(p, path)
+                            paths.append(p)
+                            if os.path.exists(p):
+                                existing_paths.append(p)
+                                if first_match_only:
+                                    raise StopIteration
 
             if first_matching_workspace_only and existing_paths:
                 break
