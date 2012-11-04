@@ -5,10 +5,10 @@ function(catkin_generate_environment)
   # generate empty file to prevent searching for packages in binary dir
   file(WRITE "${CMAKE_BINARY_DIR}/CATKIN_NO_SUBDIRS" "")
 
-  # generate relay-script for setup_util.py
-  set(PYTHON_SCRIPT ${catkin_EXTRAS_DIR}/templates/setup_util.py)
+  # generate relay-script for _setup_util.py
+  set(PYTHON_SCRIPT ${catkin_EXTRAS_DIR}/templates/_setup_util.py)
   configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
-    ${CATKIN_BUILD_PREFIX}/setup_util.py
+    ${CATKIN_BUILD_PREFIX}/_setup_util.py
     @ONLY)
 
   if(NOT MSVC)
@@ -55,9 +55,9 @@ function(catkin_generate_environment)
     install(FILES
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.CATKIN_WORKSPACE
       DESTINATION ${CMAKE_INSTALL_PREFIX})
-    # install setup_util.py
+    # install _setup_util.py
     install(PROGRAMS
-      ${catkin_EXTRAS_DIR}/templates/setup_util.py
+      ${catkin_EXTRAS_DIR}/templates/_setup_util.py
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
 

@@ -52,7 +52,7 @@ e.g. for package 'pkg'::
          setup.bash
          setup.sh
          setup.zsh
-         setup_util.py
+         _setup_util.py           # functions for the setup shell scripts
 
          bin/                     # just "anointed" central binaries (i.e. rosrun)
 

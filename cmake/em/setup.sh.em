@@ -53,44 +53,44 @@ fi
 # reset environment variables by unrolling modifications based on all workspaces in CMAKE_PREFIX_PATH
 # this does not cover modifications performed by environment hooks
 if [ $DO_CLEAN -eq 1 ]; then
-  export CPATH="$("@SETUP_DIR/setup_util.py" --remove --name CPATH --value "$CPATH_dir")"
+  export CPATH="$("@SETUP_DIR/_setup_util.py" --remove --name CPATH --value "$CPATH_dir")"
   if [ $IS_DARWIN -eq 0 ]; then
-    export LD_LIBRARY_PATH="$("@SETUP_DIR/setup_util.py" --remove --name LD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
+    export LD_LIBRARY_PATH="$("@SETUP_DIR/_setup_util.py" --remove --name LD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
   else
-    export DYLD_LIBRARY_PATH="$("@SETUP_DIR/setup_util.py" --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
+    export DYLD_LIBRARY_PATH="$("@SETUP_DIR/_setup_util.py" --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
   fi
-  export PATH="$("@SETUP_DIR/setup_util.py" --remove --name PATH --value "$PATH_dir")"
-  export PKG_CONFIG_PATH="$("@SETUP_DIR/setup_util.py" --remove --name PKG_CONFIG_PATH --value "$PKG_CONFIG_PATH_dir")"
-  export PYTHONPATH="$("@SETUP_DIR/setup_util.py" --remove --name PYTHONPATH --value "$PYTHONPATH_dir")"
+  export PATH="$("@SETUP_DIR/_setup_util.py" --remove --name PATH --value "$PATH_dir")"
+  export PKG_CONFIG_PATH="$("@SETUP_DIR/_setup_util.py" --remove --name PKG_CONFIG_PATH --value "$PKG_CONFIG_PATH_dir")"
+  export PYTHONPATH="$("@SETUP_DIR/_setup_util.py" --remove --name PYTHONPATH --value "$PYTHONPATH_dir")"
   # rollback CMAKE_PREFIX_PATH last since the other rollback calls rely on this
-  export CMAKE_PREFIX_PATH="$("@SETUP_DIR/setup_util.py" --remove --name CMAKE_PREFIX_PATH --value "$CMAKE_PREFIX_PATH_dir")"
+  export CMAKE_PREFIX_PATH="$("@SETUP_DIR/_setup_util.py" --remove --name CMAKE_PREFIX_PATH --value "$CMAKE_PREFIX_PATH_dir")"
 fi
 
 # prepend CURRENT_WORKSPACE and CURRENT_CMAKE_PREFIX_PATH to CMAKE_PREFIX_PATH
 # the complete list must be set so that environment hooks in parent workspace have the full set available
 if [ $IS_RECURSIVE -eq 0 ]; then
-  export CMAKE_PREFIX_PATH="$("@SETUP_DIR/setup_util.py" --prefix --name CMAKE_PREFIX_PATH --value "@SETUP_DIR:@CMAKE_PREFIX_PATH")$CMAKE_PREFIX_PATH"
+  export CMAKE_PREFIX_PATH="$("@SETUP_DIR/_setup_util.py" --prefix --name CMAKE_PREFIX_PATH --value "@SETUP_DIR:@CMAKE_PREFIX_PATH")$CMAKE_PREFIX_PATH"
 fi
 
 # source setup.SHELL from parent workspaces
 if [ $IS_RECURSIVE -eq 0 ]; then
   _CATKIN_SETUP_NO_RECURSION=1
-  for workspace in $("@SETUP_DIR/setup_util.py" --get-reversed-workspaces --value "@SETUP_DIR"); do
+  for workspace in $("@SETUP_DIR/_setup_util.py" --get-reversed-workspaces --value "@SETUP_DIR"); do
     . "$workspace/setup.$CATKIN_SHELL"
   done
   _CATKIN_SETUP_NO_RECURSION=0
 fi
 
 # prepend folders of workspace to environment variables
-export CPATH="$("@SETUP_DIR/setup_util.py" --prefix --name CPATH --value "@SETUP_DIR$CPATH_dir")$CPATH"
+export CPATH="$("@SETUP_DIR/_setup_util.py" --prefix --name CPATH --value "@SETUP_DIR$CPATH_dir")$CPATH"
 if [ $IS_DARWIN -eq 0 ]; then
-  export LD_LIBRARY_PATH="$("@SETUP_DIR/setup_util.py" --prefix --name LD_LIBRARY_PATH --value "@SETUP_DIR$LD_LIBRARY_PATH_dir")$LD_LIBRARY_PATH"
+  export LD_LIBRARY_PATH="$("@SETUP_DIR/_setup_util.py" --prefix --name LD_LIBRARY_PATH --value "@SETUP_DIR$LD_LIBRARY_PATH_dir")$LD_LIBRARY_PATH"
 else
-  export DYLD_LIBRARY_PATH="$("@SETUP_DIR/setup_util.py" --prefix --name DYLD_LIBRARY_PATH --value "@SETUP_DIR$LD_LIBRARY_PATH_dir")$DYLD_LIBRARY_PATH"
+  export DYLD_LIBRARY_PATH="$("@SETUP_DIR/_setup_util.py" --prefix --name DYLD_LIBRARY_PATH --value "@SETUP_DIR$LD_LIBRARY_PATH_dir")$DYLD_LIBRARY_PATH"
 fi
-export PATH="$("@SETUP_DIR/setup_util.py" --prefix --name PATH --value "@SETUP_DIR$PATH_dir")$PATH"
-export PKG_CONFIG_PATH="$("@SETUP_DIR/setup_util.py" --prefix --name PKG_CONFIG_PATH --value "@SETUP_DIR$PKG_CONFIG_PATH_dir")$PKG_CONFIG_PATH"
-export PYTHONPATH="$("@SETUP_DIR/setup_util.py" --prefix --name PYTHONPATH --value "@SETUP_DIR$PYTHONPATH_dir")$PYTHONPATH"
+export PATH="$("@SETUP_DIR/_setup_util.py" --prefix --name PATH --value "@SETUP_DIR$PATH_dir")$PATH"
+export PKG_CONFIG_PATH="$("@SETUP_DIR/_setup_util.py" --prefix --name PKG_CONFIG_PATH --value "@SETUP_DIR$PKG_CONFIG_PATH_dir")$PKG_CONFIG_PATH"
+export PYTHONPATH="$("@SETUP_DIR/_setup_util.py" --prefix --name PYTHONPATH --value "@SETUP_DIR$PYTHONPATH_dir")$PYTHONPATH"
 
 # run all environment hooks of this workspace
 FIND=`which find`
