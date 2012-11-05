@@ -27,14 +27,19 @@ def main():
         fh.write('set(ORDERED_PATHS "%s")' % ';'.join(ordered_paths))
 
 
-def order_paths(paths_to_order, prefixes):
-    # the ordered paths contains a list for each prefix plus one more which contains paths which do not match one of the prefixes
-    ordered_paths = [[] for _ in range(len(prefixes) + 1)]
+def order_paths(paths_to_order, prefix_paths):
+    """
+    returns a list containing all items of path_to_order ordered by list of prefix_paths, compared as strings
+    :param paths_to_order: list of paths
+    :param prefix_paths: list of paths, must not end with '/'
+    """
+    # the ordered paths contains a list for each prefix plus one more which contains paths which do not match one of the prefix_paths
+    ordered_paths = [[] for _ in range(len(prefix_paths) + 1)]
 
     for path in paths_to_order:
         # put each include directory into the slot where it matches the prefix, or last otherwise
         index = 0
-        for prefix in prefixes:
+        for prefix in prefix_paths:
             if path == prefix or path.startswith(prefix + os.sep) or (os.altsep and path.startswith(prefix + os.altsep)):
                 break
             index += 1
