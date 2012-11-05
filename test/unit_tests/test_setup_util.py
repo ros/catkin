@@ -67,7 +67,7 @@ class SetupUtilTest(unittest.TestCase):
             setup_util.os.environ = mock_env
             # foows
             foows = os.path.join(rootdir, 'foo')
-            foolib = os.path.join(foows, 'lib')
+            foolib = os.path.join(foows, 'lib') + '/'
             os.makedirs(foows)
             with open(os.path.join(foows, '.CATKIN_WORKSPACE'), 'w') as fhand:
                 fhand.write('')
@@ -95,7 +95,7 @@ class SetupUtilTest(unittest.TestCase):
             self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env(varname, ''))
             self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env(varname, 'nolib'))
             self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env(varname, '/nolib'))
-            # self.assertEqual('', remove_from_env(varname, 'lib'))
+            self.assertEqual('', remove_from_env(varname, 'lib'))
             self.assertEqual('', remove_from_env(varname, '/lib'))
             self.assertEqual(os.pathsep.join([foolib, barlib]), remove_from_env(varname, ''))
             self.assertEqual('', remove_from_env(wsvarname, ''))
@@ -119,3 +119,4 @@ class SetupUtilTest(unittest.TestCase):
         finally:
             setup_util.os.environ = os.environ
             os.path.altsep = altsep
+            shutil.rmtree(rootdir)

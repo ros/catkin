@@ -58,15 +58,18 @@ def remove_from_env(name, subfolder):
     if subfolder:
         if subfolder.startswith(os.path.sep) or (os.path.altsep and subfolder.startswith(os.path.altsep)):
             subfolder = subfolder[1:]
+        if subfolder.endswith(os.path.sep) or (os.path.altsep and subfolder.endswith(os.path.altsep)):
+            subfolder = subfolder[:-1]
     for ws_path in get_workspaces():
-        try:
-            if subfolder:
-                path_to_remove = os.path.join(ws_path, subfolder)
-            else:
-                path_to_remove = ws_path
+        path_to_find = os.path.join(ws_path, subfolder) if subfolder else ws_path
+        path_to_remove = None
+        for env_path in env_paths:
+            env_path_clean = env_path[:-1] if env_path and env_path[-1] in [os.path.sep, os.path.altsep] else env_path
+            if env_path_clean == path_to_find:
+                path_to_remove = env_path
+                break
+        if path_to_remove:
             env_paths.remove(path_to_remove)
-        except ValueError:
-            pass
     return os.pathsep.join(env_paths)
 
 
