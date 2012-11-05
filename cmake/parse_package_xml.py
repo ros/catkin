@@ -4,8 +4,10 @@ from __future__ import print_function
 import sys
 import argparse
 
-from catkin_pkg.package import parse_package
-
+try:
+    from catkin_pkg.package import parse_package
+except ImportError as impe:
+    sys.exit("ERROR Cannot find a module of catkin_pkg, make sure it is up to date and on the PYTHONPATH, see catkin install instructions: %s" % impe)
 
 def _get_output(package):
     """
