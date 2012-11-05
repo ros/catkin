@@ -20,7 +20,7 @@ def _get_valid_search_dirs(search_dirs, project):
     valid_search_dirs = (valid_global_search_dirs
                          if project is None
                          else valid_project_search_dirs)
-    if search_dirs is None:
+    if not search_dirs:
         search_dirs = valid_search_dirs
     else:
         # make search folders a list
@@ -61,14 +61,17 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
     All workspaces are searched in order.
     Each workspace, each search_in subfolder, the project name and the path are concatenated to define a candidate path.
     If the candidate path exists it is appended to the result list.
-    Note: the search might return multiple paths for a 'share' from build- and source-space.
+    Note: the search might return multiple paths for 'share' from build- and source-space.
 
     :param search_dir: The list of subfolders to search in (default contains all valid values: 'bin', 'etc', 'lib', 'libexec', 'share'), ``list``
     :param project: The project name to search for (optional, not possible with the global search_in folders 'bin' and 'lib'), ``str``
     :param path: The path, ``str``
     :param _workspaces: (optional, used for unit tests), the list of workspaces to use.
+    :param considered_paths: If not None, function will append all path that were searched
+    :param first_matching_workspace_only: if True returns all results found for first workspace with results
+    :param first_match_only: if True returns first path found (supercedes first_matching_workspace_only)
     :raises ValueError: if search_dirs contains an invalid folder name
-    :returns: List of paths, ``list``
+    :returns: List of paths
     '''
     search_dirs = _get_valid_search_dirs(search_dirs, project)
 
