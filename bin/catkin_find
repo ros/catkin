@@ -17,7 +17,8 @@ def parse_args(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(description='Searches the catkin workspaces for project-specific files/folders.')
     parser.add_argument('project', nargs='?', help='The project to find a path for')
     parser.add_argument('path', nargs='?', help='The relative path of a project file/folder (a prefix is sufficient)')
-    parser.add_argument('--first-only', action='store_true', help='Flag if only the results from the first matching workspace should be returned (default is all)')
+    parser.add_argument('--first-only', action='store_true', help='Flag if only the first result should be returned')
+    parser.add_argument('--without-underlays', action='store_true', help='Flag if further workspaces should be skipped after finding matches in one workspace')
 
     group = parser.add_argument_group('Search folders', 'Restrict the folders to search in')
     for foldername, subfolder_help in {'bin': 'Search in "bin" folder',
@@ -39,7 +40,7 @@ def main():
     try:
         # keep order of folders to search in
         checked = []
-        results = find_in_workspaces(args.install_folders, args.project, args.path, first_match_only=args.first_only, considered_paths=checked)
+        results = find_in_workspaces(args.install_folders, args.project, args.path, first_matching_workspace_only=args.without_underlays, first_match_only=args.first_only, considered_paths=checked)
 
         if args.first_only:
             if len(results) > 1:
