@@ -20,7 +20,7 @@ def _get_valid_search_dirs(search_dirs, project):
     valid_search_dirs = (valid_global_search_dirs
                          if project is None
                          else valid_project_search_dirs)
-    if search_dirs is None:
+    if not search_dirs:
         search_dirs = valid_search_dirs
     else:
         # make search folders a list

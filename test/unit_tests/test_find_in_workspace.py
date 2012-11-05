@@ -17,7 +17,8 @@ except ImportError as impe:
 class FindInWorkspaceTest(unittest.TestCase):
 
     def test_get_valid_search_dirs(self):
-        self.assertEqual([], _get_valid_search_dirs([], None))
+        self.assertEqual(['bin', 'etc', 'include', 'lib', 'share'], _get_valid_search_dirs([], None))
+        self.assertEqual(['bin', 'etc', 'include', 'lib', 'share'], _get_valid_search_dirs(None, None))
         self.assertEqual(['etc', 'include', 'libexec', 'share'],
                          _get_valid_search_dirs(None, 'foo'))
         self.assertEqual(['bin', 'etc', 'include', 'lib', 'share'],
