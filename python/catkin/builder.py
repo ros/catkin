@@ -6,9 +6,16 @@ from catkin_pkg.topological_order import topological_order
 
 
 def build_workspace_in_isolation(sourcespace_dir, buildspace_parent_dir, install=False):
+    '''
+    creates a subfolder in buildspace_parent_dir for each catkin
+    package in sourcespace_dir, and runs cmake + make
+
+    :param sourcespace_dir: folder with catkin packages, ``str``
+    :param buildspace_parent_dir: parent package where to run cmake+make, ``str``
+    :param install: (optional), if True also installs in local install dir, ``bool``
+    '''
     sourcespace_dir = os.path.abspath(sourcespace_dir)
     packages = topological_order(sourcespace_dir)
-
     buildspace_dir = os.path.abspath(os.path.join(buildspace_parent_dir, 'build_isolated'))
     if not os.path.exists(buildspace_dir):
         os.makedirs(buildspace_dir)
