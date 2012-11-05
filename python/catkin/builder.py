@@ -1,9 +1,12 @@
 from __future__ import print_function
 import os
+import sys
 import subprocess
 
-from catkin_pkg.topological_order import topological_order
-
+try:
+    from catkin_pkg.topological_order import topological_order
+except ImportError as impe:
+    sys.exit("ERROR Cannot find a module of catkin_pkg, make sure it is up to date and on the PYTHONPATH, see catkin install instructions: %s" % impe)
 
 def build_workspace_in_isolation(sourcespace_dir, buildspace_parent_dir, install=False):
     sourcespace_dir = os.path.abspath(sourcespace_dir)
