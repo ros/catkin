@@ -15,9 +15,10 @@ except ImportError:
 
 def main():
     parser = argparse.ArgumentParser(description='Builds all catkin packages in isolation in topological order.')
-    parser.add_argument('sourcespace', nargs='?', default='.', help='The path to an existing folder (default: .)')
-    parser.add_argument('buildspace', nargs='?', default='.', help='The path where the build folder is created (default: .)')
+    parser.add_argument('sourcespace', help='The path to an existing folder')
     parser.add_argument('--install', action='store_true', help='Flag if each workspace should be installed')
+    parser.add_argument('--merge', action='store_true', help='Flag if the devel (and install) spaces should be merged in a single directory')
+    parser.add_argument('--force-cmake', action='store_true', help='Flag if CMake should be invoke explicitly')
     args = parser.parse_args()
 
     # verify that sourcespace folder exists
@@ -25,7 +26,7 @@ def main():
     if not os.path.isdir(sourcespace):
         sys.exit('Sourcespace "%s" does not exist' % sourcespace)
 
-    build_workspace_in_isolation(sourcespace, args.buildspace, args.install)
+    build_workspace_in_isolation(sourcespace, args.install, args.merge, args.force_cmake)
 
 
 if __name__ == '__main__':
