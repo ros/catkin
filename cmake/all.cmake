@@ -9,7 +9,13 @@ if(NOT DEFINED catkin_EXTRAS_DIR)
 endif()
 
 # define buildspace
-set(CATKIN_BUILD_PREFIX "${CMAKE_BINARY_DIR}/buildspace")
+if(CATKIN_DEVEL_SPACE)
+  set(CATKIN_DEVEL_SPACE ${CATKIN_DEVEL_SPACE} CACHE PATH "catkin devel space")
+else()
+  set(CATKIN_DEVEL_SPACE "${CMAKE_BINARY_DIR}/develspace")
+endif()
+message(STATUS "Using CATKIN_DEVEL_SPACE: ${CATKIN_DEVEL_SPACE}")
+set(CATKIN_BUILD_PREFIX "${CATKIN_DEVEL_SPACE}")
 
 # create workspace marker
 set(_sourcespaces "${CMAKE_SOURCE_DIR}")
