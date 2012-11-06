@@ -20,16 +20,16 @@ set(CATKIN_BUILD_PREFIX "${CATKIN_DEVEL_PREFIX}")
 
 # create workspace marker
 set(_sourcespaces "${CMAKE_SOURCE_DIR}")
-if(EXISTS "${CATKIN_DEVEL_PREFIX}/.CATKIN_WORKSPACE")
+if(EXISTS "${CATKIN_DEVEL_PREFIX}/.catkin")
   # prepend to existing list of sourcespaces
-  file(READ "${CATKIN_DEVEL_PREFIX}/.CATKIN_WORKSPACE" _existing_sourcespaces)
+  file(READ "${CATKIN_DEVEL_PREFIX}/.catkin" _existing_sourcespaces)
   list(FIND _existing_sourcespaces "${CMAKE_SOURCE_DIR}" _index)
   if(_index EQUAL -1)
     list(INSERT _existing_sourcespaces 0 ${CMAKE_SOURCE_DIR})
   endif()
   set(_sourcespaces ${_existing_sourcespaces})
 endif()
-file(WRITE "${CATKIN_DEVEL_PREFIX}/.CATKIN_WORKSPACE" "${_sourcespaces}")
+file(WRITE "${CATKIN_DEVEL_PREFIX}/.catkin" "${_sourcespaces}")
 
 
 # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
@@ -48,7 +48,7 @@ endif()
 # list of unique catkin workspaces based on CMAKE_PREFIX_PATH
 set(CATKIN_WORKSPACES "")
 foreach(path ${CMAKE_PREFIX_PATH})
-  if(EXISTS "${path}/.CATKIN_WORKSPACE")
+  if(EXISTS "${path}/.catkin")
     list(FIND CATKIN_WORKSPACES ${path} _index)
     if(_index EQUAL -1)
       list(APPEND CATKIN_WORKSPACES ${path})

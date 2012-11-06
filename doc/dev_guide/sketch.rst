@@ -126,7 +126,7 @@ Workspace
 
     1. *catkin_generate_environment*:
 
-     1. creates workspace marker file .CATKIN_WORKSPACE
+     1. creates catkin marker file .catkin
      2. creates environment setup files
 
  4. exits with catkin_workspace()

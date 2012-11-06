@@ -7,7 +7,7 @@ import sys
 
 '''This file provides setup.sh with commands to query catkin workspaces'''
 
-CATKIN_WORKSPACE_MARKER_FILE = '.CATKIN_WORKSPACE'
+CATKIN_MARKER_FILE = '.catkin'
 
 
 def get_workspaces():
@@ -20,7 +20,7 @@ def get_workspaces():
     env_name = 'CMAKE_PREFIX_PATH'
     paths = [path for path in os.environ.get(env_name, '').split(os.pathsep) if path]
     # remove non-workspace paths
-    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_WORKSPACE_MARKER_FILE))]
+    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_MARKER_FILE))]
     return workspaces
 
 

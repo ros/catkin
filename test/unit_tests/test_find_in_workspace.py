@@ -8,7 +8,7 @@ from mock import Mock
 try:
     import catkin
     from catkin.find_in_workspaces import find_in_workspaces, _get_valid_search_dirs
-    from catkin.workspace import CATKIN_WORKSPACE_MARKER_FILE
+    from catkin.workspace import CATKIN_MARKER_FILE
 except ImportError as impe:
     raise ImportError(
         'Please adjust your pythonpath before running this test: %s' % str(impe))
@@ -86,7 +86,7 @@ class FindInWorkspaceTest(unittest.TestCase):
             os.makedirs(share)
             os.makedirs(p1inc)
             os.makedirs(p1share)
-            with open(os.path.join(ws1, CATKIN_WORKSPACE_MARKER_FILE), 'w') as fhand:
+            with open(os.path.join(ws1, CATKIN_MARKER_FILE), 'w') as fhand:
                 fhand.write('loc1;loc2')
 
         try:

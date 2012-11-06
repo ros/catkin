@@ -39,14 +39,14 @@ e.g. for package 'pkg'::
 ::
 
    build/
-      CATKIN_NO_SUBDIRS           # an empty file to guide catkin to not search in subfolders for package.xml files
+      CATKIN_IGNORE               # an empty file to guide catkin to not search in subfolders for package.xml files
       CMakeCache.txt
       cmake_install.cmake
       Makefile
 
       develspace/                 # the layout of that folder follows the (see install directory)
 
-         .CATKIN_WORKSPACE        # identifies folder as a catkin workspace
+         .catkin                  # identifies folder as a catkin devel/install space
                                   # it contains a semicolon separated list of source folders if the workspace is a devel space
          env.sh
          setup.bash
@@ -101,7 +101,7 @@ The layout of the install directory follows the `Filesystem Hierarchy Standard (
                               # very similar to the devel space folder
                               # therefore in the following only the differences are mentioned
 
-      .CATKIN_WORKSPACE       # identifies folder as a catkin workspace
+      .catkin                 # identifies folder as a catkin devel/install space
                               # the file is empty which indicates that it is an installspace
 
       lib/

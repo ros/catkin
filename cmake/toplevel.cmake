@@ -27,7 +27,7 @@ else()
   # list of catkin workspaces
   set(catkin_search_path "")
   foreach(path ${CMAKE_PREFIX_PATH})
-    if(EXISTS "${path}/.CATKIN_WORKSPACE")
+    if(EXISTS "${path}/.catkin")
       list(FIND catkin_search_path ${path} _index)
       if(_index EQUAL -1)
         list(APPEND catkin_search_path ${path})

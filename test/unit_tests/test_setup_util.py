@@ -9,7 +9,7 @@ imp.load_source('setup_util',
                              '..', '..', 'cmake', 'templates', '_setup_util.py'))
 
 import setup_util
-from setup_util import get_reversed_workspaces, prefix_env, remove_from_env, CATKIN_WORKSPACE_MARKER_FILE
+from setup_util import get_reversed_workspaces, prefix_env, remove_from_env, CATKIN_MARKER_FILE
 
 
 class SetupUtilTest(unittest.TestCase):
@@ -23,11 +23,11 @@ class SetupUtilTest(unittest.TestCase):
             self.assertEqual('', get_reversed_workspaces('foo'))
             foows = os.path.join(rootdir, 'foo')
             os.makedirs(foows)
-            with open(os.path.join(foows, CATKIN_WORKSPACE_MARKER_FILE), 'w') as fhand:
+            with open(os.path.join(foows, CATKIN_MARKER_FILE), 'w') as fhand:
                 fhand.write('')
             barws = os.path.join(rootdir, 'bar')
             os.makedirs(barws)
-            with open(os.path.join(barws, CATKIN_WORKSPACE_MARKER_FILE), 'w') as fhand:
+            with open(os.path.join(barws, CATKIN_MARKER_FILE), 'w') as fhand:
                 fhand.write('')
             nows = os.path.join(rootdir, 'nows')
             os.makedirs(nows)
@@ -69,13 +69,13 @@ class SetupUtilTest(unittest.TestCase):
             foows = os.path.join(rootdir, 'foo')
             foolib = os.path.join(foows, 'lib') + '/'
             os.makedirs(foows)
-            with open(os.path.join(foows, '.CATKIN_WORKSPACE'), 'w') as fhand:
+            with open(os.path.join(foows, '.catkin'), 'w') as fhand:
                 fhand.write('')
             # barws
             barws = os.path.join(rootdir, 'bar')
             barlib = os.path.join(barws, 'lib')
             os.makedirs(barws)
-            with open(os.path.join(barws, '.CATKIN_WORKSPACE'), 'w') as fhand:
+            with open(os.path.join(barws, '.catkin'), 'w') as fhand:
                 fhand.write('')
             # mock_env with one ws in CPP
             varname = 'varname'

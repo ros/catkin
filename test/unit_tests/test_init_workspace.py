@@ -50,10 +50,10 @@ class InitWorkspaceTest(unittest.TestCase):
             with open(join(root_dir, 'ws1', 'catkin', 'cmake', 'toplevel.cmake'),
                       'ab') as fhand:
                 fhand.write(''.encode('UTF-8'))
-            with open(join(root_dir, 'ws1', '.CATKIN_WORKSPACE'), 'ab') as fhand:
+            with open(join(root_dir, 'ws1', '.catkin'), 'ab') as fhand:
                 fhand.write(''.encode('UTF-8'))
             os.makedirs(join(root_dir, 'ws2'))
-            with open(join(root_dir, 'ws2', '.CATKIN_WORKSPACE'), 'ab') as fhand:
+            with open(join(root_dir, 'ws2', '.catkin'), 'ab') as fhand:
                 fhand.write(''.encode('UTF-8'))
 
             init_workspace(join(root_dir, 'ws1'))
