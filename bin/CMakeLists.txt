@@ -15,7 +15,7 @@ set(programs
 foreach(program ${programs})
   set(EXECUTABLE ${catkin_SOURCE_DIR}/bin/${program})
   configure_file(${catkin_EXTRAS_DIR}/templates/script.sh.in
-    ${CATKIN_BUILD_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${program}
+    ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${program}
     @ONLY)
 endforeach()
 

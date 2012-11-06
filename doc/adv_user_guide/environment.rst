@@ -4,7 +4,7 @@ Environment files
 =================
 
 Catkin creates and installs files for env-setting convenience.  In the
-buildspace there are ``setup.zsh`` and ``setup.bash``, these contain
+devel space there are ``setup.zsh`` and ``setup.bash``, these contain
 variable zsh and bash specific tweaks.  They both import ``setup.sh``,
 which contains bourne-shell variable settings.
 

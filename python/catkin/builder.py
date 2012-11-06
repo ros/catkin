@@ -59,7 +59,7 @@ def build_workspace_in_isolation(sourcespace_dir, install=False, merge=False, fo
 
         makefile = os.path.join(package_build_dir, 'Makefile')
         if not os.path.exists(makefile) or force_cmake:
-            cmd = ['cmake', os.path.dirname(package.filename), '-DCATKIN_STATIC_ENV=1', '-DCATKIN_DEVEL_SPACE=%s' % package_devel_dir]
+            cmd = ['cmake', os.path.dirname(package.filename), '-DCATKIN_STATIC_ENV=1', '-DCATKIN_DEVEL_PREFIX=%s' % package_devel_dir]
             if install:
                 cmd.append('-DCMAKE_INSTALL_PREFIX=%s' % package_install_dir)
             _run_command_with_env(cmd, package_build_dir, last_env_to_source)

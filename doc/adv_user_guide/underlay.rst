@@ -103,7 +103,7 @@ Press tab at the end of the command-line to see additional targets for groups of
 
 To get a summary of the test results call::
 
-   $ buildspace/bin/catkin_test_results
+   $ develspace/bin/catkin_test_results
 
 Again, if catkin is already installed and not part of the workspace you just omit the path to the script.
 
@@ -112,7 +112,7 @@ Setup environment to run anything
 
 In order to setup the environment that you can run arbitrary code from the workspace the ``setup.bash/*`` must be sourced::
 
-   $ source buildspace/setup.bash
+   $ source develspace/setup.bash
 
    or
 
@@ -126,7 +126,7 @@ Chain workspaces
 
 After one workspace has been built (and optionally installed) you can create another workspace on-top of the first one.
 Therefore first setup the environment by sourcing the appropriate ``setup.bash``.
-Thereby the ``setup.bash`` can be both from either a *buildspace* or an *installspace*.
+Thereby the ``setup.bash`` can be both from either a *develspace* or an *installspace*.
 
 Then create a second workspace the same way as the first one.
 Catkin will automatically use the workspaces already referenced in the environment (in the ``CMAKE_PREFIX_PATH`` variable) as *parent* workspaces for the new one to look up dependencies.

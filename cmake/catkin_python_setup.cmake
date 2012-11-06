@@ -1,8 +1,8 @@
 #
 # Creates forwarding Python :term:`pkgutil` infrastructure in
-# buildspace that enables mixing :term:`generated code` in buildspace
-# with :term:`static code` from sourcespace within a single Python
-# package.
+# devel space that enables mixing :term:`generated code` in devel
+# space with :term:`static code` from sourcespace within a single
+# Python package.
 #
 # In addition, this will interrogate the Python setup.py file in
 # ``${${PROJECT_NAME}_SOURCE_DIR}`` and add the install command of
@@ -91,7 +91,7 @@ function(catkin_python_setup)
       get_filename_component(path ${pkg_dir} PATH)
       set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${path})
       configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
-        ${CATKIN_BUILD_PREFIX}/${PYTHON_INSTALL_DIR}/${pkg}/__init__.py
+        ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/${pkg}/__init__.py
         @ONLY)
     endforeach()
   endif()
@@ -104,7 +104,7 @@ function(catkin_python_setup)
     endif()
     set(PYTHON_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/${script})
     configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
-      ${CATKIN_BUILD_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${name}
+      ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${name}
       @ONLY)
   endforeach()
 endfunction()

@@ -1,6 +1,6 @@
 function(catkin_generate_environment)
-  # buildspace
-  set(SETUP_DIR ${CATKIN_BUILD_PREFIX})
+  # devel space
+  set(SETUP_DIR ${CATKIN_DEVEL_PREFIX})
 
   # generate empty file to prevent searching for packages in binary dir
   file(WRITE "${CMAKE_BINARY_DIR}/CATKIN_NO_SUBDIRS" "")
@@ -8,23 +8,23 @@ function(catkin_generate_environment)
   # generate relay-script for _setup_util.py
   set(PYTHON_SCRIPT ${catkin_EXTRAS_DIR}/templates/_setup_util.py)
   configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
-    ${CATKIN_BUILD_PREFIX}/_setup_util.py
+    ${CATKIN_DEVEL_PREFIX}/_setup_util.py
     @ONLY)
 
   if(NOT MSVC)
     # non-windows
     # generate env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
-      ${CATKIN_BUILD_PREFIX}/env.sh
+      ${CATKIN_DEVEL_PREFIX}/env.sh
       @ONLY)
     # generate setup for various shells
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_BINARY_DIR}/catkin_generated/setup.buildspace.context.py
+      ${CMAKE_BINARY_DIR}/catkin_generated/setup.develspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.sh.em
-      ${CATKIN_BUILD_PREFIX}/setup.sh)
+      ${CATKIN_DEVEL_PREFIX}/setup.sh)
     foreach(shell bash zsh)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
-        ${CATKIN_BUILD_PREFIX}/setup.${shell}
+        ${CATKIN_DEVEL_PREFIX}/setup.${shell}
         @ONLY)
     endforeach()
 
@@ -32,18 +32,18 @@ function(catkin_generate_environment)
     # windows
     # generate env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
-      ${CATKIN_BUILD_PREFIX}/env.bat
+      ${CATKIN_DEVEL_PREFIX}/env.bat
       @ONLY)
     # generate setup
     em_expand(${catkin_EXTRAS_DIR}/templates/setup.context.py.in
-      ${CMAKE_BINARY_DIR}/catkin_generated/setup.buildspace.context.py
+      ${CMAKE_BINARY_DIR}/catkin_generated/setup.develspace.context.py
       ${catkin_EXTRAS_DIR}/em/setup.bat.em
-      ${CATKIN_BUILD_PREFIX}/setup.bat)
+      ${CATKIN_DEVEL_PREFIX}/setup.bat)
   endif()
 
   # generate rosinstall file referencing setup.sh
   configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
-    ${CATKIN_BUILD_PREFIX}/.rosinstall
+    ${CATKIN_DEVEL_PREFIX}/.rosinstall
     @ONLY)
 
   # installspace

@@ -49,7 +49,7 @@ Design sketch
 * The build process creates a buildpace folder that has the same
   layout as an installation, so development cycles do not need to
   invoke ``make install`` frequently, if the developer decides
-  to use that buildspace directly.
+  to use that devel space directly.
 
 Main trickery
 -------------
@@ -69,9 +69,9 @@ in order.
 Each package calls :cmake:macro:`catkin_package` which generates
 ``find_package`` files; this is for other packages to use.  Each
 package does a ``find_package`` of each other; in this way, packages
-can build with their dependencies in the same buildspace, or already
+can build with their dependencies in the same devel space, or already
 installed on the system.  Different versions of these files are
-created for use in the buildspace, and in the installation.  The
+created for use in the devel space, and in the installation.  The
 stress-test for this scheme is message generation; different language
 generators must implement a specific CMake interface which is used by
 ``genmsg``.  See also :ref:`find_package_internals`.
@@ -84,10 +84,10 @@ in
 ``CMAKE_BINARY_DIR/lib/pythonX.Y/dist-packages/PACKAGENAME/__init__.py``,
 which extends the ``PYTHONPATH`` to include
 ``CMAKE_SOURCE_DIR/path/to/PACKAGENAME/src``.  This way the
-buildspace PYTHONPATH only needs to contain
+devel space PYTHONPATH only needs to contain
 ``CMAKE_BINARY_DIR/lib/pythonX.Y/dist-packages``.  Caveat: it will
 also need to contain generated Python code in that folder in
-buildspace.  At installation time, this thunk-__init__.py disappears
+devel space.  At installation time, this thunk-__init__.py disappears
 and the static python library source is installed alongside the
 generated message code in the same directory.
 
@@ -95,7 +95,7 @@ generated message code in the same directory.
 
 When CMake runs, it knows the locations of the ``CMAKE_BINARY_DIR``
 and so forth, it generates an environment file (in
-``CMAKE_BINARY_DIR/buildspace``).  Projects may extend this environment via
+``CMAKE_BINARY_DIR/develspace``).  Projects may extend this environment via
 :cmake:macro:`catkin_add_env_hooks`.
 
 Configure process
@@ -162,9 +162,9 @@ macros are used as intended.
    2. sets package-wide destination variables for usage by the user
    3. sets global variable ${PROJECT_NAME}_DIR
    4. evaluates arguments to catkin_package()
-   5. generates files in buildspace and build folder
+   5. generates files in devel space and build folder
 
-    a. buildspace is a folder mimicking an installation
+    a. devel space is a folder mimicking an installation
 
      1. generates a manifest.xml file for rosbuild backwards compatibility
      2. generates .pc, XXXConfig.cmake, Config-version.cmake, ... files

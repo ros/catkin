@@ -93,7 +93,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
         with open (template_file, 'r') as fhand:
             template = fhand.read()
         gdict = {'CATKIN_STATIC_ENV': True,
-                 'CATKIN_BUILD_PREFIX': '/foo',
+                 'CATKIN_DEVEL_PREFIX': '/foo',
                  'CMAKE_PREFIX_PATH': ['/bar'],
                  'CATKIN_GLOBAL_LIB_DESTINATION': '/glob-dest/lib',
                  'CATKIN_GLOBAL_BIN_DESTINATION': '/glob-dest/bin',

@@ -8,27 +8,28 @@ if(NOT DEFINED catkin_EXTRAS_DIR)
   message(FATAL_ERROR "catkin_EXTRAS_DIR is not set")
 endif()
 
-# define buildspace
-if(CATKIN_DEVEL_SPACE)
-  set(CATKIN_DEVEL_SPACE ${CATKIN_DEVEL_SPACE} CACHE PATH "catkin devel space")
+# define devel space
+if(CATKIN_DEVEL_PREFIX)
+  set(CATKIN_DEVEL_PREFIX ${CATKIN_DEVEL_PREFIX} CACHE PATH "catkin devel space")
 else()
-  set(CATKIN_DEVEL_SPACE "${CMAKE_BINARY_DIR}/develspace")
+  set(CATKIN_DEVEL_PREFIX "${CMAKE_BINARY_DIR}/develspace")
 endif()
-message(STATUS "Using CATKIN_DEVEL_SPACE: ${CATKIN_DEVEL_SPACE}")
-set(CATKIN_BUILD_PREFIX "${CATKIN_DEVEL_SPACE}")
+message(STATUS "Using CATKIN_DEVEL_PREFIX: ${CATKIN_DEVEL_PREFIX}")
+# this variable is only for backward compatibility
+set(CATKIN_BUILD_PREFIX "${CATKIN_DEVEL_PREFIX}")
 
 # create workspace marker
 set(_sourcespaces "${CMAKE_SOURCE_DIR}")
-if(EXISTS "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE")
+if(EXISTS "${CATKIN_DEVEL_PREFIX}/.CATKIN_WORKSPACE")
   # prepend to existing list of sourcespaces
-  file(READ "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE" _existing_sourcespaces)
+  file(READ "${CATKIN_DEVEL_PREFIX}/.CATKIN_WORKSPACE" _existing_sourcespaces)
   list(FIND _existing_sourcespaces "${CMAKE_SOURCE_DIR}" _index)
   if(_index EQUAL -1)
     list(INSERT _existing_sourcespaces 0 ${CMAKE_SOURCE_DIR})
   endif()
   set(_sourcespaces ${_existing_sourcespaces})
 endif()
-file(WRITE "${CATKIN_BUILD_PREFIX}/.CATKIN_WORKSPACE" "${_sourcespaces}")
+file(WRITE "${CATKIN_DEVEL_PREFIX}/.CATKIN_WORKSPACE" "${_sourcespaces}")
 
 
 # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
@@ -39,8 +40,8 @@ if(NOT DEFINED CMAKE_PREFIX_PATH)
   endif()
 endif()
 if(CMAKE_PREFIX_PATH)
-  # skip buildspace if it is in CMAKE_PREFIX_PATH so that it is not part of CATKIN_WORKSPACES
-  list(REMOVE_ITEM CMAKE_PREFIX_PATH ${CATKIN_BUILD_PREFIX})
+  # skip devel space if it is in CMAKE_PREFIX_PATH so that it is not part of CATKIN_WORKSPACES
+  list(REMOVE_ITEM CMAKE_PREFIX_PATH ${CATKIN_DEVEL_PREFIX})
   message(STATUS "Using CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 endif()
 
@@ -59,10 +60,10 @@ if(CATKIN_WORKSPACES)
 endif()
 
 # save original CMAKE_PREFIX_PATH for environment generation
-set(CMAKE_PREFIX_PATH_WITHOUT_BUILDSPACE ${CMAKE_PREFIX_PATH})
+set(CMAKE_PREFIX_PATH_WITHOUT_DEVEL_SPACE ${CMAKE_PREFIX_PATH})
 
-# prepend buildspace to CMAKE_PREFIX_PATH
-list(INSERT CMAKE_PREFIX_PATH 0 ${CATKIN_BUILD_PREFIX})
+# prepend devel space to CMAKE_PREFIX_PATH
+list(INSERT CMAKE_PREFIX_PATH 0 ${CATKIN_DEVEL_PREFIX})
 
 
 # enable all new policies
@@ -165,10 +166,10 @@ endif()
 # take snapshot of the modifications the env script causes
 # to reproduce the same changes with a static script in a fraction of the time
 set(OUTPUT_SCRIPT_DIR ${CMAKE_BINARY_DIR}/catkin_generated)
-set(PREPEND_SPACE_DIR ${CATKIN_BUILD_PREFIX})
+set(PREPEND_SPACE_DIR ${CATKIN_DEVEL_PREFIX})
 set(CUSTOM_PREFIX_PATH ${CMAKE_PREFIX_PATH})
 em_expand(${catkin_EXTRAS_DIR}/templates/generate_cached_env.context.py.in
-  ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.buildspace.context.py
+  ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.develspace.context.py
   ${catkin_EXTRAS_DIR}/em/generate_cached_env.py.em
   ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.py)
 set(_command_option "")

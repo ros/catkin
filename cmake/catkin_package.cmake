@@ -35,7 +35,7 @@
 #   subdirectory ``cmake`` and must have the additional extension
 #   ``.in`` (since it is expanded using CMake's ``configure_file()``).
 #   The template can distinguish between build- and installspace
-#   using the boolean variables ``BUILDSPACE`` and ``INSTALLSPACE``
+#   using the boolean variables ``DEVELSPACE`` and ``INSTALLSPACE``
 #   and should be verified to work in both cases.
 # :type CFG_EXTRAS: string
 #
@@ -164,14 +164,15 @@ function(_catkin_package)
   endif()
 
   #
-  # BUILDSPACE
+  # DEVEL SPACE
   #
 
   # used in the cmake extra files
-  set(BUILDSPACE TRUE)
+  set(BUILDSPACE TRUE) # this variable is only for backward compatibility
+  set(DEVELSPACE TRUE)
   set(INSTALLSPACE FALSE)
 
-  set(PROJECT_SPACE_DIR ${CATKIN_BUILD_PREFIX})
+  set(PROJECT_SPACE_DIR ${CATKIN_DEVEL_PREFIX})
   set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
 
   # absolute path to include dirs and validate that they are existing either absolute or relative to packages source
@@ -199,54 +200,54 @@ function(_catkin_package)
   endif()
 
   # ensure that output folder exists
-  file(MAKE_DIRECTORY ${CATKIN_BUILD_PREFIX}/lib/pkgconfig)
-  # generate buildspace pc for project
+  file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/lib/pkgconfig)
+  # generate devel space pc for project
   em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.buildspace.context.pc.py
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.develspace.context.pc.py
     ${catkin_EXTRAS_DIR}/em/pkg.pc.em
-    ${CATKIN_BUILD_PREFIX}/lib/pkgconfig/${PROJECT_NAME}.pc)
+    ${CATKIN_DEVEL_PREFIX}/lib/pkgconfig/${PROJECT_NAME}.pc)
 
-  # generate buildspace cfg-extras for project
+  # generate devel space cfg-extras for project
   set(PKG_CFG_EXTRAS "")
   foreach(extra ${PROJECT_CFG_EXTRAS})
     set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
     if (EXISTS ${base})
       list(APPEND PKG_CFG_EXTRAS ${base})
-    elseif(EXISTS ${base}.em OR EXISTS ${base}.buildspace.em)
+    elseif(EXISTS ${base}.em OR EXISTS ${base}.develspace.em)
       if(EXISTS ${base}.em)
         set(em_template ${base}.em)
       else()
-        set(em_template ${base}.buildspace.em)
+        set(em_template ${base}.develspace.em)
       endif()
       em_expand(${catkin_EXTRAS_DIR}/templates/cfg-extras.context.py.in
-        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${extra}.buildspace.context.cmake.py
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${extra}.develspace.context.cmake.py
         ${em_template}
-        ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
-      list(APPEND PKG_CFG_EXTRAS ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+        ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
     elseif(EXISTS ${base}.in)
       configure_file(${base}.in
-        ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
+        ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
         @ONLY
       )
-      list(APPEND PKG_CFG_EXTRAS ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
     else()
-      message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}', 'cmake/${extra}.em', 'cmake/${extra}.buildspace.em' or 'cmake/${extra}.in' must exist.")
+      message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}', 'cmake/${extra}.em', 'cmake/${extra}.develspace.em' or 'cmake/${extra}.in' must exist.")
     endif()
   endforeach()
 
-  # generate buildspace config for project
+  # generate devel space config for project
   set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
   if(NOT EXISTS ${infile})
     set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig.cmake.in)
   endif()
   configure_file(${infile}
-    ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config.cmake
+    ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config.cmake
     @ONLY
   )
 
-  # generate buildspace config-version for project
+  # generate devel space config-version for project
   configure_file(${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in
-    ${CATKIN_BUILD_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config-version.cmake
+    ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config-version.cmake
     @ONLY
   )
 
@@ -255,7 +256,8 @@ function(_catkin_package)
   #
 
   # used in the cmake extra files
-  set(BUILDSPACE FALSE)
+  set(BUILDSPACE FALSE) # this variable is only for backward compatibility
+  set(DEVELSPACE FALSE)
   set(INSTALLSPACE TRUE)
 
   set(PROJECT_SPACE_DIR ${CMAKE_INSTALL_PREFIX})

@@ -1,6 +1,6 @@
 catkin_EXTRAS_DIR="@catkin_EXTRAS_DIR@"
 
-ENV_SCRIPT="@CATKIN_BUILD_PREFIX@/env.@script_ext@"
+ENV_SCRIPT="@CATKIN_DEVEL_PREFIX@/env.@script_ext@"
 OUTPUT_SCRIPT="@OUTPUT_SCRIPT_DIR@/env_cached.@script_ext@"
 
 PREPEND_SPACE_DIR="@PREPEND_SPACE_DIR@"

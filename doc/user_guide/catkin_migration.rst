@@ -128,8 +128,8 @@ stacks (for metapackages), and make packages the atomic unit of build.
 CMake extra files
 -----------------
 
-CMake extra files must now work in buildspace as well as in installspace.
-The templates can determine the different invocation cases using the variables ``@BUILDSPACE@`` and ``@INSTALLSPACE@``.
+CMake extra files must now work in devel space as well as in installspace.
+The templates can determine the different invocation cases using the variables ``@DEVELSPACE@`` and ``@INSTALLSPACE@``.
 
 Custom find_package() config files
 ----------------------------------
@@ -140,6 +140,6 @@ Note that the project name is no longer converted to lower case but used as-is.
 Custom environment hooks
 ------------------------
 
-The names of the templates for the environment hooks for buildspace and installspace have been unified.
+The names of the templates for the environment hooks for devel space and installspace have been unified.
 There is only one template for both.
-The templates can determine the different invocation cases using the variables ``@BUILDSPACE@`` and ``@INSTALLSPACE@``.
+The templates can determine the different invocation cases using the variables ``@DEVELSPACE@`` and ``@INSTALLSPACE@``.

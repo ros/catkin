@@ -34,7 +34,7 @@ class SimpleUnstableTest(AbstractUnstableTest):
 
         assert_exists(self.builddir,
                       'ros')
-        assert_exists(self.buildspace,
+        assert_exists(self.develspace,
                       'bin',
                       'etc',
                       'include',
@@ -57,13 +57,13 @@ class SimpleUnstableTest(AbstractUnstableTest):
             other_src_dir = os.path.join(other_root_dir, 'src')
             create_catkin_workspace(other_src_dir)
             other_build_dir = os.path.join(other_root_dir, 'build')
-            other_buildspace_dir = os.path.join(other_build_dir, 'buildspace')
+            other_develspace_dir = os.path.join(other_build_dir, 'develspace')
             shutil.copytree(os.path.join(self.workspacedir, 'common_msgs'),
                             os.path.join(other_src_dir, 'common_msgs'))
             out = self.cmake(cwd=other_build_dir,
                              srcdir=other_src_dir)
             out = succeed(MAKE_CMD, cwd=other_build_dir)
-            assert_exists(other_buildspace_dir,
+            assert_exists(other_develspace_dir,
                           PYTHON_INSTALL_PATH + '/nav_msgs/msg/_GridCells.py',
                           'include/nav_msgs/GridCells.h')
 
@@ -88,7 +88,7 @@ class SimpleUnstableTest(AbstractUnstableTest):
             other_src_dir = os.path.join(other_root_dir, 'src')
             create_catkin_workspace(other_src_dir)
             other_build_dir = os.path.join(other_root_dir, 'build')
-            other_buildspace_dir = os.path.join(other_build_dir, 'buildspace')
+            other_develspace_dir = os.path.join(other_build_dir, 'develspace')
             other_install_dir = os.path.join(other_root_dir, 'install')
             shutil.copytree(os.path.join(MOCK_DIR, 'src', 'catkin_test'),
                             os.path.join(other_src_dir, 'catkin_test'))
@@ -97,7 +97,7 @@ class SimpleUnstableTest(AbstractUnstableTest):
                        installdir=other_install_dir)
             succeed(MAKE_CMD, cwd=other_build_dir)
 
-            assert_exists(other_buildspace_dir,
+            assert_exists(other_develspace_dir,
                           "lib/liba.so",
                           "lib/libb.so",
                           "lib/libc-one.so",
@@ -106,7 +106,7 @@ class SimpleUnstableTest(AbstractUnstableTest):
             assert_exists(other_build_dir,
                           # "bin/nolangs_exec",
                           "catkin_test/quux_user/bin/quux_srv-exec")
-            assert_exists(other_buildspace_dir,
+            assert_exists(other_develspace_dir,
                           PYTHON_INSTALL_PATH + "/a",
                           # PYTHON_INSTALL_PATH + "/b",
                           # PYTHON_INSTALL_PATH + "/c",

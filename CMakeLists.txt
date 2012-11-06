@@ -11,23 +11,23 @@ endif()
 catkin_package()
 
 # for backward compatibility we provide ROSConfig(-version).cmake files
-assert(CATKIN_BUILD_PREFIX)
+assert(CATKIN_DEVEL_PREFIX)
 file(COPY cmake/ROSConfig.cmake
-  DESTINATION ${CATKIN_BUILD_PREFIX}/share/ros/cmake
+  DESTINATION ${CATKIN_DEVEL_PREFIX}/share/ros/cmake
 )
 assert(catkin_VERSION)
 set(PROJECT_VERSION ${catkin_VERSION})
 configure_file(${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in
-  ${CATKIN_BUILD_PREFIX}/share/ros/cmake/ROSConfig-version.cmake
+  ${CATKIN_DEVEL_PREFIX}/share/ros/cmake/ROSConfig-version.cmake
   @ONLY
 )
-install(FILES ${CATKIN_BUILD_PREFIX}/share/ros/cmake/ROSConfig.cmake ${CATKIN_BUILD_PREFIX}/share/ros/cmake/ROSConfig-version.cmake
+install(FILES ${CATKIN_DEVEL_PREFIX}/share/ros/cmake/ROSConfig.cmake ${CATKIN_DEVEL_PREFIX}/share/ros/cmake/ROSConfig-version.cmake
   DESTINATION share/ros/cmake
 )
 
 # for convenience we provide eigen-config(-version).cmake files
 file(COPY cmake/Modules/eigen-config.cmake cmake/Modules/eigen-config-version.cmake
-  DESTINATION ${CATKIN_BUILD_PREFIX}/share/eigen/cmake
+  DESTINATION ${CATKIN_DEVEL_PREFIX}/share/eigen/cmake
 )
 install(FILES cmake/Modules/eigen-config.cmake cmake/Modules/eigen-config-version.cmake
   DESTINATION share/eigen/cmake

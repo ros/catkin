@@ -2,7 +2,7 @@
 # Insert elements to a list in the same order as the chained catkin workspaces.
 #
 set(CATKIN_ORDERED_SPACES "")
-foreach(_space ${CATKIN_BUILD_PREFIX} ${CATKIN_WORKSPACES})
+foreach(_space ${CATKIN_DEVEL_PREFIX} ${CATKIN_WORKSPACES})
   list(APPEND CATKIN_ORDERED_SPACES ${_space})
   if(NOT EXISTS "${_space}/.CATKIN_WORKSPACE")
     message(FATAL_ERROR "The path '${_space}' is in CATKIN_WORKSPACES but does not have a .CATKIN_WORKSPACE file")

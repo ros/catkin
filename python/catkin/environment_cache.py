@@ -57,11 +57,11 @@ def generate_environment_script(env_script):
     return code
 
 
-def generate_static_environment_script(catkin_build_prefix, cmake_prefix_path, python_install_dir):
+def generate_static_environment_script(catkin_devel_prefix, cmake_prefix_path, python_install_dir):
     """
     Generates script code to mimic environment changes of the env script.
 
-    :param catkin_build_prefix: str The CMake variable CATKIN_BUILD_PREFIX
+    :param catkin_devel_prefix: str The CMake variable CATKIN_DEVEL_PREFIX
     :param cmake_prefix_path: list The CMake variable CMAKE_PREFIX_PATH
     :param python_install_dir: str The CMake variable PYTHON_INSTALL_DIR
     :returns: list script lines
@@ -81,12 +81,12 @@ def generate_static_environment_script(catkin_build_prefix, cmake_prefix_path, p
         static_env[name] = os.pathsep.join(items)
 
     static_env = {}
-    prepend_env(static_env, 'CMAKE_PREFIX_PATH', os.pathsep.join([catkin_build_prefix] + cmake_prefix_path))
-    prepend_env(static_env, 'CPATH', os.path.join(catkin_build_prefix, 'include'))
-    prepend_env(static_env, 'LD_LIBRARY_PATH', os.path.join(catkin_build_prefix, 'lib'))
-    prepend_env(static_env, 'PATH', os.path.join(catkin_build_prefix, 'bin'))
-    prepend_env(static_env, 'PKG_CONFIG_PATH', os.path.join(catkin_build_prefix, 'lib', 'pkgconfig'))
-    prepend_env(static_env, 'PYTHONPATH', os.path.join(catkin_build_prefix, python_install_dir))
+    prepend_env(static_env, 'CMAKE_PREFIX_PATH', os.pathsep.join([catkin_devel_prefix] + cmake_prefix_path))
+    prepend_env(static_env, 'CPATH', os.path.join(catkin_devel_prefix, 'include'))
+    prepend_env(static_env, 'LD_LIBRARY_PATH', os.path.join(catkin_devel_prefix, 'lib'))
+    prepend_env(static_env, 'PATH', os.path.join(catkin_devel_prefix, 'bin'))
+    prepend_env(static_env, 'PKG_CONFIG_PATH', os.path.join(catkin_devel_prefix, 'lib', 'pkgconfig'))
+    prepend_env(static_env, 'PYTHONPATH', os.path.join(catkin_devel_prefix, python_install_dir))
 
     code.append('')
     _append_comment(code, 'static environment variables')

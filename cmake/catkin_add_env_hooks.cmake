@@ -6,7 +6,7 @@
 # where it will be read by generated ``setup.<shell>``.
 #
 # The template can distinguish between build- and installspace
-# using the boolean variables ``BUILDSPACE`` and ``INSTALLSPACE``
+# using the boolean variables ``DEVELSPACE`` and ``INSTALLSPACE``
 # which are either ``true`` or ``false``.
 #
 # .. note:: Note the extra ".in" that must appear in the filename
@@ -26,7 +26,7 @@
 # :param DIRECTORY: the directory (default: ${CMAKE_CURRENT_SOURCE_DIR})
 # :type DIRECTORY: string
 # :param SKIP_INSTALL: if specified the env hooks are only generated
-#   in the buildspace but not installed
+#   in the devel space but not installed
 # :type SKIP_INSTALL: option
 #
 # @public
@@ -35,8 +35,8 @@ function(catkin_add_env_hooks file_prefix)
   cmake_parse_arguments(ARG "SKIP_INSTALL" "DIRECTORY" "SHELLS" ${ARGN})
 
   # create directory if necessary
-  if(NOT IS_DIRECTORY ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d)
-    file(MAKE_DIRECTORY ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d)
+  if(NOT IS_DIRECTORY ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d)
+    file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d)
   endif()
 
   if(NOT ARG_DIRECTORY)
@@ -47,32 +47,33 @@ function(catkin_add_env_hooks file_prefix)
     set(ENV_HOOK ${file_prefix}.${shell})
     set(base ${ARG_DIRECTORY}/${ENV_HOOK})
  
-    # generate environment hook for buildspace
+    # generate environment hook for devel space
     if (EXISTS ${base})
       # copy plain file
-      file(COPY ${base} DESTINATION ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d)
-    elseif(EXISTS ${base}.em OR EXISTS ${base}.buildspace.em)
+      file(COPY ${base} DESTINATION ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d)
+    elseif(EXISTS ${base}.em OR EXISTS ${base}.develspace.em)
       # evaluate em template
-      set(BUILDSPACE True)
+      set(DEVELSPACE True)
       set(INSTALLSPACE False)
       if(EXISTS ${base}.em)
         set(em_template ${base}.em)
       else()
-        set(em_template ${base}.buildspace.em)
+        set(em_template ${base}.develspace.em)
       endif()
       em_expand(${catkin_EXTRAS_DIR}/templates/env-hook.context.py.in
-        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${ENV_HOOK}.buildspace.context.py
+        ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${ENV_HOOK}.develspace.context.py
         ${em_template}
-        ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
+        ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
     elseif(EXISTS ${base}.in)
       # evaluate in template
-      set(BUILDSPACE true)
+      set(BUILDSPACE true) # this variable is only for backward compatibility
+      set(DEVELSPACE true)
       set(INSTALLSPACE false)
       configure_file(${base}.in
-        ${CATKIN_BUILD_PREFIX}/etc/catkin/profile.d/${ENV_HOOK}
+        ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d/${ENV_HOOK}
         @ONLY)
     else()
-      message(FATAL_ERROR "catkin_add_env_hooks() could not find environment hook.  Either '${base}', '${base}.em', '${base}.buildspace.em' or '${base}.in' must exist.")
+      message(FATAL_ERROR "catkin_add_env_hooks() could not find environment hook.  Either '${base}', '${base}.em', '${base}.develspace.em' or '${base}.in' must exist.")
     endif()
 
     # generate and install environment hook for installspace
@@ -84,7 +85,7 @@ function(catkin_add_env_hooks file_prefix)
       endif()
     elseif(EXISTS ${base}.em OR EXISTS ${base}.installspace.em)
       # evaluate em template and install
-      set(BUILDSPACE False)
+      set(DEVELSPACE False)
       set(INSTALLSPACE True)
       if(EXISTS ${base}.em)
         set(em_template ${base}.em)
@@ -101,7 +102,8 @@ function(catkin_add_env_hooks file_prefix)
       endif()
     elseif(EXISTS ${base}.in)
       # evaluate in template and install
-      set(BUILDSPACE false)
+      set(BUILDSPACE false) # this variable is only for backward compatibility
+      set(DEVELSPACE false)
       set(INSTALLSPACE true)
       configure_file(${base}.in
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}

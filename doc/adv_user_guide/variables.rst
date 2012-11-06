@@ -6,16 +6,16 @@ Variables
 Build space
 -----------
 
-.. cmake:data:: CATKIN_BUILD_PREFIX
+.. cmake:data:: CATKIN_DEVEL_PREFIX
 
-   This is set to ``${CMAKE_BINARY_DIR}/buildspace`` by ``catkin/all.cmake`` and is the analogue to ``CMAKE_PREFIX_PATH``.
-   Since the layout of the both folders ``CATKIN_BUILD_PREFIX`` and ``CMAKE_PREFIX_PATH`` is identical you can append any of the following install destinations to the build prefix.
+   This is set to ``${CMAKE_BINARY_DIR}/develspace`` by ``catkin/all.cmake`` and is the analogue to ``CMAKE_PREFIX_PATH``.
+   Since the layout of the both folders ``CATKIN_DEVEL_PREFIX`` and ``CMAKE_PREFIX_PATH`` is identical you can append any of the following install destinations to the build prefix.
 
 Install destinations
 --------------------
 
 All destination variables are meant to be used with the CMake ``install()`` macro as an ``DESTINATION`` argument.
-They only contain relative paths and are supposed to be relative to the ``${CMAKE_INSTALL_PREFIX}`` (or ``${CATKIN_BUILD_PREFIX}``).
+They only contain relative paths and are supposed to be relative to the ``${CMAKE_INSTALL_PREFIX}`` (or ``${CATKIN_DEVEL_PREFIX}``).
 
 **Project specific**
 

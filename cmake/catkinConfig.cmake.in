@@ -58,7 +58,7 @@ foreach(component ${catkin_FIND_COMPONENTS})
   # skip catkin since it does not make sense as a component
   if(NOT ${component_lower} STREQUAL "catkin")
 
-    # get search paths from all CMAKE_PREFIX_PATH (which includes buildspace and all workspaces)
+    # get search paths from all CMAKE_PREFIX_PATH (which includes devel space and all workspaces)
     set(paths "")
     foreach(path ${CMAKE_PREFIX_PATH})
       if(IS_DIRECTORY ${path}/share/${component}/cmake)
