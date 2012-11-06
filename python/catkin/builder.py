@@ -12,12 +12,15 @@ except ImportError as impe:
 
 def build_workspace_in_isolation(sourcespace_dir, install=False, merge=False, force_cmake=False, number_of_threads=None):
     '''
-    creates a subfolder in buildspace_parent_dir for each catkin
-    package in sourcespace_dir, and runs cmake + make
+    Runs ``cmake``, ``make`` and optionally ``make install`` for all
+    catkin packages in sourcespace_dir.  It creates several folders
+    in the current working directory.
 
     :param sourcespace_dir: folder with catkin packages, ``str``
-    :param buildspace_parent_dir: parent package where to run cmake+make, ``str``
     :param install: (optional), if True also installs in local install dir, ``bool``
+    :param merge: (optional), if True uses a single devel (and install) folder for all packages, ``bool``
+    :param force_cmake: (optional), if True calls cmake explicitly for each package, ``bool``
+    :param number_of_threads: (optional), the number of thread to use for make (default is the number of CPUs), ``int``
     '''
     sourcespace_dir = os.path.abspath(sourcespace_dir)
     packages = topological_order(sourcespace_dir)
