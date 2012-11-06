@@ -55,8 +55,23 @@ function(catkin_add_nosetests path)
     set(_covarg " --with-coverage")
   endif()
 
+  # strip PROJECT_BINARY_DIR from output_file_name
+  set(output_file_name ${path})
+  string(LENGTH "${PROJECT_BINARY_DIR}/" prefix_length)
+  string(LENGTH "${output_file_name}" var_length)
+  if(${var_length} GREATER ${prefix_length})
+    string(SUBSTRING "${output_file_name}" 0 ${prefix_length} var_prefix)
+    if("${var_prefix}" STREQUAL "${PROJECT_BINARY_DIR}/")
+      # passing length -1 does not work for CMake < 2.8.5
+      # http://public.kitware.com/Bug/view.php?id=10740
+      string(LENGTH "${output_file_name}" _rest)
+      math(EXPR _rest "${_rest} - ${prefix_length}")
+      string(SUBSTRING "${output_file_name}" ${prefix_length} ${_rest} output_file_name)
+    endif()
+  endif()
+  string(REPLACE "/" "." output_file_name ${output_file_name})
+
   set(output_path ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME})
-  string(REPLACE "/" "." output_file_name ${path})
   set(cmd "${CMAKE_COMMAND} -E make_directory ${output_path}")
   if(IS_DIRECTORY ${_path_name})
     set(tests "--where=${_path_name}")
