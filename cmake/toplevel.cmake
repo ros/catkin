@@ -37,11 +37,15 @@ else()
 
   # search for catkin in all workspaces
   set(CATKIN_TOPLEVEL_FIND_PACKAGE TRUE)
-  find_package(catkin REQUIRED
+  find_package(catkin QUIET
     NO_POLICY_SCOPE
     PATHS ${catkin_search_path}
     NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
   unset(CATKIN_TOPLEVEL_FIND_PACKAGE)
+
+  if(NOT catkin_FOUND)
+    message(FATAL_ERROR "find_package(catkin) failed. catkin was neither found in the workspace nor in the CMAKE_PREFIX_PATH. One reason may be that no ROS setup.sh was sourced before.")
+  endif()
 endif()
 
 catkin_workspace()
