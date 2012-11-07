@@ -50,6 +50,13 @@ if [ "$UNAME" = "Darwin" ]; then
   IS_DARWIN=1
 fi
 
+SETUP_UTIL=@SETUP_DIR/_setup_util.py
+
+if [ ! -f "$SETUP_UTIL" ]; then
+  echo "Bug: missing util script $SETUP_UTIL"
+  return 22
+fi
+
 # reset environment variables by unrolling modifications based on all workspaces in CMAKE_PREFIX_PATH
 # this does not cover modifications performed by environment hooks
 if [ $DO_CLEAN -eq 1 ]; then
