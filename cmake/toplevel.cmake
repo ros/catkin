@@ -14,7 +14,7 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/catkin/cmake/all.cmake" AND EXISTS "${CMAKE_SOURC
   # include all.cmake without add_subdirectory to let it operate in same scope
   include(catkin/cmake/all.cmake NO_POLICY_SCOPE)
   add_subdirectory(catkin)
-
+  set(catkin_FOUND 1)
 else()
   # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
   # or CMAKE_PREFIX_PATH from the environment
@@ -44,4 +44,8 @@ else()
   unset(CATKIN_TOPLEVEL_FIND_PACKAGE)
 endif()
 
-catkin_workspace()
+if(catkin_FOUND)
+  catkin_workspace()
+else()
+  message(FATAL_ERROR " Catkin not found in CMAKE_PREFIX_PATH or workspace. This may happen because you forgot to source a ROS setup.sh.")
+endif()
