@@ -89,8 +89,10 @@ function(_catkin_package)
     set(${PROJECT_NAME}_DIR "" CACHE PATH "" FORCE)
   endif()
 
-  # split DEPENDS with multiple packages into separate items
+  # decide between DEPENDS with components and with multiple packages
   set(PROJECT_DEPENDENCIES "")
+  set(PROJECT_DEPENDENCIES_INCLUDE_DIRS "")
+  set(PROJECT_DEPENDENCIES_LIBRARIES "")
   foreach(depend ${PROJECT_DEPENDS})
     string(REPLACE " " ";" depend_list ${depend})
     # check if the second argument is the COMPONENTS keyword
@@ -100,48 +102,49 @@ function(_catkin_package)
       list(GET depend_list 1 second_item)
     endif()
     if("${second_item}" STREQUAL "COMPONENTS")
-      # pass dependencies with components as is
-      list(APPEND PROJECT_DEPENDENCIES ${depend})
+      # dependencies with components can not be handled by pkg-config files
+      # so the include directories and libraries must be stored explicitly
+      # which requires the package to be find_package()-ed before
+      list(GET depend_list 0 depend_name)
+      if(NOT ${${depend_name}_FOUND})
+        message(FATAL_ERROR "catkin_package() DEPENDS on '${depend}' which must be find_package()-ed before")
+      endif()
+      list(APPEND PROJECT_DEPENDENCIES_INCLUDE_DIRS ${${depend_name}_INCLUDE_DIRS})
+      list(APPEND PROJECT_DEPENDENCIES_LIBRARIES ${${depend_name}_LIBRARIES})
     else()
-      # split multiple names (without components) into separate dependencies
+      # split multiple names (without COMPONENTS) into separate dependencies
       foreach(dep ${depend_list})
         list(APPEND PROJECT_DEPENDENCIES ${dep})
       endforeach()
     endif()
   endforeach()
 
-  # filter out dependencies which have not been find_package()-ed before
-  foreach(depend ${PROJECT_DEPENDENCIES})
-    string(REPLACE " " ";" depend_list ${depend})
-    list(GET depend_list 0 depend_name)
-    if(NOT ${depend_name}_FOUND)
-      message(WARNING "catkin_package() depends on '${depend_name}' which has not been find_package()-ed before")
-      list(REMOVE_ITEM PROJECT_DEPENDENCIES ${depend})
-    endif()
-  endforeach()
-
-  # extract all catkin packages from dependencies
+  # decide if dependencies have been find_package()-ed before
+  # and either pass the name or explicitly the include directories and libraries
   set(PROJECT_CATKIN_DEPENDS "")
-  set(PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS "")
-  set(PROJECT_NON_CATKIN_DEPENDS_LIBRARIES "")
-  foreach(depend ${PROJECT_DEPENDENCIES})
-    string(REPLACE " " ";" depend_list ${depend})
+  foreach(depend_name ${PROJECT_DEPENDENCIES})
     # check if dependency is a catkin package
-    list(GET depend_list 0 depend_name)
-    if(${${depend_name}_FOUND_CATKIN_PROJECT})
+    if(${depend_name}_FOUND AND NOT ${depend_name}_FOUND_CATKIN_PROJECT)
+      # for non-catkin packages which have been find_package()-ed it can not be guaranteed that they have pkg-config file
+      # so the include directories and libraries must be stored explicitly
+      list(APPEND PROJECT_DEPENDENCIES_INCLUDE_DIRS ${${depend_name}_INCLUDE_DIRS})
+      list(APPEND PROJECT_DEPENDENCIES_LIBRARIES ${${depend_name}_LIBRARIES})
+    else()
+      # for catkin packages it can be guaranteed that they are find_package()-able and have pkg-config files
+      # for unknown packages it is assumed that they provide both (else they must be find_package()-ed before)
       list(APPEND PROJECT_CATKIN_DEPENDS ${depend_name})
-      # verify that all catkin dependencies are listed as build- and runtime dependencies
-      list(FIND ${PROJECT_NAME}_BUILD_DEPENDS ${depend_name} _index)
-      if(_index EQUAL -1)
-        message(FATAL_ERROR "catkin_package() depends on catkin package '${depend_name}' which must therefore be listed as a build dependency in the package.xml")
+      # verify that all catkin packages which have been find_package()-ed are listed as build dependencies
+      if(${${depend_name}_FOUND_CATKIN_PROJECT})
+        list(FIND ${PROJECT_NAME}_BUILD_DEPENDS ${depend_name} _index)
+        if(_index EQUAL -1)
+          message(FATAL_ERROR "catkin_package() the package '${depend_name}' has been find_package()-ed but is not listed as a build dependency in the package.xml")
+        endif()
       endif()
+      # verify that all (assumed) catkin packages are listed as run dependencies
       list(FIND ${PROJECT_NAME}_RUN_DEPENDS ${depend_name} _index)
       if(_index EQUAL -1)
-        message(FATAL_ERROR "catkin_package() depends on catkin package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
+        message(FATAL_ERROR "catkin_package() DEPENDS on the package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
       endif()
-    elseif(${${depend_name}_FOUND})
-      list(APPEND PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS ${${depend_name}_INCLUDE_DIRS})
-      list(APPEND PROJECT_NON_CATKIN_DEPENDS_LIBRARIES ${${depend_name}_LIBRARIES})
     endif()
   endforeach()
 
@@ -159,8 +162,8 @@ function(_catkin_package)
   if(PROJECT_LIBRARIES)
     list(APPEND PKG_CONFIG_LIBRARIES ${PROJECT_LIBRARIES})
   endif()
-  if(PROJECT_NON_CATKIN_DEPENDS_LIBRARIES)
-    list(APPEND PKG_CONFIG_LIBRARIES ${PROJECT_NON_CATKIN_DEPENDS_LIBRARIES})
+  if(PROJECT_DEPENDENCIES_LIBRARIES)
+    list(APPEND PKG_CONFIG_LIBRARIES ${PROJECT_DEPENDENCIES_LIBRARIES})
   endif()
 
   #
@@ -187,8 +190,8 @@ function(_catkin_package)
     endif()
     list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${include})
   endforeach()
-  if(PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS)
-    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS})
+  if(PROJECT_DEPENDENCIES_INCLUDE_DIRS)
+    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
   endif()
 
   # prepend library path of this workspace
@@ -268,8 +271,8 @@ function(_catkin_package)
   if(NOT "${PROJECT_INCLUDE_DIRS}" STREQUAL "")
     set(PROJECT_ABSOLUTE_INCLUDE_DIRS ${PKG_INCLUDE_PREFIX}/include)
   endif()
-  if(PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS)
-    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${PROJECT_NON_CATKIN_DEPENDS_INCLUDE_DIRS})
+  if(PROJECT_DEPENDENCIES_INCLUDE_DIRS)
+    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
   endif()
 
   # prepend library path of this workspace
