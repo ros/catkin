@@ -26,6 +26,10 @@ function(catkin_add_gtest target)
     return()
   endif()
 
+  if(NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+    message(FATAL_ERROR "catkin_add_gtest() must be called after catkin_package() so that default output directories for the test binaries are defined")
+  endif()
+
   # XXX look for optional TIMEOUT argument, #2645
   cmake_parse_arguments(_gtest "" "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(_gtest_TIMEOUT)
