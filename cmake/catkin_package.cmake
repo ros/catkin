@@ -117,7 +117,7 @@ function(_catkin_package)
       # split multiple names (without COMPONENTS) into separate dependencies
       foreach(depend_name ${depend_list})
         if(${depend_name}_FOUND_CATKIN_PROJECT)
-          message(WARNING "catkin_package() DEPENDS on catkin package '${depend_name}' which is deprecated. Use CATKIN_DEPENDS for catkin packages instead.")
+          #message(WARNING "catkin_package() DEPENDS on catkin package '${depend_name}' which is deprecated. Use CATKIN_DEPENDS for catkin packages instead.")
           list(APPEND _PROJECT_CATKIN_DEPENDS ${depend_name})
         else()
           if(NOT ${${depend_name}_FOUND})
