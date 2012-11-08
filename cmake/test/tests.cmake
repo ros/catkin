@@ -9,7 +9,6 @@ endif()
 # create target to build tests
 if(NOT TARGET tests)
   add_custom_target(tests)
-  message("TODO: implement add_roslaunch_check() in rostest-extras.cmake")
 endif()
 
 # create target to run all tests
