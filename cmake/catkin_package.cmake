@@ -19,15 +19,19 @@
 #   this will break if the logical target names are not the same as
 #   the installed names.
 # :type LIBRARIES: list of strings
+# :param CATKIN_DEPENDS: a list of catkin projects which this project
+#   depends on.  It is used when client code finds this project via
+#   ``find_package()`` or ``pkg-config``.  Each project listed will in
+#   turn be ``find_package``\ -ed or is states as ``Requires`` in the
+#   .pc file.  Therefore their ``INCLUDE_DIRS`` and ``LIBRARIES`` will
+#   be appended to ours.  Only catkin projects should be used where it
+#   be guarantee that they are *find_packagable* and have pkg-config
+#   files.
+# :type CATKIN_DEPENDS: list of strings
 # :param DEPENDS: a list of CMake projects which this project depends
-#   on.  It is used when client code finds this project via
-#   ``find_package()``.  Each project listed will in turn be
-#   ``find_package``\ -ed and their ``INCLUDE_DIRS`` and ``LIBRARIES``
-#   will be appended to ours.  Only projects should be used where we
-#   can guarantee that they are *find_packagable*. If they are not
-#   catkin packages they are not added to the ``requires`` list in
-#   the pkg-config file since we can not ensure that they are
-#   *package_configurable*.
+#   on.  Since they might not be *find_packagable* or lack a pkg-config
+#   file their ``INCLUDE_DIRS`` and ``LIBRARIES`` are passed directly.
+#   This requires that it has been ``find_package``\ -ed before.
 # :type DEPENDS: list of strings
 # :param CFG_EXTRAS: a CMake file containing extra stuff that should
 #   be accessible to users of this package after
@@ -74,7 +78,7 @@ macro(catkin_package)
 endmacro()
 
 function(_catkin_package)
-  _parse_arguments_with_repeated_keywords(PROJECT "" "" "INCLUDE_DIRS;LIBRARIES;CFG_EXTRAS" "DEPENDS" ${ARGN})
+  cmake_parse_arguments(PROJECT "" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS" ${ARGN})
   if(PROJECT_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_UNPARSED_ARGUMENTS}")
   endif()
@@ -89,8 +93,8 @@ function(_catkin_package)
     set(${PROJECT_NAME}_DIR "" CACHE PATH "" FORCE)
   endif()
 
-  # decide between DEPENDS with components and with multiple packages
-  set(PROJECT_DEPENDENCIES "")
+  set(_PROJECT_CATKIN_DEPENDS ${PROJECT_CATKIN_DEPENDS})
+
   set(PROJECT_DEPENDENCIES_INCLUDE_DIRS "")
   set(PROJECT_DEPENDENCIES_LIBRARIES "")
   foreach(depend ${PROJECT_DEPENDS})
@@ -102,50 +106,50 @@ function(_catkin_package)
       list(GET depend_list 1 second_item)
     endif()
     if("${second_item}" STREQUAL "COMPONENTS")
-      # dependencies with components can not be handled by pkg-config files
-      # so the include directories and libraries must be stored explicitly
-      # which requires the package to be find_package()-ed before
       list(GET depend_list 0 depend_name)
       if(NOT ${${depend_name}_FOUND})
         message(FATAL_ERROR "catkin_package() DEPENDS on '${depend}' which must be find_package()-ed before")
       endif()
+      message(WARNING "catkin_package() DEPENDS on '${depend}' which is deprecated. find_package() it before and only DEPENDS on '${depend_name}' instead")
       list(APPEND PROJECT_DEPENDENCIES_INCLUDE_DIRS ${${depend_name}_INCLUDE_DIRS})
       list(APPEND PROJECT_DEPENDENCIES_LIBRARIES ${${depend_name}_LIBRARIES})
     else()
       # split multiple names (without COMPONENTS) into separate dependencies
-      foreach(dep ${depend_list})
-        list(APPEND PROJECT_DEPENDENCIES ${dep})
+      foreach(depend_name ${depend_list})
+        if(${depend_name}_FOUND_CATKIN_PROJECT)
+          message(WARNING "catkin_package() DEPENDS on catkin package '${depend_name}' which is deprecated. Use CATKIN_DEPENDS for catkin packages instead.")
+          list(APPEND _PROJECT_CATKIN_DEPENDS ${depend_name})
+        else()
+          if(NOT ${${depend_name}_FOUND})
+            message(FATAL_ERROR "catkin_package() DEPENDS on '${depend_name}' which must be find_package()-ed before. If it is a catkin package it can be declared as CATKIN_DEPENDS instead without find_package()-ing it.")
+          endif()
+          list(APPEND PROJECT_DEPENDENCIES_INCLUDE_DIRS ${${depend_name}_INCLUDE_DIRS})
+          list(APPEND PROJECT_DEPENDENCIES_LIBRARIES ${${depend_name}_LIBRARIES})
+        endif()
       endforeach()
     endif()
   endforeach()
 
-  # decide if dependencies have been find_package()-ed before
-  # and either pass the name or explicitly the include directories and libraries
-  set(PROJECT_CATKIN_DEPENDS "")
-  foreach(depend_name ${PROJECT_DEPENDENCIES})
-    # check if dependency is a catkin package
-    if(${depend_name}_FOUND AND NOT ${depend_name}_FOUND_CATKIN_PROJECT)
-      # for non-catkin packages which have been find_package()-ed it can not be guaranteed that they have pkg-config file
-      # so the include directories and libraries must be stored explicitly
-      list(APPEND PROJECT_DEPENDENCIES_INCLUDE_DIRS ${${depend_name}_INCLUDE_DIRS})
-      list(APPEND PROJECT_DEPENDENCIES_LIBRARIES ${${depend_name}_LIBRARIES})
-    else()
-      # for catkin packages it can be guaranteed that they are find_package()-able and have pkg-config files
-      # for unknown packages it is assumed that they provide both (else they must be find_package()-ed before)
-      list(APPEND PROJECT_CATKIN_DEPENDS ${depend_name})
-      # verify that all catkin packages which have been find_package()-ed are listed as build dependencies
-      if(${${depend_name}_FOUND_CATKIN_PROJECT})
-        list(FIND ${PROJECT_NAME}_BUILD_DEPENDS ${depend_name} _index)
-        if(_index EQUAL -1)
-          message(FATAL_ERROR "catkin_package() the package '${depend_name}' has been find_package()-ed but is not listed as a build dependency in the package.xml")
-        endif()
+  # for catkin packages it can be guaranteed that they are find_package()-able and have pkg-config files
+  set(PROJECT_DEPENDENCIES "")
+  foreach(depend_name ${_PROJECT_CATKIN_DEPENDS})
+    # verify that all catkin packages which have been find_package()-ed are listed as build dependencies
+    if(${depend_name}_FOUND)
+      # verify that these packages are really catkin packages
+      if(NOT ${depend_name}_FOUND_CATKIN_PROJECT)
+        message(FATAL_ERROR "catkin_package() CATKIN_DEPENDS on '${depend_name}' which is not a catkin package")
       endif()
-      # verify that all (assumed) catkin packages are listed as run dependencies
-      list(FIND ${PROJECT_NAME}_RUN_DEPENDS ${depend_name} _index)
+      list(FIND ${PROJECT_NAME}_BUILD_DEPENDS ${depend_name} _index)
       if(_index EQUAL -1)
-        message(FATAL_ERROR "catkin_package() DEPENDS on the package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
+        message(FATAL_ERROR "catkin_package() the catkin package '${depend_name}' has been find_package()-ed but is not listed as a build dependency in the package.xml")
       endif()
     endif()
+    # verify that all catkin packages are listed as run dependencies
+    list(FIND ${PROJECT_NAME}_RUN_DEPENDS ${depend_name} _index)
+    if(_index EQUAL -1)
+      message(FATAL_ERROR "catkin_package() DEPENDS on the catkin package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
+    endif()
+    list(APPEND PROJECT_DEPENDENCIES ${depend_name})
   endforeach()
 
   # package version provided by package.cmake/xml
@@ -356,132 +360,4 @@ function(_catkin_package)
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/package.xml
     DESTINATION share/${PROJECT_NAME}
   )
-endfunction()
-
-
-# The following function is derived from CMake's cmake_parse_arguments function.
-# The support of repeated keywords has been added for catkin_package().
-# For each keyword a list variable is returned where each item contains all arguments separated by a whitespace.
-# The original license of the file is: 
-#=============================================================================
-# Copyright 2010 Alexander Neundorf <neundorf@kde.org>
-#
-# Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file Copyright.txt for details.
-#
-# This software is distributed WITHOUT ANY WARRANTY; without even the
-# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the License for more information.
-#=============================================================================
-# Full CMake Copyright notice
-#
-# Copyright 2000-2009 Kitware, Inc., Insight Software Consortium. All rights
-# reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# Redistributions of source code must retain the above copyright notice, this
-# list of conditions and the following disclaimer.
-#
-# Redistributions in binary form must reproduce the above copyright notice,
-# this list of conditions and the following disclaimer in the documentation
-# and/or other materials provided with the distribution.
-#
-# Neither the names of Kitware, Inc., the Insight Software Consortium, nor
-# the names of their contributors may be used to endorse or promote products
-# derived from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
-function(_parse_arguments_with_repeated_keywords prefix _optionNames _singleArgNames _multiArgNames _repeatMultiArgNames)
-  # first set all result variables to empty/FALSE
-  foreach(arg_name ${_singleArgNames} ${_multiArgNames} ${_repeatSingleArgNames} ${_repeatMultiArgNames})
-    set(${prefix}_${arg_name})
-  endforeach(arg_name)
-
-  foreach(option ${_optionNames})
-    set(${prefix}_${option} FALSE)
-  endforeach(option)
-
-  set(${prefix}_UNPARSED_ARGUMENTS)
-
-  set(insideValues FALSE)
-  set(currentArgName)
-
-  # now iterate over all arguments and fill the result variables
-  foreach(currentArg ${ARGN})
-    list(FIND _optionNames "${currentArg}" optionIndex)  # ... then this marks the end of the arguments belonging to this keyword
-    list(FIND _singleArgNames "${currentArg}" singleArgIndex)  # ... then this marks the end of the arguments belonging to this keyword
-    list(FIND _multiArgNames "${currentArg}" multiArgIndex)  # ... then this marks the end of the arguments belonging to this keyword
-    list(FIND _repeatMultiArgNames "${currentArg}" repeatMultiArgIndex)  # ... then this marks the end of the arguments belonging to this keyword
-
-    if(${optionIndex} EQUAL -1  AND  ${singleArgIndex} EQUAL -1  AND  ${multiArgIndex} EQUAL -1  AND  ${repeatMultiArgIndex} EQUAL -1)
-      if(insideValues)
-        if("${insideValues}" STREQUAL "SINGLE")
-          set(${prefix}_${currentArgName} ${currentArg})
-          set(insideValues FALSE)
-        elseif("${insideValues}" STREQUAL "MULTI")
-          list(APPEND ${prefix}_${currentArgName} ${currentArg})
-        elseif("${insideValues}" STREQUAL "REPEAT")
-          # get and pop last element from list
-          list(REVERSE ${prefix}_${currentArgName})
-          list(GET ${prefix}_${currentArgName} 0 _items)
-          list(REMOVE_AT ${prefix}_${currentArgName} 0)
-          list(REVERSE ${prefix}_${currentArgName})
-          # append value to element
-          set(_items "${_items} ${currentArg}")
-          # append element as string to list
-          list(APPEND ${prefix}_${currentArgName} "${_items}")
-        endif()
-      else(insideValues)
-        list(APPEND ${prefix}_UNPARSED_ARGUMENTS ${currentArg})
-      endif(insideValues)
-    else()
-      if(NOT ${optionIndex} EQUAL -1)
-        set(${prefix}_${currentArg} TRUE)
-        set(insideValues FALSE)
-      elseif(NOT ${singleArgIndex} EQUAL -1)
-        set(currentArgName ${currentArg})
-        set(${prefix}_${currentArgName})
-        set(insideValues "SINGLE")
-      elseif(NOT ${multiArgIndex} EQUAL -1)
-        set(currentArgName ${currentArg})
-        set(${prefix}_${currentArgName})
-        set(insideValues "MULTI")
-      elseif(NOT ${repeatMultiArgIndex} EQUAL -1)
-        set(currentArgName ${currentArg})
-        # use space since empty items are not supported
-        list(APPEND ${prefix}_${currentArgName} " ")
-        set(insideValues "REPEAT")
-      endif()
-    endif()
-
-  endforeach(currentArg)
-
-  # propagate the result variables to the caller:
-  foreach(arg_name ${_singleArgNames} ${_multiArgNames} ${_optionNames})
-    set(${prefix}_${arg_name}  ${${prefix}_${arg_name}} PARENT_SCOPE)
-  endforeach(arg_name)
-  # strip spaces from the items of all repeated arguments
-  foreach(arg_name ${_repeatMultiArgNames})
-    set(stripped "")
-    foreach(items ${${prefix}_${arg_name}})
-      string(STRIP "${items}" items)
-      list(APPEND stripped "${items}")
-    endforeach()
-    set(${prefix}_${arg_name}  ${stripped} PARENT_SCOPE)
-  endforeach(arg_name)
-  set(${prefix}_UNPARSED_ARGUMENTS ${${prefix}_UNPARSED_ARGUMENTS} PARENT_SCOPE)
-
 endfunction()
