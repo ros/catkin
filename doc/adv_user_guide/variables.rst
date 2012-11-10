@@ -8,7 +8,7 @@ Build space
 
 .. cmake:data:: CATKIN_DEVEL_PREFIX
 
-   This is set to ``${CMAKE_BINARY_DIR}/develspace`` by ``catkin/all.cmake`` and is the analogue to ``CMAKE_PREFIX_PATH``.
+   This is set to ``${CMAKE_BINARY_DIR}/devel`` by ``catkin/all.cmake`` and is the analogue to ``CMAKE_PREFIX_PATH``.
    Since the layout of the both folders ``CATKIN_DEVEL_PREFIX`` and ``CMAKE_PREFIX_PATH`` is identical you can append any of the following install destinations to the build prefix.
 
 Install destinations

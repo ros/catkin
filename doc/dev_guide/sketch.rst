@@ -95,7 +95,7 @@ generated message code in the same directory.
 
 When CMake runs, it knows the locations of the ``CMAKE_BINARY_DIR``
 and so forth, it generates an environment file (in
-``CMAKE_BINARY_DIR/develspace``).  Projects may extend this environment via
+``CMAKE_BINARY_DIR/devel``).  Projects may extend this environment via
 :cmake:macro:`catkin_add_env_hooks`.
 
 Configure process

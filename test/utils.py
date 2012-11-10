@@ -132,7 +132,7 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
             self.rootdir = tempfile.mkdtemp()
         self.directories['root'] = self.rootdir
         self.builddir = os.path.join(self.rootdir, "build")
-        self.develspace = os.path.join(self.builddir, 'develspace')
+        self.develspace = os.path.join(self.builddir, 'devel')
         self.workspacedir = os.path.join(self.rootdir, "src")
         self.installdir = os.path.join(self.rootdir, "install")
         if not os.path.exists(self.builddir):

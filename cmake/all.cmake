@@ -12,7 +12,7 @@ endif()
 if(CATKIN_DEVEL_PREFIX)
   set(CATKIN_DEVEL_PREFIX ${CATKIN_DEVEL_PREFIX} CACHE PATH "catkin devel space")
 else()
-  set(CATKIN_DEVEL_PREFIX "${CMAKE_BINARY_DIR}/develspace")
+  set(CATKIN_DEVEL_PREFIX "${CMAKE_BINARY_DIR}/devel")
 endif()
 message(STATUS "Using CATKIN_DEVEL_PREFIX: ${CATKIN_DEVEL_PREFIX}")
 # this variable is only for backward compatibility

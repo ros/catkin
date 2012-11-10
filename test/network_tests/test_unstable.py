@@ -57,7 +57,7 @@ class SimpleUnstableTest(AbstractUnstableTest):
             other_src_dir = os.path.join(other_root_dir, 'src')
             create_catkin_workspace(other_src_dir)
             other_build_dir = os.path.join(other_root_dir, 'build')
-            other_develspace_dir = os.path.join(other_build_dir, 'develspace')
+            other_develspace_dir = os.path.join(other_build_dir, 'devel')
             shutil.copytree(os.path.join(self.workspacedir, 'common_msgs'),
                             os.path.join(other_src_dir, 'common_msgs'))
             out = self.cmake(cwd=other_build_dir,
@@ -88,7 +88,7 @@ class SimpleUnstableTest(AbstractUnstableTest):
             other_src_dir = os.path.join(other_root_dir, 'src')
             create_catkin_workspace(other_src_dir)
             other_build_dir = os.path.join(other_root_dir, 'build')
-            other_develspace_dir = os.path.join(other_build_dir, 'develspace')
+            other_develspace_dir = os.path.join(other_build_dir, 'devel')
             other_install_dir = os.path.join(other_root_dir, 'install')
             shutil.copytree(os.path.join(MOCK_DIR, 'src', 'catkin_test'),
                             os.path.join(other_src_dir, 'catkin_test'))

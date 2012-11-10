@@ -44,7 +44,7 @@ e.g. for package 'pkg'::
       cmake_install.cmake
       Makefile
 
-      develspace/                 # the layout of that folder follows the (see install directory)
+      devel/                      # the layout of that folder follows the (see install directory)
 
          .catkin                  # identifies folder as a catkin devel/install space
                                   # it contains a semicolon separated list of source folders if the workspace is a devel space

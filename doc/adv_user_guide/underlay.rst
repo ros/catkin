@@ -103,7 +103,7 @@ Press tab at the end of the command-line to see additional targets for groups of
 
 To get a summary of the test results call::
 
-   $ develspace/bin/catkin_test_results
+   $ devel/bin/catkin_test_results
 
 Again, if catkin is already installed and not part of the workspace you just omit the path to the script.
 
@@ -112,7 +112,7 @@ Setup environment to run anything
 
 In order to setup the environment that you can run arbitrary code from the workspace the ``setup.bash/*`` must be sourced::
 
-   $ source develspace/setup.bash
+   $ source devel/setup.bash
 
    or
 

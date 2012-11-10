@@ -44,22 +44,22 @@ This generates several folders and files in our ``build`` folder.
 
 .. note:: You need to run this command every time you add or remove packages from your workspace, change manifests or CMakeLists.txt.
 
-Important for you are the `Makefile` and the `develspace`.
+Important for you are the `Makefile` and the `devel` folder.
 
 The `Makefile` allows you to run the command `make` in the build
 folder, which will build all the projects in src (currently None).
-The `develspace` folder contains files you can use to work with the
+The `devel` folder contains files you can use to work with the
 build results as if they had already been installed.
 
 .. note:: This is an important feature of catkin. Without catkin, you would need to run `make install` after each time you run `make`, and manage another location with the install results.
 
-To use the `develspace`, your environment needs to be set up, that
+To use the `devel` folder, your environment needs to be set up, that
 means several variables like PATH, PYTHONPATH, etc. need to also point
-to the folder `~/groovy_overlay/build/develspace`. This is achieved by
-files that the CMake command generated in `develspace`. You can set up
+to the folder `~/groovy_overlay/build/devel`. This is achieved by
+files that the CMake command generated in `devel`. You can set up
 your environment by calling::
 
-   $ source ~/groovy_overlay/build/develspace/setup.bash
+   $ source ~/groovy_overlay/build/devel/setup.bash
 
 You can add this command to your .bashrc if you want it to be executed
 every time you open a shell.
@@ -103,7 +103,7 @@ Unless you ran `make install` with a system prefix, you can always
 cleanly remove all packages by deleting the `build` folder.
 
 By default, the only safe way to uninstall individual packages is to
-delete the `develspace` folder, delete the sources of the packages,
+delete the `devel` folder, delete the sources of the packages,
 and run make again. You can also remove the `build` folder and go
 through the steps above again.
 
