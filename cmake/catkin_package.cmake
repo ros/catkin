@@ -162,13 +162,45 @@ function(_catkin_package)
   endforeach()
 
   # merge explicitly listed libraries and libraries from non-catkin but find_package()-ed packages
-  set(PKG_CONFIG_LIBRARIES "")
+  set(_PKG_CONFIG_LIBRARIES "")
   if(PROJECT_LIBRARIES)
-    list(APPEND PKG_CONFIG_LIBRARIES ${PROJECT_LIBRARIES})
+    list(APPEND _PKG_CONFIG_LIBRARIES ${PROJECT_LIBRARIES})
   endif()
   if(PROJECT_DEPENDENCIES_LIBRARIES)
-    list(APPEND PKG_CONFIG_LIBRARIES ${PROJECT_DEPENDENCIES_LIBRARIES})
+    list(APPEND _PKG_CONFIG_LIBRARIES ${PROJECT_DEPENDENCIES_LIBRARIES})
   endif()
+
+  # filter out build configuration keywords and non-matching libraries
+  set(PKG_CONFIG_LIBRARIES "")
+  list(LENGTH _PKG_CONFIG_LIBRARIES _count)
+  set(_index 0)
+  while(${_index} LESS ${_count})
+    list(GET _PKG_CONFIG_LIBRARIES ${_index} library)
+    if("${library}" STREQUAL "debug")
+      if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        # skip keyword and debug library for non-debug builds
+        math(EXPR _index "${_index} + 1")
+        if(${_index} EQUAL ${_count})
+          message(FATAL_ERROR "catkin_package() the list of libraries '${_PKG_CONFIG_LIBRARIES}' ends with '${library}' which is a build configuration keyword and must be followed by a library")
+        endif()
+      endif()
+    elseif("${library}" STREQUAL "optimized")
+      if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        # skip keyword and non-debug library for debug builds
+        math(EXPR _index "${_index} + 1")
+        if(${_index} EQUAL ${_count})
+          message(FATAL_ERROR "catkin_package() the list of libraries '${_PKG_CONFIG_LIBRARIES}' ends with '${library}' which is a build configuration keyword and must be followed by a library")
+        endif()
+      endif()
+    elseif("${library}" STREQUAL "general")
+      if(${_index} EQUAL ${_count})
+        message(FATAL_ERROR "catkin_package() the list of libraries '${_PKG_CONFIG_LIBRARIES}' ends with '${library}' which is a build configuration keyword and must be followed by a library")
+      endif()
+    else()
+      list(APPEND PKG_CONFIG_LIBRARIES ${library})
+    endif()
+    math(EXPR _index "${_index} + 1")
+  endwhile()
 
   #
   # DEVEL SPACE
