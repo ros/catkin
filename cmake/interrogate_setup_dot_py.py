@@ -112,9 +112,7 @@ class Dummy:
             sys.stderr.write("\n*** Unable to find 'version' in setup.py of %s" % self.package_name)
             raise RuntimeError("version not found in setup.py")
         version = kwargs['version']
-        if 'package_dir' not in kwargs:
-            raise RuntimeError(r'package_dir not in setup.py')
-        package_dir = kwargs['package_dir']
+        package_dir = kwargs['package_dir'] if 'package_dir' in kwargs else {}
 
         pkgs = kwargs.get('packages', [])
         scripts = kwargs.get('scripts', [])
