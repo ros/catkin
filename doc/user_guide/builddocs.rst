@@ -19,7 +19,7 @@ Setup
 
 Now you can build documentation for projects that use the ``ros-theme``.  For
 example, to build catkin's documentation::
- 
+
     git clone git://github.com/ros/catkin.git
     cd catkin/doc
     make html
@@ -27,11 +27,37 @@ example, to build catkin's documentation::
 Usage
 -----
 
+Ros theme
+^^^^^^^^^
+
 To use the ``ros-theme`` in your own project's documentation, add the
 following line to your ``conf.py``::
 
-    extensions = extensions + ['catkin_sphinx.cmake', 'catkin_sphinx.ShLexer']
+    import catkin_sphinx
+    html_theme_path.append(os.path.join(os.path.dirname(catkin_sphinx.__file__),
+                                        'theme'))
 
-ros-theme-enabled projects use the following ``html_theme_path`` setting::
+    # Use ROS theme
+    html_theme = 'ros-theme'
 
-    html_theme_path = [os.path.join(os.path.expanduser('~'), 'sphinx'), 'themes']
+Shell prompts
+^^^^^^^^^^^^^
+
+If you want to document shell prompts (e.g. install instructions), use::
+
+    extensions = extensions + ['catkin_sphinx.ShLexer']
+
+and document your snippets using::
+
+    .. code-block:: catkin-sh
+
+      $ sudo pip install mystuff
+
+Cmake macro documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you also want to generate docs for cmake files, add::
+
+    extensions = extensions + ['catkin_sphinx.cmake']
+
+this will enable the sphinx "``.. cmake:macro::``" directive.
