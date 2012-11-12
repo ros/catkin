@@ -120,13 +120,14 @@ Workspace
   1. *all.cmake*:
 
    1. set global destination variables
+   1. updates .catkin file in devel space
    1. set CATKIN_WORKSPACES based on CMAKE_PREFIX_PATH entries
    1. enables new cmake policies
    1. invokes catkin_generate_environment()
 
     1. *catkin_generate_environment*:
 
-     1. creates catkin marker file .catkin
+     1. creates catkin marker file .catkin in installspace
      2. creates environment setup files
 
  4. exits with catkin_workspace()
@@ -152,9 +153,9 @@ macros are used as intended.
 
  2. *catkin_package.cmake*:
 
-  3. invoke find_package(catkin [COMPONENTS ...])
+  3. invoke find_package(catkin REQUIRED [COMPONENTS ...])
 
-   1. TODO
+   1. finds catkin, then calls find_package() with each of the components
 
   2. invokes catkin_package_xml()
 
@@ -177,4 +178,5 @@ macros are used as intended.
 
   3. (optionally) invole catkin_python_setup()
 
-   1. TODO
+   1. Generate relay scripts in devel space pointing to scripts in source
+   2. prepare installation based on values in setup.py
