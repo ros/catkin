@@ -20,11 +20,16 @@ def main():
 
     # verify that the base path is known
     base_path = os.path.abspath(args.path)
+    if not os.path.exists(base_path):
+        return 'The specified path for the source space "%s" must exist' % base_path
     if os.path.basename(base_path) == 'src':
+        source_path = base_path
         base_path = os.path.dirname(base_path)
-    source_path = os.path.join(base_path, 'src')
-    if not os.path.exists(source_path):
-        return '%s must be called with an argument pointing to the source folder, pointing to the parent folder or be invoked in these folders' % sys.argv[0]
+    else:
+        source_path = os.path.join(base_path, 'src')
+        # if source space does not comply to recommended workspace layout place all generated folder under source space
+        if not os.path.exists(source_path):
+            source_path = base_path
 
     # extract path information
     build_path = os.path.join(base_path, 'build')
@@ -37,6 +42,7 @@ def main():
     devel_prefix = [a for a in cmake_args if a.startswith(prefix)]
     if devel_prefix:
         devel_path = os.path.abspath(devel_prefix[-1][len(prefix):])
+        cmake_args = [a for a in cmake_args if a not in devel_prefix]
     print('Devel space: %s' % devel_path)
 
     #if not os.path.exists(devel_path):
@@ -48,6 +54,7 @@ def main():
     install_prefix = [a for a in cmake_args if a.startswith(prefix)]
     if install_prefix:
         install_path = os.path.abspath(install_prefix[-1][len(prefix):])
+        cmake_args = [a for a in cmake_args if a not in install_prefix]
     print('Install space: %s' % install_path)
 
     # ensure build folder exists
@@ -66,6 +73,7 @@ def main():
     makefile = os.path.join(build_path, 'Makefile')
     if not os.path.exists(makefile) or args.force_cmake:
         cmd = ['cmake', source_path, '-DCATKIN_DEVEL_PREFIX=%s' % devel_path, '-DCMAKE_INSTALL_PREFIX=%s' % install_path]
+        cmd += cmake_args
         try:
             _run_command(cmd, build_path)
         except subprocess.CalledProcessError:
@@ -86,7 +94,7 @@ def main():
         return 'Invoking "make" failed'
 
     # invoke make install
-    if not args.install:
+    if args.install:
         cmd = ['make', 'install']
         try:
             _run_command(cmd, build_path)
