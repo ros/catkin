@@ -12,13 +12,22 @@ Design sketch
  * The standard set of CMake variables, especially
    ``CMAKE_INSTALL_PREFIX``, ``CMAKE_BUILD_TYPE``,
    ``CMAKE_TOOLCHAIN_FILE`` etc.
+
  * Assorted others as needed by individual packages, i.e. to
    enable/disable certain features or dependencies.
 
-
-* There is no search of ROS_PACKAGE_PATH: the packages to be built
+* For build, there is no search of ROS_PACKAGE_PATH: the packages to be built
    are the subdirectories (potentially recursive) of the
    ``CMAKE_SOURCE_DIR``.
+
+* The source folders of a devel space are listed in the .catkin file
+   in the devel space folder. This can be more than one folder in
+   cases where several build folders share the same devel space.
+
+* For backward compatibility, sourcing a devel space setup.*sh also
+  sets the ROS_PACKAGE_PATH env variable preprending for each
+  workspace the contents of .catkin. This allows searching for
+  package contents in package sources.
 
 * Catkin does only knows about packages: it simply examines the
    subdirectories under ``CMAKE_SOURCE_DIR`` for buildable
@@ -127,7 +136,7 @@ Workspace
 
     1. *catkin_generate_environment*:
 
-     1. creates catkin marker file .catkin in installspace
+     1. creates empty catkin marker file .catkin in installspace
      2. creates environment setup files
 
  4. exits with catkin_workspace()
