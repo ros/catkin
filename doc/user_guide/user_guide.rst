@@ -9,7 +9,6 @@ User Guide
    supposed
    package
    rosbuild_migration
-   catkin_migration
    find_package
    setup_dot_py
    standards
