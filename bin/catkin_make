@@ -98,14 +98,6 @@ def main():
     except subprocess.CalledProcessError:
         return 'Invoking "make" failed'
 
-    # invoke make install
-    if args.install:
-        cmd = ['make', 'install']
-        try:
-            _run_command(cmd, build_path)
-        except subprocess.CalledProcessError:
-            return 'Invoking "%s" failed' % ' '.join(cmd)
-
 
 def _parse_args(args=sys.argv[1:]):
     # extract -D* arguments
@@ -118,7 +110,6 @@ def _parse_args(args=sys.argv[1:]):
     parser.add_argument('--build', help='The path to the build space (default "build")')
     parser.add_argument('-j', '--jobs', type=int, metavar='JOBS', nargs='?', help='Specifies the number of jobs (commands) to run simultaneously. Defaults to the environment variable ROS_PARALLEL_JOBS and falls back to the number of CPU cores.')
     parser.add_argument('--force-cmake', action='store_true', help='Invoke "cmake" even if it has been executed before')
-    parser.add_argument('--install', action='store_true', help='Invoke "make install" after building the workspace')
 
     namespace, unknown_args = parser.parse_known_args(args)
     # support -j/--jobs without an argument which argparse can not distinguish
