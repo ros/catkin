@@ -2,6 +2,7 @@ set(programs
   catkin_build_isolated
   catkin_find
   catkin_init_workspace
+  catkin_make
   catkin_package_version
   catkin_prepare_release
   catkin_test_results
