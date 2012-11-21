@@ -114,6 +114,7 @@ foreach(filename
     python # defines PYTHON_EXECUTABLE, required by empy
     empy
     find_program_required
+    legacy
     list_append_unique
     list_insert_in_workspace_order
     parse_arguments
