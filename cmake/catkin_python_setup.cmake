@@ -19,6 +19,12 @@ function(catkin_python_setup)
     message(FATAL_ERROR "catkin_python_setup() called with unused arguments: ${ARGN}")
   endif()
 
+  # make sure catkin_package() has been called (implies ${PROJECT_NAME} has been set)
+  if(NOT _CATKIN_CURRENT_PACKAGE)
+    message(FATAL_ERROR "catkin_python_setup() must be called after catkin_package()")
+  endif()
+
+
   # mark that catkin_python_setup() was called in order to disable installation of generated __init__.py files in generate_messages()
   set(${PROJECT_NAME}_CATKIN_PYTHON_SETUP TRUE PARENT_SCOPE)
   if(${PROJECT_NAME}_GENERATE_MESSAGES)
@@ -67,10 +73,6 @@ function(catkin_python_setup)
   safe_execute_process(COMMAND ${cmd})
   include(${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/setup_py_interrogation.cmake)
 
-  # call catkin_package_xml() if it has not been called before
-  if(NOT _CATKIN_CURRENT_PACKAGE)
-    catkin_package_xml()
-  endif()
   assert(${PROJECT_NAME}_VERSION)
   # verify that version from setup.py is equal to version from package.xml
   if(NOT "${${PROJECT_NAME}_SETUP_PY_VERSION}" STREQUAL "${${PROJECT_NAME}_VERSION}")
