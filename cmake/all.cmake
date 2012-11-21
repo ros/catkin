@@ -48,6 +48,7 @@ foreach(f
     tools/rt
     tools/threads
     tools/gtest
+    future
     )
   include(${catkin_EXTRAS_DIR}/${f}.cmake)
 endforeach()
