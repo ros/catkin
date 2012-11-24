@@ -1,13 +1,17 @@
 #
 # Register environment hooks which are executed by the setup script.
 #
-# For each shell in ``SHELLS``, ``<file_prefix>.<shell>.in`` in the
-# directory ``DIRECTORY`` is expand to ``etc/catkin/profile.d/``,
-# where it will be read by generated ``setup.<shell>``.
+# For each shell in ``SHELLS``, macro searches for first of
+# ``<file_prefix>.<shell>, ``<file_prefix>.<shell>.em`` or
+# ``<file_prefix>.<shell>.in`` in the
+# directory ``DIRECTORY``. Plain shells, will be copied to, templates
+# are expanded to ``etc/catkin/profile.d/``,
+# where it will be read by global generated ``setup.<shell>``.
 #
 # The template can distinguish between build- and installspace
 # using the boolean variables ``DEVELSPACE`` and ``INSTALLSPACE``
 # which are either ``true`` or ``false``.
+# E.g. @[if DEVELSPACE]@ ... @[end if]@ for .em
 #
 # .. note:: Note the extra ".in" that must appear in the filename
 #   that does not appear in the argument.
@@ -19,9 +23,13 @@
 #   read in alphanumeric order) and the name serves to disambiguate
 #   in the event of collisions.
 #
+# Example::
+#   catkin_add_env_hooks(my_prefix SHELLS bash tcsh zsh DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env-hooks)
+# looks for files env-hooks/my_prefix.[bash|tcsh|zsh].[in|em]
+#
 # :param file_prefix: the filename prefix
 # :type file_prefix: string
-# :param SHELLS: the shell extensions (i.e.: sh bat)
+# :param SHELLS: the shell extensions (e.g.: sh bat bash zsh tcsh)
 # :type SHELLS: list of strings
 # :param DIRECTORY: the directory (default: ${CMAKE_CURRENT_SOURCE_DIR})
 # :type DIRECTORY: string
