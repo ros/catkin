@@ -48,8 +48,9 @@
 #
 #   catkin_package(
 #     INCLUDE_DIRS include
-#     LIBRARIES proj-one proj-two
-#     DEPENDS roscpp
+#     LIBRARIES projlib1 projlib2
+#     CATKIN-DEPENDS roscpp
+#     DEPENDS Eigen
 #     CFG_EXTRAS proj-extras.cmake
 #   )
 #
