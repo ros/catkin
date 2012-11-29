@@ -1,0 +1,16 @@
+<package>
+  <description brief="catkin">
+    Willow Garage low-level build system macros and infrastructure.
+  </description>
+  <author>Troy Straszheim/straszheim@willowgarage.com, Morten Kjaergaard, Brian Gerkey</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/catkin</url>
+
+  <export>
+    <rosdoc config="rosdoc.yaml"/>    
+  </export>
+
+</package>
+
+
