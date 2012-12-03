@@ -118,7 +118,7 @@ Workspace
 
 1. *toplevel.cmake*: The top-level CMakeLists.txt is loaded by Catkin, this should be a symbolic link to catin/cmake/toplevel.cmake.
 
- 1. This optionally includes a user-defined `´workspace.cmake``
+ 1. This optionally includes a user-defined ``workspace.cmake``
  2. attempts to find catkin's sources by traversing locations in this oder:
 
   a. In the source folder direct subfolder 'catkin' (using ${CMAKE_SOURCE_DIR}/catkin)
@@ -183,9 +183,14 @@ macros are used as intended.
 
      1. generates .pc, XXXConfig.cmake, Config-version.cmake, ... files
 
-   6. Declares files to be commonly installed
+   6. declares files to be commonly installed
 
-  3. (optionally) invole catkin_python_setup()
+  3. (optionally) invoke catkin_python_setup()
 
-   1. Generate relay scripts in devel space pointing to scripts in source
-   2. prepare installation based on values in setup.py
+   1. generate relay scripts in devel space pointing to scripts in source
+   2. generate relay __init__.py files for any package mentioned
+   3. prepare installation based on values in setup.py
+
+  4. (optionally) invoke catkin_add_env_hooks
+
+   1. copies files / configures templates into develspace, mark for installation
