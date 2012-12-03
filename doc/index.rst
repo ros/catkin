@@ -22,6 +22,32 @@ Key benefits of catkin:
 * Support for C++ and python projects
 * Build-space can be used like an install-space (since groovy)
 
+Installation
+------------
+
+Prerequisites:
+
+catkin has the following dependencies:
+
+* CMake - A cross-platform, open-source build system.
+* Python - Python is a general-purpose, interpreted high-level programming language.
+* catkin_pkg - A Python runtime library for catkin.
+* empy - A Python template library.
+* nose - A Python testing framework.
+* GTest - A cpp unittest framework from Google.
+
+You can resolve these dependencies on Ubuntu with this command::
+
+  sudo apt-get install cmake python-catkin-pkg python-empy python-nose libgtest-dev
+
+If you are not on Ubuntu you can also install catkin_pkg from PyPi via pip.
+
+catkin itself is distributed as binary debian package for Ubuntu, it can be installed via::
+
+  sudo apt-get install ros-groovy-catkin
+
+However installing ROS will also install catkin.
+
 Code & tickets
 --------------
 
