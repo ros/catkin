@@ -6,8 +6,9 @@ import argparse
 
 try:
     from catkin_pkg.package import parse_package
-except ImportError as impe:
-    sys.exit("ERROR Cannot find a module of catkin_pkg, make sure it is up to date and on the PYTHONPATH, see catkin install instructions: %s" % impe)
+except ImportError as e:
+    sys.exit('ImportError: "from catkin_pkg.package import parse_package" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH.' % e)
+
 
 def _get_output(package):
     """
