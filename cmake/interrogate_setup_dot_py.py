@@ -113,13 +113,29 @@ def _create_mock_setup_function(package_name, outfile):
         Checks kwargs and writes a scriptfile
         '''
         if 'version' not in kwargs:
-            sys.stderr.write("\n*** Unable to find 'version' in setup.py of %s" % self.package_name)
+            sys.stderr.write("\n*** Unable to find 'version' in setup.py of %s\n" % package_name)
             raise RuntimeError("version not found in setup.py")
         version = kwargs['version']
-        package_dir = kwargs['package_dir'] if 'package_dir' in kwargs else {}
+        package_dir = kwargs.get('package_dir', {})
 
         pkgs = kwargs.get('packages', [])
         scripts = kwargs.get('scripts', [])
+
+        unsupported_args = [
+            'data_files',
+            'entry_points',
+            'exclude_package_data',
+            'ext_modules ',
+            'ext_package',
+            'include_package_data',
+            'namespace_packages',
+            'py_modules',
+            'setup_requires',
+            'use_2to3',
+            'zip_safe']
+        used_unsupported_args = [arg for arg in unsupported_args if arg in kwargs]
+        if used_unsupported_args:
+            sys.stderr.write("*** Arguments %s to setup() not supported in catkin devel space in setup.py of %s\n" % (used_unsupported_args, package_name))
 
         result = generate_cmake_file(package_name=package_name,
                                      version=version,
