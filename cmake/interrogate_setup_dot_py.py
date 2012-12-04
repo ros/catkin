@@ -4,6 +4,9 @@ from __future__ import print_function
 import os
 import sys
 
+import setuptools
+import distutils.core
+
 from argparse import ArgumentParser
 
 
@@ -94,36 +97,55 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
     return result
 
 
-class Dummy:
-    '''
-    Used as a replacement for modules setuptools and distutils.core,
-    defines a setup function.
-    '''
+def _create_mock_setup_function(package_name, outfile):
+    """
+    Creates a function to call instead of setuptools.setup or
+    distutils.core.setup, which just captures some args and writes them
+    into a file that can be used from cmake
 
-    def __init__(self, package_name, outfile):
-        self.package_name = package_name
-        self.outfile = outfile
+    :param package_name: name of the package
+    :param outfile: filename that cmake will use afterwards
+    :returns: a function to replace setuptools.setup and disutils.core.setup
+    """
 
-    def setup(self, *args, **kwargs):
+    def setup(*args, **kwargs):
         '''
         Checks kwargs and writes a scriptfile
         '''
         if 'version' not in kwargs:
-            sys.stderr.write("\n*** Unable to find 'version' in setup.py of %s" % self.package_name)
+            sys.stderr.write("\n*** Unable to find 'version' in setup.py of %s\n" % package_name)
             raise RuntimeError("version not found in setup.py")
         version = kwargs['version']
-        package_dir = kwargs['package_dir'] if 'package_dir' in kwargs else {}
+        package_dir = kwargs.get('package_dir', {})
 
         pkgs = kwargs.get('packages', [])
         scripts = kwargs.get('scripts', [])
 
-        result = generate_cmake_file(package_name=self.package_name,
+        unsupported_args = [
+            'data_files',
+            'entry_points',
+            'exclude_package_data',
+            'ext_modules ',
+            'ext_package',
+            'include_package_data',
+            'namespace_packages',
+            'py_modules',
+            'setup_requires',
+            'use_2to3',
+            'zip_safe']
+        used_unsupported_args = [arg for arg in unsupported_args if arg in kwargs]
+        if used_unsupported_args:
+            sys.stderr.write("*** Arguments %s to setup() not supported in catkin devel space in setup.py of %s\n" % (used_unsupported_args, package_name))
+
+        result = generate_cmake_file(package_name=package_name,
                                      version=version,
                                      scripts=scripts,
                                      package_dir=package_dir,
                                      pkgs=pkgs)
-        with open(self.outfile, 'w') as out:
+        with open(outfile, 'w') as out:
             out.write('\n'.join(result))
+
+    return setup
 
 
 def main():
@@ -143,12 +165,6 @@ def main():
     # print("Interrogating setup.py for package %s into %s " % (PACKAGE_NAME, OUTFILE),
     #      file=sys.stderr)
 
-    dummy = Dummy(package_name=args.package_name,
-                  outfile=args.outfile)
-
-    sys.modules['setuptools'] = dummy
-    sys.modules['distutils.core'] = dummy
-
     # find the imports in setup.py relatively to make it work before installing catkin
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
 
@@ -159,9 +175,22 @@ def main():
     # so the import of __version__ works
     os.chdir(os.path.dirname(os.path.abspath(args.setupfile_path)))
 
-    with open(args.setupfile_path, 'r') as fh:
-        exec(fh.read())
+    # patch setup() function of distutils and setuptools for the
+    # context of evaluating setup.py
+    try:
+        fake_setup = _create_mock_setup_function(package_name=args.package_name,
+                                                outfile=args.outfile)
 
+        setuptools_backup = setuptools.setup
+        distutils_backup = distutils.core.setup
+        setuptools.setup = fake_setup
+        distutils.core.setup = fake_setup
+
+        with open(args.setupfile_path, 'r') as fh:
+            exec(fh.read())
+    finally:
+        setuptools.setup = setuptools_backup
+        distutils.core.setup = distutils_backup
 
 if __name__ == '__main__':
     main()
