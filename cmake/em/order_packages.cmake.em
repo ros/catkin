@@ -4,7 +4,7 @@ import os
 try:
     from catkin_pkg.topological_order import topological_order
 except ImportError as e:
-    raise RuntimeError("ImportError: "from catkin_pkg.topological_order import topological_order" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH." % e)
+    raise RuntimeError('ImportError: "from catkin_pkg.topological_order import topological_order" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH.' % e)
 # vars defined in order_packages.context.py.in
 ordered_packages = topological_order(os.path.normpath(source_root_dir), whitelisted_packages, blacklisted_packages)
 fatal_error = False
