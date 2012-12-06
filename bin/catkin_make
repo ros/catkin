@@ -86,22 +86,20 @@ def main():
         cmd = ['cmake', source_path, '-DCATKIN_DEVEL_PREFIX=%s' % devel_path, '-DCMAKE_INSTALL_PREFIX=%s' % install_path]
         cmd += cmake_args
         try:
+            _print_command_banner(cmd, build_path, color=not args.no_color)
             if args.no_color:
-                _print_command_banner(cmd, build_path, color=False)
                 _run_command(cmd, build_path)
             else:
-                _print_command_banner(cmd, build_path, color=True)
                 _run_command_colorized(cmd, build_path)
         except subprocess.CalledProcessError:
             return 'Invoking "cmake" failed'
     else:
         cmd = ['make', 'cmake_check_build_system']
         try:
+            _print_command_banner(cmd, build_path, color=not args.no_color)
             if args.no_color:
-                _print_command_banner(cmd, build_path, color=False)
                 _run_command(cmd, build_path)
             else:
-                _print_command_banner(cmd, build_path, color=True)
                 _run_command_colorized(cmd, build_path)
         except subprocess.CalledProcessError:
             return 'Invoking "make cmake_check_build_system" failed'
@@ -121,10 +119,7 @@ def main():
         cmd.append('-j%d' % jobs)
     cmd += make_args
     try:
-        if args.no_color:
-            _print_command_banner(cmd, build_path, color=False)
-        else:
-            _print_command_banner(cmd, build_path, color=True)
+        _print_command_banner(cmd, build_path, color=not args.no_color)
         _run_command(cmd, build_path)
     except subprocess.CalledProcessError:
         return 'Invoking "make" failed'
@@ -196,7 +191,6 @@ def _print_command_banner(cmd, cwd, color):
 
 
 def _run_command_colorized(cmd, cwd):
-    _print_command_banner(cmd, cwd, color=True)
     # Run the command
     proc = subprocess.Popen(
         cmd, cwd=cwd, shell=False,
