@@ -86,6 +86,7 @@ def main():
         cmd = ['cmake', source_path, '-DCATKIN_DEVEL_PREFIX=%s' % devel_path, '-DCMAKE_INSTALL_PREFIX=%s' % install_path]
         cmd += cmake_args
         try:
+            _print_command_banner(cmd, build_path, color=not args.no_color)
             if args.no_color:
                 _run_command(cmd, build_path)
             else:
@@ -95,6 +96,7 @@ def main():
     else:
         cmd = ['make', 'cmake_check_build_system']
         try:
+            _print_command_banner(cmd, build_path, color=not args.no_color)
             if args.no_color:
                 _run_command(cmd, build_path)
             else:
@@ -117,6 +119,7 @@ def main():
         cmd.append('-j%d' % jobs)
     cmd += make_args
     try:
+        _print_command_banner(cmd, build_path, color=not args.no_color)
         _run_command(cmd, build_path)
     except subprocess.CalledProcessError:
         return 'Invoking "make" failed'
@@ -171,15 +174,23 @@ def _colorize_line(line):
     return fmt(cline)
 
 
+def _print_command_banner(cmd, cwd, color):
+    if color:
+        # Prepare for printing
+        cmd_str = sanitize(' '.join(cmd))
+        cwd_str = sanitize(cwd)
+        # Print command notice
+        print(fmt('@{bf}####'))
+        print(fmt('@{bf}#### Running command: @!"%s"@|@{bf} in @!"%s"' % \
+                  (cmd_str, cwd_str)))
+        print(fmt('@{bf}####'))
+    else:
+        print('####')
+        print('#### Running command: "%s" in "%s"' % (' '.join(cmd), cwd))
+        print('####')
+
+
 def _run_command_colorized(cmd, cwd):
-    # Prepare for printing
-    cmd_str = sanitize(' '.join(cmd))
-    cwd_str = sanitize(cwd)
-    # Print command notice
-    print(fmt('@{bf}####'))
-    print(fmt('@{bf}#### Running command: @!"%s"@|@{bf} in @!"%s"' % \
-              (cmd_str, cwd_str)))
-    print(fmt('@{bf}####'))
     # Run the command
     proc = subprocess.Popen(
         cmd, cwd=cwd, shell=False,
@@ -201,9 +212,6 @@ def _run_command_colorized(cmd, cwd):
 
 
 def _run_command(cmd, cwd):
-    print('####')
-    print('#### Running command: "%s" in "%s"' % (' '.join(cmd), cwd))
-    print('####')
     subprocess.check_call(cmd, cwd=cwd)
 
 
