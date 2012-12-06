@@ -1,26 +1,26 @@
 #!/usr/bin/env python
 
+'''This file provides setup.sh with commands to query catkin workspaces'''
+
 from __future__ import print_function
 import argparse
 import os
 import sys
 
-'''This file provides setup.sh with commands to query catkin workspaces'''
-
 CATKIN_MARKER_FILE = '.catkin'
 
 
-def get_workspaces():
-    """
+def get_workspaces(include_fuerte=False):
+    '''
     Based on CMAKE_PREFIX_PATH return all catkin workspaces
 
-    :param _environ: environment module to use, ``dict``
-    """
+    :param include_fuerte: The flag if paths starting with '/opt/ros/fuerte' should be considered workspaces, ``bool``
+    '''
     # get all cmake prefix paths
     env_name = 'CMAKE_PREFIX_PATH'
     paths = [path for path in os.environ.get(env_name, '').split(os.pathsep) if path]
     # remove non-workspace paths
-    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_MARKER_FILE))]
+    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_MARKER_FILE)) or (include_fuerte and path.startswith('/opt/ros/fuerte'))]
     return workspaces
 
 
@@ -60,7 +60,7 @@ def remove_from_env(name, subfolder):
             subfolder = subfolder[1:]
         if subfolder.endswith(os.path.sep) or (os.path.altsep and subfolder.endswith(os.path.altsep)):
             subfolder = subfolder[:-1]
-    for ws_path in get_workspaces():
+    for ws_path in get_workspaces(include_fuerte=True):
         path_to_find = os.path.join(ws_path, subfolder) if subfolder else ws_path
         path_to_remove = None
         for env_path in env_paths:
