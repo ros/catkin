@@ -206,9 +206,9 @@ def _run_command_colorized(cmd, cwd):
             except Exception as e:
                 print('<caktin_make> color formatting problem: ' + str(e),
                       file=sys.stderr)
-    retcode = proc.returncode if proc.returncode is not None else 0
-    if retcode != 0:
-        raise subprocess.CalledProcessError(retcode, ' '.join(cmd))
+    proc.wait()
+    if proc.returncode:
+        raise subprocess.CalledProcessError(proc.returncode, ' '.join(cmd))
 
 
 def _run_command(cmd, cwd):
