@@ -24,6 +24,11 @@ def main():
         base_path = os.path.abspath(args.directory)
     if not os.path.exists(base_path):
         return 'The specified base path "%s" does not exist' % base_path
+
+    # verify that the base path does not contain a package
+    if os.path.exists(os.path.join(base_path, 'package.xml')):
+        return 'The specified base path "%s" contains a package but "catkin_make" must be invoked in the root of workspace.' % base_path
+
     print('Base path: %s' % base_path)
 
     # determine source space
