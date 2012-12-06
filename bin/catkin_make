@@ -87,8 +87,10 @@ def main():
         cmd += cmake_args
         try:
             if args.no_color:
+                _print_command_banner(cmd, build_path, color=False)
                 _run_command(cmd, build_path)
             else:
+                _print_command_banner(cmd, build_path, color=True)
                 _run_command_colorized(cmd, build_path)
         except subprocess.CalledProcessError:
             return 'Invoking "cmake" failed'
@@ -96,8 +98,10 @@ def main():
         cmd = ['make', 'cmake_check_build_system']
         try:
             if args.no_color:
+                _print_command_banner(cmd, build_path, color=False)
                 _run_command(cmd, build_path)
             else:
+                _print_command_banner(cmd, build_path, color=True)
                 _run_command_colorized(cmd, build_path)
         except subprocess.CalledProcessError:
             return 'Invoking "make cmake_check_build_system" failed'
@@ -117,6 +121,10 @@ def main():
         cmd.append('-j%d' % jobs)
     cmd += make_args
     try:
+        if args.no_color:
+            _print_command_banner(cmd, build_path, color=False)
+        else:
+            _print_command_banner(cmd, build_path, color=True)
         _run_command(cmd, build_path)
     except subprocess.CalledProcessError:
         return 'Invoking "make" failed'
@@ -171,15 +179,24 @@ def _colorize_line(line):
     return fmt(cline)
 
 
+def _print_command_banner(cmd, cwd, color):
+    if color:
+        # Prepare for printing
+        cmd_str = sanitize(' '.join(cmd))
+        cwd_str = sanitize(cwd)
+        # Print command notice
+        print(fmt('@{bf}####'))
+        print(fmt('@{bf}#### Running command: @!"%s"@|@{bf} in @!"%s"' % \
+                  (cmd_str, cwd_str)))
+        print(fmt('@{bf}####'))
+    else:
+        print('####')
+        print('#### Running command: "%s" in "%s"' % (' '.join(cmd), cwd))
+        print('####')
+
+
 def _run_command_colorized(cmd, cwd):
-    # Prepare for printing
-    cmd_str = sanitize(' '.join(cmd))
-    cwd_str = sanitize(cwd)
-    # Print command notice
-    print(fmt('@{bf}####'))
-    print(fmt('@{bf}#### Running command: @!"%s"@|@{bf} in @!"%s"' % \
-              (cmd_str, cwd_str)))
-    print(fmt('@{bf}####'))
+    _print_command_banner(cmd, cwd, color=True)
     # Run the command
     proc = subprocess.Popen(
         cmd, cwd=cwd, shell=False,
@@ -201,9 +218,6 @@ def _run_command_colorized(cmd, cwd):
 
 
 def _run_command(cmd, cwd):
-    print('####')
-    print('#### Running command: "%s" in "%s"' % (' '.join(cmd), cwd))
-    print('####')
     subprocess.check_call(cmd, cwd=cwd)
 
 
