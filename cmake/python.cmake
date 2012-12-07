@@ -1,4 +1,4 @@
-find_package(PythonInterp)
+find_package(PythonInterp REQUIRED)
 execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/python_version.py
   OUTPUT_VARIABLE PYTHON_VERSION_XDOTY
   OUTPUT_STRIP_TRAILING_WHITESPACE)
