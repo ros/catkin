@@ -4,8 +4,11 @@ from __future__ import print_function
 import os
 import sys
 
-import setuptools
 import distutils.core
+try:
+    import setuptools
+except ImportError:
+    pass
 
 from argparse import ArgumentParser
 
@@ -99,13 +102,13 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
 
 def _create_mock_setup_function(package_name, outfile):
     """
-    Creates a function to call instead of setuptools.setup or
-    distutils.core.setup, which just captures some args and writes them
+    Creates a function to call instead of distutils.core.setup or
+    setuptools.setup, which just captures some args and writes them
     into a file that can be used from cmake
 
     :param package_name: name of the package
     :param outfile: filename that cmake will use afterwards
-    :returns: a function to replace setuptools.setup and disutils.core.setup
+    :returns: a function to replace disutils.core.setup and setuptools.setup
     """
 
     def setup(*args, **kwargs):
@@ -181,16 +184,22 @@ def main():
         fake_setup = _create_mock_setup_function(package_name=args.package_name,
                                                 outfile=args.outfile)
 
-        setuptools_backup = setuptools.setup
         distutils_backup = distutils.core.setup
-        setuptools.setup = fake_setup
         distutils.core.setup = fake_setup
+        try:
+            setuptools_backup = setuptools.setup
+            setuptools.setup = fake_setup
+        except NameError:
+            pass
 
         with open(args.setupfile_path, 'r') as fh:
             exec(fh.read())
     finally:
-        setuptools.setup = setuptools_backup
         distutils.core.setup = distutils_backup
+        try:
+            setuptools.setup = setuptools_backup
+        except NameError:
+            pass
 
 if __name__ == '__main__':
     main()
