@@ -67,12 +67,13 @@ Using package.xml in setup.py
 Writing a setup.py file without duplicating information contained in the package.xml is possible using a catkin_pkg convenience function like this::
 
   from distutils.core import setup
-  from catkin_pkg.package import parse_package_for_distutils
+  from catkin_pkg.python_setup import generate_distutils_setup
 
-  d = parse_package_for_distutils()
-  d['packages'] = ['mypkg']
-  d['scripts'] = ['bin/myscript']
-  d['package_dir'] = {'': 'src'}
+  d = generate_distutils_setup(
+    packages=['mypkg'],
+    scripts=['bin/myscript'],
+    package_dir={'': 'src'}
+  )
 
   setup(**d)
 

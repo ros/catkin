@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-from catkin_pkg.package import parse_package_for_distutils
+from catkin_pkg.python_setup import generate_distutils_setup
 
-d = parse_package_for_distutils()
-d['packages'] = ['catkin']
-d['package_dir'] = {'': 'python'}
+d = generate_distutils_setup(
+    packages=['catkin'],
+    package_dir={'': 'python'}
+)
 
 setup(**d)
