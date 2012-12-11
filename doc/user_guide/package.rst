@@ -135,6 +135,8 @@ find_package and pkg-config infrastructure code.  Furthermore it
 parses the ``package.xml`` and provides some of the information as
 CMake variables.
 
+API doc: :ref:`catkin_package_ref`
+
 .. rubric:: include_directories
 
 This is standard CMake.  You will want to include
@@ -156,6 +158,9 @@ necessary libraries, i.e. ``catkin_LIBRARIES``.
 
 Call :cmake:macro:`catkin_python_setup` if the project contains a
 setup.py / Python code which should installed.
+
+API doc: :ref:`catkin_python_setup_ref`
+
 
 .. rubric:: install
 
