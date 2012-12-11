@@ -24,7 +24,9 @@
 #   in the event of collisions.
 #
 # Example::
+#
 #   catkin_add_env_hooks(my_prefix SHELLS bash tcsh zsh DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env-hooks)
+#
 # looks for files env-hooks/my_prefix.[bash|tcsh|zsh].[in|em]
 #
 # :param file_prefix: the filename prefix
@@ -54,7 +56,7 @@ function(catkin_add_env_hooks file_prefix)
   foreach(shell ${ARG_SHELLS})
     set(ENV_HOOK ${file_prefix}.${shell})
     set(base ${ARG_DIRECTORY}/${ENV_HOOK})
- 
+
     # generate environment hook for devel space
     if (EXISTS ${base})
       # copy plain file
