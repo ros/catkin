@@ -64,10 +64,18 @@ The basic case of creating a C++ library::
    find_package(catkin REQUIRED [COMPONENTS otherpkg ...])
    # find_package(...)
 
+   ## Uncomment this if the package has a setup.py. This macro ensures
+   ## modules and scripts declared therein get installed
+   catkin_python_setup()
+
+   ## LIBRARIES: libraries you create in this project that dependent projects also need
+   ## CATKIN_DEPENDS: catkin_packages dependent projects also need
+   ## DEPENDS: system dependencies of this project that dependent projects also need
    catkin_package(
       INCLUDE_DIRS include
       LIBRARIES ${PROJECT_NAME}
-      DEPENDS otherpkg)
+      CATKIN_DEPENDS catkinpkg1 catkinpkg2
+      DEPENDS systempkg1 systempkg2)
 
    find_package(Boost REQUIRED COMPONENTS date_time thread)
 
@@ -75,14 +83,12 @@ The basic case of creating a C++ library::
    link_directories(${catkin_LINK_DIRS})
 
    # declare a library with the same name as project
-   add_library(${PROJECT_NAME} SHARED 
+   add_library(${PROJECT_NAME} SHARED
      src/duration.cpp
      src/rate.cpp
      src/time.cpp)
 
    target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-
-   catkin_python_setup()
 
    # install the library
    install(TARGETS ${PROJECT_NAME}
