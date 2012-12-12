@@ -57,6 +57,15 @@ if(@PROJECT_NAME@_CONFIG_INCLUDED)
 endif()
 set(@PROJECT_NAME@_CONFIG_INCLUDED TRUE)
 
+# warn when using a deprecated package
+if(NOT "@PROJECT_DEPRECATED@" STREQUAL "")
+  set(_msg "WARNING: package '@PROJECT_NAME@' is deprecated")
+  if(NOT "@PROJECT_DEPRECATED@" STREQUAL "TRUE")
+    set(_msg "${_msg} (@PROJECT_DEPRECATED@)")
+  endif()
+  message("${_msg}")
+endif()
+
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(@PROJECT_NAME@_FOUND_CATKIN_PROJECT TRUE)
 
