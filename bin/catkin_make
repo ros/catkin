@@ -155,6 +155,9 @@ def _colorize_line(line):
         # -- ~~  -
         cline = cline.replace('~~ ', '@{pf}~~ @|')
         cline = cline.replace(' - ', ' - @!@{bf}')
+        cline = cline.replace('(', '@|(')
+        cline = cline.replace('(metapackage)', '@|(@{cf}metapackage@|)')
+        cline = cline.replace('(non-catkin)', '@|(@!@{cf}non-catkin@|)')
     if line.startswith('-- +++'):
         # -- +++ add_subdirectory(package)
         cline = cline.replace('+++', '@!@{gf}+++@|')
@@ -162,6 +165,10 @@ def _colorize_line(line):
         cline = cline.replace(')', '@|)')
         cline = cline.replace('metapackage: \'', 'metapackage: \'@!@{bf}')
         cline = cline.replace('\'\n', '@|\'\n')
+        cline = cline.replace('cmake package: \'', 'cmake package: \'@!@{bf}')
+        cline = cline.replace('\'\n', '@|\'\n')
+    if line.startswith('-- ==>'):
+        cline = cline.replace('==>', '@{bf}==>@|')
     if line.startswith('WARNING'):
         # WARNING
         cline = ansi('yf') + cline
