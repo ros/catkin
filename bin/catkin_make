@@ -158,9 +158,9 @@ def _colorize_line(line):
     if line.startswith('-- +++'):
         # -- +++ add_subdirectory(package)
         cline = cline.replace('+++', '@!@{gf}+++@|')
-        cline = cline.replace('add_subdirectory(', 'add_subdirectory(@!@{bf}')
+        cline = cline.replace('kin package: \'', 'kin package: \'@!@{bf}')
         cline = cline.replace(')', '@|)')
-        cline = cline.replace('metapackage \'', 'metapackage \'@!@{bf}')
+        cline = cline.replace('metapackage: \'', 'metapackage: \'@!@{bf}')
         cline = cline.replace('\'\n', '@|\'\n')
     if line.startswith('WARNING'):
         # WARNING
