@@ -25,6 +25,12 @@ list(APPEND CATKIN_ORDERED_PACKAGES "@(package.name)")
 list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "@(path)")
 list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "@(str('metapackage' in [e.tagname for e in package.exports]))")
 list(APPEND CATKIN_ORDERED_PACKAGES_BUILD_TYPE "@(str([e.content for e in package.exports if e.tagname == 'build_type'][0]) if 'build_type' in [e.tagname for e in package.exports] else 'catkin')")
+@{
+deprecated = [e for e in package.exports if e.tagname == 'deprecated']
+}@
+@[if deprecated]@
+message("WARNING: Package '@(package.name)' is deprecated@(' (%s)' % deprecated[0].content if deprecated[0].content else '')")
+@[end if]@
 @[end if]@
 @[end for]@
 

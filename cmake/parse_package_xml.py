@@ -25,6 +25,9 @@ def _get_output(package):
     values['BUILD_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.build_depends])
     values['RUN_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.run_depends])
 
+    deprecated = [e.content for e in package.exports if e.tagname == 'deprecated']
+    values['DEPRECATED'] = '"%s"' % ((deprecated[0] if deprecated[0] else 'TRUE') if deprecated else '')
+
     output = []
     output.append(r'set(_CATKIN_CURRENT_PACKAGE "%s")' % package.name)
     for k, v in values.items():

@@ -156,6 +156,9 @@ function(_catkin_package)
   # package version provided by package.cmake/xml
   set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
 
+  # flag if package is deprecated provided by package.cmake/xml
+  set(PROJECT_DEPRECATED ${${PROJECT_NAME}_DEPRECATED})
+
   # get library paths from all workspaces
   set(lib_paths "")
   foreach(workspace ${CATKIN_WORKSPACES})
