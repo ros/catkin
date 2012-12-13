@@ -157,7 +157,8 @@ def _colorize_line(line):
         cline = cline.replace(' - ', ' - @!@{bf}')
         cline = cline.replace('(', '@|(')
         cline = cline.replace('(metapackage)', '@|(@{cf}metapackage@|)')
-        cline = cline.replace('(non-catkin)', '@|(@!@{cf}non-catkin@|)')
+        cline = cline.replace('(plain cmake)', '@|(@!@{cf}plain cmake@|)')
+        cline = cline.replace('(unknown)', '@|(@{yf}unknown@|)')
     if line.startswith('-- +++'):
         # -- +++ add_subdirectory(package)
         cline = cline.replace('+++', '@!@{gf}+++@|')
@@ -178,6 +179,10 @@ def _colorize_line(line):
     if line.startswith('CMake Error'):
         # CMake Error...
         cline = cline.replace('CMake Error', '@{rf}@!CMake Error@|')
+    if line.startswith('Call Stack (most recent call first):'):
+        # CMake Call Stack
+        cline = cline.replace('Call Stack (most recent call first):',
+                              '@{cf}@_Call Stack (most recent call first):@|')
     return fmt(cline)
 
 
