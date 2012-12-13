@@ -158,39 +158,52 @@ This depends on the actual CMakeLists.txt of course, and any standard
 cmake project is allowed, so we sketch here only the case when the catkin
 macros are used as intended.
 
-1. *CMakeLists.txt*: catkin_package() is called
+1. *CMakeLists.txt*:
 
- 2. *catkin_package.cmake*:
-
-  3. invoke find_package(catkin REQUIRED [COMPONENTS ...])
+ 1. find_package(catkin REQUIRED [COMPONENTS ...])
 
    1. finds catkin, then calls find_package() with each of the components
 
-  2. invokes catkin_package_xml()
+ 2. (optionally) catkin_python_setup()
 
-   1. *catkin_package_xml.cmake* parse package.xml and sets cmake variable accordingly (version, maintainer, dependencies)
-   2. sets package-wide destination variables for usage by the user
-   3. sets global variable ${PROJECT_NAME}_DIR
-   4. evaluates arguments to catkin_package()
-   5. generates files in devel space and build folder
+  1. generate relay scripts in devel space pointing to scripts in source
+  2. generate relay __init__.py files for any package mentioned
+  3. prepare installation based on values in setup.py
 
-    a. devel space is a folder mimicking an installation
+ 3. (optionally) use genmsg to create msg/srv
 
-     1. generates a manifest.xml file for rosbuild backwards compatibility
-     2. generates .pc, XXXConfig.cmake, Config-version.cmake, ... files
+  1. add_message_files and/or add service_files
 
-    b. build folder contains files that will be installed by moving to install prefix
+   1. declare install target for .msg/.srv files
 
-     1. generates .pc, XXXConfig.cmake, Config-version.cmake, ... files
+  2. generate_messages()
 
-   6. declares files to be commonly installed
+   1. generate *-msg-paths.cmake files
+   2. generate __init__.py unless catkin_python_setup did
 
-  3. (optionally) invoke catkin_python_setup()
+ 4. catkin_package()
 
-   1. generate relay scripts in devel space pointing to scripts in source
-   2. generate relay __init__.py files for any package mentioned
-   3. prepare installation based on values in setup.py
+  1. *catkin_package.cmake*:
 
-  4. (optionally) invoke catkin_add_env_hooks
+   1. invokes catkin_package_xml()
 
-   1. copies files / configures templates into develspace, mark for installation
+    1. *catkin_package_xml.cmake* parse package.xml and sets cmake variable accordingly (version, maintainer, dependencies)
+    2. sets package-wide destination variables for usage by the user
+    3. sets global variable ${PROJECT_NAME}_DIR
+    4. evaluates arguments to catkin_package()
+    5. generates files in devel space and build folder
+
+     a. devel space is a folder mimicking an installation
+
+      1. generates a manifest.xml file for rosbuild backwards compatibility
+      2. generates .pc, XXXConfig.cmake, Config-version.cmake, ... files
+
+     b. build folder contains files that will be installed by moving to install prefix
+
+      1. generates .pc, XXXConfig.cmake, Config-version.cmake, ... files
+
+    6. declares files to be commonly installed
+
+ 5. (optionally) catkin_add_env_hooks
+
+  1. copies files / configures templates into develspace, mark for installation

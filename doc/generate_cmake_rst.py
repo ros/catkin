@@ -60,7 +60,7 @@ def generate_rst(files):
                     if dec_type == 'function' or dec_type == 'macro':
                         rst = []
                         # directives defined in catkin-sphinx
-                        dec_line = '.. cmake:macro:: %s(%s)' % (dec_args[0], ', '.join(dec_args[1:]))
+                        dec_line = '.. _`%s_ref`:\n\n`%s`\n%s\n\n.. cmake:macro:: %s(%s)' % (dec_args[0],dec_args[0], '-' * (len(dec_args[0]) + 2), dec_args[0], ', '.join(dec_args[1:]))
                         rst.append(dec_line)
                         rst.append('')
                         rst.append(' *[%s defined in %s]*' % (dec_type, relpath))
