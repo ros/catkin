@@ -1,16 +1,17 @@
+# This macro will interrogate the Python setup.py file in
+# ``${${PROJECT_NAME}_SOURCE_DIR}``, and then creates forwarding
+# Python :term:`pkgutil` infrastructure in devel space
+# accordingly for the scripts and packages declared in setup.py.
 #
-# Creates forwarding Python :term:`pkgutil` infrastructure in
-# devel space that enables mixing :term:`generated code` in devel
-# space with :term:`static code` from sourcespace within a single
-# Python package.
+# Doing so enables mixing :term:`generated code` in
+# devel space with :term:`static code` from sourcespace within a
+# single Python package.
 #
-# In addition, this will interrogate the Python setup.py file in
-# ``${${PROJECT_NAME}_SOURCE_DIR}`` and add the install command of
+# In addition, it adds the install command of
 # distutils/setuputils to the install target.
-# 
-# .. note:: If the project also uses message generation via
-#   ``generate_messages()`` this function must be called before.
 #
+# .. note:: If the project also uses genmsg message generation via
+#   ``generate_messages()`` this function must be called before.
 #
 # @public
 #
