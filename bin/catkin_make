@@ -157,7 +157,7 @@ def _colorize_line(line):
         cline = cline.replace(' - ', ' - @!@{bf}')
         cline = cline.replace('(', '@|(')
         cline = cline.replace('(metapackage)', '@|(@{cf}metapackage@|)')
-        cline = cline.replace('(plain cmake)', '@|(@!@{cf}plain cmake@|)')
+        cline = cline.replace('(plain cmake)', '@|(@{rf}plain cmake@|)')
         cline = cline.replace('(unknown)', '@|(@{yf}unknown@|)')
     if line.startswith('-- +++'):
         # -- +++ add_subdirectory(package)
