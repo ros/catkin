@@ -45,20 +45,15 @@ function(catkin_workspace)
       list(GET CATKIN_ORDERED_PACKAGES_IS_META ${index} is_meta)
       list(GET CATKIN_ORDERED_PACKAGES_BUILD_TYPE ${index} build_type)
       if(${is_meta})
-        # If metapackage
         message(STATUS "~~  - ${name} (metapackage)")
       else()
         if(${build_type} MATCHES catkin)
-          # If catkin (default if not set)
           message(STATUS "~~  - ${name}")
         else()
-          # Else non-homogeneous
           set(CATKIN_NONHOMOGENEOUS_WORKSPACE TRUE)
-          # If cmake
           if(${build_type} MATCHES cmake)
             message(STATUS "~~  - ${name} (plain cmake)")
           else()
-            # Else unknown
             message(STATUS "~~  - ${name} (unknown)")
             message(WARNING "Unknown build type '${build_type}' for package '${name}'")
           endif()
