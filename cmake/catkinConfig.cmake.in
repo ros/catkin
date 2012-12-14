@@ -89,3 +89,8 @@ list_insert_in_workspace_order(catkin_LIBRARY_DIRS ${catkin_LIBRARY_DIRS})
 
 # decrement recursion counter
 math(EXPR _CATKIN_FIND_ "${_CATKIN_FIND_} - 1")
+
+if(_CATKIN_FIND_ EQUAL 0)
+  # store found components (from the fist level only) for validation in catkin_package() that they are build dependencies
+  list(APPEND catkin_ALL_FOUND_COMPONENTS ${catkin_FIND_COMPONENTS})
+endif()
