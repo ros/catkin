@@ -7,7 +7,8 @@
   <license>Unknown</license>
   <url/>
 
-  <build_depend>catkin</build_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+
   <build_depend>gencpp</build_depend>
   <build_depend>genmsg</build_depend>
   <build_depend>genpy</build_depend>
@@ -16,7 +17,4 @@
   <build_depend>roscpp_traits</build_depend>
   <build_depend>roscpp_serialization</build_depend>
   <build_depend>sensor_msgs</build_depend>
-  <export>
-  </export>
-
 </package>

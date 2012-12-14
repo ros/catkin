@@ -7,5 +7,5 @@
   <license>Unknown</license>
   <url/>
 
-  <build_depend>catkin</build_depend>
+  <buildtool_depend>catkin</buildtool_depend>
 </package>
