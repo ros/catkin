@@ -84,6 +84,17 @@ function(_catkin_package)
     message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_UNPARSED_ARGUMENTS}")
   endif()
 
+  if(NOT ${PROJECT_NAME} STREQUAL "catkin")
+    list(FIND ${PROJECT_NAME}_BUILDTOOL_DEPENDS "catkin" _index)
+    if(_index EQUAL -1)
+      list(FIND ${PROJECT_NAME}_BUILD_DEPENDS "catkin" _index)
+      if(_index EQUAL -1)
+        message(FATAL_ERROR "catkin_package() 'catkin' must be listed as a buildtool dependency in the package.xml")
+      endif()
+      message("WARNING: 'catkin' should be listed as a buildtool dependency in the package.xml (instead of build dependency)")
+    endif()
+  endif()
+
   # prepend INCLUDE_DIRS passed using a variable
   if(${PROJECT_NAME}_INCLUDE_DIRS)
     list(INSERT PROJECT_INCLUDE_DIRS 0 ${${PROJECT_NAME}_INCLUDE_DIRS})

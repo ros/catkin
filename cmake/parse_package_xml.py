@@ -23,6 +23,7 @@ def _get_output(package):
     values['MAINTAINER'] = '"%s"' % (', '.join([str(m) for m in package.maintainers]))
 
     values['BUILD_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.build_depends])
+    values['BUILDTOOL_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.buildtool_depends])
     values['RUN_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.run_depends])
 
     deprecated = [e.content for e in package.exports if e.tagname == 'deprecated']
