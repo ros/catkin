@@ -53,6 +53,8 @@ installing the prerequisistes.
 Similar to build_depend, but for packages and libraries that are not
 needed at build time.
 
+.. _cmakelists.txt:
+
 CMakeLists.txt
 ^^^^^^^^^^^^^^
 

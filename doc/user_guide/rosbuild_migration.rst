@@ -28,22 +28,26 @@ catkin packages are:
 3. Convert your stack into a metapackage, unless it was a unary rosbuild stack (Unary rosbuild stacks are stacks with just one package, those will become one catkin package)
 
  a. create a catkin package in your old stack folder and name it like the stack, this is going to be the metapackage (as an example, see ros_comm/ros_comm)
- b. add all other packages of the old stack as run_depend tags of the metapackage in the package.xml
+ b. add all other packages of the old stack as run_depend tags of the metapackage in the ``package.xml``
  c. remove the stack.xml, the information from it moves into the package.xml of the metapackage
  d. What previously was your 'stack' folder should not contain only packages and at most one metapackage.
 
 4. For each folder containing a ``manifest.xml`` file, do the following steps.
-   You can use the utility catkinize_manifest_xml_to_package_xml.py from
+   You can use the catkinize script from
    `catkinize <https://github.com/ros-infrastructure/catkinize>`_ to partially
    automate this step.
 
  a. rename the ``manifest.xml`` to ``package.xml``
  b. add a name tag with the name of the package, which should also be the folder name
- c. If missing, create a CMakeLists.txt file containing a ``catkin_package()`` invocation
+ c. If you define messages or service in the package, declare dependencies::
 
-5. In each ``CMakeLists.txt``, do the following steps. You can use the script
-   catkinize_cmakelists.py from `catkinize
-   <https://github.com/ros-infrastructure/catkinize>`_ to do some of the work.
+    <build_depend>message_generation</build_depend>
+    <run_depend>message_runtime</run_depend>
+
+ d. If missing, create a CMakeLists.txt file, see :ref:`cmakelists.txt`
+
+5. In each ``CMakeLists.txt``, do the following steps. You can use the catkinize script from
+   `catkinize <https://github.com/ros-infrastructure/catkinize>`_ to do some of the work.
 
  a. If rosbuild macros were used, switch from rosbuild macros to the underlying CMake commands
  b. Declare how your targets (c++ binaries) shall be installed
