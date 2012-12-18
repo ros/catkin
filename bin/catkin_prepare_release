@@ -87,7 +87,7 @@ def main():
                             new_version=new_version,
                             svn_url=url)
     print('Execute the following commands:\n')
-    print('\n'.join(commands))
+    print(' && '.join(commands))
 
 
 if __name__ == '__main__':
