@@ -29,4 +29,7 @@ if(NOT EMPY_EXECUTABLE)
   else()
     set(EMPY_EXECUTABLE "${PYTHON_EXECUTABLE};${PY_EM}" CACHE STRING "Executable string for empy" FORCE)
   endif()
+else()
+  # ensure to use cmake-style path separators on Windows
+  file(TO_CMAKE_PATH "${EMPY_EXECUTABLE}" EMPY_EXECUTABLE)
 endif()
