@@ -7,7 +7,6 @@ set(programs
   catkin_prepare_release
   catkin_test_results
   catkin_topological_order
-  catkin_ws
 
   #catkin-build-debs-of-workspace
 )
