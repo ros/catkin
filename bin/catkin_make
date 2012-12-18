@@ -126,8 +126,8 @@ def main():
 
 
 def _parse_args(args=sys.argv[1:]):
-    # extract -D* arguments
-    cmake_args = [a for a in args if a.startswith('-D')]
+    # extract -D* and -G* arguments
+    cmake_args = [a for a in args if a.startswith('-D') or a.startswith('-G')]
     args = [a for a in args if a not in cmake_args]
 
     parser = argparse.ArgumentParser(description='Creates the catkin workspace layout and invokes cmake and make. Any argument starting with "-D" will be passed to the "cmake" invocation. All other arguments are passed to the "make" invocation.')
