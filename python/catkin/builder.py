@@ -417,12 +417,12 @@ def build_workspace_isolated(
             elif build_type_tag == 'cmake':
                 msg.append(
                     '@{pf}~~@|  - @!@{bf}' + package.name + '@|' +
-                    ' (@!@{cf}plain cmake@!)'
+                    ' (@!@{cf}plain cmake@|)'
                 )
             else:
                 msg.append(
                     '@{pf}~~@|  - @!@{bf}' + package.name + '@|' +
-                    ' (@{rf}unknown@!)'
+                    ' (@{rf}unknown@|)'
                 )
                 unknown_build_types.append(package)
     msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
