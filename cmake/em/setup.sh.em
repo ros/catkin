@@ -60,22 +60,30 @@ fi
 # reset environment variables by unrolling modifications based on all workspaces in CMAKE_PREFIX_PATH
 # this does not cover modifications performed by environment hooks
 if [ $DO_CLEAN -eq 1 ]; then
+  export CPATH
   export CPATH="$("$SETUP_UTIL" --remove --name CPATH --value "$CPATH_dir")"
   if [ $IS_DARWIN -eq 0 ]; then
+    export LD_LIBRARY_PATH
     export LD_LIBRARY_PATH="$("$SETUP_UTIL" --remove --name LD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
   else
+    export DYLD_LIBRARY_PATH
     export DYLD_LIBRARY_PATH="$("$SETUP_UTIL" --remove --name DYLD_LIBRARY_PATH --value "$LD_LIBRARY_PATH_dir")"
   fi
+  export PATH
   export PATH="$("$SETUP_UTIL" --remove --name PATH --value "$PATH_dir")"
+  export PKG_CONFIG_PATH
   export PKG_CONFIG_PATH="$("$SETUP_UTIL" --remove --name PKG_CONFIG_PATH --value "$PKG_CONFIG_PATH_dir")"
+  export PYTHONPATH
   export PYTHONPATH="$("$SETUP_UTIL" --remove --name PYTHONPATH --value "$PYTHONPATH_dir")"
   # rollback CMAKE_PREFIX_PATH last since the other rollback calls rely on this
+  export CMAKE_PREFIX_PATH
   export CMAKE_PREFIX_PATH="$("$SETUP_UTIL" --remove --name CMAKE_PREFIX_PATH --value "$CMAKE_PREFIX_PATH_dir")"
 fi
 
 # prepend CURRENT_WORKSPACE and CURRENT_CMAKE_PREFIX_PATH to CMAKE_PREFIX_PATH
 # the complete list must be set so that environment hooks in parent workspace have the full set available
 if [ $IS_RECURSIVE -eq 0 ]; then
+  export CMAKE_PREFIX_PATH
   export CMAKE_PREFIX_PATH="$("$SETUP_UTIL" --prefix --name CMAKE_PREFIX_PATH --value "@SETUP_DIR:@CMAKE_PREFIX_PATH")$CMAKE_PREFIX_PATH"
 fi
 
@@ -89,14 +97,20 @@ if [ $IS_RECURSIVE -eq 0 ]; then
 fi
 
 # prepend folders of workspace to environment variables
+export CPATH
 export CPATH="$("$SETUP_UTIL" --prefix --name CPATH --value "@SETUP_DIR$CPATH_dir")$CPATH"
 if [ $IS_DARWIN -eq 0 ]; then
+  export LD_LIBRARY_PATH
   export LD_LIBRARY_PATH="$("$SETUP_UTIL" --prefix --name LD_LIBRARY_PATH --value "@SETUP_DIR$LD_LIBRARY_PATH_dir")$LD_LIBRARY_PATH"
 else
+  export DYLD_LIBRARY_PATH
   export DYLD_LIBRARY_PATH="$("$SETUP_UTIL" --prefix --name DYLD_LIBRARY_PATH --value "@SETUP_DIR$LD_LIBRARY_PATH_dir")$DYLD_LIBRARY_PATH"
 fi
+export PATH
 export PATH="$("$SETUP_UTIL" --prefix --name PATH --value "@SETUP_DIR$PATH_dir")$PATH"
+export PKG_CONFIG_PATH
 export PKG_CONFIG_PATH="$("$SETUP_UTIL" --prefix --name PKG_CONFIG_PATH --value "@SETUP_DIR$PKG_CONFIG_PATH_dir")$PKG_CONFIG_PATH"
+export PYTHONPATH
 export PYTHONPATH="$("$SETUP_UTIL" --prefix --name PYTHONPATH --value "@SETUP_DIR$PYTHONPATH_dir")$PYTHONPATH"
 
 # run all environment hooks of this workspace
