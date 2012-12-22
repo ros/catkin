@@ -27,16 +27,16 @@ def main():
         help='The path to the source space (default "src")'
     )
     add('--build', '--build-space', default=None,
-        help='The path to the build space (default "build")'
+        help='The path to the build space (default "build_isolated")'
     )
     add('--devel', '--devel-space', default=None,
-        help='Sets the target devel space (default "devel")'
+        help='Sets the target devel space (default "devel_isolated")'
     )
     add('--merge', action='store_true', default=False,
         help='Build each catkin package into a common devel space.'
     )
     add('--install-space', dest='install_space', default=None,
-        help='Sets the target install space (default "install")'
+        help='Sets the target install space (default "install_isolated")'
     )
     add('--install', action='store_true', default=False,
         help='Causes each catkin package to be installed.'
@@ -49,7 +49,7 @@ def main():
         help='Runs cmake explicitly for each catkin package.'
     )
     add('--no-color', action='store_true', default=False,
-        help='Disables colored ouput (only for catkin_make and CMake)'
+        help='Disables colored output (only for catkin_make and CMake)'
     )
     add('-v', '--verbose', action='store_true', default=False,
         help='Prints more build output.'

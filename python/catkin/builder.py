@@ -395,7 +395,7 @@ def build_workspace_isolated(
 
     # Check build space
     if buildspace is None:
-        buildspace = os.path.join(workspace, 'build')
+        buildspace = os.path.join(workspace, 'build_isolated')
     buildspace = os.path.abspath(buildspace)
     if not os.path.exists(buildspace):
         os.mkdir(buildspace)
@@ -403,13 +403,13 @@ def build_workspace_isolated(
 
     # Check devel space
     if develspace is None:
-        develspace = os.path.join(workspace, 'devel')
+        develspace = os.path.join(workspace, 'devel_isolated')
     develspace = os.path.abspath(develspace)
     print('Devel space: ' + str(develspace))
 
     # Check install space
     if installspace is None:
-        installspace = os.path.join(workspace, 'install')
+        installspace = os.path.join(workspace, 'install_isolated')
     installspace = os.path.abspath(installspace)
     print('Install space: ' + str(installspace))
 
