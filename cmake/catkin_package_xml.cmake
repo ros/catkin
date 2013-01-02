@@ -1,5 +1,5 @@
 #
-# Parse :ref:`package.xml` from ``CMAKE_CURRENT_SOURCE_DIR`` and
+# Parse package.xml from ``CMAKE_CURRENT_SOURCE_DIR`` and
 # make several information available to CMake.
 #
 # .. note:: It is called automatically by ``catkin_package()`` if not

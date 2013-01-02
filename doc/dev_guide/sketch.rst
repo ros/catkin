@@ -178,7 +178,7 @@ macros are used as intended.
 
   2. generate_messages()
 
-   1. generate *-msg-paths.cmake files
+   1. generate \*-msg-paths.cmake files
    2. generate __init__.py unless catkin_python_setup did
 
  4. catkin_package()
