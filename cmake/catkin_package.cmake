@@ -149,7 +149,7 @@ function(_catkin_package)
     if(${depend_name}_FOUND)
       # verify that these packages are really catkin packages
       if(NOT ${depend_name}_FOUND_CATKIN_PROJECT)
-        message(FATAL_ERROR "catkin_package() CATKIN_DEPENDS on '${depend_name}' which is not a catkin package")
+        message(FATAL_ERROR "catkin_package() CATKIN_DEPENDS on '${depend_name}', but candidate with libs at ${${depend_name}_LIBRARIES} is not a catkin package")
       endif()
       if(catkin_ALL_FOUND_COMPONENTS)
         list(FIND catkin_ALL_FOUND_COMPONENTS ${depend_name} _index)
