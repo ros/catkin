@@ -32,6 +32,7 @@
 
 from __future__ import print_function
 
+import copy
 import io
 import multiprocessing
 import os
@@ -168,12 +169,12 @@ def run_command(cmd, cwd, quiet=False):
 blue_arrow = '@!@{bf}==>@{wf}'
 
 
-def _check_build_dir(name, spaces):
-    package_build_dir = os.path.join(spaces['build'], name)
+def _check_build_dir(name, workspace, buildspace):
+    package_build_dir = os.path.join(buildspace, name)
     if not os.path.exists(package_build_dir):
         cprint(
             blue_arrow + ' Creating build directory: \'' +
-            os.path.relpath(package_build_dir, spaces['workspace']) + '\'@|'
+            os.path.relpath(package_build_dir, workspace) + '\'@|'
         )
         os.mkdir(package_build_dir)
     return package_build_dir
@@ -186,65 +187,87 @@ def isolation_print_command(cmd, path=None):
         )
 
 
-def build_catkin_package(path, package, spaces, options):
+def build_catkin_package(
+    path,
+    package,
+    workspace,
+    buildspace,
+    develspace,
+    installspace,
+    install,
+    jobs,
+    force_cmake,
+    quiet,
+    last_env
+):
     cprint(
         "Processing @{cf}catkin@| package: '@!@{bf}" +
         package.name + "@|'"
     )
 
     # Make the build dir
-    build_dir = _check_build_dir(package.name, spaces)
+    build_dir = _check_build_dir(package.name, workspace, buildspace)
 
     # Check last_env
-    if options['last_env'] is not None:
+    if last_env is not None:
         cprint(
             blue_arrow + " Building with env: " +
-            "'{0}'".format(options['last_env'])
+            "'{0}'".format(last_env)
         )
 
     # Check for Makefile and maybe call cmake
     makefile = os.path.join(build_dir, 'Makefile')
-    if not os.path.exists(makefile) or options['force_cmake']:
+    if not os.path.exists(makefile) or force_cmake:
         # Run cmake
         cmake_cmd = [
             'cmake',
             os.path.dirname(package.filename),
             '-DCATKIN_STATIC_ENV=1',
-            '-DCATKIN_DEVEL_PREFIX=' + spaces['devel'] + '',
-            '-DCMAKE_INSTALL_PREFIX=' + spaces['install'] + ''
+            '-DCATKIN_DEVEL_PREFIX=' + develspace + '',
+            '-DCMAKE_INSTALL_PREFIX=' + installspace + ''
         ]
         isolation_print_command(' '.join(cmake_cmd))
-        if options['last_env'] is not None:
-            cmake_cmd = [options['last_env']] + cmake_cmd
-        run_command_colorized(cmake_cmd, build_dir, options['quiet'])
+        if last_env is not None:
+            cmake_cmd = [last_env] + cmake_cmd
+        run_command_colorized(cmake_cmd, build_dir, quiet)
     else:
         print('Makefile exists, skipping explicit cmake invocation...')
         # Check to see if cmake needs to be run via make
         make_check_cmake_cmd = ['make', 'cmake_check_build_system']
         isolation_print_command(' '.join(make_check_cmake_cmd), build_dir)
-        if options['last_env'] is not None:
-            make_check_cmake_cmd = [options['last_env']] + make_check_cmake_cmd
+        if last_env is not None:
+            make_check_cmake_cmd = [last_env] + make_check_cmake_cmd
         run_command_colorized(
-            make_check_cmake_cmd, build_dir, options['quiet']
+            make_check_cmake_cmd, build_dir, quiet
         )
 
     # Run make
-    make_cmd = ['make', '-j' + str(options['jobs'])]
+    make_cmd = ['make', '-j' + str(jobs)]
     isolation_print_command(' '.join(make_cmd), build_dir)
-    if options['last_env'] is not None:
-        make_cmd = [options['last_env']] + make_cmd
-    run_command(make_cmd, build_dir, options['quiet'])
+    if last_env is not None:
+        make_cmd = [last_env] + make_cmd
+    run_command(make_cmd, build_dir, quiet)
 
     # Make install
-    if options['install']:
+    if install:
         make_install_cmd = ['make', 'install']
         isolation_print_command(' '.join(make_install_cmd), build_dir)
-        if options['last_env'] is not None:
-            make_install_cmd = [options['last_env']] + make_install_cmd
-        run_command(make_install_cmd, build_dir, options['quiet'])
+        if last_env is not None:
+            make_install_cmd = [last_env] + make_install_cmd
+        run_command(make_install_cmd, build_dir, quiet)
 
 
-def build_cmake_package(path, package, spaces, options):
+def build_cmake_package(
+    path,
+    package,
+    workspace,
+    buildspace,
+    installspace,
+    jobs,
+    force_cmake,
+    quiet,
+    last_env
+):
     # Notify the user that we are processing a plain cmake package
     cprint(
         "Processing @{cf}plain cmake@| package: '@!@{bf}" + package.name +
@@ -252,59 +275,73 @@ def build_cmake_package(path, package, spaces, options):
     )
 
     # Make the build dir
-    build_dir = _check_build_dir(package.name, spaces)
+    build_dir = _check_build_dir(package.name, workspace, buildspace)
 
     # Check last_env
-    if options['last_env'] is not None:
+    if last_env is not None:
         cprint(blue_arrow + " Building with env: " +
-               "'{0}'".format(options['last_env']))
+               "'{0}'".format(last_env))
 
     # Check for Makefile and maybe call cmake
     makefile = os.path.join(build_dir, 'Makefile')
-    if not os.path.exists(makefile) or options['force_cmake']:
+    if not os.path.exists(makefile) or force_cmake:
         # Call cmake
         cmake_cmd = [
             'cmake',
             os.path.dirname(package.filename),
-            '-DCMAKE_INSTALL_PREFIX=' + spaces['install'] + ''
+            '-DCMAKE_INSTALL_PREFIX=' + installspace + ''
         ]
         isolation_print_command(' '.join(cmake_cmd))
-        if options['last_env'] is not None:
-            cmake_cmd = [options['last_env']] + cmake_cmd
-        run_command_colorized(cmake_cmd, build_dir, options['quiet'])
+        if last_env is not None:
+            cmake_cmd = [last_env] + cmake_cmd
+        run_command_colorized(cmake_cmd, build_dir, quiet)
     else:
         print('Makefile exists, skipping explicit cmake invocation...')
         # Check to see if cmake needs to be run via make
         make_check_cmake_cmd = ['make', 'cmake_check_build_system']
         isolation_print_command(' '.join(make_check_cmake_cmd), build_dir)
-        if options['last_env'] is not None:
-            make_check_cmake_cmd = [options['last_env']] + make_check_cmake_cmd
+        if last_env is not None:
+            make_check_cmake_cmd = [last_env] + make_check_cmake_cmd
         run_command_colorized(
-            make_check_cmake_cmd, build_dir, options['quiet']
+            make_check_cmake_cmd, build_dir, quiet
         )
 
     # Run make
-    make_cmd = ['make', '-j' + str(options['jobs'])]
+    make_cmd = ['make', '-j' + str(jobs)]
     isolation_print_command(' '.join(make_cmd), build_dir)
-    if options['last_env'] is not None:
-        make_cmd = [options['last_env']] + make_cmd
-    run_command(make_cmd, build_dir, options['quiet'])
+    if last_env is not None:
+        make_cmd = [last_env] + make_cmd
+    run_command(make_cmd, build_dir, quiet)
 
     # Make install
     make_install_cmd = ['make', 'install']
     isolation_print_command(' '.join(make_install_cmd), build_dir)
-    if options['last_env'] is not None:
-        make_install_cmd = [options['last_env']] + make_install_cmd
-    run_command(make_install_cmd, build_dir, options['quiet'])
+    if last_env is not None:
+        make_install_cmd = [last_env] + make_install_cmd
+    run_command(make_install_cmd, build_dir, quiet)
 
 
-def build_package(path, package, spaces, options, number=None, of=None):
+def build_package(
+    path,
+    package,
+    workspace,
+    buildspace,
+    develspace,
+    installspace,
+    install,
+    jobs,
+    force_cmake,
+    quiet,
+    last_env,
+    number=None,
+    of=None
+):
     export_tags = [e.tagname for e in package.exports]
     cprint('@!@{gf}==>@| ', end='')
     new_last_env = None
     if 'metapackage' in export_tags:
         cprint("Skipping @!metapackage@|: '@!@{bf}" + package.name + "@|'")
-        new_last_env = options['last_env']
+        new_last_env = last_env
     else:
         if 'build_type' in export_tags:
             build_type_tag = [e.content for e in package.exports
@@ -312,22 +349,44 @@ def build_package(path, package, spaces, options, number=None, of=None):
         else:
             build_type_tag = 'catkin'
         if build_type_tag == 'catkin':
-            build_catkin_package(path, package, spaces, options)
-            if options['install']:
+            build_catkin_package(
+                path,
+                package,
+                workspace,
+                buildspace,
+                develspace,
+                installspace,
+                install,
+                jobs,
+                force_cmake,
+                quiet,
+                last_env
+            )
+            if install:
                 new_last_env = os.path.join(
-                    spaces['install'],
+                    installspace,
                     'env_cached.sh'
                 )
             else:
                 new_last_env = os.path.join(
-                    spaces['build'],
+                    buildspace,
                     package.name,
                     'catkin_generated',
                     'env_cached.sh'
                 )
         elif build_type_tag == 'cmake':
-            build_cmake_package(path, package, spaces, options)
-            new_last_env = options['last_env']
+            build_cmake_package(
+                path,
+                package,
+                workspace,
+                buildspace,
+                installspace,
+                jobs,
+                force_cmake,
+                quiet,
+                last_env
+            )
+            new_last_env = last_env
         else:
             sys.exit('Can not build package with unknown build_type')
     if number is not None and of is not None:
@@ -467,31 +526,28 @@ def build_workspace_isolated(
         print(colorize_line('Error: Packages with unknown build types exist'))
         sys.exit('Can not build workspace with packages of unknown build_type')
 
-    # Construct spaces and options dicts
-    spaces = {
-        'workspace': workspace,
-        'build': buildspace,
-        'devel': develspace,
-        'install': installspace
-    }
-    options = {
-        'install': install,
-        'merge': merge,
-        'jobs': jobs,
-        'force_cmake': force_cmake,
-        'quiet': quiet,
-        'last_env': None
-    }
-
     # Build packages
+    original_develspace = copy.deepcopy(develspace)
+    last_env = None
     for index, path_package in enumerate(packages):
         path, package = path_package
         if not merge:
-            spaces['devel'] = os.path.join(develspace, package.name)
+            develspace = os.path.join(original_develspace, package.name)
         try:
-            options['last_env'] = build_package(
-                path, package, spaces, options,
-                number=index + 1, of=len(packages)
+            last_env = build_package(
+                path,
+                package,
+                workspace,
+                buildspace,
+                develspace,
+                installspace,
+                install,
+                jobs,
+                force_cmake,
+                quiet,
+                last_env,
+                number=index + 1,
+                of=len(packages)
             )
         except subprocess.CalledProcessError as e:
             cprint(
