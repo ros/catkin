@@ -22,6 +22,8 @@ except ImportError:
     from catkin.builder import run_command
     from catkin.builder import run_command_colorized
 
+from catkin_pkg.packages import find_packages
+
 
 def main():
     args, cmake_args, make_args = _parse_args()
@@ -86,9 +88,21 @@ def main():
         except Exception as e:
             return 'Creating the toplevel cmake file failed: %s' % str(e)
 
+    # compare list of package paths from last run and if it changed force cmake
+    packages = find_packages(source_path)
+    package_paths = os.pathsep.join(sorted(packages.keys()))
+    packages_changed = True
+    previous_package_paths_file = os.path.join(build_path, 'catkin_make.packages')
+    if os.path.exists(previous_package_paths_file):
+        with open(previous_package_paths_file, 'r') as f:
+            previous_package_paths = f.read()
+            packages_changed = (package_paths != previous_package_paths)
+    with open(previous_package_paths_file, 'w') as f:
+        f.write(package_paths)
+
     # consider calling cmake
     makefile = os.path.join(build_path, 'Makefile')
-    if not os.path.exists(makefile) or args.force_cmake:
+    if not os.path.exists(makefile) or args.force_cmake or packages_changed:
         cmd = ['cmake', source_path, '-DCATKIN_DEVEL_PREFIX=%s' % devel_path, '-DCMAKE_INSTALL_PREFIX=%s' % install_path]
         cmd += cmake_args
         try:
