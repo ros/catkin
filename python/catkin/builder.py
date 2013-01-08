@@ -222,7 +222,6 @@ def build_catkin_package(
         cmake_cmd = [
             'cmake',
             os.path.dirname(package.filename),
-            '-DCATKIN_STATIC_ENV=1',
             '-DCATKIN_DEVEL_PREFIX=' + develspace + '',
             '-DCMAKE_INSTALL_PREFIX=' + installspace + ''
         ]
@@ -365,14 +364,12 @@ def build_package(
             if install:
                 new_last_env = os.path.join(
                     installspace,
-                    'env_cached.sh'
+                    'env.sh'
                 )
             else:
                 new_last_env = os.path.join(
-                    buildspace,
-                    package.name,
-                    'catkin_generated',
-                    'env_cached.sh'
+                    develspace,
+                    'env.sh'
                 )
         elif build_type_tag == 'cmake':
             build_cmake_package(

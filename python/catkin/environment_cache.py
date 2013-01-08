@@ -50,13 +50,13 @@ def generate_environment_script(env_script):
     code = []
     _append_header(code)
 
-    _append_comment(code, 'based on a snapshot of the environment before and after calling the env script')
-    _append_comment(code, 'it emulates the modifications of the env script.sh without recurring computations')
+    _append_comment(code, 'based on a snapshot of the environment before and after calling the setup script')
+    _append_comment(code, 'it emulates the modifications of the setup script without recurring computations')
 
     # fetch current environment
     env = os.environ
 
-    # fetch environment after calling env
+    # fetch environment after calling setup
     python_code = 'import os; print(dict(os.environ))'
     output = subprocess.check_output([env_script, sys.executable, '-c', python_code])
     if sys.stdout.encoding:
@@ -87,47 +87,6 @@ def generate_environment_script(env_script):
         else:
             _set_variable(code, key, new_value)
 
-    _append_footer(code)
-    return code
-
-
-def generate_static_environment_script(catkin_devel_prefix, cmake_prefix_path, python_install_dir):
-    """
-    Generates script code to mimic environment changes of the env script.
-
-    :param catkin_devel_prefix: str The CMake variable CATKIN_DEVEL_PREFIX
-    :param cmake_prefix_path: list The CMake variable CMAKE_PREFIX_PATH
-    :param python_install_dir: str The CMake variable PYTHON_INSTALL_DIR
-    :returns: list script lines
-    """
-    code = []
-    _append_header(code)
-
-    _append_comment(code, 'based on a snapshot of the environment at invocation time and the knowledge about how setup.sh work')
-    _append_comment(code, 'it overwrites the environment with a static version without even calling the env script once')
-
-    def prepend_env(static_env, name, value):
-        items = os.environ[name].split(os.pathsep) if name in os.environ and os.environ[name] != '' else []
-        values = [v for v in value.split(os.pathsep) if v != '']
-        for v in values:
-            if v not in items:
-                items.insert(0, v)
-        static_env[name] = os.pathsep.join(items)
-
-    static_env = {}
-    prepend_env(static_env, 'CMAKE_PREFIX_PATH', os.pathsep.join([catkin_devel_prefix] + cmake_prefix_path))
-    prepend_env(static_env, 'CPATH', os.path.join(catkin_devel_prefix, 'include'))
-    prepend_env(static_env, 'LD_LIBRARY_PATH', os.path.join(catkin_devel_prefix, 'lib'))
-    prepend_env(static_env, 'PATH', os.path.join(catkin_devel_prefix, 'bin'))
-    prepend_env(static_env, 'PKG_CONFIG_PATH', os.path.join(catkin_devel_prefix, 'lib', 'pkgconfig'))
-    prepend_env(static_env, 'PYTHONPATH', os.path.join(catkin_devel_prefix, python_install_dir))
-
-    code.append('')
-    _append_comment(code, 'static environment variables')
-    for key in sorted(static_env.keys()):
-        _set_variable(code, key, static_env[key])
-
-    _append_footer(code)
     return code
 
 
@@ -143,14 +102,6 @@ def _append_header(code):
 
     _append_comment(code, 'generated from catkin/python/catkin/environment_cache.py')
     code.append('')
-
-
-def _append_footer(code):
-    code.append('')
-    if _is_not_windows():
-        code.append('exec "$@"')
-    else:
-        code.append('%*')
 
 
 def _append_comment(code, value):
