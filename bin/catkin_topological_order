@@ -41,3 +41,6 @@ def main():
             print('%s' % package.name)
         else:
             print('%s %s' % (package.name, path))
+
+if __name__ == '__main__':
+    main()
