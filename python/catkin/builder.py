@@ -116,11 +116,15 @@ def print_command_banner(cmd, cwd, color):
 
 
 def run_command_colorized(cmd, cwd, quiet=False):
+    run_command(cmd, cwd, quiet=quiet, colorized=True)
+
+
+def run_command(cmd, cwd, quiet=False, colorized=False):
     # Run the command
     proc = subprocess.Popen(
         cmd, cwd=cwd, shell=False,
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
+        )
     out = sys.stdout
     if quiet:
         out = io.StringIO()
@@ -129,42 +133,26 @@ def run_command_colorized(cmd, cwd, quiet=False):
         if proc.returncode is not None or not line:
             break
         else:
-            try:
-                out.write(unicode(colorize_line(line)))
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                print('<caktin_make> color formatting problem: ' + str(e),
-                      file=sys.stderr)
+            if not colorized:
+                out.write(line)
+            else:
+                try:
+                    out.write(unicode(colorize_line(line)))
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    print('<caktin_make> color formatting problem: ' + str(e),
+                          file=sys.stderr)
     proc.wait()
+    if quiet:
+        result = out.getvalue()
+    else:
+        result = ''
     if proc.returncode:
-        if type(out) == io.StringIO:
-            print(out.getvalue())
+        if quiet:
+            print(result)
         raise subprocess.CalledProcessError(proc.returncode, ' '.join(cmd))
-    return out.getvalue() if type(out) == io.StringIO else ''
-
-
-def run_command(cmd, cwd, quiet=False):
-    if not quiet:
-        subprocess.check_call(cmd, cwd=cwd)
-        return ''
-    # Run the command
-    proc = subprocess.Popen(
-        cmd, cwd=cwd, shell=False,
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
-    out = io.StringIO()
-    while True:
-        line = proc.stdout.readline().decode('utf-8')
-        if proc.returncode is not None or not line:
-            break
-        else:
-            out.write(line)
-    proc.wait()
-    if proc.returncode:
-        print(out.getvalue())
-        raise subprocess.CalledProcessError(proc.returncode, ' '.join(cmd))
-    return out.getvalue()
+    return result
 
 blue_arrow = '@!@{bf}==>@{wf}'
 
