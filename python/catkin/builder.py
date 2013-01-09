@@ -121,10 +121,13 @@ def run_command_colorized(cmd, cwd, quiet=False):
 
 def run_command(cmd, cwd, quiet=False, colorized=False):
     # Run the command
-    proc = subprocess.Popen(
-        cmd, cwd=cwd, shell=False,
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        )
+    try:
+        proc = subprocess.Popen(
+            cmd, cwd=cwd, shell=False,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            )
+    except OSError as e:
+        raise OSError("Failed command '%s' : '%s'" % (cmd, e))
     out = sys.stdout
     if quiet:
         out = io.StringIO()
