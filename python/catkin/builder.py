@@ -146,6 +146,7 @@ def run_command(cmd, cwd, quiet=False, colorized=False):
                     traceback.print_exc()
                     print('<caktin_make> color formatting problem: ' + str(e),
                           file=sys.stderr)
+                    out.write(line)
     proc.wait()
     if quiet:
         result = out.getvalue()
