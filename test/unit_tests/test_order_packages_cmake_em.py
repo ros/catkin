@@ -14,8 +14,7 @@ class OrderPackagesEmTest(unittest.TestCase):
         template_file = os.path.join(os.path.dirname(__file__), '..', '..', 'cmake', 'em', 'order_packages.cmake.em')
         with open (template_file, 'r') as fhand:
             template = fhand.read()
-        gdict = {'CATKIN_STATIC_ENV': True,
-                 'CATKIN_DEVEL_PREFIX': '/foo',
+        gdict = {'CATKIN_DEVEL_PREFIX': '/foo',
                  'CMAKE_PREFIX_PATH': ['/bar'],
                  'CATKIN_GLOBAL_LIB_DESTINATION': '/glob-dest/lib',
                  'CATKIN_GLOBAL_BIN_DESTINATION': '/glob-dest/bin',

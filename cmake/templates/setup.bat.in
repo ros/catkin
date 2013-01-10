@@ -1,5 +1,5 @@
 @@echo off
-REM generated from catkin/cmake/em/setup.bat.em
+REM generated from catkin/cmake/template/setup.bat.in
 
 REM remember type of shell if not already set
 if [%CATKIN_SHELL%]==[] (
