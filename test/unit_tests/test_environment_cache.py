@@ -7,12 +7,13 @@ from mock import Mock
 
 try:
     import catkin.environment_cache
-    from catkin.environment_cache import _append_header, _append_footer, _set_variable, _append_comment, _is_not_windows, generate_static_environment_script, generate_environment_script
+    from catkin.environment_cache import _append_header, _append_footer, _set_variable, _append_comment, _is_not_windows, generate_environment_script
 except ImportError as impe:
     raise ImportError(
         'Please adjust your pythonpath before running this test: %s' % str(impe))
 
-class PlattformTest(unittest.TestCase):
+
+class PlatformTest(unittest.TestCase):
 
     def setUp(self):
         self.platform_backup = catkin.environment_cache.platform
@@ -88,49 +89,3 @@ exec "$@"''')
         finally:
             catkin.environment_cache.os.environ = os.environ
             shutil.rmtree(rootdir)
-
-    def test_generate_static_environment_script_empty(self):
-        try:
-            fake_environ = os.environ.copy()
-            fake_environ['CMAKE_PREFIX_PATH'] = ''
-            fake_environ['CPATH'] = ''
-            fake_environ['LD_LIBRARY_PATH'] = ''
-            fake_environ['PATH'] = ''
-            fake_environ['PKG_CONFIG_PATH'] = ''
-            fake_environ['PYTHONPATH'] = ''
-            catkin.environment_cache.os.environ = fake_environ
-            result = generate_static_environment_script('/foo/build', ['/bar/install'], '/baz/pylib')
-            self.assertTrue('export CMAKE_PREFIX_PATH="/bar/install:/foo/build"' in result, result)
-            self.assertTrue('export CPATH="/foo/build/include"' in result, result)
-            self.assertTrue('export LD_LIBRARY_PATH="/foo/build/lib"' in result, result)
-            self.assertTrue('export PATH="/foo/build/bin"' in result, result)
-            self.assertTrue('export PKG_CONFIG_PATH="/foo/build/lib/pkgconfig"' in result, result)
-            self.assertTrue('export PYTHONPATH="/baz/pylib"' in result, result)
-            self.assertEqual('#!/usr/bin/env sh', result[0])
-            self.assertEqual('exec "$@"', result[-1])
-            self.assertEqual(15, len(result))
-        finally:
-            catkin.environment_cache.os.environ = os.environ
-
-    def test_generate_static_environment_script_foo(self):
-        try:
-            fake_environ = os.environ.copy()
-            fake_environ['CMAKE_PREFIX_PATH'] = 'foo_cpp'
-            fake_environ['CPATH'] = 'foo_cpath'
-            fake_environ['LD_LIBRARY_PATH'] = 'foo_ld'
-            fake_environ['PATH'] = 'foo_path'
-            fake_environ['PKG_CONFIG_PATH'] = 'foo_pkgpath'
-            fake_environ['PYTHONPATH'] = 'foo_pp'
-            catkin.environment_cache.os.environ = fake_environ
-            result = generate_static_environment_script('/foo/build', ['/bar/install'], '/baz/pylib')
-            self.assertTrue('export CMAKE_PREFIX_PATH="/bar/install:/foo/build:foo_cpp"' in result, result)
-            self.assertTrue('export CPATH="/foo/build/include:foo_cpath"' in result, result)
-            self.assertTrue('export LD_LIBRARY_PATH="/foo/build/lib:foo_ld"' in result, result)
-            self.assertTrue('export PATH="/foo/build/bin:foo_path"' in result, result)
-            self.assertTrue('export PKG_CONFIG_PATH="/foo/build/lib/pkgconfig:foo_pkgpath"' in result, result)
-            self.assertTrue('export PYTHONPATH="/baz/pylib:foo_pp"' in result, result)
-            self.assertEqual('#!/usr/bin/env sh', result[0])
-            self.assertEqual('exec "$@"', result[-1])
-            self.assertEqual(15, len(result))
-        finally:
-            catkin.environment_cache.os.environ = os.environ

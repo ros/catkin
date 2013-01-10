@@ -40,7 +40,7 @@ class BuilderTest(unittest.TestCase):
             self.assertEqual(('/path1',), top_args)
             self.assertEqual(4, mock_run.call_count, mock_run.call_args_list)
             run_args = mock_run.call_args_list
-            self.assertEqual(['cmake', '/foo', '-DCATKIN_STATIC_ENV=1', '-DCATKIN_DEVEL_PREFIX=%s' % os.path.join(root_dir, 'p1__devel')], run_args[0][0][0])
+            self.assertEqual(['cmake', '/foo', '-DCATKIN_DEVEL_PREFIX=%s' % os.path.join(root_dir, 'p1__devel')], run_args[0][0][0])
             self.assertEqual(['make', '-j8'], run_args[1][0][0])
             # install case
             mock_top.reset_mock()
@@ -51,7 +51,7 @@ class BuilderTest(unittest.TestCase):
             self.assertEqual(('/path1',), top_args)
             self.assertEqual(6, mock_run.call_count)
             run_args = mock_run.call_args_list
-            self.assertEqual(['cmake', '/foo', '-DCATKIN_STATIC_ENV=1', '-DCATKIN_DEVEL_PREFIX=%s' % os.path.join(root_dir, 'p1__devel'), '-DCMAKE_INSTALL_PREFIX=%s' % os.path.join(root_dir, 'p1__install')], run_args[0][0][0])
+            self.assertEqual(['cmake', '/foo', '-DCATKIN_DEVEL_PREFIX=%s' % os.path.join(root_dir, 'p1__devel'), '-DCMAKE_INSTALL_PREFIX=%s' % os.path.join(root_dir, 'p1__install')], run_args[0][0][0])
             self.assertEqual(['make', '-j8'], run_args[1][0][0])
             self.assertEqual(['make', 'install'], run_args[2][0][0])
         finally:

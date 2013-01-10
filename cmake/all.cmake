@@ -164,44 +164,21 @@ if(CMAKE_HOST_UNIX) # true for linux, apple, mingw-cross and cygwin
 else()
   set(script_ext bat)
 endif()
-if(CATKIN_STATIC_ENV)
-  # static environment avoid to call env script at all and uses current environment including the knowledge about the effects of the local setup.sh without evaluating it
-  message(STATUS "Generating static environment")
-  set(CATKIN_STATIC_ENV TRUE CACHE BOOL "Generate static environment")
-endif()
-# take snapshot of the modifications the env script causes
+# take snapshot of the modifications the setup script causes
 # to reproduce the same changes with a static script in a fraction of the time
-set(OUTPUT_SCRIPT_DIR ${CMAKE_BINARY_DIR}/catkin_generated)
-set(PREPEND_SPACE_DIR ${CATKIN_DEVEL_PREFIX})
-set(CUSTOM_PREFIX_PATH ${CMAKE_PREFIX_PATH})
-em_expand(${catkin_EXTRAS_DIR}/templates/generate_cached_env.context.py.in
-  ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.develspace.context.py
-  ${catkin_EXTRAS_DIR}/em/generate_cached_env.py.em
-  ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.py)
-set(_command_option "")
-if(CATKIN_STATIC_ENV)
-  set(_command_option "--static")
-endif()
-set(GENERATE_ENVIRONMENT_CACHE_COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.py ${_command_option})
+set(SETUP_DIR ${CMAKE_BINARY_DIR}/catkin_generated)
+set(SETUP_FILENAME "setup_cached")
+configure_file(${catkin_EXTRAS_DIR}/templates/generate_cached_setup.py.in
+  ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_setup.py)
+set(GENERATE_ENVIRONMENT_CACHE_COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_setup.py)
 # the script is generated once here and refreshed by every call to catkin_add_env_hooks()
 safe_execute_process(COMMAND ${GENERATE_ENVIRONMENT_CACHE_COMMAND})
+# generate env_cached which just relays to the setup_cached
+configure_file(${catkin_EXTRAS_DIR}/templates/env.${script_ext}.in
+  ${SETUP_DIR}/env_cached.${script_ext}
+  @ONLY)
 # environment to call external processes
-set(CATKIN_ENV ${CMAKE_BINARY_DIR}/catkin_generated/env_cached.${script_ext} CACHE INTERNAL "catkin environment")
-
-if(CATKIN_STATIC_ENV)
-  # generate cached env script for installspace when requesting a static environment
-  set(OUTPUT_SCRIPT_DIR ${CMAKE_BINARY_DIR}/catkin_generated/installspace)
-  set(PREPEND_SPACE_DIR ${CMAKE_INSTALL_PREFIX})
-  set(CUSTOM_PREFIX_PATH ${CATKIN_WORKSPACES})
-  em_expand(${catkin_EXTRAS_DIR}/templates/generate_cached_env.context.py.in
-    ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_env.installspace.context.py
-    ${catkin_EXTRAS_DIR}/em/generate_cached_env.py.em
-    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/generate_cached_env.py)
-  set(cmd ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/catkin_generated/installspace/generate_cached_env.py ${_command_option})
-  safe_execute_process(COMMAND ${cmd})
-  install(PROGRAMS ${OUTPUT_SCRIPT_DIR}/env_cached.${script_ext}
-    DESTINATION .)
-endif()
+set(CATKIN_ENV ${SETUP_DIR}/env_cached.${script_ext} CACHE INTERNAL "catkin environment")
 
 # add additional environment hooks
 if(CATKIN_BUILD_BINARY_PACKAGE AND NOT "${PROJECT_NAME}" STREQUAL "catkin")
