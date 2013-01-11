@@ -222,11 +222,19 @@ function(_catkin_package)
       if(${_index} EQUAL ${_count})
         message(FATAL_ERROR "catkin_package() the list of libraries '${_PKG_CONFIG_LIBRARIES}' ends with '${library}' which is a build configuration keyword and must be followed by a library")
       endif()
-    else()
+    elseif(NOT "${library}" STREQUAL "")
       list(APPEND PKG_CONFIG_LIBRARIES ${library})
     endif()
     math(EXPR _index "${_index} + 1")
   endwhile()
+
+  set(PKG_CONFIG_LIBRARIES_WITH_PREFIX "")
+  foreach(library ${PKG_CONFIG_LIBRARIES})
+    if(NOT IS_ABSOLUTE ${library})
+      set(library "-l${library}")
+    endif()
+    list(APPEND PKG_CONFIG_LIBRARIES_WITH_PREFIX ${library})
+  endforeach()
 
   #
   # DEVEL SPACE
