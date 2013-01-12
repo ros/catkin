@@ -188,17 +188,9 @@ def isolation_print_command(cmd, path=None):
 
 
 def build_catkin_package(
-    path,
-    package,
-    workspace,
-    buildspace,
-    develspace,
-    installspace,
-    install,
-    jobs,
-    force_cmake,
-    quiet,
-    last_env
+    path, package,
+    workspace, buildspace, develspace, installspace,
+    install, jobs, force_cmake, quiet, last_env
 ):
     cprint(
         "Processing @{cf}catkin@| package: '@!@{bf}" +
@@ -257,15 +249,9 @@ def build_catkin_package(
 
 
 def build_cmake_package(
-    path,
-    package,
-    workspace,
-    buildspace,
-    installspace,
-    jobs,
-    force_cmake,
-    quiet,
-    last_env
+    path, package,
+    workspace, buildspace, develspace, installspace,
+    install, jobs, force_cmake, quiet, last_env
 ):
     # Notify the user that we are processing a plain cmake package
     cprint(
@@ -287,8 +273,8 @@ def build_cmake_package(
         # Call cmake
         cmake_cmd = [
             'cmake',
-            os.path.dirname(package.filename),
-            '-DCMAKE_INSTALL_PREFIX=' + installspace + ''
+            '-DCMAKE_INSTALL_PREFIX=' + (installspace if install else develspace),
+            os.path.dirname(package.filename)
         ]
         isolation_print_command(' '.join(cmake_cmd))
         if last_env is not None:
@@ -321,19 +307,10 @@ def build_cmake_package(
 
 
 def build_package(
-    path,
-    package,
-    workspace,
-    buildspace,
-    develspace,
-    installspace,
-    install,
-    jobs,
-    force_cmake,
-    quiet,
-    last_env,
-    number=None,
-    of=None
+    path, package,
+    workspace, buildspace, develspace, installspace,
+    install, jobs, force_cmake, quiet, last_env,
+    number=None, of=None
 ):
     export_tags = [e.tagname for e in package.exports]
     cprint('@!@{gf}==>@| ', end='')
@@ -349,17 +326,9 @@ def build_package(
             build_type_tag = 'catkin'
         if build_type_tag == 'catkin':
             build_catkin_package(
-                path,
-                package,
-                workspace,
-                buildspace,
-                develspace,
-                installspace,
-                install,
-                jobs,
-                force_cmake,
-                quiet,
-                last_env
+                path, package,
+                workspace, buildspace, develspace, installspace,
+                install, jobs, force_cmake, quiet, last_env
             )
             if install:
                 new_last_env = os.path.join(
@@ -373,15 +342,9 @@ def build_package(
                 )
         elif build_type_tag == 'cmake':
             build_cmake_package(
-                path,
-                package,
-                workspace,
-                buildspace,
-                installspace,
-                jobs,
-                force_cmake,
-                quiet,
-                last_env
+                path, package,
+                workspace, buildspace, develspace, installspace,
+                install, jobs, force_cmake, quiet, last_env
             )
             new_last_env = last_env
         else:
@@ -532,19 +495,10 @@ def build_workspace_isolated(
             develspace = os.path.join(original_develspace, package.name)
         try:
             last_env = build_package(
-                path,
-                package,
-                workspace,
-                buildspace,
-                develspace,
-                installspace,
-                install,
-                jobs,
-                force_cmake,
-                quiet,
-                last_env,
-                number=index + 1,
-                of=len(packages)
+                path, package,
+                workspace, buildspace, develspace, installspace,
+                install, jobs, force_cmake, quiet, last_env,
+                number=index + 1, of=len(packages)
             )
         except subprocess.CalledProcessError as e:
             cprint(
