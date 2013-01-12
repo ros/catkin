@@ -116,11 +116,13 @@ def print_command_banner(cmd, cwd, color):
 
 
 def run_command_colorized(cmd, cwd, quiet=False):
-    # Run the command
-    proc = subprocess.Popen(
-        cmd, cwd=cwd, shell=False,
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
+    try:
+        proc = subprocess.Popen(
+            cmd, cwd=cwd, shell=False,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+    except OSError as e:
+        raise OSError("Failed command '%s': %s" % (cmd, e))
     out = sys.stdout
     if quiet:
         out = io.StringIO()
@@ -136,6 +138,7 @@ def run_command_colorized(cmd, cwd, quiet=False):
                 traceback.print_exc()
                 print('<caktin_make> color formatting problem: ' + str(e),
                       file=sys.stderr)
+                out.write(unicode(line))
     proc.wait()
     if proc.returncode:
         if type(out) == io.StringIO:
@@ -148,11 +151,13 @@ def run_command(cmd, cwd, quiet=False):
     if not quiet:
         subprocess.check_call(cmd, cwd=cwd)
         return ''
-    # Run the command
-    proc = subprocess.Popen(
-        cmd, cwd=cwd, shell=False,
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
+    try:
+        proc = subprocess.Popen(
+            cmd, cwd=cwd, shell=False,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+    except OSError as e:
+        raise OSError("Failed command '%s': %s" % (cmd, e))
     out = io.StringIO()
     while True:
         line = proc.stdout.readline().decode('utf-8')
