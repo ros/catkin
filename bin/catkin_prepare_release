@@ -7,14 +7,11 @@ import sys
 
 from catkin_pkg.packages import find_packages, verify_equal_package_versions
 
-try:
-    from catkin.package_version import bump_version
-    from catkin.workspace_vcs import get_repository_type, vcs_remotes
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.package_version import bump_version
-    from catkin.workspace_vcs import get_repository_type, vcs_remotes
+# find the import relatively if available to work before installing catkin or overlaying installed version
+if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
+from catkin.package_version import bump_version
+from catkin.workspace_vcs import get_repository_type, vcs_remotes
 
 
 def get_commands(path, packages, vcs_type, new_version, svn_url=None):

@@ -5,12 +5,10 @@ import argparse
 import os
 import sys
 
-try:
-    from catkin.init_workspace import init_workspace
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.init_workspace import init_workspace
+# find the import relatively if available to work before installing catkin or overlaying installed version
+if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
+from catkin.init_workspace import init_workspace
 
 
 def main():

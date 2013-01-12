@@ -200,9 +200,6 @@ def main():
     # print("Interrogating setup.py for package %s into %s " % (PACKAGE_NAME, OUTFILE),
     #      file=sys.stderr)
 
-    # find the imports in setup.py relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-
     # print("executing %s" % args.setupfile_path)
 
     # be sure you're in the directory containing

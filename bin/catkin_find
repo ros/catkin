@@ -5,12 +5,10 @@ import argparse
 import sys
 import os
 
-try:
-    from catkin.find_in_workspaces import find_in_workspaces
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.find_in_workspaces import find_in_workspaces
+# find the import relatively if available to work before installing catkin or overlaying installed version
+if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
+from catkin.find_in_workspaces import find_in_workspaces
 
 
 def parse_args(args=sys.argv[1:]):

@@ -7,12 +7,11 @@ import sys
 
 from catkin_pkg.packages import find_packages, verify_equal_package_versions
 
-try:
-    from catkin.package_version import bump_version, update_versions
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'python'))
-    from catkin.package_version import bump_version, update_versions
+# find the import relatively if available to work before installing catkin or overlaying installed version
+if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
+from catkin.package_version import bump_version, update_versions
+
 
 def main():
     parser = argparse.ArgumentParser(description='Show or bump the version number in package.xml files.')

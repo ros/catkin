@@ -4,13 +4,10 @@ import os
 import stat
 import sys
 
-try:
-    from catkin.environment_cache import generate_environment_script
-except ImportError:
-    # find the import relatively to make it work before installing catkin
-    sys.path.append(os.path.join('@catkin_EXTRAS_DIR@', '..', 'python'))
-    from catkin.environment_cache import generate_environment_script
-
+# find the import relatively if available to work before installing catkin or overlaying installed version
+if os.path.exists(os.path.join('@catkin_EXTRAS_DIR@', 'catkinConfig.cmake.in')):
+    sys.path.insert(0, os.path.join('@catkin_EXTRAS_DIR@', '..', 'python'))
+from catkin.environment_cache import generate_environment_script
 
 code = generate_environment_script('@CATKIN_DEVEL_PREFIX@/env.@script_ext@')
 
