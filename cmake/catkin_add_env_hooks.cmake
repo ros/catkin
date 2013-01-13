@@ -76,7 +76,6 @@ function(catkin_add_env_hooks file_prefix)
         ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d/${ENV_HOOK})
     elseif(EXISTS ${base}.in)
       # evaluate in template
-      set(BUILDSPACE true) # this variable is only for backward compatibility
       set(DEVELSPACE true)
       set(INSTALLSPACE false)
       configure_file(${base}.in
@@ -112,7 +111,6 @@ function(catkin_add_env_hooks file_prefix)
       endif()
     elseif(EXISTS ${base}.in)
       # evaluate in template and install
-      set(BUILDSPACE false) # this variable is only for backward compatibility
       set(DEVELSPACE false)
       set(INSTALLSPACE true)
       configure_file(${base}.in

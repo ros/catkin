@@ -15,8 +15,6 @@ else()
   set(CATKIN_DEVEL_PREFIX "${CMAKE_BINARY_DIR}/devel")
 endif()
 message(STATUS "Using CATKIN_DEVEL_PREFIX: ${CATKIN_DEVEL_PREFIX}")
-# this variable is only for backward compatibility
-set(CATKIN_BUILD_PREFIX "${CATKIN_DEVEL_PREFIX}")
 
 # create workspace marker
 set(_sourcespaces "${CMAKE_SOURCE_DIR}")

@@ -241,7 +241,6 @@ function(_catkin_package)
   #
 
   # used in the cmake extra files
-  set(BUILDSPACE TRUE) # this variable is only for backward compatibility
   set(DEVELSPACE TRUE)
   set(INSTALLSPACE FALSE)
 
@@ -329,7 +328,6 @@ function(_catkin_package)
   #
 
   # used in the cmake extra files
-  set(BUILDSPACE FALSE) # this variable is only for backward compatibility
   set(DEVELSPACE FALSE)
   set(INSTALLSPACE TRUE)
 
