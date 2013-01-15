@@ -10,7 +10,8 @@ if [ -z "$CATKIN_SHELL" ] ; then
 fi
 
 FIND=`which find`
-for envfile in `$FIND $CATKIN_BINARY_DIR/etc/catkin/profile.d -maxdepth 1 -name "*.all" 2>/dev/null` `$FIND $CATKIN_BINARY_DIR/etc/catkin/profile.d -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null`
+SORT=`which sort`
+for envfile in `$FIND $CATKIN_BINARY_DIR/etc/catkin/profile.d -maxdepth 1 -name "*.all" 2>/dev/null | $SORT` `$FIND $CATKIN_BINARY_DIR/etc/catkin/profile.d -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null | $SORT`
 do
   . $envfile
 done
