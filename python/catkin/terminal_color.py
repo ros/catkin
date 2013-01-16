@@ -127,12 +127,3 @@ def fmt(msg):
     msg = msg.replace('@|', '@{reset}')
     t = ColorTemplate(msg)
     return t.substitute(_ansi) + ansi('reset')
-
-
-if __name__ == '__main__':
-    test = '@_This is underlined@|'
-    print(fmt(test))
-    test = 'This has bad stuff @! @/ @_ @| OK!'
-    test = sanitize(test)
-    print(test)
-    print(fmt(test))

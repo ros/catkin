@@ -56,7 +56,7 @@ def cprint(msg, end=None):
 
 
 def colorize_line(line):
-    cline = str(sanitize(line))
+    cline = sanitize(line)
     cline = cline.replace(
         '-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
         '-- @{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~@|'
@@ -133,11 +133,12 @@ def run_command(cmd, cwd, quiet=False, colorize=False):
     out = io.StringIO() if quiet else sys.stdout
     if capture:
         while True:
-            line = proc.stdout.readline().decode('utf-8')
+            line = proc.stdout.readline().decode('utf8', 'replace')
+            line = unicode(line)
             if proc.returncode is not None or not line:
                 break
             try:
-                line = unicode(colorize_line(line)) if colorize else line
+                line = colorize_line(line) if colorize else line
             except Exception as e:
                 import traceback
                 traceback.print_exc()
@@ -485,11 +486,12 @@ def build_workspace_isolated(
                 install, jobs, force_cmake, quiet, last_env,
                 number=index + 1, of=len(packages)
             )
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, KeyboardInterrupt) as e:
             cprint(
                 '@{rf}@!<==@| ' +
                 'Failed to process package \'@!@{bf}' +
                 package.name + '@|\': \n  ' +
-                str(e)
+                (str(e) if isinstance(e, KeyboardInterrupt)
+                        else 'KeyboardInterrupt')
             )
             sys.exit('Command failed, exiting.')
