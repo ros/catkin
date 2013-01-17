@@ -82,7 +82,7 @@ def colorize_line(line):
         cline = cline.replace('\'\n', '@|\'\n')
     if line.startswith('-- ==>'):
         cline = cline.replace('-- ==>', '-- @!@{bf}==>@|')
-    if line.startswith('WARNING'):
+    if line.lower().startswith('warning'):
         # WARNING
         cline = ansi('yf') + cline
     if line.startswith('CMake Warning'):
@@ -551,6 +551,13 @@ def build_workspace_isolated(
     if unknown_build_types:
         print(colorize_line('Error: Packages with unknown build types exist'))
         sys.exit('Can not build workspace with packages of unknown build_type')
+
+    # Check to see if the workspace has changed
+    if cmake_input_changed(sourcespace, buildspace, None, 'catkin_make_isolated'):
+        force_cmake = True
+        print(colorize_line(
+            'Warning: packages or cmake arguments have changed, forcing cmake'
+        ))
 
     # Build packages
     original_develspace = copy.deepcopy(develspace)
