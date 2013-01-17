@@ -7,16 +7,12 @@ import subprocess
 import sys
 import os
 
-from catkin_pkg.packages import find_packages
-
 # find the import relatively if available to work before installing catkin or overlaying installed version
 if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from catkin.init_workspace import init_workspace
 from catkin.terminal_color import disable_ANSI_colors
-from catkin.builder import print_command_banner
-from catkin.builder import run_command
-from catkin.builder import run_command_colorized
+from catkin.builder import cmake_input_changed, print_command_banner, run_command, run_command_colorized
 
 
 def main():
@@ -82,21 +78,12 @@ def main():
         except Exception as e:
             return 'Creating the toplevel cmake file failed: %s' % str(e)
 
-    # compare list of package paths from last run and if it changed force cmake
-    packages = find_packages(source_path)
-    package_paths = os.pathsep.join(sorted(packages.keys()))
-    packages_changed = True
-    previous_package_paths_file = os.path.join(build_path, 'catkin_make.packages')
-    if os.path.exists(previous_package_paths_file):
-        with open(previous_package_paths_file, 'r') as f:
-            previous_package_paths = f.read()
-            packages_changed = (package_paths != previous_package_paths)
-    with open(previous_package_paths_file, 'w') as f:
-        f.write(package_paths)
+    # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
+    force_cmake = cmake_input_changed(source_path, build_path, cmake_args)
 
     # consider calling cmake
     makefile = os.path.join(build_path, 'Makefile')
-    if not os.path.exists(makefile) or args.force_cmake or packages_changed:
+    if not os.path.exists(makefile) or args.force_cmake or force_cmake:
         cmd = ['cmake', source_path, '-DCATKIN_DEVEL_PREFIX=%s' % devel_path, '-DCMAKE_INSTALL_PREFIX=%s' % install_path]
         cmd += cmake_args
         try:
