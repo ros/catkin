@@ -13,20 +13,20 @@ if(APPLE OR MSVC)
 endif()
 
 if(SETUPTOOLS_DEB_LAYOUT)
-  set(PYTHON_PACKAGES_DIR dist-packages CACHE STRING "dist-packages or site-packages")
-  set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb" CACHE STRING "extra arguments to setuptools")
+  set(PYTHON_PACKAGES_DIR dist-packages)
+  set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb")
 else()
-  set(PYTHON_PACKAGES_DIR site-packages CACHE STRING "dist-packages or site-packages")
+  set(PYTHON_PACKAGES_DIR site-packages)
   file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX}/bin PYTHON_INSTALL_PREFIX) # setuptools is fussy about windows paths
-  set(SETUPTOOLS_ARG_EXTRA "--install-scripts=${PYTHON_INSTALL_PREFIX}" CACHE STRING "extra arguments to setuptools")
+  set(SETUPTOOLS_ARG_EXTRA "--install-scripts=${PYTHON_INSTALL_PREFIX}")
 endif()
 
 if(NOT MSVC)
   set(PYTHON_INSTALL_DIR lib/python${PYTHON_VERSION_XDOTY}/${PYTHON_PACKAGES_DIR}
-    CACHE INTERNAL "This needs to be in PYTHONPATH when setup.py install is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
+    CACHE INTERNAL "This needs to be in PYTHONPATH when 'setup.py install' is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
 else()
   # Windows setuptools installs to lib/site-packages not lib/python2.7/site-packages 
   # Or is this SETUPTOOLS_DEB_LAYOUT dependent?
   set(PYTHON_INSTALL_DIR lib/${PYTHON_PACKAGES_DIR}
-    CACHE INTERNAL "This needs to be in PYTHONPATH when setup.py install is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
+    CACHE INTERNAL "This needs to be in PYTHONPATH when 'setup.py install' is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
 endif()
