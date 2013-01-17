@@ -45,15 +45,31 @@ if [ -z "$CATKIN_SHELL" ]; then
   CATKIN_SHELL=sh
 fi
 
-# run all environment hooks
+# find all environment hooks
+ENV_HOOKS_GENERIC=""
+ENV_HOOKS_SPECIFIC=""
+# order by workspace and ordered inside each workspace
+_IFS=$IFS
+IFS=":"
 FIND=`which find`
 SORT=`which sort`
-ENV_HOOKS_GENERIC=$($FIND "@SETUP_DIR@/etc/catkin/profile.d" -maxdepth 1 -name "*.sh" 2>/dev/null | $SORT)
-if [ "$CATKIN_SHELL" != "sh" ]; then
-  ENV_HOOKS_SPECIFIC=$($FIND "@SETUP_DIR@/etc/catkin/profile.d" -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null | $SORT)
-else
-  ENV_HOOKS_SPECIFIC=
-fi
+for path in $CMAKE_PREFIX_PATH; do
+  # ignore non-catkin workspaces
+  if [ -z "$path" -o ! -f "$path/.catkin" ]; then
+    continue
+  fi
+  ENV_HOOKS_GENERIC="$($FIND "$path/etc/catkin/profile.d" -maxdepth 1 -name "*.sh" 2>/dev/null | $SORT)
+$ENV_HOOKS_GENERIC"
+  if [ "$CATKIN_SHELL" != "sh" ]; then
+    ENV_HOOKS_SPECIFIC="$($FIND "$path/etc/catkin/profile.d" -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null | $SORT)
+$ENV_HOOKS_SPECIFIC"
+  fi
+done
+IFS=$_IFS
+
+# source generic and shell-specific environment hooks
 for envfile in $ENV_HOOKS_GENERIC $ENV_HOOKS_SPECIFIC; do
-  . "$envfile"
+  if [ ! -z "$envfile" ]; then
+    . "$envfile"
+  fi
 done
