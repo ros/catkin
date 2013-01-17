@@ -42,8 +42,8 @@ import platform
 import sys
 
 # environment at generation time
-CMAKE_PREFIX_PATH = os.pathsep.join('@CMAKE_PREFIX_PATH@'.split(';'))
-CURRENT_WORKSPACE = '@SETUP_DIR@'
+CMAKE_PREFIX_PATH = os.pathsep.join('@CMAKE_PREFIX_PATH_WITHOUT_DEVEL_SPACE@'.split(';'))
+CURRENT_WORKSPACE = os.path.dirname(__file__)
 
 CATKIN_MARKER_FILE = '.catkin'
 
