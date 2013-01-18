@@ -578,8 +578,8 @@ def build_workspace_isolated(
                 '@{rf}@!<==@| ' +
                 'Failed to process package \'@!@{bf}' +
                 package.name + '@|\': \n  ' +
-                (str(e) if isinstance(e, KeyboardInterrupt)
-                        else 'KeyboardInterrupt')
+                ('KeyboardInterrupt' if isinstance(e, KeyboardInterrupt)
+                        else str(e))
             )
             sys.exit('Command failed, exiting.')
 
