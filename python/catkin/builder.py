@@ -315,15 +315,18 @@ def build_cmake_package(
         return
     cprint(blue_arrow + " Generating an env_cached.sh")
     # Generate basic env.sh for chaining to catkin packages
-    last_env = os.path.join(os.path.dirname(last_env), 'setup.sh')
     new_env_path = os.path.join(install_target, 'env.sh')
-    cmake_prefix_path = install_target + ":"
-    ld_path = os.path.join(install_target, 'lib') + ":"
+    subs = {}
+    subs['last_env'] = os.path.join(os.path.dirname(last_env), 'setup.sh')
+    subs['cmake_prefix_path'] = install_target + ":"
+    subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
     pythonpath = ":".join(get_python_path(install_target))
     if pythonpath:
         pythonpath += ":"
-    pkgcfg_path = os.path.join(install_target, 'lib', 'pkgconfig') + ":"
-    path = os.path.join(install_target, 'bin') + ":"
+    subs['pythonpath'] = pythonpath
+    subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
+    subs['pkgcfg_path'] += ":"
+    subs['path'] = os.path.join(install_target, 'bin') + ":"
     with open(new_env_path, 'w+') as file_handle:
         file_handle.write("""\
 #!/bin/sh
@@ -352,7 +355,7 @@ export PKG_CONFIG_PATH="{pkgcfg_path}$PKG_CONFIG_PATH"
 export PYTHONPATH="{pythonpath}$PYTHONPATH"
 
 exec "$@"
-""".format(**locals())
+""".format(**subs)
         )
     os.chmod(new_env_path, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
 
