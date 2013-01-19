@@ -154,7 +154,7 @@ def run_command(cmd, cwd, quiet=False, colorize=False):
         raise subprocess.CalledProcessError(proc.returncode, ' '.join(cmd))
     return out.getvalue() if quiet else ''
 
-blue_arrow = '@!@{bf}==>@{wf}'
+blue_arrow = '@!@{bf}==>@|@!'
 
 
 def _check_build_dir(name, workspace, buildspace):
