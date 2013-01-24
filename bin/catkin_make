@@ -29,7 +29,11 @@ def main():
     if not os.path.exists(base_path):
         return 'The specified base path "%s" does not exist' % base_path
 
-    # verify that the base path does not contain a package
+    # verify that the base path does not contain a CMakeLists.txt
+    if os.path.exists(os.path.join(base_path, 'CMakeLists.txt')):
+        return 'The specified base path "%s" contains a CMakeLists.txt but "catkin_make" must be invoked in the root of workspace.' % base_path
+
+    # verify that the base path does not contain a package.xml
     if os.path.exists(os.path.join(base_path, 'package.xml')):
         return 'The specified base path "%s" contains a package but "catkin_make" must be invoked in the root of workspace.' % base_path
 
