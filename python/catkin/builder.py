@@ -594,6 +594,10 @@ def build_workspace_isolated(
                 ('KeyboardInterrupt' if isinstance(e, KeyboardInterrupt)
                         else str(e))
             )
+            if isinstance(e, subprocess.CalledProcessError):
+                cmd = ' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd
+                print(fmt("\n@{rf}Reproduce this error by running:"))
+                print(fmt("@{gf}@!==> @|") + cmd + "\n")
             sys.exit('Command failed, exiting.')
 
 
