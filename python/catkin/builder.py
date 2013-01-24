@@ -238,7 +238,7 @@ def build_catkin_package(
         )
 
     # Run make
-    make_cmd = ['make', '-j' + str(jobs)]
+    make_cmd = ['make', '-j' + str(jobs), '-l' + str(jobs)]
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
@@ -299,7 +299,7 @@ def build_cmake_package(
         )
 
     # Run make
-    make_cmd = ['make', '-j' + str(jobs)]
+    make_cmd = ['make', '-j' + str(jobs), '-l' + str(jobs)]
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
@@ -460,7 +460,7 @@ def build_workspace_isolated(
         devel space. does not work with non-catkin packages, ``bool``
     :param install: if True, install all packages to the install space,
         ``bool``
-    :param jobs: number of parallel build jobs to run (make -jN), ``int``
+    :param jobs: number of parallel build jobs to run (make -jN -lN), ``int``
     :param force_cmake: (optional), if True calls cmake explicitly for each
         package, ``bool``
     :param colorize: if True, colorize cmake output and other messages,

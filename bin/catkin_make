@@ -122,6 +122,7 @@ def main():
             else:
                 jobs = multiprocessing.cpu_count()
         cmd.append('-j%d' % jobs)
+        cmd.append('-l%d' % jobs)
     cmd += make_args
     try:
         print_command_banner(cmd, build_path, color=not args.no_color)
