@@ -26,8 +26,7 @@ install(DIRECTORY cmake
   DESTINATION share/catkin
   USE_SOURCE_PERMISSIONS
   PATTERN "catkinConfig.cmake.in" EXCLUDE
-  PATTERN "Modules" EXCLUDE
-  PATTERN "ROSConfig.cmake" EXCLUDE)
+  PATTERN "Modules" EXCLUDE)
 
 catkin_python_setup()
 
