@@ -600,6 +600,29 @@ def build_workspace_isolated(
                 print(fmt("@{gf}@!==> @|") + cmd + "\n")
             sys.exit('Command failed, exiting.')
 
+    # Provide a top level devel space environment setup script
+    if not merge:
+        target_setup = os.path.join(original_develspace, 'setup')
+        with open(target_setup + '.sh', 'w') as f:
+            f.write("""\
+# Generated from catkin.builder module
+. "{0}/setup.sh"
+""".format(develspace))
+        with open(target_setup + '.bash', 'w') as f:
+            f.write("""\
+# Generated from catkin.builder module
+CATKIN_SHELL=bash
+source "{0}"
+""".format(target_setup + '.sh'))
+        with open(target_setup + '.zsh', 'w') as f:
+            f.write("""\
+# Generated from catkin.builder module
+CATKIN_SHELL=zsh
+emulate sh # emulate POSIX
+. "{0}"
+emulate zsh # back to zsh mode
+""".format(target_setup + '.sh'))
+
 
 def cmake_input_changed(source_path, build_path, cmake_args=None, filename='catkin_make'):
     # get current input
