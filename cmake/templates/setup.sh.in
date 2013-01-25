@@ -68,8 +68,10 @@ done
 IFS=$_IFS
 
 # source generic and shell-specific environment hooks
+_IFS=$IFS
+IFS="
+"
 for envfile in $ENV_HOOKS_GENERIC $ENV_HOOKS_SPECIFIC; do
-  if [ ! -z "$envfile" ]; then
-    . "$envfile"
-  fi
+  . "$envfile"
 done
+IFS=$_IFS
