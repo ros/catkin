@@ -1,4 +1,4 @@
-# generated from catkin/cmake/template/pkg-config.cmake.in
+# generated from catkin/cmake/template/pkgConfig.cmake.in
 
 # append elements to a list if they are not already in the list
 # copied from catkin/cmake/list_append_unique.cmake to keep pkgConfig
@@ -74,6 +74,7 @@ endif()
 if(NOT "@PROJECT_DEPRECATED@" STREQUAL "")
   set(_msg "WARNING: package '@PROJECT_NAME@' is deprecated")
   if(NOT "@PROJECT_DEPRECATED@" STREQUAL "TRUE")
+    # Add message if any
     set(_msg "${_msg} (@PROJECT_DEPRECATED@)")
   endif()
   message("${_msg}")

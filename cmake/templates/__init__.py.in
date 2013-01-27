@@ -1,3 +1,4 @@
+# generated from catkin/cmake/template/__init__.py.in
 # keep symbol table as clean as possible by deleting all unnecessary symbols
 
 from os import path as os_path
