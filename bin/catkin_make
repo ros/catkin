@@ -118,11 +118,13 @@ def main():
         jobs = args.jobs
         if not jobs:
             if 'ROS_PARALLEL_JOBS' in os.environ:
-                jobs = int(os.environ['ROS_PARALLEL_JOBS'])
+                ros_parallel_jobs = os.environ['ROS_PARALLEL_JOBS']
+                cmd += [arg for arg in ros_parallel_jobs.split(' ') if arg]
             else:
                 jobs = multiprocessing.cpu_count()
-        cmd.append('-j%d' % jobs)
-        cmd.append('-l%d' % jobs)
+        if jobs:
+            cmd.append('-j%d' % jobs)
+            cmd.append('-l%d' % jobs)
     cmd += make_args
     try:
         print_command_banner(cmd, build_path, color=not args.no_color)
