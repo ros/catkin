@@ -50,9 +50,9 @@ be used by catkin::
   from distutils.core import setup
 
   setup(
-    version=...
-    scripts=['bin/myscript']
-    packages=['mypkg']
+    version='...',
+    scripts=['bin/myscript'],
+    packages=['mypkg'],
     package_dir={'': 'src'})
 
 This creates relays for all scripts listed in ``scripts`` to a folder
