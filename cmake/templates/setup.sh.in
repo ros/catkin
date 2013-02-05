@@ -50,34 +50,12 @@ if [ -z "$CATKIN_SHELL" ]; then
   CATKIN_SHELL=sh
 fi
 
-# find all environment hooks
-_ENV_HOOKS_GENERIC=""
-_ENV_HOOKS_SPECIFIC=""
-# order by workspace and ordered inside each workspace
+# source all environment hooks
 _IFS=$IFS
 IFS=":"
-_FIND=`which find`
-_SORT=`which sort`
-# do not use variable names set in the environment since zsh will overwrite them
-for _path in $CMAKE_PREFIX_PATH; do
-  # ignore non-catkin workspaces
-  if [ -z "$_path" -o ! -f "$_path/.catkin" ]; then
-    continue
-  fi
-  _ENV_HOOKS_GENERIC="$($_FIND "$_path/etc/catkin/profile.d" -maxdepth 1 -name "*.sh" 2>/dev/null | $_SORT)
-$_ENV_HOOKS_GENERIC"
-  if [ "$CATKIN_SHELL" != "sh" ]; then
-    _ENV_HOOKS_SPECIFIC="$($_FIND "$_path/etc/catkin/profile.d" -maxdepth 1 -name "*.$CATKIN_SHELL" 2>/dev/null | $_SORT)
-$_ENV_HOOKS_SPECIFIC"
-  fi
-done
-IFS=$_IFS
-
-# source generic and shell-specific environment hooks
-_IFS=$IFS
-IFS="
-"
-for _envfile in $_ENV_HOOKS_GENERIC $_ENV_HOOKS_SPECIFIC; do
+for _envfile in $_CATKIN_ENVIRONMENT_HOOKS; do
+  IFS=$_IFS
   . "$_envfile"
 done
 IFS=$_IFS
+unset _CATKIN_ENVIRONMENT_HOOKS
