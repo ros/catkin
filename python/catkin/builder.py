@@ -370,32 +370,17 @@ def build_package(
 ):
     export_tags = [e.tagname for e in package.exports]
     cprint('@!@{gf}==>@| ', end='')
-    new_last_env = None
+    new_last_env = get_new_env(package, develspace, installspace, install, last_env)
     if 'metapackage' in export_tags:
         cprint("Skipping @!metapackage@|: '@!@{bf}" + package.name + "@|'")
-        new_last_env = last_env
     else:
-        if 'build_type' in export_tags:
-            build_type_tag = [e.content for e in package.exports
-                                        if e.tagname == 'build_type'][0]
-        else:
-            build_type_tag = 'catkin'
-        if build_type_tag == 'catkin':
+        build_type = _get_build_type(package)
+        if build_type == 'catkin':
             build_catkin_package(
                 path, package,
                 workspace, buildspace, develspace, installspace,
                 install, jobs, force_cmake, quiet, last_env, cmake_args
             )
-            if install:
-                new_last_env = os.path.join(
-                    installspace,
-                    'env.sh'
-                )
-            else:
-                new_last_env = os.path.join(
-                    develspace,
-                    'env.sh'
-                )
             if not os.path.exists(new_last_env):
                 raise RuntimeError(
                     "No env.sh file generated at: '" + new_last_env +
@@ -403,22 +388,12 @@ def build_package(
                     "interpreted as a catkin package.\n  This can also occur "
                     "when the cmake cache is stale, try --force-cmake."
                 )
-        elif build_type_tag == 'cmake':
+        elif build_type == 'cmake':
             build_cmake_package(
                 path, package,
                 workspace, buildspace, develspace, installspace,
                 install, jobs, force_cmake, quiet, last_env, cmake_args
             )
-            if install:
-                new_last_env = os.path.join(
-                    installspace,
-                    'env.sh'
-                )
-            else:
-                new_last_env = os.path.join(
-                    develspace,
-                    'env.sh'
-                )
         else:
             sys.exit('Can not build package with unknown build_type')
     if number is not None and of is not None:
@@ -428,6 +403,29 @@ def build_package(
     cprint('@{gf}<==@| Finished processing package' + msg + ': \'@{bf}@!' +
            package.name + '@|\'')
     return new_last_env
+
+
+def get_new_env(package, develspace, installspace, install, last_env):
+    new_env = None
+    export_tags = [e.tagname for e in package.exports]
+    if 'metapackage' in export_tags:
+        new_env = last_env
+    else:
+        build_type = _get_build_type(package)
+        if build_type in ['catkin', 'cmake']:
+            new_env = os.path.join(
+                installspace if install else develspace,
+                'env.sh'
+            )
+    return new_env
+
+
+def _get_build_type(package):
+    build_type = 'catkin'
+    if 'build_type' in [e.tagname for e in package.exports]:
+        build_type = [e.content for e in package.exports
+                                if e.tagname == 'build_type'][0]
+    return build_type
 
 
 def build_workspace_isolated(
@@ -441,6 +439,7 @@ def build_workspace_isolated(
     jobs=None,
     force_cmake=False,
     colorize=True,
+    pkg=None,
     quiet=False,
     cmake_args=[]
 ):
@@ -465,6 +464,8 @@ def build_workspace_isolated(
         package, ``bool``
     :param colorize: if True, colorize cmake output and other messages,
         ``bool``
+    :param pkg: specific package to build (all parent packages in the
+        topological order must have been built before), ``str``
     :param quiet: if True, hides some build output, ``bool``
     :param cmake_args: additional arguments for cmake, ``[str]``
     '''
@@ -521,9 +522,17 @@ def build_workspace_isolated(
     packages = find_packages(sourcespace)
     if not packages:
         sys.exit("No packages found in source space: {0}".format(sourcespace))
-    ordered_packages = topological_order_packages(packages)
+
+    # verify that specified package exists in workspace and is not a metapackage
+    if pkg:
+        packages_by_name = {p.name: path for path, p in packages.iteritems()}
+        if pkg not in packages_by_name:
+            sys.exit("Package '%s' not found in the workspace" % pkg)
+        if 'metapackage' in [e.tagname for e in packages[packages_by_name[pkg]].exports]:
+            sys.exit("Package '%s' is a metapackage and can not be built" % pkg)
 
     # Report topological ordering
+    ordered_packages = topological_order_packages(packages)
     unknown_build_types = []
     msg = []
     msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -578,29 +587,35 @@ def build_workspace_isolated(
         path, package = path_package
         if not merge:
             develspace = os.path.join(original_develspace, package.name)
-        try:
-            last_env = build_package(
-                path, package,
-                workspace, buildspace, develspace, installspace,
-                install, jobs, force_cmake, quiet, last_env, cmake_args,
-                number=index + 1, of=len(ordered_packages)
-            )
-        except Exception as e:
-            cprint(
-                '@{rf}@!<==@| ' +
-                'Failed to process package \'@!@{bf}' +
-                package.name + '@|\': \n  ' +
-                ('KeyboardInterrupt' if isinstance(e, KeyboardInterrupt)
-                        else str(e))
-            )
-            if isinstance(e, subprocess.CalledProcessError):
-                cmd = ' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd
-                print(fmt("\n@{rf}Reproduce this error by running:"))
-                print(fmt("@{gf}@!==> @|") + cmd + "\n")
-            sys.exit('Command failed, exiting.')
+        if not pkg or package.name == pkg:
+            try:
+                last_env = build_package(
+                    path, package,
+                    workspace, buildspace, develspace, installspace,
+                    install, jobs, force_cmake, quiet, last_env, cmake_args,
+                    number=index + 1, of=len(ordered_packages)
+                )
+            except Exception as e:
+                cprint(
+                    '@{rf}@!<==@| ' +
+                    'Failed to process package \'@!@{bf}' +
+                    package.name + '@|\': \n  ' +
+                    ('KeyboardInterrupt' if isinstance(e, KeyboardInterrupt)
+                            else str(e))
+                )
+                if isinstance(e, subprocess.CalledProcessError):
+                    cmd = ' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd
+                    print(fmt("\n@{rf}Reproduce this error by running:"))
+                    print(fmt("@{gf}@!==> @|") + cmd + "\n")
+                sys.exit('Command failed, exiting.')
+            if pkg:
+                break
+        else:
+            cprint("Skipping package: '@!@{bf}" + package.name + "@|'")
+            last_env = get_new_env(package, develspace, installspace, install, last_env)
 
     # Provide a top level devel space environment setup script
-    if not merge:
+    if not merge and not pkg:
         target_setup = os.path.join(original_develspace, 'setup')
         with open(target_setup + '.sh', 'w') as f:
             f.write("""\
