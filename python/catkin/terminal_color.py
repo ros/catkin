@@ -37,6 +37,7 @@ Module to enable color terminal output
 from __future__ import print_function
 
 import string
+import os
 
 _ansi = {}
 
@@ -100,6 +101,8 @@ def disable_ANSI_colors():
 
 # Default to ansi colors on
 enable_ANSI_colors()
+if os.name in ['nt']:
+    disable_ANSI_colors()
 
 
 class ColorTemplate(string.Template):
