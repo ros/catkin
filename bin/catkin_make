@@ -91,7 +91,7 @@ def main():
         if args.pkg not in packages_by_name:
             return fmt('@{rf}Package @{boldon}"%s"@{boldoff} not found in the workspace' % args.pkg)
         if 'metapackage' in [e.tagname for e in packages[packages_by_name[args.pkg]].exports]:
-            return fmt('@{rf}Package @{boldon}"%s"@{boldoff} is metapackage and can not be built' % args.pkg)
+            return fmt('@{rf}Package @{boldon}"%s"@{boldoff} is a metapackage and can not be built' % args.pkg)
 
     # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
     force_cmake = cmake_input_changed(packages, build_path, cmake_args)
