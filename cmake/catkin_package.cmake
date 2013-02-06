@@ -292,6 +292,10 @@ function(_catkin_package)
   foreach(extra ${PROJECT_CFG_EXTRAS})
     set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
     if (EXISTS ${base})
+      configure_file(${base}
+        ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
+        COPYONLY
+      )
       list(APPEND PKG_CFG_EXTRAS ${base})
     elseif(EXISTS ${base}.em OR EXISTS ${base}.develspace.em)
       if(EXISTS ${base}.em)
