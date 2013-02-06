@@ -13,6 +13,7 @@ if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
 from catkin.init_workspace import init_workspace
 from catkin.terminal_color import disable_ANSI_colors
 from catkin.builder import cmake_input_changed, print_command_banner, run_command, run_command_colorized
+from catkin_pkg.packages import find_packages
 
 
 def main():
@@ -82,8 +83,18 @@ def main():
         except Exception as e:
             return 'Creating the toplevel cmake file failed: %s' % str(e)
 
+    packages = find_packages(source_path)
+
+    # verify that specified package exists in workspace and is not a metapackage
+    if args.pkg:
+        packages_by_name = {p.name: path for path, p in packages.iteritems()}
+        if args.pkg not in packages_by_name:
+            return "Package '%s' not found in the workspace." % args.pkg
+        if 'metapackage' in [e.tagname for e in packages[packages_by_name[args.pkg]].exports]:
+            return "Package '%s' is metapackage and can not be built." % args.pkg
+
     # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
-    force_cmake = cmake_input_changed(source_path, build_path, cmake_args)
+    force_cmake = cmake_input_changed(packages, build_path, cmake_args)
 
     # consider calling cmake
     makefile = os.path.join(build_path, 'Makefile')
@@ -127,8 +138,11 @@ def main():
             cmd.append('-l%d' % jobs)
     cmd += make_args
     try:
-        print_command_banner(cmd, build_path, color=not args.no_color)
-        run_command(cmd, build_path)
+        make_path = build_path
+        if args.pkg:
+            make_path = os.path.join(make_path, packages_by_name[args.pkg])
+        print_command_banner(cmd, make_path, color=not args.no_color)
+        run_command(cmd, make_path)
     except subprocess.CalledProcessError:
         return 'Invoking "make" failed'
 
@@ -145,6 +159,7 @@ def _parse_args(args=sys.argv[1:]):
     parser.add_argument('-j', '--jobs', type=int, metavar='JOBS', nargs='?', help='Specifies the number of jobs (commands) to run simultaneously. Defaults to the environment variable ROS_PARALLEL_JOBS and falls back to the number of CPU cores.')
     parser.add_argument('--force-cmake', action='store_true', help='Invoke "cmake" even if it has been executed before')
     parser.add_argument('--no-color', action='store_true', help='Disables colored ouput (only for catkin_make and CMake)')
+    parser.add_argument('--pkg', help='Invoke "make" on a specific package only')
 
     namespace, unknown_args = parser.parse_known_args(args)
     # support -j/--jobs without an argument which argparse can not distinguish

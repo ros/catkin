@@ -42,7 +42,7 @@ import sys
 
 try:
     from catkin_pkg.packages import find_packages
-    from catkin_pkg.topological_order import topological_order
+    from catkin_pkg.topological_order import topological_order_packages
 except ImportError as e:
     sys.exit(
         'ImportError: "from catkin_pkg.topological_order import '
@@ -518,16 +518,17 @@ def build_workspace_isolated(
     jobs = int(jobs)
 
     # Find packages
-    packages = topological_order(sourcespace)
+    packages = find_packages(sourcespace)
     if not packages:
         sys.exit("No packages found in source space: {0}".format(sourcespace))
+    ordered_packages = topological_order_packages(packages)
 
     # Report topological ordering
     unknown_build_types = []
     msg = []
     msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
     msg.append('@{pf}~~@|  traversing packages in topological order:')
-    for path, package in packages:
+    for path, package in ordered_packages:
         export_tags = [e.tagname for e in package.exports]
         if 'metapackage' in export_tags:
             msg.append(
@@ -564,9 +565,7 @@ def build_workspace_isolated(
         sys.exit('Can not build workspace with packages of unknown build_type')
 
     # Check to see if the workspace has changed
-    if cmake_input_changed(
-        sourcespace, buildspace, cmake_args, 'catkin_make_isolated'
-    ):
+    if cmake_input_changed(packages, buildspace, cmake_args, 'catkin_make_isolated'):
         force_cmake = True
         print(colorize_line(
             'Warning: packages or cmake arguments have changed, forcing cmake'
@@ -575,7 +574,7 @@ def build_workspace_isolated(
     # Build packages
     original_develspace = copy.deepcopy(develspace)
     last_env = None
-    for index, path_package in enumerate(packages):
+    for index, path_package in enumerate(ordered_packages):
         path, package = path_package
         if not merge:
             develspace = os.path.join(original_develspace, package.name)
@@ -584,7 +583,7 @@ def build_workspace_isolated(
                 path, package,
                 workspace, buildspace, develspace, installspace,
                 install, jobs, force_cmake, quiet, last_env, cmake_args,
-                number=index + 1, of=len(packages)
+                number=index + 1, of=len(ordered_packages)
             )
         except Exception as e:
             cprint(
@@ -624,9 +623,8 @@ emulate zsh # back to zsh mode
 """.format(target_setup + '.sh'))
 
 
-def cmake_input_changed(source_path, build_path, cmake_args=None, filename='catkin_make'):
+def cmake_input_changed(packages, build_path, cmake_args=None, filename='catkin_make'):
     # get current input
-    packages = find_packages(source_path)
     package_paths = os.pathsep.join(sorted(packages.keys()))
     cmake_args = ' '.join(cmake_args) if cmake_args else ''
 
