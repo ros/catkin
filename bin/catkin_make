@@ -11,7 +11,7 @@ import os
 if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from catkin.init_workspace import init_workspace
-from catkin.terminal_color import disable_ANSI_colors
+from catkin.terminal_color import disable_ANSI_colors, fmt
 from catkin.builder import cmake_input_changed, print_command_banner, run_command, run_command_colorized
 from catkin_pkg.packages import find_packages
 
@@ -28,15 +28,15 @@ def main():
     if args.directory:
         base_path = os.path.abspath(args.directory)
     if not os.path.exists(base_path):
-        return 'The specified base path "%s" does not exist' % base_path
+        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} does not exist' % base_path)
 
     # verify that the base path does not contain a CMakeLists.txt
     if os.path.exists(os.path.join(base_path, 'CMakeLists.txt')):
-        return 'The specified base path "%s" contains a CMakeLists.txt but "catkin_make" must be invoked in the root of workspace.' % base_path
+        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} contains a CMakeLists.txt but "catkin_make" must be invoked in the root of workspace' % base_path)
 
     # verify that the base path does not contain a package.xml
     if os.path.exists(os.path.join(base_path, 'package.xml')):
-        return 'The specified base path "%s" contains a package but "catkin_make" must be invoked in the root of workspace.' % base_path
+        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} contains a package but "catkin_make" must be invoked in the root of workspace' % base_path)
 
     print('Base path: %s' % base_path)
 
@@ -45,7 +45,7 @@ def main():
     if args.source:
         source_path = os.path.abspath(args.source)
     if not os.path.exists(source_path):
-        return 'The specified source space "%s" does not exist' % source_path
+        return fmt('@{rf}The specified source space @{boldon}"%s"@{boldoff} does not exist' % source_path)
     print('Source space: %s' % source_path)
 
     build_path = os.path.join(base_path, 'build')
@@ -81,7 +81,7 @@ def main():
         try:
             init_workspace(source_path)
         except Exception as e:
-            return 'Creating the toplevel cmake file failed: %s' % str(e)
+            return fmt('@{rf}Creating the toplevel cmake file failed:@| %s' % str(e))
 
     packages = find_packages(source_path)
 
@@ -89,9 +89,9 @@ def main():
     if args.pkg:
         packages_by_name = {p.name: path for path, p in packages.iteritems()}
         if args.pkg not in packages_by_name:
-            return "Package '%s' not found in the workspace." % args.pkg
+            return fmt('@{rf}Package @{boldon}"%s"@{boldoff} not found in the workspace' % args.pkg)
         if 'metapackage' in [e.tagname for e in packages[packages_by_name[args.pkg]].exports]:
-            return "Package '%s' is metapackage and can not be built." % args.pkg
+            return fmt('@{rf}Package @{boldon}"%s"@{boldoff} is metapackage and can not be built' % args.pkg)
 
     # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
     force_cmake = cmake_input_changed(packages, build_path, cmake_args)
@@ -108,7 +108,7 @@ def main():
             else:
                 run_command_colorized(cmd, build_path)
         except subprocess.CalledProcessError:
-            return 'Invoking "cmake" failed'
+            return fmt('@{rf}Invoking @{boldon}"cmake"@{boldoff} failed')
     else:
         cmd = ['make', 'cmake_check_build_system']
         try:
@@ -118,7 +118,7 @@ def main():
             else:
                 run_command_colorized(cmd, build_path)
         except subprocess.CalledProcessError:
-            return 'Invoking "make cmake_check_build_system" failed'
+            return fmt('@{rf}Invoking @{boldon}"make cmake_check_build_system"@{boldoff} failed')
 
     # invoke make
     cmd = ['make']
@@ -144,7 +144,7 @@ def main():
         print_command_banner(cmd, make_path, color=not args.no_color)
         run_command(cmd, make_path)
     except subprocess.CalledProcessError:
-        return 'Invoking "make" failed'
+        return fmt('@{rf}Invoking @{boldon}"make"@{boldoff} failed')
 
 
 def _parse_args(args=sys.argv[1:]):
