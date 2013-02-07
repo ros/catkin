@@ -57,9 +57,14 @@ be used by catkin::
 
 This creates relays for all scripts listed in ``scripts`` to a folder
 in devel space where they can be found and executed, and also relay
-packages for any package listed in ``packages``. The version will be
-compared to that declared in package.xml, and raise an error on
-mismatch.
+packages for any package listed in ``packages``. A relay package is a
+folder with an __init__.py folder and nothing else. Importing this
+folder in python will execute the contents of __init__.py, which will
+in turn import the original python modules in the folder in the
+sourcespace using the python exec() function.
+
+The version will be compared to that declared in package.xml, and
+raise an error on mismatch.
 
 Using package.xml in setup.py
 =============================
