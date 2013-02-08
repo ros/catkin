@@ -50,7 +50,7 @@ def get_commands(path, packages, vcs_type, new_version, svn_url=None):
         elif os.path.dirname(svn_url).endswith(TAGS):
             base_url = os.path.dirname(svn_url)[:-len(TAGS)]
         else:
-            sys.exit('Could not determine base URL of SVN repository "%s"' % url)
+            raise RuntimeError('Could not determine base URL of SVN repository "%s"' % svn_url)
         tag_url = '%s/tags/%s' % (base_url, new_version)
         cmd = 'svn cp -m "tagging %s" %s %s' % (new_version, svn_url, tag_url)
         result.append(cmd)
@@ -60,21 +60,18 @@ def get_commands(path, packages, vcs_type, new_version, svn_url=None):
 def main():
     parser = argparse.ArgumentParser(
         description='Outputs the commands to bump the version number, commit the modified package.xml files and create a tag in the repository.')
-    parser.parse_args()
+    parser.add_argument('--bump', choices=('major', 'minor', 'patch'), default='patch', help='Which part of the version number to bump? (default: %(default)s)')
+    args = parser.parse_args()
 
     path = '.'
-    try:
-        packages = find_packages(path)
-        old_version = verify_equal_package_versions(packages.values())
-        new_version = bump_version(old_version, 'patch')
-    except Exception as e:
-        sys.exit(str(e))
+    packages = find_packages(path)
+    old_version = verify_equal_package_versions(packages.values())
+    new_version = bump_version(old_version, args.bump)
 
     vcs_type = get_repository_type(path)
     url = None
     if vcs_type is None:
-        sys.exit(
-            'Could not determine repository type of "%s"' % path)
+        raise RuntimeError('Could not determine repository type of "%s"' % path)
     elif vcs_type == 'svn':
         url = vcs_remotes(path, 'svn')[5:]
 
@@ -83,9 +80,15 @@ def main():
                             vcs_type=vcs_type,
                             new_version=new_version,
                             svn_url=url)
-    print('Execute the following commands:\n')
+    #print('Execute the following commands:\n')
     print(' && '.join(commands))
 
 
 if __name__ == '__main__':
-    main()
+    rc = 0
+    try:
+        main()
+    except Exception as e:
+        print(e, file=sys.stderr)
+        rc = 1
+    sys.exit(rc)
