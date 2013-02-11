@@ -47,7 +47,7 @@ if [%CATKIN_SHELL%]==[] (
 )
 
 REM source all environment hooks
-for /F "tokens=* delims=;" %%a in (%_CATKIN_ENVIRONMENT_HOOKS%) do (
+for /F "tokens=* delims=;" %%a in ("%_CATKIN_ENVIRONMENT_HOOKS%") do (
   for %%b in (%%a) do (
     call "%%b"
   )
