@@ -24,7 +24,7 @@ without other commands in between::
 Use ``${PROJECT_NAME}`` for global variables, targets and labels instead of
 repeating the project name manually or using fixed names.
 
-You can use ${PROJECT_NAME} as prefix for global variable names as well, as shown in examples below. Variables become global if they are set using the CACHED  argument or created using the option() macro.
+You can use ${PROJECT_NAME} as prefix for global variable names as well, as shown in examples below. Variables become global if they are set using the CACHE argument or created using the option() macro.
 
 After you defined your project name like this::
 
@@ -34,7 +34,7 @@ dont do this::
 
   catkin_add_gtest(test ...)
   add_executable(myproject ...)
-  set(use_feature 42 CACHED STRING "description")
+  set(use_feature 42 CACHE STRING "description")
   option(use_feature "on or off" OFF)
   macro(xyz) ...
 
@@ -42,7 +42,7 @@ do this instead::
 
   catkin_add_gtest(${PROJECT_NAME}_test ...)
   add_executable(${PROJECT_NAME} ...)
-  set(${PROJECT_NAME}_use_feature 42 CACHED STRING "description")
+  set(${PROJECT_NAME}_use_feature 42 CACHE STRING "description")
   option(${PROJECT_NAME}_use_feature "on or off" OFF)
   macro(${PROJECT_NAME}_xyz) ...
 

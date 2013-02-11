@@ -50,21 +50,28 @@ be used by catkin::
   from distutils.core import setup
 
   setup(
-    version=...
-    scripts=['bin/myscript']
-    packages=['mypkg']
+    version='...',
+    scripts=['bin/myscript'],
+    packages=['mypkg'],
     package_dir={'': 'src'})
 
 This creates relays for all scripts listed in ``scripts`` to a folder
 in devel space where they can be found and executed, and also relay
-packages for any package listed in ``packages``. The version will be
-compared to that declared in package.xml, and raise an error on
-mismatch.
+packages for any package listed in ``packages``. A relay package is a
+folder with an __init__.py folder and nothing else. Importing this
+folder in python will execute the contents of __init__.py, which will
+in turn import the original python modules in the folder in the
+sourcespace using the python exec() function.
+
+The version will be compared to that declared in package.xml, and
+raise an error on mismatch.
 
 Using package.xml in setup.py
 =============================
 
-Writing a setup.py file without duplicating information contained in the package.xml is possible using a catkin_pkg convenience function like this::
+Writing a setup.py file without duplicating information contained in
+the package.xml is possible using a catkin_pkg convenience function
+like this::
 
   from distutils.core import setup
   from catkin_pkg.python_setup import generate_distutils_setup
@@ -77,7 +84,21 @@ Writing a setup.py file without duplicating information contained in the package
 
   setup(**d)
 
-This will parse the package.xml and also format the fields, such that multiple authors with emails will be set nicely for setup.py, in case one distributes to pypi.
+This will parse the package.xml and also format the fields, such that
+multiple authors with emails will be set nicely for setup.py, in case
+one distributes to pypi.
+
+.. note::
+
+  ROS Users should generally not use the scripts argument, as
+  in ROS, executables should be executed using rosrun rather
+  than being installed to the global bin folder. One way of
+  installing such python scripts is to add the following to
+  the CMakeLists.txt::
+
+    install(PROGRAMS scripts/myscript
+      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
 
 Develspace limitations
 ======================

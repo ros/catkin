@@ -1,3 +1,4 @@
+# generated from catkin/cmake/template/pkgConfig-version.cmake.in
 set(PACKAGE_VERSION "@PROJECT_VERSION@")
 
 set(PACKAGE_VERSION_EXACT False)
