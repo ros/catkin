@@ -1,3 +1,4 @@
+# generated from catkin/cmake/template/env-hook.context.py.in
 DEVELSPACE = @DEVELSPACE@
 INSTALLSPACE = @INSTALLSPACE@
 
