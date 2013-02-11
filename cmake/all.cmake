@@ -114,6 +114,7 @@ foreach(filename
     parse_arguments
     safe_execute_process
     stamp
+	platform/cross_platform_utilities
     platform/lsb
     platform/ubuntu
     platform/windows
