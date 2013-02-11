@@ -439,7 +439,7 @@ def build_workspace_isolated(
     jobs=None,
     force_cmake=False,
     colorize=True,
-    pkg=None,
+    build_packages=None,
     quiet=False,
     cmake_args=[]
 ):
@@ -464,8 +464,8 @@ def build_workspace_isolated(
         package, ``bool``
     :param colorize: if True, colorize cmake output and other messages,
         ``bool``
-    :param pkg: specific package to build (all parent packages in the
-        topological order must have been built before), ``str``
+    :param build_packages: specific packages to build (all parent packages
+        in the topological order must have been built before), ``str``
     :param quiet: if True, hides some build output, ``bool``
     :param cmake_args: additional arguments for cmake, ``[str]``
     '''
@@ -524,12 +524,14 @@ def build_workspace_isolated(
         sys.exit("No packages found in source space: {0}".format(sourcespace))
 
     # verify that specified package exists in workspace and is not a metapackage
-    if pkg:
+    if build_packages:
         packages_by_name = {p.name: path for path, p in packages.iteritems()}
-        if pkg not in packages_by_name:
-            sys.exit("Package '%s' not found in the workspace" % pkg)
-        if 'metapackage' in [e.tagname for e in packages[packages_by_name[pkg]].exports]:
-            sys.exit("Package '%s' is a metapackage and can not be built" % pkg)
+        unknown_packages = [p for p in build_packages if p not in packages_by_name]
+        if unknown_packages:
+            sys.exit('Packages not found in the workspace: %s' % ', '.join(unknown_packages))
+        metapackages = [p for p in build_packages if ('metapackage' in [e.tagname for e in packages[packages_by_name[p]].exports])]
+        if metapackages:
+            sys.exit('Packages are metapackages and can not be built: %s' % ', '.join(metapackages))
 
     # Report topological ordering
     ordered_packages = topological_order_packages(packages)
@@ -587,7 +589,7 @@ def build_workspace_isolated(
         path, package = path_package
         if not merge:
             develspace = os.path.join(original_develspace, package.name)
-        if not pkg or package.name == pkg:
+        if not build_packages or package.name in build_packages:
             try:
                 last_env = build_package(
                     path, package,
@@ -608,14 +610,12 @@ def build_workspace_isolated(
                     print(fmt("\n@{rf}Reproduce this error by running:"))
                     print(fmt("@{gf}@!==> @|") + cmd + "\n")
                 sys.exit('Command failed, exiting.')
-            if pkg:
-                break
         else:
             cprint("Skipping package: '@!@{bf}" + package.name + "@|'")
             last_env = get_new_env(package, develspace, installspace, install, last_env)
 
     # Provide a top level devel space environment setup script
-    if not merge and not pkg:
+    if not merge and not build_packages:
         target_setup = os.path.join(original_develspace, 'setup')
         with open(target_setup + '.sh', 'w') as f:
             f.write("""\

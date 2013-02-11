@@ -57,8 +57,8 @@ def parse_args(args=sys.argv[1:]):
     add('--no-color', action='store_true', default=False,
         help='Disables colored output (only for catkin_make and CMake)'
     )
-    add('--pkg',
-        help='Invoke "make" on a specific package (only after initial invocation)'
+    add('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
+        help='Invoke "make" on specific packages (only after initial invocation)'
     )
     add('-v', '--verbose', action='store_true', default=False,
         help='Prints more build output.'
@@ -111,7 +111,7 @@ def main():
         jobs=opts.jobs,
         force_cmake=opts.force_cmake,
         colorize=not opts.no_color,
-        pkg=opts.pkg,
+        build_packages=opts.packages,
         quiet=not opts.verbose,
         cmake_args=cmake_args
     )
