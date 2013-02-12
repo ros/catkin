@@ -73,8 +73,8 @@ endif()
 # warn when using a deprecated package
 if(NOT "@PROJECT_DEPRECATED@" STREQUAL "")
   set(_msg "WARNING: package '@PROJECT_NAME@' is deprecated")
+  # append custom deprecation text if available
   if(NOT "@PROJECT_DEPRECATED@" STREQUAL "TRUE")
-    # Add message if any
     set(_msg "${_msg} (@PROJECT_DEPRECATED@)")
   endif()
   message("${_msg}")
