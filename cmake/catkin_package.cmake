@@ -36,11 +36,15 @@
 # :param CFG_EXTRAS: a CMake file containing extra stuff that should
 #   be accessible to users of this package after
 #   ``find_package``\ -ing it.  This file must live in the
-#   subdirectory ``cmake`` and must have the additional extension
-#   ``.in`` (since it is expanded using CMake's ``configure_file()``).
-#   The template can distinguish between build- and installspace
-#   using the boolean variables ``DEVELSPACE`` and ``INSTALLSPACE``
-#   and should be verified to work in both cases.
+#   subdirectory ``cmake``.  Various additional extension are possible:
+#   for a plain cmake file just ``.cmake``, for files expanded using
+#   CMake's ``configure_file()`` use ``.cmake.in`` or for files expanded
+#   by empy use ``.cmake.em``.  The templates can distinguish between
+#   devel- and installspace using the boolean variables ``DEVELSPACE``
+#   and ``INSTALLSPACE``.  For em templated files it is also possible to
+#   use the extensions ``.cmake.develspace.em`` or
+#   ``.cmake.installspace.em`` to generate the files only for a specific
+#   case.
 # :type CFG_EXTRAS: string
 #
 # Example:
@@ -51,7 +55,7 @@
 #     LIBRARIES projlib1 projlib2
 #     CATKIN-DEPENDS roscpp
 #     DEPENDS Eigen
-#     CFG_EXTRAS proj-extras.cmake
+#     CFG_EXTRAS proj-extras[.cmake|.cmake.in|.cmake(.develspace|.installspace)?.em]
 #   )
 #
 # @public
