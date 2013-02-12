@@ -38,6 +38,8 @@ if(NOT DEFINED CMAKE_PREFIX_PATH)
   endif()
 endif()
 message(STATUS "Using CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+# store original CMAKE_PREFIX_PATH
+set(CMAKE_PREFIX_PATH_AS_IS ${CMAKE_PREFIX_PATH})
 
 # list of unique catkin workspaces based on CMAKE_PREFIX_PATH
 set(CATKIN_WORKSPACES "")
