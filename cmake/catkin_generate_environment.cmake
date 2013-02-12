@@ -12,7 +12,7 @@ function(catkin_generate_environment)
     ${CATKIN_DEVEL_PREFIX}/_setup_util.py
     @ONLY)
 
-  if(NOT MSVC)
+  if(NOT WIN32)
     # non-windows
     # generate env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
@@ -60,7 +60,7 @@ function(catkin_generate_environment)
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
 
-  if(NOT MSVC)
+  if(NOT WIN32)
     # non-windows
     # generate and install env
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in

@@ -120,7 +120,7 @@ else()
 endif()
 # For Visual C++, need to increase variadic template size to build gtest
 if(GTEST_FOUND)
-  if(MSVC) 
+  if(WIN32) 
     add_definitions(/D _VARIADIC_MAX=10)
   endif()
 endif()

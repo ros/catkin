@@ -20,7 +20,7 @@ endif()
 # on every lib (painful) or to make exe's public (name conflicts
 # bound to arise).
 if(BUILD_SHARED_LIBS)
-  if(MSVC)
+  if(WIN32)
     function(add_library library)
       # Check if its an external, imported library (e.g. boost libs via cmake module definition)
       list(FIND ARGN "IMPORTED" FIND_POS)

@@ -35,7 +35,7 @@ function(catkin_python_setup)
 
   assert(PYTHON_INSTALL_DIR)
   set(INSTALL_CMD_WORKING_DIRECTORY ${${PROJECT_NAME}_SOURCE_DIR})
-  if(NOT MSVC)
+  if(NOT WIN32)
     set(INSTALL_SCRIPT
       ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/python_distutils_install.sh)
     configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.sh.in

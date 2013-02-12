@@ -8,7 +8,7 @@ set(PYTHON_VERSION_XDOTY ${PYTHON_VERSION_XDOTY} CACHE STRING "Python version")
 #This should be resolved automatically one day...
 option(SETUPTOOLS_DEB_LAYOUT "ON for debian style python packages layout" ON)
 
-if(APPLE OR MSVC)
+if(APPLE OR WIN32)
   set(SETUPTOOLS_DEB_LAYOUT OFF)
 endif()
 
