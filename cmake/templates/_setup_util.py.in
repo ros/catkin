@@ -168,7 +168,7 @@ def assignment(key, value):
     if not IS_WINDOWS:
         return 'export %s="%s"' % (key, value)
     else:
-        return 'set %s="%s"' % (key, value)
+        return 'set %s=%s' % (key, value)
 
 
 def comment(msg):
@@ -184,7 +184,7 @@ def prepend(environ, key, prefix):
     if not IS_WINDOWS:
         return 'export %s="%s$%s"' % (key, prefix, key)
     else:
-        return 'set %s="%s%%%s%%"' % (key, prefix, key)
+        return 'set %s=%s%%%s%%' % (key, prefix, key)
 
 
 def find_env_hooks(environ, cmake_prefix_path):
