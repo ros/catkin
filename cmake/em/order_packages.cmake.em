@@ -22,7 +22,7 @@ fatal_error = True
 }@
 @[elif package.name != 'catkin']@
 list(APPEND CATKIN_ORDERED_PACKAGES "@(package.name)")
-list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "@(path)")
+list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "@(path.replace('\\','/'))")
 list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "@(str('metapackage' in [e.tagname for e in package.exports]))")
 list(APPEND CATKIN_ORDERED_PACKAGES_BUILD_TYPE "@(str([e.content for e in package.exports if e.tagname == 'build_type'][0]) if 'build_type' in [e.tagname for e in package.exports] else 'catkin')")
 @{
