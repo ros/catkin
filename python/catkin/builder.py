@@ -319,7 +319,7 @@ def build_cmake_package(
     # Generate basic env.sh for chaining to catkin packages
     new_env_path = os.path.join(install_target, 'env.sh')
     subs = {}
-    subs['last_env'] = os.path.join(os.path.dirname(last_env), 'setup.sh')
+    subs['last_env'] = os.path.join(os.path.dirname(last_env), 'setup.sh') if last_env is not None else None
     subs['cmake_prefix_path'] = install_target + ":"
     subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
     pythonpath = ":".join(get_python_path(install_target))
