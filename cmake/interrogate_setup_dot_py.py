@@ -157,7 +157,6 @@ def _create_mock_setup_function(package_name, outfile):
         scripts = kwargs.get('scripts', [])
 
         unsupported_args = [
-            'data_files',
             'entry_points',
             'exclude_package_data',
             'ext_modules ',
