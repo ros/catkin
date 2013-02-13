@@ -578,9 +578,7 @@ def build_workspace_isolated(
     # Check to see if the workspace has changed
     if cmake_input_changed(packages, buildspace, cmake_args, 'catkin_make_isolated'):
         force_cmake = True
-        print(colorize_line(
-            'Warning: packages or cmake arguments have changed, forcing cmake'
-        ))
+        print('The packages or cmake arguments have changed, forcing cmake invocation')
 
     # Build packages
     original_develspace = copy.deepcopy(develspace)
