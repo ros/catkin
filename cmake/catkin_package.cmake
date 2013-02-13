@@ -46,6 +46,12 @@
 #   ``.cmake.installspace.em`` to generate the files only for a specific
 #   case.
 # :type CFG_EXTRAS: string
+# :param SKIP_CMAKE_CONFIG_GENERATION: the option to skip the generation
+#   of the CMake config files for the package
+# :type SKIP_CMAKE_CONFIG_GENERATION: bool
+# :param SKIP_PKG_CONFIG_GENERATION: the option to skip the generation of
+#   the pkg-config file for the package
+# :type SKIP_PKG_CONFIG_GENERATION: bool
 #
 # Example:
 # ::
@@ -83,7 +89,7 @@ macro(catkin_package)
 endmacro()
 
 function(_catkin_package)
-  cmake_parse_arguments(PROJECT "" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS" ${ARGN})
+  cmake_parse_arguments(PROJECT "SKIP_CMAKE_CONFIG_GENERATION;SKIP_PKG_CONFIG_GENERATION" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS" ${ARGN})
   if(PROJECT_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_UNPARSED_ARGUMENTS}")
   endif()
@@ -283,13 +289,15 @@ function(_catkin_package)
     set(PKG_CMAKE_DIR "${catkin_EXTRAS_DIR}")
   endif()
 
-  # ensure that output folder exists
-  file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/lib/pkgconfig)
-  # generate devel space pc for project
-  em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.develspace.context.pc.py
-    ${catkin_EXTRAS_DIR}/em/pkg.pc.em
-    ${CATKIN_DEVEL_PREFIX}/lib/pkgconfig/${PROJECT_NAME}.pc)
+  if(NOT PROJECT_SKIP_PKG_CONFIG_GENERATION)
+    # ensure that output folder exists
+    file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/lib/pkgconfig)
+    # generate devel space pc for project
+    em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.develspace.context.pc.py
+      ${catkin_EXTRAS_DIR}/em/pkg.pc.em
+      ${CATKIN_DEVEL_PREFIX}/lib/pkgconfig/${PROJECT_NAME}.pc)
+  )
 
   # generate devel space cfg-extras for project
   set(PKG_CFG_EXTRAS "")
@@ -319,20 +327,21 @@ function(_catkin_package)
     endif()
   endforeach()
 
-  # generate devel space config for project
-  set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
-  if(NOT EXISTS ${infile})
-    set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig.cmake.in)
-  endif()
-  configure_file(${infile}
-    ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config.cmake
-    @ONLY
-  )
-
-  # generate devel space config-version for project
-  configure_file(${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in
-    ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config-version.cmake
-    @ONLY
+  if(NOT PROJECT_SKIP_CMAKE_CONFIG_GENERATION)
+    # generate devel space config for project
+    set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
+    if(NOT EXISTS ${infile})
+      set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig.cmake.in)
+    endif()
+    configure_file(${infile}
+      ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config.cmake
+      @ONLY
+    )
+    # generate devel space config-version for project
+    configure_file(${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in
+      ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config-version.cmake
+      @ONLY
+    )
   )
 
   #
@@ -360,15 +369,17 @@ function(_catkin_package)
   list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
   set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
 
-  # ensure that output folder exists
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace)
-  # generate and install pc for project
-  em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.installspace.context.pc.py
-    ${catkin_EXTRAS_DIR}/em/pkg.pc.em
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc
-    DESTINATION lib/pkgconfig
+  if(NOT PROJECT_SKIP_PKG_CONFIG_GENERATION)
+    # ensure that output folder exists
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace)
+    # generate and install pc for project
+    em_expand(${catkin_EXTRAS_DIR}/templates/pkg.context.pc.in
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.installspace.context.pc.py
+      ${catkin_EXTRAS_DIR}/em/pkg.pc.em
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc
+      DESTINATION lib/pkgconfig
+    )
   )
 
   # generate and install cfg-extras for project
@@ -405,31 +416,31 @@ function(_catkin_package)
     DESTINATION share/${PROJECT_NAME}/cmake
   )
 
-  # generate config for project
-  set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
-  if(NOT EXISTS ${infile})
-    set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig.cmake.in)
-  endif()
-  configure_file(${infile}
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config.cmake
-    @ONLY
-  )
-
-  # generate config-version for project
-  set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config-version.cmake.in)
-  if(NOT EXISTS ${infile})
-    set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in)
-  endif()
-  configure_file(${infile}
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
-    @ONLY
-  )
-
-  # install config, config-version and cfg-extras for project
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
-    DESTINATION share/${PROJECT_NAME}/cmake
+  if(NOT PROJECT_SKIP_CMAKE_CONFIG_GENERATION)
+    # generate config for project
+    set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
+    if(NOT EXISTS ${infile})
+      set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig.cmake.in)
+    endif()
+    configure_file(${infile}
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config.cmake
+      @ONLY
+    )
+    # generate config-version for project
+    set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config-version.cmake.in)
+    if(NOT EXISTS ${infile})
+      set(infile ${catkin_EXTRAS_DIR}/templates/pkgConfig-version.cmake.in)
+    endif()
+    configure_file(${infile}
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
+      @ONLY
+    )
+    # install config, config-version and cfg-extras for project
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
+      DESTINATION share/${PROJECT_NAME}/cmake
+    )
   )
 
   # install package.xml
