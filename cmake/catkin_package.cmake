@@ -297,7 +297,7 @@ function(_catkin_package)
       ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/pkg.develspace.context.pc.py
       ${catkin_EXTRAS_DIR}/em/pkg.pc.em
       ${CATKIN_DEVEL_PREFIX}/lib/pkgconfig/${PROJECT_NAME}.pc)
-  )
+  endif()
 
   # generate devel space cfg-extras for project
   set(PKG_CFG_EXTRAS "")
@@ -342,7 +342,7 @@ function(_catkin_package)
       ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${PROJECT_NAME}Config-version.cmake
       @ONLY
     )
-  )
+  endif()
 
   #
   # INSTALLSPACE
@@ -380,7 +380,7 @@ function(_catkin_package)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc
       DESTINATION lib/pkgconfig
     )
-  )
+  endif()
 
   # generate and install cfg-extras for project
   set(PKG_CFG_EXTRAS "")
@@ -441,7 +441,7 @@ function(_catkin_package)
       ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
       DESTINATION share/${PROJECT_NAME}/cmake
     )
-  )
+  endif()
 
   # install package.xml
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/package.xml
