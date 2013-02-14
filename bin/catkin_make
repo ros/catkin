@@ -31,7 +31,7 @@ def main():
         return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} does not exist' % base_path)
 
     # verify that the base path does not contain a CMakeLists.txt
-    if os.path.exists(os.path.join(base_path, 'CMakeLists.txt')):
+    if os.path.realpath(base_path) != os.path.realpath(args.source) and os.path.exists(os.path.join(base_path, 'CMakeLists.txt')):
         return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} contains a CMakeLists.txt but "catkin_make" must be invoked in the root of workspace' % base_path)
 
     # verify that the base path does not contain a package.xml
@@ -83,7 +83,7 @@ def main():
         except Exception as e:
             return fmt('@{rf}Creating the toplevel cmake file failed:@| %s' % str(e))
 
-    packages = find_packages(source_path)
+    packages = find_packages(source_path, [install_path])
 
     # verify that specified package exists in workspace and is not a metapackage
     if args.pkg:
