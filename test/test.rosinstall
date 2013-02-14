@@ -31,7 +31,7 @@
 - git:
     uri: 'git://github.com/ros/langs-dev.git'
     local-name: langs-dev
-    version: master
+    version: fuerte-devel
 
 - git:
     uri: 'git://github.com/ros/std_msgs.git'
@@ -53,23 +53,25 @@
     local-name: ros_tutorials
     version: fuerte-devel
 
-- svn:
-    uri: 'https://code.ros.org/svn/ros/stacks/ros/branches/ros-1.8'
+- git:
+    uri: 'git://github.com/ros/ros.git'
     local-name: ros
+    version: ros-1.8
 
 - git:
     uri: 'git://github.com/ros/common_msgs.git'
     local-name: common_msgs
     version: fuerte-devel
 
-- hg:
+- git:
     local-name: rospack
-    uri: https://kforge.ros.org/rosrelease/rospack
+    uri: 'git://github.com/ros/rospack.git'
     version: fuerte-devel
 
-- svn:
+- git:
+    uri: git://github.com/ros-visualization/rx
     local-name: rx
-    uri: https://code.ros.org/svn/ros/stacks/rx/trunk
+    version: fuerte-devel
 
 - hg:
     local-name: actionlib
