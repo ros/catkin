@@ -83,7 +83,7 @@ def main():
         except Exception as e:
             return fmt('@{rf}Creating the toplevel cmake file failed:@| %s' % str(e))
 
-    packages = find_packages(source_path, [install_path])
+    packages = find_packages(source_path, exclude_subspaces=True)
 
     # verify that specified package exists in workspace and is not a metapackage
     if args.pkg:

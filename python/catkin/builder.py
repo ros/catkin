@@ -519,7 +519,7 @@ def build_workspace_isolated(
     jobs = int(jobs)
 
     # Find packages
-    packages = find_packages(sourcespace, [installspace])
+    packages = find_packages(sourcespace, exclude_subspaces=True)
     if not packages:
         sys.exit("No packages found in source space: {0}".format(sourcespace))
 
