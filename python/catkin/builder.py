@@ -329,6 +329,8 @@ def build_cmake_package(
     subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
     subs['pkgcfg_path'] += ":"
     subs['path'] = os.path.join(install_target, 'bin') + ":"
+    if not os.path.exists(install_target):
+        os.mkdir(install_target)
     with open(new_env_path, 'w+') as file_handle:
         file_handle.write("""\
 #!/bin/sh
