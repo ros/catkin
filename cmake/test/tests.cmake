@@ -1,10 +1,10 @@
-# set directory for test results and create it
-if(ENV{CATKIN_TEST_RESULTS_DIR})
-  message("Override test results directory with environment variable CATKIN_TEST_RESULTS_DIR=${CATKIN_TEST_RESULTS_DIR}")
-  set(CATKIN_TEST_RESULTS_DIR $ENV{CATKIN_TEST_RESULTS_DIR} CACHE INTERNAL "")
+# allow overriding CATKIN_TEST_RESULTS_DIR when explicitly passed to CMake as a command line argument
+if(DEFINED CATKIN_TEST_RESULTS_DIR)
+  set(CATKIN_TEST_RESULTS_DIR ${CATKIN_TEST_RESULTS_DIR} CACHE INTERNAL "")
 else()
   set(CATKIN_TEST_RESULTS_DIR ${CMAKE_BINARY_DIR}/test_results CACHE INTERNAL "")
 endif()
+message(STATUS "Using CATKIN_TEST_RESULTS_DIR: ${CATKIN_TEST_RESULTS_DIR}")
 file(MAKE_DIRECTORY ${CATKIN_TEST_RESULTS_DIR})
 
 # create target to build tests
