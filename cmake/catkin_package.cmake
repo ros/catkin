@@ -36,7 +36,8 @@
 # :param CFG_EXTRAS: a CMake file containing extra stuff that should
 #   be accessible to users of this package after
 #   ``find_package``\ -ing it.  This file must live in the
-#   subdirectory ``cmake``.  Various additional extension are possible:
+#   subdirectory ``cmake`` or be an absolute path.  Various additional
+#   file extension are possible:
 #   for a plain cmake file just ``.cmake``, for files expanded using
 #   CMake's ``configure_file()`` use ``.cmake.in`` or for files expanded
 #   by empy use ``.cmake.em``.  The templates can distinguish between
@@ -304,7 +305,12 @@ function(_catkin_package)
   # generate devel space cfg-extras for project
   set(PKG_CFG_EXTRAS "")
   foreach(extra ${${PROJECT_NAME}_CFG_EXTRAS} ${PROJECT_CFG_EXTRAS})
-    set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
+    if(IS_ABSOLUTE ${extra})
+      set(base ${extra})
+      get_filename_component(extra ${extra} NAME)
+    else()
+      set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
+    endif()
     if(EXISTS ${base}.em OR EXISTS ${base}.develspace.em)
       if(EXISTS ${base}.develspace.em)
         set(em_template ${base}.develspace.em)
@@ -329,8 +335,8 @@ function(_catkin_package)
       list(APPEND PKG_CFG_EXTRAS ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
     elseif(EXISTS ${base})
       list(APPEND PKG_CFG_EXTRAS ${base})
-    else()
-      message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}', 'cmake/${extra}.em', 'cmake/${extra}.develspace.em' or 'cmake/${extra}.in' must exist.")
+    elseif(NOT EXISTS ${base}.installspace.em AND NOT EXISTS ${base}.installspace.in)
+      message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}.develspace.em', 'cmake/${extra}.em', 'cmake/${extra}.develspace.in', 'cmake/${extra}.in', 'cmake/${extra}' or a variant specific to the installspace must exist.")
     endif()
   endforeach()
 
@@ -393,7 +399,12 @@ function(_catkin_package)
   set(PKG_CFG_EXTRAS "")
   set(installable_cfg_extras "")
   foreach(extra ${${PROJECT_NAME}_CFG_EXTRAS} ${PROJECT_CFG_EXTRAS})
-    set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
+    if(IS_ABSOLUTE ${extra})
+      set(base ${extra})
+      get_filename_component(extra ${extra} NAME)
+    else()
+      set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
+    endif()
     if(EXISTS ${base}.em OR EXISTS ${base}.installspace.em)
       if(EXISTS ${base}.installspace.em)
         set(em_template ${base}.installspace.em)
@@ -405,6 +416,7 @@ function(_catkin_package)
         ${em_template}
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
       list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
     elseif(EXISTS ${base}.in OR EXISTS ${base}.installspace.in)
       if(EXISTS ${base}.installspace.in)
         set(in_template ${base}.installspace.in)
@@ -416,12 +428,13 @@ function(_catkin_package)
         @ONLY
       )
       list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
     elseif(EXISTS ${base})
       list(APPEND installable_cfg_extras ${base})
-    else()
-      message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}', 'cmake/${extra}.em', 'cmake/${extra}.installspace.em' or 'cmake/${extra}.in' must exist.")
+      list(APPEND PKG_CFG_EXTRAS ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+    elseif(NOT EXISTS ${base}.develspace.em AND NOT EXISTS ${base}.develspace.in)
+      message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}.installspace.em', 'cmake/${extra}.em', 'cmake/${extra}.installspace.in', 'cmake/${extra}.in', 'cmake/${extra}'or a variant specific to the develspace must exist.")
     endif()
-    list(APPEND PKG_CFG_EXTRAS ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
   endforeach()
   install(FILES
     ${installable_cfg_extras}
