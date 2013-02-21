@@ -45,6 +45,8 @@
 #   use the extensions ``.cmake.develspace.(in|em)`` or
 #   ``.cmake.installspace.(em|in)`` to generate the files only for a
 #   specific case.
+#   If the global variable ${PROJECT_NAME}_CFG_EXTRAS is set it will be
+#   prepended to the explicitly passed argument.
 # :type CFG_EXTRAS: string
 # :param SKIP_CMAKE_CONFIG_GENERATION: the option to skip the generation
 #   of the CMake config files for the package
@@ -301,7 +303,7 @@ function(_catkin_package)
 
   # generate devel space cfg-extras for project
   set(PKG_CFG_EXTRAS "")
-  foreach(extra ${PROJECT_CFG_EXTRAS})
+  foreach(extra ${${PROJECT_NAME}_CFG_EXTRAS} ${PROJECT_CFG_EXTRAS})
     set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
     if (EXISTS ${base})
       list(APPEND PKG_CFG_EXTRAS ${base})
@@ -390,7 +392,7 @@ function(_catkin_package)
   # generate and install cfg-extras for project
   set(PKG_CFG_EXTRAS "")
   set(installable_cfg_extras "")
-  foreach(extra ${PROJECT_CFG_EXTRAS})
+  foreach(extra ${${PROJECT_NAME}_CFG_EXTRAS} ${PROJECT_CFG_EXTRAS})
     set(base ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${extra})
     if (EXISTS ${base})
       list(APPEND installable_cfg_extras ${base})
