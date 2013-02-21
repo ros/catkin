@@ -41,10 +41,10 @@
 #   CMake's ``configure_file()`` use ``.cmake.in`` or for files expanded
 #   by empy use ``.cmake.em``.  The templates can distinguish between
 #   devel- and installspace using the boolean variables ``DEVELSPACE``
-#   and ``INSTALLSPACE``.  For em templated files it is also possible to
-#   use the extensions ``.cmake.develspace.em`` or
-#   ``.cmake.installspace.em`` to generate the files only for a specific
-#   case.
+#   and ``INSTALLSPACE``.  For templated files it is also possible to
+#   use the extensions ``.cmake.develspace.(in|em)`` or
+#   ``.cmake.installspace.(em|in)`` to generate the files only for a
+#   specific case.
 # :type CFG_EXTRAS: string
 # :param SKIP_CMAKE_CONFIG_GENERATION: the option to skip the generation
 #   of the CMake config files for the package
@@ -306,18 +306,23 @@ function(_catkin_package)
     if (EXISTS ${base})
       list(APPEND PKG_CFG_EXTRAS ${base})
     elseif(EXISTS ${base}.em OR EXISTS ${base}.develspace.em)
-      if(EXISTS ${base}.em)
-        set(em_template ${base}.em)
-      else()
+      if(EXISTS ${base}.develspace.em)
         set(em_template ${base}.develspace.em)
+      else()
+        set(em_template ${base}.em)
       endif()
       em_expand(${catkin_EXTRAS_DIR}/templates/cfg-extras.context.py.in
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${extra}.develspace.context.cmake.py
         ${em_template}
         ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
       list(APPEND PKG_CFG_EXTRAS ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
-    elseif(EXISTS ${base}.in)
-      configure_file(${base}.in
+    elseif(EXISTS ${base}.in OR EXISTS ${base}.develspace.in)
+      if(EXISTS ${base}.develspace.in)
+        set(in_template ${base}.develspace.in)
+      else()
+        set(in_template ${base}.in)
+      endif()
+      configure_file(${in_template}
         ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
         @ONLY
       )
@@ -390,18 +395,23 @@ function(_catkin_package)
     if (EXISTS ${base})
       list(APPEND installable_cfg_extras ${base})
     elseif(EXISTS ${base}.em OR EXISTS ${base}.installspace.em)
-      if(EXISTS ${base}.em)
-        set(em_template ${base}.em)
-      else()
+      if(EXISTS ${base}.installspace.em)
         set(em_template ${base}.installspace.em)
+      else()
+        set(em_template ${base}.em)
       endif()
       em_expand(${catkin_EXTRAS_DIR}/templates/cfg-extras.context.py.in
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${extra}.installspace.context.cmake.py
         ${em_template}
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
       list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
-    elseif(EXISTS ${base}.in)
-      configure_file(${base}.in
+    elseif(EXISTS ${base}.in OR EXISTS ${base}.installspace.in)
+      if(EXISTS ${base}.installspace.in)
+        set(in_template ${base}.installspace.in)
+      else()
+        set(in_template ${base}.in)
+      endif()
+      configure_file(${in_template}
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra}
         @ONLY
       )
