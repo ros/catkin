@@ -117,9 +117,9 @@ function(catkin_add_env_hooks file_prefix)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
           DESTINATION etc/catkin/profile.d)
       endif()
-    elseif(EXISTS ${base}.in)
+    elseif(EXISTS ${base}.in OR EXISTS ${base}.installspace.in)
       # evaluate in template and install
-      if(EXISTS ${base}.installspace.in OR EXISTS ${base}.installspace.in)
+      if(EXISTS ${base}.installspace.in)
         set(in_template ${base}.installspace.in)
       else()
         set(in_template ${base}.in)
