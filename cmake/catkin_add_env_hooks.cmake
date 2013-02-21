@@ -65,10 +65,7 @@ function(catkin_add_env_hooks file_prefix)
     # generate environment hook for devel space
     set(DEVELSPACE True)
     set(INSTALLSPACE False)
-    if (EXISTS ${base})
-      # copy plain file
-      file(COPY ${base} DESTINATION ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d)
-    elseif(EXISTS ${base}.em OR EXISTS ${base}.develspace.em)
+    if(EXISTS ${base}.em OR EXISTS ${base}.develspace.em)
       # evaluate em template
       if(EXISTS ${base}.develspace.em)
         set(em_template ${base}.develspace.em)
@@ -89,6 +86,9 @@ function(catkin_add_env_hooks file_prefix)
       configure_file(${in_template}
         ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d/${ENV_HOOK}
         @ONLY)
+    elseif (EXISTS ${base})
+      # copy plain file
+      file(COPY ${base} DESTINATION ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d)
     else()
       message(FATAL_ERROR "catkin_add_env_hooks() could not find environment hook.  Either '${base}', '${base}.em', '${base}.develspace.em' or '${base}.in' must exist.")
     endif()
@@ -96,13 +96,7 @@ function(catkin_add_env_hooks file_prefix)
     # generate and install environment hook for installspace
     set(DEVELSPACE False)
     set(INSTALLSPACE True)
-    if (EXISTS ${base})
-      # install plain file
-      if(NOT ${ARG_SKIP_INSTALL})
-        install(FILES ${base}
-          DESTINATION etc/catkin/profile.d)
-      endif()
-    elseif(EXISTS ${base}.em OR EXISTS ${base}.installspace.em)
+    if(EXISTS ${base}.em OR EXISTS ${base}.installspace.em)
       # evaluate em template and install
       if(EXISTS ${base}.installspace.em)
         set(em_template ${base}.installspace.em)
@@ -129,6 +123,12 @@ function(catkin_add_env_hooks file_prefix)
         @ONLY)
       if(NOT ${ARG_SKIP_INSTALL})
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
+          DESTINATION etc/catkin/profile.d)
+      endif()
+    elseif (EXISTS ${base})
+      # install plain file
+      if(NOT ${ARG_SKIP_INSTALL})
+        install(FILES ${base}
           DESTINATION etc/catkin/profile.d)
       endif()
     endif()
