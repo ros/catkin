@@ -102,6 +102,7 @@ foreach(filename
     catkin_add_env_hooks
     catkin_destinations
     catkin_generate_environment
+    catkin_metapackage
     catkin_package
     catkin_package_xml
     catkin_workspace

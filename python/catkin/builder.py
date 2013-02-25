@@ -68,7 +68,6 @@ def colorize_line(line):
         cline = cline.replace('~~ ', '@{pf}~~ @|')
         cline = cline.replace(' - ', ' - @!@{bf}')
         cline = cline.replace('(', '@|(')
-        cline = cline.replace('(metapackage)', '@|(@{cf}metapackage@|)')
         cline = cline.replace('(plain cmake)', '@|(@{rf}plain cmake@|)')
         cline = cline.replace('(unknown)', '@|(@{yf}unknown@|)')
     if line.startswith('-- +++'):
@@ -76,7 +75,6 @@ def colorize_line(line):
         cline = cline.replace('+++', '@!@{gf}+++@|')
         cline = cline.replace('kin package: \'', 'kin package: \'@!@{bf}')
         cline = cline.replace(')', '@|)')
-        cline = cline.replace('metapackage: \'', 'metapackage: \'@!@{bf}')
         cline = cline.replace('\'\n', '@|\'\n')
         cline = cline.replace('cmake package: \'', 'cmake package: \'@!@{bf}')
         cline = cline.replace('\'\n', '@|\'\n')
@@ -214,6 +212,10 @@ def build_catkin_package(
     # Check for Makefile and maybe call cmake
     makefile = os.path.join(build_dir, 'Makefile')
     if not os.path.exists(makefile) or force_cmake:
+        if not os.path.exists(os.path.join(os.path.dirname(package.filename), 'CMakeLists.txt')):
+            print(colorize_line('Error: Package "%s" does not have a CMakeLists.txt file' % package.name))
+            sys.exit('Can not build catkin package without CMakeLists.txt file')
+
         # Run cmake
         cmake_cmd = [
             'cmake',
@@ -375,34 +377,30 @@ def build_package(
     install, jobs, force_cmake, quiet, last_env, cmake_args,
     number=None, of=None
 ):
-    export_tags = [e.tagname for e in package.exports]
     cprint('@!@{gf}==>@| ', end='')
     new_last_env = get_new_env(package, develspace, installspace, install, last_env)
-    if 'metapackage' in export_tags:
-        cprint("Skipping @!metapackage@|: '@!@{bf}" + package.name + "@|'")
+    build_type = _get_build_type(package)
+    if build_type == 'catkin':
+        build_catkin_package(
+            path, package,
+            workspace, buildspace, develspace, installspace,
+            install, jobs, force_cmake, quiet, last_env, cmake_args
+        )
+        if not os.path.exists(new_last_env):
+            raise RuntimeError(
+                "No env.sh file generated at: '" + new_last_env +
+                "'\n  This sometimes occurs when a non-catkin package is "
+                "interpreted as a catkin package.\n  This can also occur "
+                "when the cmake cache is stale, try --force-cmake."
+            )
+    elif build_type == 'cmake':
+        build_cmake_package(
+            path, package,
+            workspace, buildspace, develspace, installspace,
+            install, jobs, force_cmake, quiet, last_env, cmake_args
+        )
     else:
-        build_type = _get_build_type(package)
-        if build_type == 'catkin':
-            build_catkin_package(
-                path, package,
-                workspace, buildspace, develspace, installspace,
-                install, jobs, force_cmake, quiet, last_env, cmake_args
-            )
-            if not os.path.exists(new_last_env):
-                raise RuntimeError(
-                    "No env.sh file generated at: '" + new_last_env +
-                    "'\n  This sometimes occurs when a non-catkin package is "
-                    "interpreted as a catkin package.\n  This can also occur "
-                    "when the cmake cache is stale, try --force-cmake."
-                )
-        elif build_type == 'cmake':
-            build_cmake_package(
-                path, package,
-                workspace, buildspace, develspace, installspace,
-                install, jobs, force_cmake, quiet, last_env, cmake_args
-            )
-        else:
-            sys.exit('Can not build package with unknown build_type')
+        sys.exit('Can not build package with unknown build_type')
     if number is not None and of is not None:
         msg = ' [@{gf}@!' + str(number) + '@| of @!@{gf}' + str(of) + '@|]'
     else:
@@ -414,16 +412,12 @@ def build_package(
 
 def get_new_env(package, develspace, installspace, install, last_env):
     new_env = None
-    export_tags = [e.tagname for e in package.exports]
-    if 'metapackage' in export_tags:
-        new_env = last_env
-    else:
-        build_type = _get_build_type(package)
-        if build_type in ['catkin', 'cmake']:
-            new_env = os.path.join(
-                installspace if install else develspace,
-                'env.sh'
-            )
+    build_type = _get_build_type(package)
+    if build_type in ['catkin', 'cmake']:
+        new_env = os.path.join(
+            installspace if install else develspace,
+            'env.sh'
+        )
     return new_env
 
 
@@ -530,15 +524,12 @@ def build_workspace_isolated(
     if not packages:
         sys.exit("No packages found in source space: {0}".format(sourcespace))
 
-    # verify that specified package exists in workspace and is not a metapackage
+    # verify that specified package exists in workspace
     if build_packages:
         packages_by_name = {p.name: path for path, p in packages.iteritems()}
         unknown_packages = [p for p in build_packages if p not in packages_by_name]
         if unknown_packages:
             sys.exit('Packages not found in the workspace: %s' % ', '.join(unknown_packages))
-        metapackages = [p for p in build_packages if ('metapackage' in [e.tagname for e in packages[packages_by_name[p]].exports])]
-        if metapackages:
-            sys.exit('Packages are metapackages and can not be built: %s' % ', '.join(metapackages))
 
     # Report topological ordering
     ordered_packages = topological_order_packages(packages)
@@ -548,30 +539,24 @@ def build_workspace_isolated(
     msg.append('@{pf}~~@|  traversing packages in topological order:')
     for path, package in ordered_packages:
         export_tags = [e.tagname for e in package.exports]
-        if 'metapackage' in export_tags:
+        if 'build_type' in export_tags:
+            build_type_tag = [e.content for e in package.exports
+                                        if e.tagname == 'build_type'][0]
+        else:
+            build_type_tag = 'catkin'
+        if build_type_tag == 'catkin':
+            msg.append('@{pf}~~@|  - @!@{bf}' + package.name + '@|')
+        elif build_type_tag == 'cmake':
             msg.append(
                 '@{pf}~~@|  - @!@{bf}' + package.name + '@|' +
-                ' (@{cf}metapackage@|)'
+                ' (@!@{cf}plain cmake@|)'
             )
         else:
-            if 'build_type' in export_tags:
-                build_type_tag = [e.content for e in package.exports
-                                            if e.tagname == 'build_type'][0]
-            else:
-                build_type_tag = 'catkin'
-            if build_type_tag == 'catkin':
-                msg.append('@{pf}~~@|  - @!@{bf}' + package.name + '@|')
-            elif build_type_tag == 'cmake':
-                msg.append(
-                    '@{pf}~~@|  - @!@{bf}' + package.name + '@|' +
-                    ' (@!@{cf}plain cmake@|)'
-                )
-            else:
-                msg.append(
-                    '@{pf}~~@|  - @!@{bf}' + package.name + '@|' +
-                    ' (@{rf}unknown@|)'
-                )
-                unknown_build_types.append(package)
+            msg.append(
+                '@{pf}~~@|  - @!@{bf}' + package.name + '@|' +
+                ' (@{rf}unknown@|)'
+            )
+            unknown_build_types.append(package)
     msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
     for index in range(len(msg)):
         msg[index] = fmt(msg[index])

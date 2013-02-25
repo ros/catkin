@@ -85,13 +85,11 @@ def main():
 
     packages = find_packages(source_path, exclude_subspaces=True)
 
-    # verify that specified package exists in workspace and is not a metapackage
+    # verify that specified package exists in workspace
     if args.pkg:
         packages_by_name = {p.name: path for path, p in packages.iteritems()}
         if args.pkg not in packages_by_name:
             return fmt('@{rf}Package @{boldon}"%s"@{boldoff} not found in the workspace' % args.pkg)
-        if 'metapackage' in [e.tagname for e in packages[packages_by_name[args.pkg]].exports]:
-            return fmt('@{rf}Package @{boldon}"%s"@{boldoff} is a metapackage and can not be built' % args.pkg)
 
     # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
     force_cmake = cmake_input_changed(packages, build_path, cmake_args)
