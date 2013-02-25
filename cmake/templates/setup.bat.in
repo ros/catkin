@@ -41,11 +41,6 @@ if NOT EXIST %_SETUP_TMP% (
 call %_SETUP_TMP%
 del %_SETUP_TMP%
 
-REM remember type of shell if not already set
-if [%CATKIN_SHELL%]==[] (
-  set CATKIN_SHELL=bat
-)
-
 REM source all environment hooks
 for /F "tokens=* delims=;" %%a in ("%_CATKIN_ENVIRONMENT_HOOKS%") do (
   for %%b in (%%a) do (

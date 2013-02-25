@@ -33,6 +33,11 @@ export PATH
 export PKG_CONFIG_PATH
 export PYTHONPATH
 
+# remember type of shell if not already set
+if [ -z "$CATKIN_SHELL" ]; then
+  CATKIN_SHELL=sh
+fi
+
 # invoke Python script to generate necessary exports of environment variables
 _MKTEMP=`which mktemp`
 _SETUP_TMP=`$_MKTEMP /tmp/setup.sh.XXXXXXXXXX`
@@ -40,15 +45,10 @@ if [ $? -ne 0 -o ! -f "$_SETUP_TMP" ]; then
   echo "Could not create temporary file: $_SETUP_TMP"
   return 1
 fi
-$_SETUP_UTIL $@ > $_SETUP_TMP
+CATKIN_SHELL=$CATKIN_SHELL $_SETUP_UTIL $@ > $_SETUP_TMP
 . $_SETUP_TMP
 _RM=`which rm`
 $_RM $_SETUP_TMP
-
-# remember type of shell if not already set
-if [ -z "$CATKIN_SHELL" ]; then
-  CATKIN_SHELL=sh
-fi
 
 # source all environment hooks
 _IFS=$IFS
