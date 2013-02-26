@@ -49,6 +49,13 @@
 #   If the global variable ${PROJECT_NAME}_CFG_EXTRAS is set it will be
 #   prepended to the explicitly passed argument.
 # :type CFG_EXTRAS: string
+# :param CODE_GENERATION_TARGETS: a list of target names which generate
+#   code. Downstream packages can depend on these targets to ensure that
+#   code is generated before it is being used. The generated CMake config
+#   file will ensure that the targets exists.
+#   If the global variable ${PROJECT_NAME}_CODE_GENERATION_TARGETS is
+#   set it will be prepended to the explicitly passed argument.
+# :type CODE_GENERATION_TARGETS: string
 # :param SKIP_CMAKE_CONFIG_GENERATION: the option to skip the generation
 #   of the CMake config files for the package
 # :type SKIP_CMAKE_CONFIG_GENERATION: bool
@@ -341,6 +348,13 @@ function(_catkin_package)
   endforeach()
 
   if(NOT PROJECT_SKIP_CMAKE_CONFIG_GENERATION)
+    set(PKG_CODE_GENERATION_TARGETS ${${PROJECT_NAME}_CODE_GENERATION_TARGETS} ${PROJECT_CODE_GENERATION_TARGETS})
+    foreach(t ${PKG_CODE_GENERATION_TARGETS})
+      if(NOT TARGET ${t})
+        message(FATAL_ERROR "catkin_package() could not find target '${t}' for code generation.")
+      endif()
+    endforeach()
+
     # generate devel space config for project
     set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
     if(NOT EXISTS ${infile})
