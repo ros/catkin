@@ -294,10 +294,7 @@ function(_catkin_package)
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
   list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
-  set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
-  if("${PROJECT_NAME}" STREQUAL "catkin")
-    set(PKG_CMAKE_DIR "${catkin_EXTRAS_DIR}")
-  endif()
+  set(PKG_CMAKE_DIR "\${${PROJECT_NAME}_EXTRAS_DIR}")
 
   if(NOT PROJECT_SKIP_PKG_CONFIG_GENERATION)
     # ensure that output folder exists
@@ -398,7 +395,7 @@ function(_catkin_package)
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
   list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
-  set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
+  set(PKG_CMAKE_DIR "\${${PROJECT_NAME}_EXTRAS_DIR}")
 
   if(NOT PROJECT_SKIP_PKG_CONFIG_GENERATION)
     # ensure that output folder exists
