@@ -32,7 +32,7 @@ include_directories(${sensor_msgs_INCLUDE_DIRS})
 include_directories(${std_msgs_INCLUDE_DIRS} ${quux_msgs_INCLUDE_DIRS})
 
 add_executable(quux_user-exec src/main.cpp)
-add_dependencies(quux_user-exec sensor_msgs_gencpp)
+add_dependencies(quux_user-exec ${sensor_msgs_EXPORTED_TARGETS})
 
 message(STATUS ${roscpp_serialization_LIBRARIES})
 
@@ -41,4 +41,4 @@ target_link_libraries(quux_user-exec ${roscpp_serialization_LIBRARIES} ${rostime
 add_executable(quux_srv-exec src/srv_test.cpp)
 
 target_link_libraries(quux_srv-exec ${roscpp_serialization_LIBRARIES})
-add_dependencies(quux_srv-exec sensor_msgs_gencpp)
+add_dependencies(quux_srv-exec ${sensor_msgs_EXPORTED_TARGETS})
