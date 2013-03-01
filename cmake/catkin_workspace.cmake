@@ -49,6 +49,7 @@ function(catkin_workspace)
       if(${is_meta})
         message(STATUS "~~  - ${name} (metapackage)")
         # verify that CMakeLists.txt of metapackage conforms to standard
+        set(metapackage_arguments "")
         configure_file(${catkin_EXTRAS_DIR}/templates/metapackage.cmake.in
           ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/metapackages/${name}/CMakeLists.txt
           @ONLY)
@@ -98,6 +99,7 @@ function(catkin_workspace)
           add_subdirectory(${path})
         else()
           message(STATUS "==> add_subdirectory(${path}) (using generated file from <buildspace>/catkin_generated/metapackages/${name})")
+          message("WARNING: Add a CMakeLists.txt file to the metapackage '${name}'")
           add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/metapackages/${name} ${CMAKE_BINARY_DIR}/${path})
         endif()
       elseif(${build_type} MATCHES catkin)

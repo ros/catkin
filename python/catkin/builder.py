@@ -50,6 +50,7 @@ except ImportError as e:
         '"catkin_pkg", it is up to date and on the PYTHONPATH.' % e
     )
 
+from catkin.cmake import configure_file, get_cmake_path
 from catkin.terminal_color import ansi, disable_ANSI_colors, fmt, sanitize
 
 
@@ -212,14 +213,24 @@ def build_catkin_package(
     # Check for Makefile and maybe call cmake
     makefile = os.path.join(build_dir, 'Makefile')
     if not os.path.exists(makefile) or force_cmake:
-        if not os.path.exists(os.path.join(os.path.dirname(package.filename), 'CMakeLists.txt')):
-            print(colorize_line('Error: Package "%s" does not have a CMakeLists.txt file' % package.name))
-            sys.exit('Can not build catkin package without CMakeLists.txt file')
+        package_dir = os.path.dirname(package.filename)
+        if not os.path.exists(os.path.join(package_dir, 'CMakeLists.txt')):
+            export_tags = [e.tagname for e in package.exports]
+            if 'metapackage' not in export_tags:
+                print(colorize_line('Error: Package "%s" does not have a CMakeLists.txt file' % package.name))
+                sys.exit('Can not build catkin package without CMakeLists.txt file')
+            # generate CMakeLists.txt for metpackages without one
+            print(colorize_line('Warning: metapackage "%s" should have a CMakeLists.txt file' % package.name))
+            cmake_code = configure_file(os.path.join(get_cmake_path(), 'templates', 'metapackage.cmake.in'), {'name': package.name, 'metapackage_arguments': 'DIRECTORY "%s"' % package_dir})
+            cmakelists_txt = os.path.join(build_dir, 'CMakeLists.txt')
+            with open(cmakelists_txt, 'w') as f:
+                f.write(cmake_code)
+            package_dir = build_dir
 
         # Run cmake
         cmake_cmd = [
             'cmake',
-            os.path.dirname(package.filename),
+            package_dir,
             '-DCATKIN_DEVEL_PREFIX=' + develspace,
             '-DCMAKE_INSTALL_PREFIX=' + installspace
         ]

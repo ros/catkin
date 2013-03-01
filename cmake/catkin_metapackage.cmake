@@ -6,14 +6,17 @@
 #   immediately after calling ``project()`` and
 #   ``find_package(catkin REQUIRED)``.
 #
+# :param DIRECTORY: the path to the package.xml file if not in the same
+#   location as the CMakeLists.txt file
+# :type DIRECTORY: string
+#
 # @public
 #
 function(catkin_metapackage)
-  if(ARGN)
-    message(FATAL_ERROR "catkin_metapackage() called with unused arguments: ${ARGN}")
+  cmake_parse_arguments(ARG "" "DIRECTORY" "" ${ARGN})
+  if(ARG_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "catkin_metapackage() called with unused arguments: ${ARG_UNPARSED_ARGUMENTS}")
   endif()
-
-  debug_message(10 "catkin_metapackage() called in file ${CMAKE_CURRENT_LIST_FILE}")
 
   # verify that project() has been called before
   if(NOT PROJECT_NAME)
@@ -23,22 +26,20 @@ function(catkin_metapackage)
     message(FATAL_ERROR "catkin_metapackage() PROJECT_NAME is set to 'Project', which is not a valid project name. You must call project() before calling catkin_metapackage().")
   endif()
 
-  cmake_parse_arguments(PROJECT "" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS" ${ARGN})
-  if(PROJECT_UNPARSED_ARGUMENTS)
-    message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_UNPARSED_ARGUMENTS}")
+  debug_message(10 "catkin_metapackage() called in file ${CMAKE_CURRENT_LIST_FILE}")
+
+  if(NOT ARG_DIRECTORY)
+    if(${CMAKE_CURRENT_LIST_FILE} STREQUAL ${CMAKE_BINARY_DIR}/catkin_generated/metapackages/${PROJECT_NAME}/CMakeLists.txt)
+      set(ARG_DIRECTORY ${CMAKE_SOURCE_DIR}/${path})
+    else()
+      set(ARG_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    endif()
   endif()
 
-  # call catkin_package_xml()
-  if(${CMAKE_CURRENT_LIST_FILE} STREQUAL ${CMAKE_BINARY_DIR}/catkin_generated/metapackages/${PROJECT_NAME}/CMakeLists.txt)
-    set(package_dir ${CMAKE_SOURCE_DIR}/${path})
-    catkin_package_xml(DIRECTORY ${CMAKE_SOURCE_DIR}/${path})
-  else()
-    set(package_dir ${CMAKE_CURRENT_SOURCE_DIR})
-    catkin_package_xml()
-  endif()
+  catkin_package_xml(DIRECTORY ${ARG_DIRECTORY})
 
   # install package.xml
-  install(FILES ${package_dir}/package.xml
+  install(FILES ${ARG_DIRECTORY}/package.xml
     DESTINATION share/${PROJECT_NAME}
   )
 endfunction()
