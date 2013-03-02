@@ -61,8 +61,8 @@ def cprint(msg, end=None):
 def colorize_line(line):
     cline = sanitize(line)
     cline = cline.replace(
-        '-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-        '-- @{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~@|'
+        '-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+        '-- @{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~@|'
     )
     if line.startswith('-- ~~'):
         # -- ~~  -
@@ -553,8 +553,8 @@ def build_workspace_isolated(
     ordered_packages = topological_order_packages(packages)
     unknown_build_types = []
     msg = []
-    msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    msg.append('@{pf}~~@|  traversing packages in topological order:')
+    msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' + ('~' * len(str(len(ordered_packages)))))
+    msg.append('@{pf}~~@|  traversing %d packages in topological order:' % len(ordered_packages))
     for path, package in ordered_packages:
         export_tags = [e.tagname for e in package.exports]
         if 'build_type' in export_tags:
@@ -575,7 +575,7 @@ def build_workspace_isolated(
                 ' (@{rf}unknown@|)'
             )
             unknown_build_types.append(package)
-    msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+    msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' + ('~' * len(str(len(ordered_packages)))))
     for index in range(len(msg)):
         msg[index] = fmt(msg[index])
     print('\n'.join(msg))
