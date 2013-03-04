@@ -70,6 +70,8 @@ else()
   set(@PROJECT_NAME@_PREFIX ${@PROJECT_NAME@_INSTALL_PREFIX})
 endif()
 
+set(@PROJECT_NAME@_EXTRAS_DIR ${CMAKE_CURRENT_LIST_DIR})
+
 # warn when using a deprecated package
 if(NOT "@PROJECT_DEPRECATED@" STREQUAL "")
   set(_msg "WARNING: package '@PROJECT_NAME@' is deprecated")
@@ -165,5 +167,5 @@ if(@PROJECT_NAME@_LIBRARIES)
 endif()
 
 foreach(extra @PKG_CFG_EXTRAS@)
-  include(${extra})
+  include(${@PROJECT_NAME@_EXTRAS_DIR}/${extra})
 endforeach()

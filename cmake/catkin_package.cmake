@@ -294,10 +294,7 @@ function(_catkin_package)
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
   list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
-  set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
-  if("${PROJECT_NAME}" STREQUAL "catkin")
-    set(PKG_CMAKE_DIR "${catkin_EXTRAS_DIR}")
-  endif()
+  set(PKG_CMAKE_DIR "\${${PROJECT_NAME}_EXTRAS_DIR}")
 
   if(NOT PROJECT_SKIP_PKG_CONFIG_GENERATION)
     # ensure that output folder exists
@@ -328,7 +325,7 @@ function(_catkin_package)
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/${extra}.develspace.context.cmake.py
         ${em_template}
         ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
-      list(APPEND PKG_CFG_EXTRAS ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${extra})
     elseif(EXISTS ${base}.in OR EXISTS ${base}.develspace.in)
       if(EXISTS ${base}.develspace.in)
         set(in_template ${base}.develspace.in)
@@ -339,9 +336,13 @@ function(_catkin_package)
         ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
         @ONLY
       )
-      list(APPEND PKG_CFG_EXTRAS ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${extra})
     elseif(EXISTS ${base})
-      list(APPEND PKG_CFG_EXTRAS ${base})
+      configure_file(${base}
+        ${CATKIN_DEVEL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra}
+        COPYONLY
+      )
+      list(APPEND PKG_CFG_EXTRAS ${extra})
     elseif(NOT EXISTS ${base}.installspace.em AND NOT EXISTS ${base}.installspace.in)
       message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}.develspace.em', 'cmake/${extra}.em', 'cmake/${extra}.develspace.in', 'cmake/${extra}.in', 'cmake/${extra}' or a variant specific to the installspace must exist.")
     endif()
@@ -394,7 +395,7 @@ function(_catkin_package)
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
   list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
-  set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
+  set(PKG_CMAKE_DIR "\${${PROJECT_NAME}_EXTRAS_DIR}")
 
   if(NOT PROJECT_SKIP_PKG_CONFIG_GENERATION)
     # ensure that output folder exists
@@ -430,7 +431,7 @@ function(_catkin_package)
         ${em_template}
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
       list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
-      list(APPEND PKG_CFG_EXTRAS ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${extra})
     elseif(EXISTS ${base}.in OR EXISTS ${base}.installspace.in)
       if(EXISTS ${base}.installspace.in)
         set(in_template ${base}.installspace.in)
@@ -442,10 +443,10 @@ function(_catkin_package)
         @ONLY
       )
       list(APPEND installable_cfg_extras ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${extra})
-      list(APPEND PKG_CFG_EXTRAS ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${extra})
     elseif(EXISTS ${base})
       list(APPEND installable_cfg_extras ${base})
-      list(APPEND PKG_CFG_EXTRAS ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/cmake/${extra})
+      list(APPEND PKG_CFG_EXTRAS ${extra})
     elseif(NOT EXISTS ${base}.develspace.em AND NOT EXISTS ${base}.develspace.in)
       message(FATAL_ERROR "catkin_package() could not find CFG_EXTRAS file.  Either 'cmake/${extra}.installspace.em', 'cmake/${extra}.em', 'cmake/${extra}.installspace.in', 'cmake/${extra}.in', 'cmake/${extra}'or a variant specific to the develspace must exist.")
     endif()
