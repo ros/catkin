@@ -606,6 +606,8 @@ def build_workspace_isolated(
                     number=index + 1, of=len(ordered_packages)
                 )
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 cprint(
                     '@{rf}@!<==@| ' +
                     'Failed to process package \'@!@{bf}' +
