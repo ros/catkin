@@ -1,6 +1,6 @@
 <stack>
   <name>catkin</name>
-  <version>0.4.5</version>
+  <version>0.4.6</version>
   <description>Willow Garage low-level build system macros and infrastructure.</description>
   <author email="straszheim@willowgarage.com">Troy Straszheim</author>
   <author>Morten Kjaergaard</author>
