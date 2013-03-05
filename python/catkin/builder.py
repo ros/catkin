@@ -586,9 +586,11 @@ def build_workspace_isolated(
         sys.exit('Can not build workspace with packages of unknown build_type')
 
     # Check to see if the workspace has changed
-    if cmake_input_changed(packages, buildspace, cmake_args, 'catkin_make_isolated'):
-        force_cmake = True
+    force_cmake, install_toggled = cmake_input_changed(packages, buildspace, install, cmake_args, 'catkin_make_isolated')
+    if force_cmake:
         print('The packages or cmake arguments have changed, forcing cmake invocation')
+    elif install_toggled:
+        print('The install argument has been toggled, forcing cmake invocation on plain cmake package')
 
     # Build packages
     original_develspace = copy.deepcopy(develspace)
@@ -599,10 +601,12 @@ def build_workspace_isolated(
             develspace = os.path.join(original_develspace, package.name)
         if not build_packages or package.name in build_packages:
             try:
+                export_tags = [e.tagname for e in package.exports]
+                is_cmake_package = 'cmake' in [e.content for e in package.exports if e.tagname == 'build_type']
                 last_env = build_package(
                     path, package,
                     workspace, buildspace, develspace, installspace,
-                    install, jobs, force_cmake, quiet, last_env, cmake_args,
+                    install, jobs, force_cmake or (install_toggled and is_cmake_package), quiet, last_env, cmake_args,
                     number=index + 1, of=len(ordered_packages)
                 )
             except Exception as e:
@@ -651,13 +655,14 @@ def build_workspace_isolated(
             f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.zsh.in'), variables))
 
 
-def cmake_input_changed(packages, build_path, cmake_args=None, filename='catkin_make'):
+def cmake_input_changed(packages, build_path, install, cmake_args=None, filename='catkin_make'):
     # get current input
     package_paths = os.pathsep.join(sorted(packages.keys()))
     cmake_args = ' '.join(cmake_args) if cmake_args else ''
 
     # file to store current input
     changed = False
+    install_toggled = False
     input_filename = os.path.join(build_path, '%s.cache' % filename)
     if not os.path.exists(input_filename):
         changed = True
@@ -666,13 +671,16 @@ def cmake_input_changed(packages, build_path, cmake_args=None, filename='catkin_
         with open(input_filename, 'r') as f:
             previous_package_paths = f.readline().rstrip()
             previous_cmake_args = f.readline().rstrip()
+            previous_install = f.readline().rstrip() == str(True)
         if package_paths != previous_package_paths:
             changed = True
         if cmake_args != previous_cmake_args:
             changed = True
+        if install != previous_install:
+            install_toggled = True
 
     # store current input for next invocation
     with open(input_filename, 'w') as f:
-        f.write('%s\n%s' % (package_paths, cmake_args))
+        f.write('%s\n%s\n%s' % (package_paths, cmake_args, install))
 
-    return changed
+    return changed, install_toggled
