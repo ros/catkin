@@ -45,7 +45,7 @@ if [ $? -ne 0 -o ! -f "$_SETUP_TMP" ]; then
   echo "Could not create temporary file: $_SETUP_TMP"
   return 1
 fi
-CATKIN_SHELL=$CATKIN_SHELL $_SETUP_UTIL $@ > $_SETUP_TMP
+CATKIN_SHELL=$CATKIN_SHELL "$_SETUP_UTIL" $@ > $_SETUP_TMP
 . $_SETUP_TMP
 _RM=`which rm`
 $_RM $_SETUP_TMP

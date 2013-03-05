@@ -165,6 +165,7 @@ if(@PROJECT_NAME@_LIBRARIES)
   _remove_duplicate_libraries(@PROJECT_NAME@_LIBRARIES @PROJECT_NAME@_LIBRARIES)
 endif()
 
-foreach(extra @PKG_CFG_EXTRAS@)
+set(pkg_cfg_extras "@PKG_CFG_EXTRAS@")
+foreach(extra ${pkg_cfg_extras})
   include(${extra})
 endforeach()
