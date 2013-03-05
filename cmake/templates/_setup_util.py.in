@@ -201,6 +201,8 @@ def find_env_hooks(environ, cmake_prefix_path):
 
     generic_env_hooks = []
     specific_env_hooks = []
+    generic_env_hooks_by_filename = {}
+    specific_env_hooks_by_filename = {}
     generic_env_hook_ext = 'bat' if IS_WINDOWS else 'sh'
     specific_env_hook_ext = environ['CATKIN_SHELL'] if not IS_WINDOWS and 'CATKIN_SHELL' in environ and environ['CATKIN_SHELL'] else None
     # remove non-workspace paths
@@ -211,8 +213,16 @@ def find_env_hooks(environ, cmake_prefix_path):
             for filename in sorted(os.listdir(env_hook_dir)):
                 if filename.endswith('.%s' % generic_env_hook_ext):
                     generic_env_hooks.append(os.path.join(env_hook_dir, filename))
+                    # remove previous env hook with same name if present
+                    if filename in generic_env_hooks_by_filename:
+                        generic_env_hooks.remove(generic_env_hooks_by_filename[filename])
+                    generic_env_hooks_by_filename[filename] = generic_env_hooks[-1]
                 elif specific_env_hook_ext is not None and filename.endswith('.%s' % specific_env_hook_ext):
                     specific_env_hooks.append(os.path.join(env_hook_dir, filename))
+                    # remove previous env hook with same name if present
+                    if filename in specific_env_hooks_by_filename:
+                        specific_env_hooks.remove(specific_env_hooks_by_filename[filename])
+                    specific_env_hooks_by_filename[filename] = specific_env_hooks[-1]
     lines.append(assignment('_CATKIN_ENVIRONMENT_HOOKS', os.pathsep.join(generic_env_hooks + specific_env_hooks)))
     return lines
 
