@@ -2,6 +2,10 @@
 @{
 import os
 try:
+    from catkin_pkg.cmake import get_metapackage_cmake_template_path
+except ImportError as e:
+    raise RuntimeError('ImportError: "from catkin_pkg.cmake import get_metapackage_cmake_template_path" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH.' % e)
+try:
     from catkin_pkg.topological_order import topological_order
 except ImportError as e:
     raise RuntimeError('ImportError: "from catkin_pkg.topological_order import topological_order" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH.' % e)
@@ -40,3 +44,5 @@ message_generators = [package.name for (_, package) in ordered_packages if 'mess
 }@
 set(CATKIN_MESSAGE_GENERATORS @(' '.join(message_generators)))
 @[end if]@
+
+set(CATKIN_METAPACKAGE_CMAKE_TEMPLATE "@(get_metapackage_cmake_template_path())")

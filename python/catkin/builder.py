@@ -41,7 +41,7 @@ import subprocess
 import sys
 
 try:
-    from catkin_pkg.cmake import configure_file, get_cmake_path
+    from catkin_pkg.cmake import configure_file, get_metapackage_cmake_template_path
     from catkin_pkg.packages import find_packages
     from catkin_pkg.topological_order import topological_order_packages
 except ImportError as e:
@@ -221,7 +221,7 @@ def build_catkin_package(
                 sys.exit('Can not build catkin package without CMakeLists.txt file')
             # generate CMakeLists.txt for metpackages without one
             print(colorize_line('Warning: metapackage "%s" should have a CMakeLists.txt file' % package.name))
-            cmake_code = configure_file(os.path.join(get_cmake_path(), 'templates', 'metapackage.cmake.in'), {'name': package.name, 'metapackage_arguments': 'DIRECTORY "%s"' % package_dir})
+            cmake_code = configure_file(get_metapackage_cmake_template_path(), {'name': package.name, 'metapackage_arguments': 'DIRECTORY "%s"' % package_dir})
             cmakelists_txt = os.path.join(build_dir, 'CMakeLists.txt')
             with open(cmakelists_txt, 'w') as f:
                 f.write(cmake_code)

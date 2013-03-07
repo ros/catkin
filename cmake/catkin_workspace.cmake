@@ -50,7 +50,8 @@ function(catkin_workspace)
         message(STATUS "~~  - ${name} (metapackage)")
         # verify that CMakeLists.txt of metapackage conforms to standard
         set(metapackage_arguments "")
-        configure_file(${catkin_EXTRAS_DIR}/templates/metapackage.cmake.in
+        assert(CATKIN_METAPACKAGE_CMAKE_TEMPLATE)
+        configure_file(${CATKIN_METAPACKAGE_CMAKE_TEMPLATE}
           ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/metapackages/${name}/CMakeLists.txt
           @ONLY)
         if(EXISTS ${CMAKE_SOURCE_DIR}/${path}/CMakeLists.txt)
