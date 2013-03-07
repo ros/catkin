@@ -41,6 +41,7 @@ import subprocess
 import sys
 
 try:
+    from catkin_pkg.cmake import configure_file, get_cmake_path
     from catkin_pkg.packages import find_packages
     from catkin_pkg.topological_order import topological_order_packages
 except ImportError as e:
@@ -50,7 +51,6 @@ except ImportError as e:
         '"catkin_pkg", it is up to date and on the PYTHONPATH.' % e
     )
 
-from catkin.cmake import configure_file, get_cmake_path
 from catkin.terminal_color import ansi, disable_ANSI_colors, fmt, sanitize
 
 
