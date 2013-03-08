@@ -271,7 +271,12 @@ def build_catkin_package(
         isolation_print_command(' '.join(cmake_cmd))
         if last_env is not None:
             cmake_cmd = [last_env] + cmake_cmd
-        run_command_colorized(cmake_cmd, build_dir, quiet)
+        try:
+            run_command_colorized(cmake_cmd, build_dir, quiet)
+        except subprocess.CalledProcessError as e:
+            # remove Makefile to force CMake invocation next time
+            os.remove(makefile)
+            raise
     else:
         print('Makefile exists, skipping explicit cmake invocation...')
         # Check to see if cmake needs to be run via make
