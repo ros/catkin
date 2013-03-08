@@ -93,7 +93,7 @@ def main():
             return fmt('@{rf}Package @{boldon}"%s"@{boldoff} not found in the workspace' % args.pkg)
 
     # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
-    force_cmake = cmake_input_changed(packages, build_path, cmake_args)
+    force_cmake, _ = cmake_input_changed(packages, build_path, cmake_args=cmake_args)
 
     # consider calling cmake
     makefile = os.path.join(build_path, 'Makefile')
