@@ -51,6 +51,7 @@ except ImportError as e:
         '"catkin_pkg", it is up to date and on the PYTHONPATH.' % e
     )
 
+from catkin.cmake import get_cmake_path
 from catkin.terminal_color import ansi, disable_ANSI_colors, fmt, sanitize
 
 
