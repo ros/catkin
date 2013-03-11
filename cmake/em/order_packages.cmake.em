@@ -45,4 +45,4 @@ message_generators = [package.name for (_, package) in ordered_packages if 'mess
 set(CATKIN_MESSAGE_GENERATORS @(' '.join(message_generators)))
 @[end if]@
 
-set(CATKIN_METAPACKAGE_CMAKE_TEMPLATE "@(get_metapackage_cmake_template_path())")
+set(CATKIN_METAPACKAGE_CMAKE_TEMPLATE "@(get_metapackage_cmake_template_path().replace('\\','/'))")
