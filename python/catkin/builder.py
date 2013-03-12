@@ -633,11 +633,12 @@ def build_workspace_isolated(
         sys.exit('Can not build workspace with packages of unknown build_type')
 
     # Check to see if the workspace has changed
-    force_cmake, install_toggled = cmake_input_changed(packages, buildspace, install=install, cmake_args=cmake_args, filename='catkin_make_isolated')
-    if force_cmake:
-        print('The packages or cmake arguments have changed, forcing cmake invocation')
-    elif install_toggled:
-        print('The install argument has been toggled, forcing cmake invocation on plain cmake package')
+    if not force_cmake:
+        force_cmake, install_toggled = cmake_input_changed(packages, buildspace, install=install, cmake_args=cmake_args, filename='catkin_make_isolated')
+        if force_cmake:
+            print('The packages or cmake arguments have changed, forcing cmake invocation')
+        elif install_toggled:
+            print('The install argument has been toggled, forcing cmake invocation on plain cmake package')
 
     # Build packages
     original_develspace = copy.deepcopy(develspace)
