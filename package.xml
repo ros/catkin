@@ -3,7 +3,7 @@
   <name>catkin</name>
   <version>0.5.64</version>
   <description>Low-level build system macros and infrastructure for ROS.</description>
-  <maintainer email="dthomas@willowgarage.com">Dirk Thomas</maintainer>
+  <maintainer email="dthomas@osrfoundation.org">Dirk Thomas</maintainer>
   <license>BSD</license>
 
   <url type="website">http://www.ros.org/wiki/catkin</url>
