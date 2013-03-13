@@ -167,5 +167,8 @@ endif()
 
 set(pkg_cfg_extras "@PKG_CFG_EXTRAS@")
 foreach(extra ${pkg_cfg_extras})
+  if(NOT IS_ABSOLUTE ${extra})
+    set(extra ${@PROJECT_NAME@_DIR}/${extra})
+  endif()
   include(${extra})
 endforeach()
