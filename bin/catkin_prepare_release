@@ -14,12 +14,12 @@ from catkin.package_version import bump_version
 from catkin.workspace_vcs import get_repository_type, vcs_remotes
 
 
-def get_commands(path, packages, vcs_type, new_version, svn_url=None):
+def get_commands(path, packages, vcs_type, bump, new_version, svn_url=None):
     result = []
 
     # bump version number
     script = os.path.relpath(os.path.join(os.path.dirname(__file__), 'catkin_package_version'))
-    cmd = '%s --bump patch %s' % (script, path)
+    cmd = '%s --bump %s %s' % (script, bump, path)
     result.append(cmd)
 
     # commit modified package.xml
@@ -78,6 +78,7 @@ def main():
     commands = get_commands(path=path,
                             packages=packages,
                             vcs_type=vcs_type,
+                            bump=args.bump,
                             new_version=new_version,
                             svn_url=url)
     #print('Execute the following commands:\n')
