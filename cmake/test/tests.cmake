@@ -43,17 +43,17 @@ function(catkin_run_tests_target type name xunit_filename)
   if(NOT TARGET run_tests_${PROJECT_NAME})
     add_custom_target(run_tests_${PROJECT_NAME})
     # create hidden meta target which depends on hidden test targets which depend on clean_test_results
-    add_custom_target(.run_tests_${PROJECT_NAME})
+    add_custom_target(_run_tests_${PROJECT_NAME})
     # run_tests depends on this hidden target hierarchy to clear test results before running all tests
-    add_dependencies(run_tests .run_tests_${PROJECT_NAME})
+    add_dependencies(run_tests _run_tests_${PROJECT_NAME})
   endif()
   # create meta target to trigger all tests of a specific type of a project
   if(NOT TARGET run_tests_${PROJECT_NAME}_${type})
     add_custom_target(run_tests_${PROJECT_NAME}_${type})
     add_dependencies(run_tests_${PROJECT_NAME} run_tests_${PROJECT_NAME}_${type})
     # hidden meta target which depends on hidden test targets which depend on clean_test_results
-    add_custom_target(.run_tests_${PROJECT_NAME}_${type})
-    add_dependencies(.run_tests_${PROJECT_NAME} .run_tests_${PROJECT_NAME}_${type})
+    add_custom_target(_run_tests_${PROJECT_NAME}_${type})
+    add_dependencies(_run_tests_${PROJECT_NAME} _run_tests_${PROJECT_NAME}_${type})
   endif()
   # create target for test execution
   set(results ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/${xunit_filename})
@@ -70,8 +70,8 @@ function(catkin_run_tests_target type name xunit_filename)
     add_dependencies(run_tests_${PROJECT_NAME}_${type}_${name} ${_testing_DEPENDENCIES})
   endif()
   # hidden test target which depends on building all tests and cleaning test results
-  add_custom_target(.run_tests_${PROJECT_NAME}_${type}_${name}
+  add_custom_target(_run_tests_${PROJECT_NAME}_${type}_${name}
     COMMAND ${cmd})
-  add_dependencies(.run_tests_${PROJECT_NAME}_${type} .run_tests_${PROJECT_NAME}_${type}_${name})
-  add_dependencies(.run_tests_${PROJECT_NAME}_${type}_${name} clean_test_results tests ${_testing_DEPENDENCIES})
+  add_dependencies(_run_tests_${PROJECT_NAME}_${type} _run_tests_${PROJECT_NAME}_${type}_${name})
+  add_dependencies(_run_tests_${PROJECT_NAME}_${type}_${name} clean_test_results tests ${_testing_DEPENDENCIES})
 endfunction()
