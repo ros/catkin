@@ -118,13 +118,12 @@ Workspace
 
 1. *toplevel.cmake*: The top-level CMakeLists.txt is loaded by Catkin, this should be a symbolic link to catin/cmake/toplevel.cmake.
 
- 1. This optionally includes a user-defined ``workspace.cmake``
- 2. attempts to find catkin's sources by traversing locations in this oder:
+ 1. attempts to find catkin's sources by traversing locations in this oder:
 
   a. In the source folder direct subfolder 'catkin' (using ${CMAKE_SOURCE_DIR}/catkin)
   b. Workspace folders listed in CMAKE_PREFIX_PATH
 
- 3. loads catkin macros from the first catkin location found that way
+ 2. loads catkin macros from the first catkin location found that way
 
   1. *all.cmake*:
 
@@ -139,7 +138,7 @@ Workspace
      1. creates empty catkin marker file .catkin in installspace
      2. creates environment setup files
 
- 4. exits with catkin_workspace()
+ 3. exits with catkin_workspace()
 
 2. *catkin_workspace.cmake*:
 

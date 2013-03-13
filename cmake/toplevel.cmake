@@ -3,9 +3,6 @@
 
 cmake_minimum_required(VERSION 2.8.3)
 
-# optionally provide a cmake file in the workspace to override arbitrary stuff
-include(workspace.cmake OPTIONAL)
-
 set(CATKIN_TOPLEVEL TRUE)
 
 # include catkin directly or via find_package()
