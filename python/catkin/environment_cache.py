@@ -114,7 +114,6 @@ def _append_comment(code, value):
 
 def _set_variable(code, key, value):
     if _is_not_windows():
-        export_command = 'export'
+        code.append('export %s="%s"' % (key, value))
     else:
-        export_command = 'set'
-    code.append('%s %s="%s"' % (export_command, key, value))
+        code.append('set %s=%s' % (key, value))
