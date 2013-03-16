@@ -77,6 +77,24 @@ def test_results(test_results_dir):
     return results
 
 
+def aggregate_results(results, callback_per_result=None):
+    """
+    Aggregate results
+
+    :param results: dict as from test_results()
+    :returns: tuple (num_tests, num_errors, num_failures)
+    """
+    sum_tests = sum_errors = sum_failures = 0
+    for name in sorted(results.keys()):
+        (num_tests, num_errors, num_failures) = results[name]
+        sum_tests += num_tests
+        sum_errors += num_errors
+        sum_failures += num_failures
+        if callback_per_result:
+            callback_per_result(name, num_tests, num_errors, num_failures)
+    return sum_tests, sum_errors, sum_failures
+
+
 def print_summary(results, show_stable=False, show_unstable=True):
     """
     print summary to stdout
@@ -85,14 +103,10 @@ def print_summary(results, show_stable=False, show_unstable=True):
     :param show_stable: print tests without failures extra
     :param show_stable: print tests with failures extra
     """
-    sum_tests = sum_errors = sum_failures = 0
-    for name in sorted(results.keys()):
-        (num_tests, num_errors, num_failures) = results[name]
-        sum_tests += num_tests
-        sum_errors += num_errors
-        sum_failures += num_failures
+    def callback(name, num_tests, num_errors, num_failures):
         if show_stable and not num_errors and not num_failures:
             print('%s: %d tests' % (name, num_tests))
         if show_unstable and (num_errors or num_failures):
             print('%s: %d tests, %d errors, %d failures' % (name, num_tests, num_errors, num_failures))
+    sum_tests, sum_errors, sum_failures = aggregate_results(results, callback)
     print('Summary: %d tests, %d errors, %d failures' % (sum_tests, sum_errors, sum_failures))

@@ -8,7 +8,7 @@ import sys
 # find the import relatively if available to work before installing catkin or overlaying installed version
 if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-from catkin.test_results import print_summary, test_results
+from catkin.test_results import aggregate_results, print_summary, test_results
 
 
 def main():
@@ -26,7 +26,10 @@ def main():
 
     try:
         results = test_results(test_results_dir)
+        _, sum_errors, sum_failures = aggregate_results(results)
         print_summary(results)
+        if sum_errors or sum_failures:
+            sys.exit(1)
     except Exception as e:
         sys.stderr.write(str(e))
         exit(2)
