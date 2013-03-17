@@ -18,7 +18,6 @@ if(SETUPTOOLS_DEB_LAYOUT)
 else()
   set(PYTHON_PACKAGES_DIR site-packages)
   file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX}/bin PYTHON_INSTALL_PREFIX) # setuptools is fussy about windows paths
-  set(SETUPTOOLS_ARG_EXTRA "--install-scripts=${PYTHON_INSTALL_PREFIX}")
 endif()
 
 if(NOT WIN32)
