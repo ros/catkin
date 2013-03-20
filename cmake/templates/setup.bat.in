@@ -48,6 +48,10 @@ for /F "tokens=* delims=;" %%a in ("%_CATKIN_ENVIRONMENT_HOOKS%") do (
   )
 )
 
+REM 3rdparty packages often put dll's into lib (convention is bin) and 
+REM windows finds it's dll's via the PATH variable. Make that happen here!
+set PATH=%LD_LIBRARY_PATH%;%PATH%
+
 REM unset temporary variables
 set _SETUP_UTIL=
 set _PYTHON=
