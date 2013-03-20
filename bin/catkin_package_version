@@ -21,6 +21,9 @@ def main():
 
     try:
         packages = find_packages(args.path)
+        if not packages:
+            print('No packages found', file=sys.stderr)
+            sys.exit(1)
         version = verify_equal_package_versions(packages.values())
 
         # only print the version number

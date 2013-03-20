@@ -65,6 +65,9 @@ def main():
 
     path = '.'
     packages = find_packages(path)
+    if not packages:
+        print('No packages found', file=sys.stderr)
+        sys.exit(1)
     old_version = verify_equal_package_versions(packages.values())
     new_version = bump_version(old_version, args.bump)
 
