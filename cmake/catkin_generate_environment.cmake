@@ -45,7 +45,7 @@ function(catkin_generate_environment)
   # installspace
   set(SETUP_DIR ${CMAKE_INSTALL_PREFIX})
 
-  if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
+  if(NOT CATKIN_BUILD_BINARY_PACKAGE)
     # generate and install workspace marker
     file(WRITE ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.catkin "")
     install(FILES
@@ -66,7 +66,7 @@ function(catkin_generate_environment)
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.sh
       @ONLY)
-    if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
+    if(NOT CATKIN_BUILD_BINARY_PACKAGE)
       install(PROGRAMS
         ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.sh
         DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -76,7 +76,7 @@ function(catkin_generate_environment)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
         ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
         @ONLY)
-      if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
+      if(NOT CATKIN_BUILD_BINARY_PACKAGE)
         install(FILES
           ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
           DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -105,7 +105,7 @@ function(catkin_generate_environment)
   configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
     ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
     @ONLY)
-  if(NOT CATKIN_BUILD_BINARY_PACKAGE OR "${PROJECT_NAME}" STREQUAL "catkin")
+  if(NOT CATKIN_BUILD_BINARY_PACKAGE)
     install(FILES
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
       DESTINATION ${CMAKE_INSTALL_PREFIX})

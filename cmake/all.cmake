@@ -178,7 +178,7 @@ configure_file(${catkin_EXTRAS_DIR}/templates/env.${script_ext}.in
 set(CATKIN_ENV ${SETUP_DIR}/env_cached.${script_ext} CACHE INTERNAL "catkin environment")
 
 # add additional environment hooks
-if(CATKIN_BUILD_BINARY_PACKAGE AND NOT "${PROJECT_NAME}" STREQUAL "catkin")
+if(CATKIN_BUILD_BINARY_PACKAGE)
   set(catkin_skip_install_env_hooks "SKIP_INSTALL")
 endif()
 if(CMAKE_HOST_UNIX)
