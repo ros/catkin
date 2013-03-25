@@ -140,8 +140,7 @@ def print_command_banner(cmd, cwd, color):
         cwd_str = sanitize(cwd)
         # Print command notice
         cprint('@{bf}####')
-        cprint('@{bf}#### Running command: @!"%s"@|@{bf} in @!"%s"' % \
-                  (cmd_str, cwd_str))
+        cprint('@{bf}#### Running command: @!"%s"@|@{bf} in @!"%s"' % (cmd_str, cwd_str))
         cprint('@{bf}####')
     else:
         print('####')
@@ -202,9 +201,9 @@ def _check_build_dir(name, workspace, buildspace):
 
 def isolation_print_command(cmd, path=None):
     cprint(
-            blue_arrow + " " + sanitize(cmd) + "@|" +
-            (" @!@{kf}in@| '@!" + sanitize(path) + "@|'" if path else '')
-        )
+        blue_arrow + " " + sanitize(cmd) + "@|" +
+        (" @!@{kf}in@| '@!" + sanitize(path) + "@|'" if path else '')
+    )
 
 
 def get_python_path(path):
@@ -254,7 +253,9 @@ def build_catkin_package(
                 sys.exit('Can not build catkin package without CMakeLists.txt file')
             # generate CMakeLists.txt for metpackages without one
             print(colorize_line('Warning: metapackage "%s" should have a CMakeLists.txt file' % package.name))
-            cmake_code = configure_file(get_metapackage_cmake_template_path(), {'name': package.name, 'metapackage_arguments': 'DIRECTORY "%s"' % package_dir})
+            cmake_code = configure_file(
+                get_metapackage_cmake_template_path(),
+                {'name': package.name, 'metapackage_arguments': 'DIRECTORY "%s"' % package_dir})
             cmakelists_txt = os.path.join(build_dir, 'CMakeLists.txt')
             with open(cmakelists_txt, 'w') as f:
                 f.write(cmake_code)
@@ -480,8 +481,7 @@ def get_new_env(package, develspace, installspace, install, last_env):
 def _get_build_type(package):
     build_type = 'catkin'
     if 'build_type' in [e.tagname for e in package.exports]:
-        build_type = [e.content for e in package.exports
-                                if e.tagname == 'build_type'][0]
+        build_type = [e.content for e in package.exports if e.tagname == 'build_type'][0]
     return build_type
 
 
@@ -605,8 +605,7 @@ def build_workspace_isolated(
     for path, package in ordered_packages:
         export_tags = [e.tagname for e in package.exports]
         if 'build_type' in export_tags:
-            build_type_tag = [e.content for e in package.exports
-                                        if e.tagname == 'build_type'][0]
+            build_type_tag = [e.content for e in package.exports if e.tagname == 'build_type'][0]
         else:
             build_type_tag = 'catkin'
         if build_type_tag == 'catkin':
@@ -634,7 +633,13 @@ def build_workspace_isolated(
 
     # Check to see if the workspace has changed
     if not force_cmake:
-        force_cmake, install_toggled = cmake_input_changed(packages, buildspace, install=install, cmake_args=cmake_args, filename='catkin_make_isolated')
+        force_cmake, install_toggled = cmake_input_changed(
+            packages,
+            buildspace,
+            install=install,
+            cmake_args=cmake_args,
+            filename='catkin_make_isolated'
+        )
         if force_cmake:
             print('The packages or cmake arguments have changed, forcing cmake invocation')
         elif install_toggled:
@@ -654,7 +659,8 @@ def build_workspace_isolated(
                 last_env = build_package(
                     path, package,
                     workspace, buildspace, develspace, installspace,
-                    install, jobs, force_cmake or (install_toggled and is_cmake_package), quiet, last_env, cmake_args, make_args,
+                    install, jobs, force_cmake or (install_toggled and is_cmake_package),
+                    quiet, last_env, cmake_args, make_args,
                     number=index + 1, of=len(ordered_packages)
                 )
             except Exception as e:
@@ -665,7 +671,7 @@ def build_workspace_isolated(
                     'Failed to process package \'@!@{bf}' +
                     package.name + '@|\': \n  ' +
                     ('KeyboardInterrupt' if isinstance(e, KeyboardInterrupt)
-                            else str(e))
+                        else str(e))
                 )
                 if isinstance(e, subprocess.CalledProcessError):
                     cmd = ' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd
