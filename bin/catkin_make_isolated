@@ -29,50 +29,36 @@ def parse_args(args=sys.argv[1:]):
     )
     add = parser.add_argument
     add('-C', '--directory', dest='workspace',
-        help='The base path of the workspace (default ".")'
-    )
+        help='The base path of the workspace (default ".")')
     add('--source', '--source-space', default=None,
-        help='The path to the source space (default "src")'
-    )
+        help='The path to the source space (default "src")')
     add('--build', '--build-space', default=None,
-        help='The path to the build space (default "build_isolated")'
-    )
+        help='The path to the build space (default "build_isolated")')
     add('--devel', '--devel-space', default=None,
-        help='Sets the target devel space (default "devel_isolated")'
-    )
+        help='Sets the target devel space (default "devel_isolated")')
     add('--merge', action='store_true', default=False,
-        help='Build each catkin package into a common devel space.'
-    )
+        help='Build each catkin package into a common devel space.')
     add('--install-space', dest='install_space', default=None,
-        help='Sets the target install space (default "install_isolated")'
-    )
+        help='Sets the target install space (default "install_isolated")')
     add('--install', action='store_true', default=False,
-        help='Causes each catkin package to be installed.'
-    )
+        help='Causes each catkin package to be installed.')
     add('-j', '--jobs', type=int, metavar='JOBS', nargs='?',
         help='Specifies the number of jobs (commands) to run simultaneously. '
-             'Defaults to the number of CPU cores.'
-    )
+             'Defaults to the number of CPU cores.')
     add('--force-cmake', action='store_true', default=False,
-        help='Runs cmake explicitly for each catkin package.'
-    )
+        help='Runs cmake explicitly for each catkin package.')
     add('--no-color', action='store_true', default=False,
-        help='Disables colored output (only for catkin_make and CMake)'
-    )
+        help='Disables colored output (only for catkin_make and CMake)')
     add('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
-        help='Invoke "make" on specific packages (only after initial invocation)'
-    )
+        help='Invoke "make" on specific packages (only after initial invocation)')
     add('-q', '--quiet', action='store_true', default=False,
-        help='Suppresses the cmake and make output until an error occurs.'
-    )
+        help='Suppresses the cmake and make output until an error occurs.')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to CMake. '
-             'It must be passed after other arguments since it collects all following options.'
-    )
+             'It must be passed after other arguments since it collects all following options.')
     add('--make-args', dest='make_args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to make.'
-             'It must be passed after other arguments since it collects all following options.'
-    )
+             'It must be passed after other arguments since it collects all following options.')
     opts = parser.parse_args(args)
     opts.cmake_args = cmake_args
     opts.make_args = make_args

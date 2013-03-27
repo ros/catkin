@@ -2,13 +2,9 @@
 
 import os
 import unittest
-# import tempfile
-# import shutil
-# import mock
 
 try:
     import catkin.builder
-    # from catkin.builder import build_workspace_in_isolation
 except ImportError as e:
     raise ImportError(
         'Please adjust your pythonpath before running this test: %s' % str(e)
@@ -27,7 +23,7 @@ class BuilderTest(unittest.TestCase):
 
             def readline(self):
                 self.__popen.returncode = 0
-                return u'\u2018'
+                return unichr(2018)
 
         class MockPopen(object):
             def __init__(self, *args, **kwargs):
