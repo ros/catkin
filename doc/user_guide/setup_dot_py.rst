@@ -50,10 +50,11 @@ be used by catkin::
   from distutils.core import setup
 
   setup(
-    version='...',
-    scripts=['bin/myscript'],
-    packages=['mypkg'],
-    package_dir={'': 'src'})
+      version='...',
+      scripts=['bin/myscript'],
+      packages=['mypkg'],
+      package_dir={'': 'src'}
+  )
 
 This creates relays for all scripts listed in ``scripts`` to a folder
 in devel space where they can be found and executed, and also relay
@@ -77,9 +78,9 @@ like this::
   from catkin_pkg.python_setup import generate_distutils_setup
 
   d = generate_distutils_setup(
-    packages=['mypkg'],
-    scripts=['bin/myscript'],
-    package_dir={'': 'src'}
+      packages=['mypkg'],
+      scripts=['bin/myscript'],
+      package_dir={'': 'src'}
   )
 
   setup(**d)
