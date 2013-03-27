@@ -3,29 +3,33 @@
 from __future__ import print_function
 import argparse
 import os
+import re
 import sys
 
 # find the import relatively if available to work before installing catkin or overlaying installed version
 if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-from catkin.builder import build_workspace_isolated, colorize_line, extract_cmake_and_make_arguments
+from catkin.builder import build_workspace_isolated
+from catkin.builder import colorize_line
+from catkin.builder import extract_cmake_and_make_arguments
+from catkin.builder import extract_jobs_flags
 
 
-def extract_cmake_args(args=sys.argv[1:]):
-    # extract -D* and -G* arguments
-    cmake_args = [a for a in args if a.startswith('-D') or a.startswith('-G')]
-    args = [a for a in args if a not in cmake_args]
-
-    return cmake_args, args
-
-
-def parse_args(args=sys.argv[1:]):
+def parse_args(args=None):
+    args = sys.argv[1:] if args is None else args
     args, cmake_args, make_args = extract_cmake_and_make_arguments(args)
 
+    # Extract make jobs flags
+    jobs_flags = extract_jobs_flags(' '.join(args))
+    if jobs_flags:
+        args = re.sub(jobs_flags, '', ' '.join(args)).split()
+        jobs_flags = jobs_flags.split()
+
     parser = argparse.ArgumentParser(
-        description='Builds each catkin (and non-catkin) package from '
-                    'a given workspace in isolation, but still in '
-                    'topological order.'
+        description=
+        'Builds each catkin (and non-catkin) package from a given workspace in isolation, '
+        'but still in topological order. '
+        'Make job flags (-j/-l) are handled just like catkin_make handles them.'
     )
     add = parser.add_argument
     add('-C', '--directory', dest='workspace',
@@ -42,9 +46,6 @@ def parse_args(args=sys.argv[1:]):
         help='Sets the target install space (default "install_isolated")')
     add('--install', action='store_true', default=False,
         help='Causes each catkin package to be installed.')
-    add('-j', '--jobs', type=int, metavar='JOBS', nargs='?',
-        help='Specifies the number of jobs (commands) to run simultaneously. '
-             'Defaults to the number of CPU cores.')
     add('--force-cmake', action='store_true', default=False,
         help='Runs cmake explicitly for each catkin package.')
     add('--no-color', action='store_true', default=False,
@@ -61,7 +62,7 @@ def parse_args(args=sys.argv[1:]):
              'It must be passed after other arguments since it collects all following options.')
     opts = parser.parse_args(args)
     opts.cmake_args = cmake_args
-    opts.make_args = make_args
+    opts.make_args = make_args + (jobs_flags or [])
     return opts
 
 
@@ -103,7 +104,6 @@ def main():
         installspace=opts.install_space,
         merge=opts.merge,
         install=opts.install,
-        jobs=opts.jobs,
         force_cmake=opts.force_cmake,
         colorize=not opts.no_color,
         build_packages=opts.packages,

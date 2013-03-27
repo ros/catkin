@@ -36,6 +36,7 @@ import copy
 import io
 import multiprocessing
 import os
+import re
 import stat
 import subprocess
 import sys
@@ -222,10 +223,45 @@ def get_python_path(path):
     return python_path
 
 
+def handle_make_arguments(input_make_args):
+    make_args = list(input_make_args)
+    # If no -j/--jobs/-l/--load-average flags are in input_make_args
+    if not extract_jobs_flags(''.join(input_make_args)):
+        # If -j/--jobs/-l/--load-average are in MAKEFLAGS
+        if 'MAKEFLAGS' in os.environ and extract_jobs_flags(os.environ['MAKEFLAGS']):
+            # Do not extend make arguments, let MAKEFLAGS set things
+            pass
+        else:
+            # Else extend the make_arguments to include some jobs flags
+            # If ROS_PARALLEL_JOBS is set use those flags
+            if 'ROS_PARALLEL_JOBS' in os.environ:
+                # ROS_PARALLEL_JOBS is a set of make variables, not just a number
+                ros_parallel_jobs = os.environ['ROS_PARALLEL_JOBS']
+                make_args.extend(ros_parallel_jobs.split())
+            else:
+                # Else Use the number of CPU cores
+                try:
+                    jobs = multiprocessing.cpu_count()
+                except NotImplementedError:
+                    jobs = 1
+                make_args.append('-j{0}'.format(jobs))
+                make_args.append('-l{0}'.format(jobs))
+    return make_args
+
+
+def extract_jobs_flags(mflags):
+    regex = r'(?:^|\s)(-?(?:j|l)(?:\s*[0-9]+|\s|$))' + \
+            r'|' + \
+            r'(?:^|\s)((?:--)?(?:jobs|load-average)(?:(?:=|\s+)[0-9]+|(?:\s|$)))'
+    matches = re.findall(regex, mflags) or []
+    matches = [m[0] or m[1] for m in matches]
+    return ' '.join([m.strip() for m in matches]) if matches else None
+
+
 def build_catkin_package(
     path, package,
     workspace, buildspace, develspace, installspace,
-    install, jobs, force_cmake, quiet, last_env, cmake_args, make_args
+    install, force_cmake, quiet, last_env, cmake_args, make_args
 ):
     cprint(
         "Processing @{cf}catkin@| package: '@!@{bf}" +
@@ -290,8 +326,8 @@ def build_catkin_package(
         )
 
     # Run make
-    make_cmd = ['make', '-j' + str(jobs), '-l' + str(jobs)]
-    make_cmd.extend(make_args)
+    make_cmd = ['make']
+    make_cmd.extend(handle_make_arguments(make_args))
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
@@ -309,7 +345,7 @@ def build_catkin_package(
 def build_cmake_package(
     path, package,
     workspace, buildspace, develspace, installspace,
-    install, jobs, force_cmake, quiet, last_env, cmake_args, make_args
+    install, force_cmake, quiet, last_env, cmake_args, make_args
 ):
     # Notify the user that we are processing a plain cmake package
     cprint(
@@ -352,8 +388,8 @@ def build_cmake_package(
         )
 
     # Run make
-    make_cmd = ['make', '-j' + str(jobs), '-l' + str(jobs)]
-    make_cmd.extend(make_args)
+    make_cmd = ['make']
+    make_cmd.extend(handle_make_arguments(make_args))
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
@@ -431,7 +467,7 @@ exec "$@"
 def build_package(
     path, package,
     workspace, buildspace, develspace, installspace,
-    install, jobs, force_cmake, quiet, last_env, cmake_args, make_args,
+    install, force_cmake, quiet, last_env, cmake_args, make_args,
     number=None, of=None
 ):
     cprint('@!@{gf}==>@| ', end='')
@@ -441,7 +477,7 @@ def build_package(
         build_catkin_package(
             path, package,
             workspace, buildspace, develspace, installspace,
-            install, jobs, force_cmake, quiet, last_env, cmake_args, make_args
+            install, force_cmake, quiet, last_env, cmake_args, make_args
         )
         if not os.path.exists(new_last_env):
             raise RuntimeError(
@@ -454,7 +490,7 @@ def build_package(
         build_cmake_package(
             path, package,
             workspace, buildspace, develspace, installspace,
-            install, jobs, force_cmake, quiet, last_env, cmake_args, make_args
+            install, force_cmake, quiet, last_env, cmake_args, make_args
         )
     else:
         sys.exit('Can not build package with unknown build_type')
@@ -493,7 +529,6 @@ def build_workspace_isolated(
     installspace=None,
     merge=False,
     install=False,
-    jobs=None,
     force_cmake=False,
     colorize=True,
     build_packages=None,
@@ -517,7 +552,6 @@ def build_workspace_isolated(
         devel space. does not work with non-catkin packages, ``bool``
     :param install: if True, install all packages to the install space,
         ``bool``
-    :param jobs: number of parallel build jobs to run (make -jN -lN), ``int``
     :param force_cmake: (optional), if True calls cmake explicitly for each
         package, ``bool``
     :param colorize: if True, colorize cmake output and other messages,
@@ -575,14 +609,6 @@ def build_workspace_isolated(
         print("Additional make Arguments: " + " ".join(make_args))
     else:
         make_args = []
-
-    # Check jobs
-    if not jobs:
-        try:
-            jobs = multiprocessing.cpu_count()
-        except NotImplementedError:
-            jobs = 1
-    jobs = int(jobs)
 
     # Find packages
     packages = find_packages(sourcespace, exclude_subspaces=True)
@@ -659,7 +685,7 @@ def build_workspace_isolated(
                 last_env = build_package(
                     path, package,
                     workspace, buildspace, develspace, installspace,
-                    install, jobs, force_cmake or (install_toggled and is_cmake_package),
+                    install, force_cmake or (install_toggled and is_cmake_package),
                     quiet, last_env, cmake_args, make_args,
                     number=index + 1, of=len(ordered_packages)
                 )
