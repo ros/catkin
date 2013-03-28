@@ -12,7 +12,12 @@ if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from catkin.init_workspace import init_workspace
 from catkin.terminal_color import disable_ANSI_colors, fmt
-from catkin.builder import cmake_input_changed, extract_cmake_and_make_arguments, print_command_banner, run_command, run_command_colorized
+from catkin.builder import cmake_input_changed
+from catkin.builder import extract_cmake_and_make_arguments
+from catkin.builder import handle_make_arguments
+from catkin.builder import print_command_banner
+from catkin.builder import run_command
+from catkin.builder import run_command_colorized
 from catkin_pkg.packages import find_packages
 
 
@@ -32,12 +37,15 @@ def main():
         return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} does not exist' % base_path)
 
     # verify that the base path does not contain a CMakeLists.txt, except if base path equals source path
-    if (args.source is None or os.path.realpath(base_path) != os.path.realpath(args.source)) and os.path.exists(os.path.join(base_path, 'CMakeLists.txt')):
-        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} contains a CMakeLists.txt but "catkin_make" must be invoked in the root of workspace' % base_path)
+    if (args.source is None or os.path.realpath(base_path) != os.path.realpath(args.source)) \
+       and os.path.exists(os.path.join(base_path, 'CMakeLists.txt')):
+        return fmt(('@{rf}The specified base path @{boldon}"%s"@{boldoff} ' % base_path) +
+                   'contains a CMakeLists.txt but "catkin_make" must be invoked in the root of workspace')
 
     # verify that the base path does not contain a package.xml
     if os.path.exists(os.path.join(base_path, 'package.xml')):
-        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} contains a package but "catkin_make" must be invoked in the root of workspace' % base_path)
+        return fmt(('@{rf}The specified base path @{boldon}"%s"@{boldoff} ' % base_path) +
+                   'contains a package but "catkin_make" must be invoked in the root of workspace')
 
     print('Base path: %s' % base_path)
 
@@ -98,7 +106,12 @@ def main():
     # consider calling cmake
     makefile = os.path.join(build_path, 'Makefile')
     if not os.path.exists(makefile) or args.force_cmake or force_cmake:
-        cmd = ['cmake', source_path, '-DCATKIN_DEVEL_PREFIX=%s' % devel_path, '-DCMAKE_INSTALL_PREFIX=%s' % install_path]
+        cmd = [
+            'cmake',
+            source_path,
+            '-DCATKIN_DEVEL_PREFIX=%s' % devel_path,
+            '-DCMAKE_INSTALL_PREFIX=%s' % install_path
+        ]
         cmd += cmake_args
         try:
             print_command_banner(cmd, build_path, color=not args.no_color)
@@ -121,21 +134,7 @@ def main():
 
     # invoke make
     cmd = ['make']
-    jobs = args.jobs
-    if args.jobs == '':
-        cmd.append('-j')
-    else:
-        jobs = args.jobs
-        if not jobs:
-            if 'ROS_PARALLEL_JOBS' in os.environ:
-                ros_parallel_jobs = os.environ['ROS_PARALLEL_JOBS']
-                cmd += [arg for arg in ros_parallel_jobs.split(' ') if arg]
-            else:
-                jobs = multiprocessing.cpu_count()
-        if jobs:
-            cmd.append('-j%d' % jobs)
-            cmd.append('-l%d' % jobs)
-    cmd += args.make_args
+    cmd.extend(handle_make_arguments(args.make_args))
     try:
         make_path = build_path
         if args.pkg:
@@ -149,23 +148,34 @@ def main():
 def _parse_args(args=sys.argv[1:]):
     args, cmake_args, make_args = extract_cmake_and_make_arguments(args)
 
-    parser = argparse.ArgumentParser(description='Creates the catkin workspace layout and invokes cmake and make. Any argument starting with "-D" will be passed to the "cmake" invocation. All other arguments (i.e. target names) are passed to the "make" invocation.')
-    parser.add_argument('-C', '--directory', default='.', help='The base path of the workspace (default ".")')
-    parser.add_argument('--source', help='The path to the source space (default "src")')
-    parser.add_argument('--build', help='The path to the build space (default "build")')
-    parser.add_argument('-j', '--jobs', type=int, metavar='JOBS', nargs='?', help='Specifies the number of jobs (commands) to run simultaneously. Defaults to the environment variable ROS_PARALLEL_JOBS and falls back to the number of CPU cores.')
-    parser.add_argument('--force-cmake', action='store_true', help='Invoke "cmake" even if it has been executed before')
-    parser.add_argument('--no-color', action='store_true', help='Disables colored ouput (only for catkin_make and CMake)')
-    parser.add_argument('--pkg', help='Invoke "make" on a specific package only')
-    parser.add_argument('--cmake-args', dest='cmake_args', nargs='*', type=str,
-        help='Arbitrary arguments which are passes to CMake. It must be passed after other arguments since it collects all following options.')
-    parser.add_argument('--make-args', dest='make_args', nargs='*', type=str,
-        help='Arbitrary arguments which are passes to make. It must be passed after other arguments since it collects all following options. This is only necessary in combination with --cmake-args since else all unknown arguments are passed to make anyway.')
+    parser = argparse.ArgumentParser(
+        description=
+        'Creates the catkin workspace layout and invokes cmake and make. '
+        'Any argument starting with "-D" will be passed to the "cmake" invocation. '
+        'The -j (--jobs) and -l (--load-average) arguments for make are also extracted and passed to make directly. '
+        'If no -j/-l arguments are given, then the MAKEFLAGS environment variable is searched for -j/-l flags. '
+        'If found then no -j/-l flags are passed to make explicitly (as not to override the MAKEFLAGS). '
+        'If MAKEFLAGS is not set then the environement variable ROS_PARALLEL_JOBS is used. '
+        'If not ROS_PARALLEL_JOBS then the flags "-jn -ln" are used, where n is number of CPU cores. '
+        'If the number of CPU cores cannot be determined then no flags are given to make. '
+        'All other arguments (i.e. target names) are passed to the "make" invocation.')
+    add = parser.add_argument
+    add('-C', '--directory', default='.', help='The base path of the workspace (default ".")')
+    add('--source', help='The path to the source space (default "src")')
+    add('--build', help='The path to the build space (default "build")')
+    add('--force-cmake', action='store_true', help='Invoke "cmake" even if it has been executed before')
+    add('--no-color', action='store_true', help='Disables colored ouput (only for catkin_make and CMake)')
+    add('--pkg', help='Invoke "make" on a specific package only')
+    add('--cmake-args', dest='cmake_args', nargs='*', type=str,
+        help='Arbitrary arguments which are passes to CMake. '
+             'It must be passed after other arguments since it collects all following options.')
+    add('--make-args', dest='make_args', nargs='*', type=str,
+        help='Arbitrary arguments which are passes to make. '
+             'It must be passed after other arguments since it collects all following options. '
+             'This is only necessary in combination with --cmake-args since else all unknown '
+             'arguments are passed to make anyway.')
 
     namespace, unknown_args = parser.parse_known_args(args)
-    # support -j/--jobs without an argument which argparse can not distinguish
-    if not namespace.jobs and [a for a in args if a == '-j' or a == '--jobs']:
-        namespace.jobs = ''
     namespace.cmake_args = cmake_args
     namespace.make_args = unknown_args + make_args
     return namespace
