@@ -156,8 +156,8 @@ def _parse_args(args=sys.argv[1:]):
         'If no -j/-l arguments are given, then the MAKEFLAGS environment variable is searched for -j/-l flags. '
         'If found then no -j/-l flags are passed to make explicitly (as not to override the MAKEFLAGS). '
         'If MAKEFLAGS is not set then the environement variable ROS_PARALLEL_JOBS is used. '
-        'If the ROS_PARALLEL_JOBS variable is not defined then the flags "-jn -ln" are used, '
-        'where n is number of CPU cores or 1 if the number of cores cannot be determined. '
+        'If not ROS_PARALLEL_JOBS then the flags "-jn -ln" are used, where n is number of CPU cores. '
+        'If the number of CPU cores cannot be determined then no flags are given to make. '
         'All other arguments (i.e. target names) are passed to the "make" invocation.')
     add = parser.add_argument
     add('-C', '--directory', default='.', help='The base path of the workspace (default ".")')

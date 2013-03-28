@@ -167,8 +167,7 @@ def run_command(cmd, cwd, quiet=False, colorize=False):
     out = io.StringIO() if quiet else sys.stdout
     if capture:
         while True:
-            line = proc.stdout.readline().decode('utf8', 'replace')
-            line = unicode(line)
+            line = unicode(proc.stdout.readline())
             if proc.returncode is not None or not line:
                 break
             try:
@@ -242,10 +241,11 @@ def handle_make_arguments(input_make_args):
                 # Else Use the number of CPU cores
                 try:
                     jobs = multiprocessing.cpu_count()
+                    make_args.append('-j{0}'.format(jobs))
+                    make_args.append('-l{0}'.format(jobs))
                 except NotImplementedError:
-                    jobs = 1
-                make_args.append('-j{0}'.format(jobs))
-                make_args.append('-l{0}'.format(jobs))
+                    # If the number of cores cannot be determined, do not extend args
+                    pass
     return make_args
 
 
