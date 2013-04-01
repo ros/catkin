@@ -44,15 +44,14 @@ would look like this::
   /stick/pickage/... (pickage files)
   /stick/peckage/... (peckage files)
 
-The new version adds a new "stick" metapackage subdirectory under /stick, along with a package.xml file::
+The new version adds a new "stick" metapackage subdirectory under /stick, along with a package.xml and CMakeLists.txt file::
 
   /stick/stick/package.xml
+  /stick/stick/CMakeLists.xml
   /stick/pickage/... (pickage files)
   /stick/peckage/... (peckage files)
 
-.. note:: Metapackages do not have a CMakeLists.txt file.
-
-The contents of the /stick/stick/package.xml looks like this::
+The contents of the /stick/stick/CMakeLists.xml must look like this::
 
   <package>
     <name>stick</name>
@@ -73,6 +72,13 @@ The contents of the /stick/stick/package.xml looks like this::
       <metapackage/>
     </export>
   </package>
+
+The contents of the /stick/stick/package.xml looks like this::
+
+  cmake_minimum_required(VERSION 2.8.3)
+  project(stick)
+  find_package(catkin REQUIRED)
+  catkin_metapackage()
 
 The rest of these instructions refer to changes within regular (not meta-) catkin packages.
 
