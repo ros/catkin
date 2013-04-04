@@ -155,8 +155,10 @@ def _parse_args(args=sys.argv[1:]):
         'The -j (--jobs) and -l (--load-average) arguments for make are also extracted and passed to make directly. '
         'If no -j/-l arguments are given, then the MAKEFLAGS environment variable is searched for -j/-l flags. '
         'If found then no -j/-l flags are passed to make explicitly (as not to override the MAKEFLAGS). '
-        'If MAKEFLAGS is not set then the environement variable ROS_PARALLEL_JOBS is used. '
-        'If not ROS_PARALLEL_JOBS then the flags "-jn -ln" are used, where n is number of CPU cores. '
+        'If MAKEFLAGS is not set then the jobs flags in the ROS_PARALLEL_JOBS environment variable are passed to make. '
+        'Note: ROS_PARALLEL_JOBS should contain the exact job flags, not just a number. '
+        'See: http://www.ros.org/wiki/ROS/EnvironmentVariables#ROS_PARALLEL_JOBS '
+        'If ROS_PARALLEL_JOBS is not set then the flags "-jn -ln" are used, where n is number of CPU cores. '
         'If the number of CPU cores cannot be determined then no flags are given to make. '
         'All other arguments (i.e. target names) are passed to the "make" invocation.')
     add = parser.add_argument
