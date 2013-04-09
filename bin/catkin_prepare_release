@@ -74,8 +74,8 @@ def main():
             try:
                 metapackage.validate_metapackage(path, package, warnings=True)
             except metapackage.InvalidMetapackage as e:
-                print("Invalid metapackage at path '%s':\n  %s\n" % (os.path.abspath(path), str(e)))
-                print("See requirements for metapackages: %s" % metapackage.DEFINITION_URL)
+                print("Invalid metapackage at path '%s':\n  %s\n" % (os.path.abspath(path), str(e)), file=sys.stderr)
+                print("See requirements for metapackages: %s" % metapackage.DEFINITION_URL, file=sys.stderr)
                 sys.exit(1)
     old_version = verify_equal_package_versions(packages.values())
     new_version = bump_version(old_version, args.bump)
