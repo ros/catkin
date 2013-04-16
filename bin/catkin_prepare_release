@@ -70,7 +70,7 @@ def main():
         print('No packages found', file=sys.stderr)
         sys.exit(1)
     for path, package in packages.iteritems():
-        if metapackage.is_metapackage(package):
+        if package.is_metapackage():
             try:
                 metapackage.validate_metapackage(path, package, warnings=True)
             except metapackage.InvalidMetapackage as e:
