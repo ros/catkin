@@ -69,5 +69,6 @@ Contents
    :maxdepth: 2
 
    user_guide/user_guide
+   howto/index
    adv_user_guide/adv_user_guide
    dev_guide/dev_guide
