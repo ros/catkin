@@ -709,7 +709,7 @@ def build_workspace_isolated(
             last_env = get_new_env(package, develspace, installspace, install, last_env)
 
     # Provide a top level devel space environment setup script
-    if not merge and not build_packages:
+    if not merge and not build_packages and os.path.exists(original_develspace):
         # generate env.sh and setup.sh which relay to last devel space
         generated_env = os.path.join(original_develspace, 'env.sh')
         with open(generated_env, 'w') as f:
