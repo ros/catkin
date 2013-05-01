@@ -96,6 +96,10 @@ def main():
     opts = parse_args()
     cmake_args, opts = handle_cmake_args(opts.cmake_args, opts)
 
+    # force --no-color if stdout is non-interactive
+    if not sys.stdout.isatty():
+        opts.no_color = True
+
     build_workspace_isolated(
         workspace=opts.workspace or '.',
         sourcespace=opts.source,
