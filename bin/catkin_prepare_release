@@ -3,47 +3,57 @@
 from __future__ import print_function
 import argparse
 import os
+import subprocess
 import sys
 
-from catkin_pkg.packages import find_packages, verify_equal_package_versions
 from catkin_pkg import metapackage
+from catkin_pkg.package import PACKAGE_MANIFEST_FILENAME
+from catkin_pkg.packages import find_packages, verify_equal_package_versions
 
 # find the import relatively if available to work before installing catkin or overlaying installed version
 if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-from catkin.package_version import bump_version
+from catkin.package_version import bump_version, update_versions
 from catkin.workspace_vcs import get_repository_type, vcs_remotes
 
 
-def get_commands(path, packages, vcs_type, bump, new_version, svn_url=None):
-    result = []
+def has_package_xml_changes(base_path, pkg_path, vcs_type):
+    package_xml_file = os.path.join(pkg_path, PACKAGE_MANIFEST_FILENAME)
+    cmd = [_find_executable(vcs_type), 'diff', package_xml_file]
+    try:
+        output = subprocess.check_output(cmd, cwd=base_path)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError("Failed to check if '%s' has modifications: %s" % (pkg_path, str(e)))
+    return output != ''
 
-    # bump version number
-    script = os.path.relpath(os.path.join(os.path.dirname(__file__), 'catkin_package_version'))
-    cmd = '%s --bump %s %s' % (script, bump, path)
-    result.append(cmd)
 
-    # commit modified package.xml
-    package_xmls = [os.path.join(p, 'package.xml') for p in packages.keys()]
-    cmd = '%s commit -m "%s" %s' % (vcs_type, new_version, ' '.join(package_xmls))
-    result.append(cmd)
-    # push changes
+def try_repo_push(base_path, vcs_type):
     if vcs_type in ['bzr', 'git', 'hg']:
-        cmd = '%s push' % vcs_type
-        result.append(cmd)
+        cmd = [_find_executable(vcs_type), 'push']
+        try:
+            output = subprocess.check_output(cmd, cwd=base_path, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError("Failed to push to repository: %s\n%s" % (str(e), output))
 
-    # tag version
+
+def commit_package_xml_files(base_path, vcs_type, packages, message):
+    package_xmls = [os.path.join(p, PACKAGE_MANIFEST_FILENAME) for p in packages.keys()]
+    cmd = [_find_executable(vcs_type), 'commit', '-m', message]
+    cmd += package_xmls
+    try:
+        subprocess.check_call(cmd, cwd=base_path)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError("Failed to commit package.xml files: %s" % str(e))
+
+
+def tag_repository(base_path, vcs_type, new_version):
     if vcs_type in ['bzr', 'git', 'hg']:
-        cmd = '%s tag %s' % (vcs_type, new_version)
-        result.append(cmd)
-        cmd = '%s push' % vcs_type
-        if vcs_type == 'git':
-            cmd += ' --tags'
-        result.append(cmd)
+        cmd = [_find_executable(vcs_type), 'tag', new_version]
     elif vcs_type == 'svn':
         TRUNK = '/trunk'
         BRANCHES = '/branches'
         TAGS = '/tags'
+        svn_url = vcs_remotes(base_path, 'svn')[5:]
         if svn_url.endswith(TRUNK):
             base_url = svn_url[:-len(TRUNK)]
         elif os.path.dirname(svn_url).endswith(BRANCHES):
@@ -54,54 +64,94 @@ def get_commands(path, packages, vcs_type, bump, new_version, svn_url=None):
             raise RuntimeError('Could not determine base URL of SVN repository "%s"' % svn_url)
         tag_url = '%s/tags/%s' % (base_url, new_version)
         cmd = 'svn cp -m "tagging %s" %s %s' % (new_version, svn_url, tag_url)
-        result.append(cmd)
-    return result
+    else:
+        assert False, 'Unknown vcs type: %s' % vcs_type
+    try:
+        output = subprocess.check_output(cmd, cwd=base_path, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError("Failed to tag repository: %s\n%s" % (str(e), output))
+
+
+def _find_executable(vcs_type):
+    for path in os.getenv('PATH').split(os.path.pathsep):
+        file_path = os.path.join(path, vcs_type)
+        if os.path.isfile(file_path):
+            return file_path
+    raise RuntimeError("Could not find vcs binary: %s" % vcs_type)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Outputs the commands to bump the version number, commit the modified package.xml files and create a tag in the repository.')
+        description='Runs the commands to bump the version number, commit the modified %s files and create a tag in the repository.' % PACKAGE_MANIFEST_FILENAME)
     parser.add_argument('--bump', choices=('major', 'minor', 'patch'), default='patch', help='Which part of the version number to bump? (default: %(default)s)')
+    #parser.add_argument('-y', '--non-interactive', action='store_false', default=False,
+    #    help='Run without user interaction')
     args = parser.parse_args()
 
-    path = '.'
-    packages = find_packages(path)
+    base_path = '.'
+
+    # determine repository type
+    vcs_type = get_repository_type(base_path)
+    if vcs_type is None:
+        raise RuntimeError("Could not determine repository type of '%s'" % base_path)
+    print('Repository type: %s' % vcs_type)
+
+    # find packages
+    packages = find_packages(base_path)
     if not packages:
-        print('No packages found', file=sys.stderr)
-        sys.exit(1)
+        raise RuntimeError('No packages found')
+    print('Found packages: %s' % ', '.join([p.name for p in packages.values()]))
+
     for pkg_path, package in packages.iteritems():
+        # verify that the package.xml files don't have modifications pending
+        if has_package_xml_changes(base_path, pkg_path, vcs_type):
+            raise RuntimeError("The %s file at path '%s' has modification. Please commit/revert them before." % (PACKAGE_MANIFEST_FILENAME, pkg_path))
+        # verify that metapackages are valid
         if package.is_metapackage():
             try:
                 metapackage.validate_metapackage(pkg_path, package)
             except metapackage.InvalidMetapackage as e:
-                print("Invalid metapackage at path '%s':\n  %s\n" % (os.path.abspath(pkg_path), str(e)), file=sys.stderr)
-                print("See requirements for metapackages: %s" % metapackage.DEFINITION_URL, file=sys.stderr)
-                sys.exit(1)
+                raise RuntimeError("Invalid metapackage at path '%s':\n  %s\n\nSee requirements for metapackages: %s" % (os.path.abspath(pkg_path), str(e), metapackage.DEFINITION_URL))
+
+    # fetch current version and verify that all packages have same version number
     old_version = verify_equal_package_versions(packages.values())
     new_version = bump_version(old_version, args.bump)
 
-    vcs_type = get_repository_type(path)
-    url = None
-    if vcs_type is None:
-        raise RuntimeError('Could not determine repository type of "%s"' % path)
-    elif vcs_type == 'svn':
-        url = vcs_remotes(path, 'svn')[5:]
+    # verify that repository is pushable
+    try_repo_push(base_path, vcs_type)
 
-    commands = get_commands(path=path,
-                            packages=packages,
-                            vcs_type=vcs_type,
-                            bump=args.bump,
-                            new_version=new_version,
-                            svn_url=url)
-    #print('Execute the following commands:\n')
-    print(' && '.join(commands))
+    # bump version number
+    update_versions(packages.keys(), new_version)
+    print('Bump version from %s to %s' % (old_version, new_version))
+
+    print('Committing the package.xml files...')
+    commit_package_xml_files(base_path, vcs_type, packages, new_version)
+
+    print('Tagging the repository...')
+    tag_repository(base_path, vcs_type, new_version)
+
+    # push changes to the repository
+    if vcs_type in ['bzr', 'git', 'hg']:
+        print('Pushing changes to the repository...')
+        cmd = [_find_executable(vcs_type), 'push']
+        try:
+            output = subprocess.check_output(cmd, cwd=base_path, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError("Failed to push changes to the repository: %s\n%s\n\nYou need to manually push the changes/tag to the repository." % (str(e), output))
+
+    # push tags to the repository
+    if vcs_type in ['git']:
+        print('Pushing tag to the repository...')
+        cmd = [_find_executable(vcs_type), 'push', '--tags']
+        try:
+            output = subprocess.check_output(cmd, cwd=base_path, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError("Failed to push tag to the repository: %s\n%s\n\nYou need to manually push the new tag to the repository." % (str(e), output))
 
 
 if __name__ == '__main__':
-    rc = 0
     try:
         main()
     except Exception as e:
         print(e, file=sys.stderr)
-        rc = 1
-    sys.exit(rc)
+        sys.exit(1)
