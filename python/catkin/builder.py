@@ -225,7 +225,7 @@ def get_python_path(path):
 def handle_make_arguments(input_make_args):
     make_args = list(input_make_args)
     # If no -j/--jobs/-l/--load-average flags are in input_make_args
-    if not extract_jobs_flags(''.join(input_make_args)):
+    if not extract_jobs_flags(' '.join(input_make_args)):
         # If -j/--jobs/-l/--load-average are in MAKEFLAGS
         if 'MAKEFLAGS' in os.environ and extract_jobs_flags(os.environ['MAKEFLAGS']):
             # Do not extend make arguments, let MAKEFLAGS set things
