@@ -64,28 +64,41 @@ def split_arguments(args, splitter_name, default=None):
 
 
 def extract_cmake_and_make_arguments(args):
+    args, cmake_args, make_args, _ = _extract_cmake_and_make_arguments(args, extract_catkin_make=False)
+    return args, cmake_args, make_args
+
+
+def extract_cmake_and_make_and_catkin_make_arguments(args):
+    return _extract_cmake_and_make_arguments(args, extract_catkin_make=True)
+
+
+def _extract_cmake_and_make_arguments(args, extract_catkin_make):
     cmake_args = []
     make_args = []
-    if '--cmake-args' in args and '--make-args' in args:
-        cmake_index = args.index('--cmake-args')
-        make_index = args.index('--make-args')
-        # split off last argument group first
-        if cmake_index < make_index:
-            args, make_args = split_arguments(args, '--make-args')
-            args, cmake_args = split_arguments(args, '--cmake-args')
-        else:
-            args, cmake_args = split_arguments(args, '--cmake-args')
-            args, make_args = split_arguments(args, '--make-args')
-    elif '--cmake-args' in args:
-        args, cmake_args = split_arguments(args, '--cmake-args')
-    elif '--make-args' in args:
-        args, make_args = split_arguments(args, '--make-args')
+    catkin_make_args = []
+
+    arg_types = {
+        '--cmake-args': cmake_args,
+        '--make-args': make_args
+    }
+    if extract_catkin_make:
+        arg_types['--catkin-make-args'] = catkin_make_args
+
+    arg_indexes = {}
+    for k in arg_types.keys():
+        if k in args:
+            arg_indexes[args.index(k)] = k
+
+    for index in reversed(sorted(arg_indexes.keys())):
+        arg_type = arg_indexes[index]
+        args, specific_args = split_arguments(args, arg_type)
+        arg_types[arg_type].extend(specific_args)
 
     # classify -D* and -G* arguments as cmake specific arguments
     implicit_cmake_args = [a for a in args if a.startswith('-D') or a.startswith('-G')]
     args = [a for a in args if a not in implicit_cmake_args]
 
-    return args, implicit_cmake_args + cmake_args, make_args
+    return args, implicit_cmake_args + cmake_args, make_args, catkin_make_args
 
 
 def cprint(msg, end=None):
@@ -225,7 +238,7 @@ def get_python_path(path):
 def handle_make_arguments(input_make_args):
     make_args = list(input_make_args)
     # If no -j/--jobs/-l/--load-average flags are in input_make_args
-    if not extract_jobs_flags(''.join(input_make_args)):
+    if not extract_jobs_flags(' '.join(input_make_args)):
         # If -j/--jobs/-l/--load-average are in MAKEFLAGS
         if 'MAKEFLAGS' in os.environ and extract_jobs_flags(os.environ['MAKEFLAGS']):
             # Do not extend make arguments, let MAKEFLAGS set things
@@ -327,6 +340,11 @@ def build_catkin_package(
 
     # Run make
     make_cmd = ['make']
+    # force single threaded execution when running test since rostest does not support multiple parallel runs
+    run_tests = [a for a in make_args if a.startswith('run_tests')]
+    if run_tests:
+        print('Forcing "-j1" for running unit tests.')
+        make_args.append('-j1')
     make_cmd.extend(handle_make_arguments(make_args))
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
@@ -467,7 +485,7 @@ exec "$@"
 def build_package(
     path, package,
     workspace, buildspace, develspace, installspace,
-    install, force_cmake, quiet, last_env, cmake_args, make_args,
+    install, force_cmake, quiet, last_env, cmake_args, make_args, catkin_make_args,
     number=None, of=None
 ):
     cprint('@!@{gf}==>@| ', end='')
@@ -477,7 +495,7 @@ def build_package(
         build_catkin_package(
             path, package,
             workspace, buildspace, develspace, installspace,
-            install, force_cmake, quiet, last_env, cmake_args, make_args
+            install, force_cmake, quiet, last_env, cmake_args, make_args + catkin_make_args
         )
         if not os.path.exists(new_last_env):
             raise RuntimeError(
@@ -534,7 +552,8 @@ def build_workspace_isolated(
     build_packages=None,
     quiet=False,
     cmake_args=None,
-    make_args=None
+    make_args=None,
+    catkin_make_args=None
 ):
     '''
     Runs ``cmake``, ``make`` and optionally ``make install`` for all
@@ -561,6 +580,8 @@ def build_workspace_isolated(
     :param quiet: if True, hides some build output, ``bool``
     :param cmake_args: additional arguments for cmake, ``[str]``
     :param make_args: additional arguments for make, ``[str]``
+    :param catkin_make_args: additional arguments for make but only for catkin
+        packages, ``[str]``
     '''
     if not colorize:
         disable_ANSI_colors()
@@ -609,6 +630,11 @@ def build_workspace_isolated(
         print("Additional make Arguments: " + " ".join(make_args))
     else:
         make_args = []
+
+    if catkin_make_args:
+        print("Additional make Arguments for catkin packages: " + " ".join(catkin_make_args))
+    else:
+        catkin_make_args = []
 
     # Find packages
     packages = find_packages(sourcespace, exclude_subspaces=True)
@@ -686,7 +712,7 @@ def build_workspace_isolated(
                     path, package,
                     workspace, buildspace, develspace, installspace,
                     install, force_cmake or (install_toggled and is_cmake_package),
-                    quiet, last_env, cmake_args, make_args,
+                    quiet, last_env, cmake_args, make_args, catkin_make_args,
                     number=index + 1, of=len(ordered_packages)
                 )
             except Exception as e:
