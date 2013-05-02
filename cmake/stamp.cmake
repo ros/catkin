@@ -8,6 +8,6 @@
 function(stamp path)
   get_filename_component(filename "${path}" NAME)
   configure_file(${path}
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/stamps/${PROJECT_NAME}/${filename}
-    @ONLY)
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/stamps/${PROJECT_NAME}/${filename}.stamp
+    COPYONLY)
 endfunction()
