@@ -235,10 +235,18 @@ def get_python_path(path):
     return python_path
 
 
-def handle_make_arguments(input_make_args):
+def handle_make_arguments(input_make_args, force_single_threaded_when_running_tests=False):
     make_args = list(input_make_args)
-    # If no -j/--jobs/-l/--load-average flags are in input_make_args
-    if not extract_jobs_flags(' '.join(input_make_args)):
+
+    if force_single_threaded_when_running_tests:
+        # force single threaded execution when running test since rostest does not support multiple parallel runs
+        run_tests = [a for a in make_args if a.startswith('run_tests')]
+        if run_tests:
+            print('Forcing "-j1" for running unit tests.')
+            make_args.append('-j1')
+
+    # If no -j/--jobs/-l/--load-average flags are in make_args
+    if not extract_jobs_flags(' '.join(make_args)):
         # If -j/--jobs/-l/--load-average are in MAKEFLAGS
         if 'MAKEFLAGS' in os.environ and extract_jobs_flags(os.environ['MAKEFLAGS']):
             # Do not extend make arguments, let MAKEFLAGS set things
@@ -340,12 +348,7 @@ def build_catkin_package(
 
     # Run make
     make_cmd = ['make']
-    # force single threaded execution when running test since rostest does not support multiple parallel runs
-    run_tests = [a for a in make_args if a.startswith('run_tests')]
-    if run_tests:
-        print('Forcing "-j1" for running unit tests.')
-        make_args.append('-j1')
-    make_cmd.extend(handle_make_arguments(make_args))
+    make_cmd.extend(handle_make_arguments(make_args, force_single_threaded_when_running_tests=True))
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
