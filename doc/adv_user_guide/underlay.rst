@@ -22,7 +22,7 @@ Pick a temp directory::
 
 Get the rosinstall file::
 
-   $ wget https://raw.github.com/ros/catkin/master/rosinstalls/base.rosinstall
+   $ wget https://raw.github.com/ros/catkin/groovy-devel/rosinstalls/base.rosinstall
 
 .. todo:: get the file from outside catkin
 
