@@ -22,9 +22,7 @@ Pick a temp directory::
 
 Get the rosinstall file::
 
-   $ wget https://raw.github.com/ros/catkin/master/rosinstalls/base.rosinstall
-
-.. todo:: get the file from outside catkin
+   $ wget http://packages.ros.org/web/rosinstall/generate/raw/groovy/catkin,genmsg,gencpp,genlisp,genpy,message_generation,message_runtime,std_msgs,roscpp_core,ros_comm,ros_tutorials,ros,common_msgs,rospack,actionlib -O base.rosinstall
 
 Rosinstall it.  You don't want it built, use ``-n``, like this::
 
