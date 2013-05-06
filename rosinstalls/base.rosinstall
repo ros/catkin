@@ -1,27 +1,27 @@
 - git:
     uri: 'git://github.com/ros/catkin.git'
     local-name: catkin
-    version: master
+    version: groovy-devel
 
 - git:
     uri: 'git://github.com/ros/genmsg.git'
     local-name: genmsg
-    version: master
+    version: groovy-devel
 
 - git:
     uri: 'git://github.com/ros/gencpp.git'
     local-name: gencpp
-    version: master
+    version: groovy-devel
 
 - git:
     uri: 'git://github.com/ros/genlisp.git'
     local-name: genlisp
-    version: master
+    version: groovy-devel
 
 - git:
     uri: 'git://github.com/ros/genpy.git'
     local-name: genpy
-    version: master
+    version: groovy-devel
 
 - git:
     uri: 'git://github.com/ros/langs.git'
@@ -36,12 +36,12 @@
 - git:
     uri: 'git://github.com/ros/std_msgs.git'
     local-name: std_msgs
-    version: master
+    version: groovy-devel
 
 - git:
     uri: 'git://github.com/ros/roscpp_core.git'
     local-name: roscpp_core
-    version: master
+    version: groovy-devel
 
 - git:
     uri: 'git://github.com/ros/ros_comm.git'
@@ -58,11 +58,14 @@
 - git:
     uri: 'git://github.com/ros/common_msgs.git'
     local-name: common_msgs
+    version: groovy-devel
 
-- hg:
+- git:
+    uri: 'git://github.com/ros/rospack.git'
     local-name: rospack
-    uri: https://kforge.ros.org/rosrelease/rospack
+    version: groovy-devel
 
-- hg:
+- git:
+    uri: 'git://github.com/ros/actionlib.git'
     local-name: actionlib
-    uri: https://kforge.ros.org/common/actionlib
+    version: groovy-devel
