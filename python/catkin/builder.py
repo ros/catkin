@@ -332,8 +332,9 @@ def build_catkin_package(
         try:
             run_command_colorized(cmake_cmd, build_dir, quiet)
         except subprocess.CalledProcessError as e:
-            # remove Makefile to force CMake invocation next time
-            os.remove(makefile)
+            if os.path.exists(makefile):
+                # remove Makefile to force CMake invocation next time
+                os.remove(makefile)
             raise
     else:
         print('Makefile exists, skipping explicit cmake invocation...')
