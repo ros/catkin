@@ -5,10 +5,10 @@
 # about include directories, libraries, further dependencies and
 # CMake variables are used.
 #
-# .. note:: It must be called once for each package.  Best practice
-#   is to call this macro early in your root CMakeLists.txt,
-#   immediately after calling ``project()`` and
-#   ``find_package(catkin REQUIRED)``.
+# .. note:: It must be called once for each package.  It is indirectly
+#   calling``catkin_destinations()`` which will provide additional
+#   output variables.  Please make sure to call ``catkin_package()``
+#   before using those variables.
 #
 # :param INCLUDE_DIRS: ``CMAKE_CURRENT_SOURCE_DIR``-relative paths to
 #   C/C++ includes
