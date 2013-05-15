@@ -480,10 +480,7 @@ fi
 export PATH="{path}$PATH"
 export PKG_CONFIG_PATH="{pkgcfg_path}$PKG_CONFIG_PATH"
 export PYTHONPATH="{pythonpath}$PYTHONPATH"
-
-exec "$@"
-""".format(**subs)
-        )
+""".format(**subs))
 
 
 def build_package(
