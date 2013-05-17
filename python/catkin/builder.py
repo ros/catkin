@@ -640,7 +640,9 @@ def build_workspace_isolated(
     # Find packages
     packages = find_packages(sourcespace, exclude_subspaces=True)
     if not packages:
-        sys.exit("No packages found in source space: {0}".format(sourcespace))
+        #sys.exit("No packages found in source space: {0}".format(sourcespace))
+        if not os.path.exists(develspace):
+            os.makedirs(develspace)
 
     # verify that specified package exists in workspace
     if build_packages:
@@ -737,24 +739,42 @@ def build_workspace_isolated(
 
     # Provide a top level devel space environment setup script
     if not merge and not build_packages and os.path.exists(original_develspace):
-        # generate env.sh and setup.sh which relay to last devel space
         generated_env = os.path.join(original_develspace, 'env.sh')
-        with open(generated_env, 'w') as f:
-            f.write("""\
-#!/usr/bin/env sh
-# generated from catkin.builder module
+        generated_setup_sh = os.path.join(original_develspace, 'setup.sh') 
+        if packages:
+            # generate env.sh and setup.sh which relay to last devel space
+            with open(generated_env, 'w') as f:
+                f.write("""\
+    #!/usr/bin/env sh
+    # generated from catkin.builder module
 
-{0} "$@"
-""".format(os.path.join(develspace, 'env.sh')))
-        os.chmod(generated_env, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
-        with open(os.path.join(original_develspace, 'setup.sh'), 'w') as f:
-            f.write("""\
-#!/usr/bin/env sh
-# generated from catkin.builder module
+    {0} "$@"
+    """.format(os.path.join(develspace, 'env.sh')))
+            os.chmod(generated_env, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+            with open(generated_setup_sh, 'w') as f:
+                f.write("""\
+    #!/usr/bin/env sh
+    # generated from catkin.builder module
 
-. "{0}/setup.sh"
-""".format(develspace))
-        # generate setup.bash and setup.zsh for convenience
+    . "{0}/setup.sh"
+    """.format(develspace))
+            # generate setup.bash and setup.zsh for convenience
+        else:
+            variables = {'SETUP_DIR': original_develspace, 'SETUP_FILENAME': 'setup'}
+            with open(generated_env, 'w') as f:
+                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'env.sh.in'), variables))
+            os.chmod(generated_env, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+            variables = {'SETUP_DIR': original_develspace}
+            with open(generated_setup_sh, 'w') as f:
+                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.sh.in'), variables))
+            variables = {'SETUP_DIR': '', 
+                         'CMAKE_PREFIX_PATH_AS_IS': os.environ['CMAKE_PREFIX_PATH'],
+                         'CATKIN_GLOBAL_LIB_DESTINATION': 'lib',
+                         'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
+                         'PYTHON_INSTALL_DIR':''}
+            with open(os.path.join(original_develspace, '_setup_util.py'), 'w') as f:
+                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', '_setup_util.py.in'), variables))
+
         variables = {'SETUP_DIR': original_develspace}
         with open(os.path.join(original_develspace, 'setup.bash'), 'w') as f:
             f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.bash.in'), variables))
