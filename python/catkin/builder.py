@@ -699,19 +699,20 @@ def build_workspace_isolated(
             print('The install argument has been toggled, forcing cmake invocation on plain cmake package')
 
     # Build packages
-    original_develspace = copy.deepcopy(develspace)
     last_env = None
     for index, path_package in enumerate(ordered_packages):
         path, package = path_package
-        if not merge:
-            develspace = os.path.join(original_develspace, package.name)
+        if merge:
+            pkg_develspace = develspace
+        else:
+            pkg_develspace = os.path.join(develspace, package.name)
         if not build_packages or package.name in build_packages:
             try:
                 export_tags = [e.tagname for e in package.exports]
                 is_cmake_package = 'cmake' in [e.content for e in package.exports if e.tagname == 'build_type']
                 last_env = build_package(
                     path, package,
-                    workspace, buildspace, develspace, installspace,
+                    workspace, buildspace, pkg_develspace, installspace,
                     install, force_cmake or (install_toggled and is_cmake_package),
                     quiet, last_env, cmake_args, make_args, catkin_make_args,
                     number=index + 1, of=len(ordered_packages)
@@ -733,32 +734,32 @@ def build_workspace_isolated(
                 sys.exit('Command failed, exiting.')
         else:
             cprint("Skipping package: '@!@{bf}" + package.name + "@|'")
-            last_env = get_new_env(package, develspace, installspace, install, last_env)
+            last_env = get_new_env(package, pkg_develspace, installspace, install, last_env)
 
     # Provide a top level devel space environment setup script
-    if not merge and not build_packages and os.path.exists(original_develspace):
+    if not merge and not build_packages and os.path.exists(develspace):
         # generate env.sh and setup.sh which relay to last devel space
-        generated_env = os.path.join(original_develspace, 'env.sh')
+        generated_env = os.path.join(develspace, 'env.sh')
         with open(generated_env, 'w') as f:
             f.write("""\
 #!/usr/bin/env sh
 # generated from catkin.builder module
 
 {0} "$@"
-""".format(os.path.join(develspace, 'env.sh')))
+""".format(os.path.join(pkg_develspace, 'env.sh')))
         os.chmod(generated_env, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
-        with open(os.path.join(original_develspace, 'setup.sh'), 'w') as f:
+        with open(os.path.join(develspace, 'setup.sh'), 'w') as f:
             f.write("""\
 #!/usr/bin/env sh
 # generated from catkin.builder module
 
 . "{0}/setup.sh"
-""".format(develspace))
+""".format(pkg_develspace))
         # generate setup.bash and setup.zsh for convenience
-        variables = {'SETUP_DIR': original_develspace}
-        with open(os.path.join(original_develspace, 'setup.bash'), 'w') as f:
+        variables = {'SETUP_DIR': develspace}
+        with open(os.path.join(develspace, 'setup.bash'), 'w') as f:
             f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.bash.in'), variables))
-        with open(os.path.join(original_develspace, 'setup.zsh'), 'w') as f:
+        with open(os.path.join(develspace, 'setup.zsh'), 'w') as f:
             f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.zsh.in'), variables))
 
 
