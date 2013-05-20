@@ -225,7 +225,7 @@ def get_python_path(path):
     if os.path.exists(lib_path):
         items = os.listdir(lib_path)
         for item in items:
-            if os.path.isdir(item) and item.startswith('python'):
+            if os.path.isdir(os.path.join(lib_path, item)) and item.startswith('python'):
                 python_items = os.listdir(os.path.join(lib_path, item))
                 for py_item in python_items:
                     if py_item in ['dist-packages', 'site-packages']:
