@@ -44,7 +44,7 @@ import sys
 # environment at generation time
 CMAKE_PREFIX_PATH = '@CMAKE_PREFIX_PATH_AS_IS@'.split(';')
 setup_dir = '@SETUP_DIR@'
-if setup_dir not in CMAKE_PREFIX_PATH:
+if setup_dir and setup_dir not in CMAKE_PREFIX_PATH:
     CMAKE_PREFIX_PATH.insert(0, setup_dir)
 CMAKE_PREFIX_PATH = os.pathsep.join(CMAKE_PREFIX_PATH)
 

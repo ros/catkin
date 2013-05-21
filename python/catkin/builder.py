@@ -219,20 +219,17 @@ def isolation_print_command(cmd, path=None):
     )
 
 
-def get_python_path(path):
-    python_path = []
-    lib_path = os.path.join(path, 'lib')
-    if os.path.exists(lib_path):
-        items = os.listdir(lib_path)
-        for item in items:
-            if os.path.isdir(os.path.join(lib_path, item)) and item.startswith('python'):
-                python_items = os.listdir(os.path.join(lib_path, item))
-                for py_item in python_items:
-                    if py_item in ['dist-packages', 'site-packages']:
-                        py_path = os.path.join(lib_path, item, py_item)
-                        if os.path.isdir(py_path):
-                            python_path.append(py_path)
-    return python_path
+def get_python_install_dir():
+    # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
+    python_install_dir = 'lib'
+    if os.name != 'nt':
+        python_version_xdoty = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
+        python_install_dir = os.path.join(python_install_dir, 'python' + python_version_xdoty)
+
+    python_use_debian_layout = os.path.exists('/etc/debian_version')
+    python_packages_dir = 'dist-packages' if python_use_debian_layout else 'site-packages'
+    python_install_dir = os.path.join(python_install_dir, python_packages_dir)
+    return python_install_dir
 
 
 def handle_make_arguments(input_make_args, force_single_threaded_when_running_tests=False):
@@ -443,10 +440,8 @@ def build_cmake_package(
     subs = {}
     subs['cmake_prefix_path'] = install_target + ":"
     subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
-    pythonpath = ":".join(get_python_path(install_target))
-    if pythonpath:
-        pythonpath += ":"
-    subs['pythonpath'] = pythonpath
+    pythonpath = os.path.join(install_target, get_python_install_dir())
+    subs['pythonpath'] = pythonpath + ':'
     subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
     subs['pkgcfg_path'] += ":"
     subs['path'] = os.path.join(install_target, 'bin') + ":"
@@ -640,7 +635,7 @@ def build_workspace_isolated(
     # Find packages
     packages = find_packages(sourcespace, exclude_subspaces=True)
     if not packages:
-        sys.exit("No packages found in source space: {0}".format(sourcespace))
+        print(fmt("@{yf}No packages found in source space: %s@|" % sourcespace))
 
     # verify that specified package exists in workspace
     if build_packages:
@@ -699,6 +694,7 @@ def build_workspace_isolated(
             print('The install argument has been toggled, forcing cmake invocation on plain cmake package')
 
     # Build packages
+    pkg_develspace = None
     last_env = None
     for index, path_package in enumerate(ordered_packages):
         path, package = path_package
@@ -737,30 +733,69 @@ def build_workspace_isolated(
             last_env = get_new_env(package, pkg_develspace, installspace, install, last_env)
 
     # Provide a top level devel space environment setup script
-    if not merge and not build_packages and os.path.exists(develspace):
-        # generate env.sh and setup.sh which relay to last devel space
-        generated_env = os.path.join(develspace, 'env.sh')
-        with open(generated_env, 'w') as f:
-            f.write("""\
+    if not os.path.exists(develspace):
+        os.makedirs(develspace)
+    if not build_packages:
+        generated_env_sh = os.path.join(develspace, 'env.sh')
+        generated_setup_sh = os.path.join(develspace, 'setup.sh')
+        generated_setup_util_py = os.path.join(develspace, '_setup_util.py')
+        if not merge and pkg_develspace:
+            # generate env.sh and setup.sh which relay to last devel space
+            with open(generated_env_sh, 'w') as f:
+                f.write("""\
 #!/usr/bin/env sh
 # generated from catkin.builder module
 
 {0} "$@"
 """.format(os.path.join(pkg_develspace, 'env.sh')))
-        os.chmod(generated_env, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
-        with open(os.path.join(develspace, 'setup.sh'), 'w') as f:
-            f.write("""\
+            os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+            with open(generated_setup_sh, 'w') as f:
+                f.write("""\
 #!/usr/bin/env sh
 # generated from catkin.builder module
 
 . "{0}/setup.sh"
 """.format(pkg_develspace))
-        # generate setup.bash and setup.zsh for convenience
-        variables = {'SETUP_DIR': develspace}
-        with open(os.path.join(develspace, 'setup.bash'), 'w') as f:
-            f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.bash.in'), variables))
-        with open(os.path.join(develspace, 'setup.zsh'), 'w') as f:
-            f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.zsh.in'), variables))
+
+        elif not pkg_develspace:
+            # generate env.sh and setup.sh for an empty devel space
+            if 'CMAKE_PREFIX_PATH' in os.environ.keys():
+                variables = {
+                    'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
+                    'CATKIN_GLOBAL_LIB_DESTINATION': 'lib',
+                    'CMAKE_PREFIX_PATH_AS_IS': ';'.join(os.environ['CMAKE_PREFIX_PATH'].split(os.pathsep)),
+                    'PYTHON_INSTALL_DIR': get_python_install_dir(),
+                    'SETUP_DIR': '',
+                }
+                with open(generated_setup_util_py, 'w') as f:
+                    f.write(configure_file(os.path.join(get_cmake_path(), 'templates', '_setup_util.py.in'), variables))
+                os.chmod(generated_setup_util_py, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+            else:
+                sys.exit("Unable to process CMAKE_PREFIX_PATH from environment. Cannot generate environment files.")
+
+            variables = {
+                'SETUP_DIR': develspace,
+                'SETUP_FILENAME': 'setup'
+            }
+            with open(generated_env_sh, 'w') as f:
+                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'env.sh.in'), variables))
+            os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+            variables = {'SETUP_DIR': develspace}
+            with open(generated_setup_sh, 'w') as f:
+                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.sh.in'), variables))
+
+        if not merge and pkg_develspace:
+            # remove _setup_util.py file which might have been generated for an empty
+            if os.path.exists(generated_setup_util_py):
+                os.remove(generated_setup_util_py)
+
+        if not merge or not pkg_develspace:
+            # generate setup.bash and setup.zsh for convenience
+            variables = {'SETUP_DIR': develspace}
+            with open(os.path.join(develspace, 'setup.bash'), 'w') as f:
+                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.bash.in'), variables))
+            with open(os.path.join(develspace, 'setup.zsh'), 'w') as f:
+                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.zsh.in'), variables))
 
 
 def cmake_input_changed(packages, build_path, install=None, cmake_args=None, filename='catkin_make'):
