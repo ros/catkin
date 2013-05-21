@@ -7,7 +7,7 @@ from mock import Mock
 
 try:
     import catkin.environment_cache
-    from catkin.environment_cache import _append_header, _append_footer, _set_variable, _append_comment, _is_not_windows, generate_environment_script
+    from catkin.environment_cache import _append_header, _set_variable, _append_comment, _is_not_windows, generate_environment_script
 except ImportError as impe:
     raise ImportError(
         'Please adjust your pythonpath before running this test: %s' % str(impe))
@@ -40,9 +40,6 @@ class PlatformTest(unittest.TestCase):
         _append_comment(code, 'foo')
         self.assertEqual(['# foo'], code)
         code = []
-        _append_footer(code)
-        self.assertEqual(['', 'exec "$@"'], code)
-        code = []
         _set_variable(code, 'foo', 'bar')
         self.assertEqual(['export foo="bar"'], code)
 
@@ -57,11 +54,8 @@ class PlatformTest(unittest.TestCase):
         _append_comment(code, 'foo')
         self.assertEqual(['REM foo'], code)
         code = []
-        _append_footer(code)
-        self.assertEqual(['', '%*'], code)
-        code = []
         _set_variable(code, 'foo', 'bar')
-        self.assertEqual(['set foo="bar"'], code)
+        self.assertEqual(['set foo=bar'], code)
 
     def test_generate_environment_script(self):
         try:
@@ -85,7 +79,6 @@ exec "$@"''')
             self.assertTrue('export TRICK="/usr/lib"' in result, result)
             self.assertTrue('export BAR="/bar"' in result, result)
             self.assertEqual('#!/usr/bin/env sh', result[0])
-            self.assertEqual('exec "$@"', result[-1])
         finally:
             catkin.environment_cache.os.environ = os.environ
             shutil.rmtree(rootdir)

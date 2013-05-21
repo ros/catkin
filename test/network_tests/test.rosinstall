@@ -35,6 +35,16 @@
 #     version: master
 
 - git:
+    uri: 'git://github.com/ros/message_generation.git'
+    local-name: message_generation
+    version: master
+
+- git:
+    uri: 'git://github.com/ros/message_runtime.git'
+    local-name: message_runtime
+    version: master
+
+- git:
     uri: 'git://github.com/ros/std_msgs.git'
     local-name: std_msgs
     version: master
@@ -60,9 +70,9 @@
     uri: 'git://github.com/ros/common_msgs.git'
     local-name: common_msgs
 
-- hg:
+- git:
+    uri: 'git://github.com/ros/rospack.git'
     local-name: rospack
-    uri: https://kforge.ros.org/rosrelease/rospack
 
 # - hg:
 #     local-name: actionlib

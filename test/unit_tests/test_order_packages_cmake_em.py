@@ -26,5 +26,6 @@ class OrderPackagesEmTest(unittest.TestCase):
         self.assertTrue('set(CATKIN_ORDERED_PACKAGES "")' in result, result)
         self.assertTrue('set(CATKIN_ORDERED_PACKAGE_PATHS "")' in result, result)
         self.assertTrue('set(CATKIN_ORDERED_PACKAGES_IS_META "")' in result, result)
+        self.assertTrue('set(CATKIN_ORDERED_PACKAGES_BUILD_TYPE "")' in result, result)
         self.assertTrue('set(CATKIN_MESSAGE_GENERATORS' in result, result)
-        self.assertEqual(7, len(result.splitlines()))
+        self.assertEqual(10, len(result.splitlines()))

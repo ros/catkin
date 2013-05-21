@@ -6,7 +6,7 @@ catkin_package()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 find_package(quux_msgs)
-assert_unset(quux_msgs_INCLUDE_DIRS)
+assert(quux_msgs_INCLUDE_DIRS)
 
 include_directories(${quux_msgs_INCLUDE_DIRS})
 

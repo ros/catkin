@@ -20,13 +20,17 @@ class ParsePackageXmlTest(unittest.TestCase):
         pack.version = '0.1.2'
         pack.maintainers = ['m1', 'm2']
         pack.build_depends = ['bd1', 'bd2']
+        pack.buildtool_depends = ['catkin']
         pack.run_depends = ['rd1', 'rd2']
+        pack.exports = []
         result = _get_output(pack)
         self.assertEqual(['set(_CATKIN_CURRENT_PACKAGE "foopack")',
-                          'set(foopack_RUN_DEPENDS "rd1" "rd2")',
-                          'set(foopack_VERSION "0.1.2")',
                           'set(foopack_MAINTAINER "m1, m2")',
-                          'set(foopack_BUILD_DEPENDS "bd1" "bd2")'], result)
+                          'set(foopack_DEPRECATED "")',
+                          'set(foopack_VERSION "0.1.2")',
+                          'set(foopack_BUILD_DEPENDS "bd1" "bd2")',
+                          'set(foopack_RUN_DEPENDS "rd1" "rd2")',
+                          'set(foopack_BUILDTOOL_DEPENDS "catkin")'], result)
 
     def test_main(self):
         try:
@@ -50,9 +54,11 @@ class ParsePackageXmlTest(unittest.TestCase):
             with open(check_file, 'r') as fhand:
                 contents = fhand.read()
             self.assertEqual('''set(_CATKIN_CURRENT_PACKAGE "foopack")
-set(foopack_RUN_DEPENDS "rd1" "rd2")
-set(foopack_VERSION "0.1.2")
 set(foopack_MAINTAINER "foo <foo@bar.com>")
-set(foopack_BUILD_DEPENDS "bd1" "bd2")''', contents)
+set(foopack_DEPRECATED "")
+set(foopack_VERSION "0.1.2")
+set(foopack_BUILD_DEPENDS "bd1" "bd2")
+set(foopack_RUN_DEPENDS "rd1" "rd2")
+set(foopack_BUILDTOOL_DEPENDS )''', contents)
         finally:
             shutil.rmtree(rootdir)

@@ -109,11 +109,13 @@ class MockTest(AbstractCatkinWorkspaceTest):
         self.assertTrue("""\
 list(APPEND CATKIN_ORDERED_PACKAGES "catkin_test")
 list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "catkin_test/catkin_test")
-list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "True")""" in result, result)
+list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "True")
+list(APPEND CATKIN_ORDERED_PACKAGES_BUILD_TYPE "catkin")""" in result, result)
         self.assertTrue("""\
 list(APPEND CATKIN_ORDERED_PACKAGES "a")
 list(APPEND CATKIN_ORDERED_PACKAGE_PATHS "catkin_test/a")
-list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "False")""" in result, result)
+list(APPEND CATKIN_ORDERED_PACKAGES_IS_META "False")
+list(APPEND CATKIN_ORDERED_PACKAGES_BUILD_TYPE "catkin")""" in result, result)
         # catkin itself filtered out
         self.assertFalse('list(APPEND CATKIN_ORDERED_PACKAGES "catkin"' in result, result)
-        self.assertEqual(28, len(result.splitlines()))
+        self.assertEqual(38, len(result.splitlines()))
