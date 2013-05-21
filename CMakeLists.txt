@@ -34,4 +34,5 @@ install(DIRECTORY cmake
 
 catkin_python_setup()
 
-#catkin_add_nosetests(test)
+catkin_add_nosetests(test/local_tests)
+catkin_add_nosetests(test/unit_tests)

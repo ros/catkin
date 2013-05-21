@@ -2,6 +2,10 @@
 
 import os
 import shutil
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 from test.utils import AbstractCatkinWorkspaceTest, MOCK_DIR, \
     MAKE_CMD, succeed, assert_exists, fail
 
