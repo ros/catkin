@@ -234,6 +234,18 @@ def get_python_path(path):
                             python_path.append(py_path)
     return python_path
 
+def get_python_install_dir():
+    python_use_debian_layout = False
+    if os.path.exists('/etc/debian_version'):
+        python_use_debian_layout = True
+    
+    python_packages_dir = 'dist-packages' if python_use_debian_layout else 'site-packages'
+
+    if os.name != 'nt':
+        python_version_xdoty = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
+        return 'lib/python' + python_version_xdoty + '/' + python_packages_dir
+    else:
+        return 'lib/' + python_packages_dir
 
 def handle_make_arguments(input_make_args, force_single_threaded_when_running_tests=False):
     make_args = list(input_make_args)
@@ -762,26 +774,20 @@ def build_workspace_isolated(
 """.format(develspace))
         else:
             env_generated = False
-            if ('CMAKE_PREFIX_PATH' in os.environ.keys() and 
-                ':' not in os.environ['CMAKE_PREFIX_PATH']):
-
+            if 'CMAKE_PREFIX_PATH' in os.environ.keys():
                 path = os.environ['CMAKE_PREFIX_PATH'] 
-                python_path = get_python_path(path)
-                if len(python_path) == 1:
-                    python_path = python_path[0]
-                    if python_path.startswith(path):
-                        python_path = python_path[len(path) + 1:]
-                        variables = {
-                             'SETUP_DIR': '', 
-                             'CMAKE_PREFIX_PATH_AS_IS': path,
-                             'CATKIN_GLOBAL_LIB_DESTINATION': 'lib',
-                             'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
-                             'PYTHON_INSTALL_DIR': python_path
-                        }
-                    with open(os.path.join(original_develspace, '_setup_util.py'), 'w') as f:
-                        f.write(configure_file(os.path.join(get_cmake_path(), 'templates', '_setup_util.py.in'), variables))
-                    os.chmod(os.path.join(original_develspace, '_setup_util.py'), stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
-                    env_generated = True
+                python_path = get_python_install_dir()
+                variables = {
+                     'SETUP_DIR': '', 
+                     'CMAKE_PREFIX_PATH_AS_IS': path,
+                     'CATKIN_GLOBAL_LIB_DESTINATION': 'lib',
+                     'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
+                     'PYTHON_INSTALL_DIR': python_path
+                }
+                with open(os.path.join(original_develspace, '_setup_util.py'), 'w') as f:
+                    f.write(configure_file(os.path.join(get_cmake_path(), 'templates', '_setup_util.py.in'), variables))
+                os.chmod(os.path.join(original_develspace, '_setup_util.py'), stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+                env_generated = True
 
             if not env_generated:
                 sys.exit("Unable to process CMAKE_PREFIX_PATH from environment. Cannot generate environment files.")
