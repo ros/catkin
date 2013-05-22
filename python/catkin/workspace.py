@@ -58,15 +58,18 @@ def get_source_paths(workspace):
     :param workspace: path to catkin workspace folder, ``str``
     """
     # determine source spaces
-    data = ''
     filename = os.path.join(workspace, CATKIN_MARKER_FILE)
     if not os.path.isfile(filename):
         raise ValueError('Not a catkin workspace: "%s", missing file %s' % (workspace, filename))
     with open(filename) as f:
         data = f.read()
 
-    if data == '':
-        source_paths = []
-    else:
-        source_paths = data.split(';')
+    source_paths = []
+    if data != '':
+        real_source_paths = set([])
+        for path in data.split(';'):
+            real_path = os.path.realpath(path)
+            if real_path not in real_source_paths:
+                source_paths.append(path)
+                real_source_paths.add(real_path)
     return source_paths
