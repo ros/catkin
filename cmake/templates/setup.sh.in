@@ -50,12 +50,30 @@ CATKIN_SHELL=$CATKIN_SHELL "$_SETUP_UTIL" $@ > $_SETUP_TMP
 _RM=`which rm`
 $_RM $_SETUP_TMP
 
-# source all environment hooks
+# save value of IFS, including if it was unset
+# the "+x" syntax helps differentiate unset from empty
 _IFS=$IFS
+if [ -z ${IFS+x} ]; then
+  _IFS_WAS_UNSET=1
+fi
+
+# source all environment hooks
 IFS=":"
 for _envfile in $_CATKIN_ENVIRONMENT_HOOKS; do
+  # restore value of IFS, including if it was unset
   IFS=$_IFS
+  if [ $_IFS_WAS_UNSET ]; then
+    unset IFS
+  fi
   . "$_envfile"
 done
+
+# restore value of IFS, including if it was unset
 IFS=$_IFS
+if [ $_IFS_WAS_UNSET ]; then
+  unset IFS
+  unset _IFS_WAS_UNSET
+fi
+unset _IFS
+
 unset _CATKIN_ENVIRONMENT_HOOKS
