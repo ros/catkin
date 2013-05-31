@@ -120,6 +120,7 @@ foreach(filename
     platform/lsb
     platform/ubuntu
     platform/windows
+    test/catkin_download_test_data
     test/download_test_data
     test/gtest
     test/nosetests
