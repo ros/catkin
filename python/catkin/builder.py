@@ -460,7 +460,7 @@ def build_cmake_package(
 # detect if running on Darwin platform
 _UNAME=`uname -s`
 IS_DARWIN=0
-if [ "${_UNAME:0:6}" = "Darwin" ]; then
+if [ "$_UNAME" = "Darwin" ]; then
   IS_DARWIN=1
 fi
 
