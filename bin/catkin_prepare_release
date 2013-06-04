@@ -7,6 +7,7 @@ import subprocess
 import sys
 
 from catkin_pkg import metapackage
+from catkin_pkg.changelog import CHANGELOG_FILENAME, get_changelog_from_path
 from catkin_pkg.package import PACKAGE_MANIFEST_FILENAME
 from catkin_pkg.package_version import bump_version
 from catkin_pkg.packages import find_packages, verify_equal_package_versions
@@ -26,6 +27,26 @@ def has_package_xml_changes(base_path, pkg_path, vcs_type):
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Failed to check if '%s' has modifications: %s" % (pkg_path, str(e)))
     return output != ''
+
+
+def prompt_continue(msg, default):
+    """Prompt the user for continuation."""
+    if default:
+        msg += ' [Y/n]?'
+    else:
+        msg += ' [y/N]?'
+
+    while True:
+        response = raw_input(msg)
+        if not response:
+            response = 'y' if default else 'n'
+        else:
+            response = response.lower()
+
+        if response in ['y', 'n']:
+            return response == 'y'
+
+        print("Response '%s' was not recognized, please use one of the following options: y, Y, n, N" % response, file=sys.stderr)
 
 
 def try_repo_push(base_path, vcs_type):
@@ -85,8 +106,8 @@ def main():
     parser = argparse.ArgumentParser(
         description='Runs the commands to bump the version number, commit the modified %s files and create a tag in the repository.' % PACKAGE_MANIFEST_FILENAME)
     parser.add_argument('--bump', choices=('major', 'minor', 'patch'), default='patch', help='Which part of the version number to bump? (default: %(default)s)')
-    #parser.add_argument('-y', '--non-interactive', action='store_false', default=False,
-    #    help='Run without user interaction')
+    parser.add_argument('-y', '--non-interactive', action='store_true', default=False,
+        help="Run without user interaction, confirming all questions with 'yes'")
     args = parser.parse_args()
 
     base_path = '.'
@@ -117,6 +138,23 @@ def main():
     # fetch current version and verify that all packages have same version number
     old_version = verify_equal_package_versions(packages.values())
     new_version = bump_version(old_version, args.bump)
+
+    # check for changelog entries
+    missing_changelogs = []
+    for pkg_path, package in packages.iteritems():
+        changelog_path = os.path.join(base_path, pkg_path, CHANGELOG_FILENAME)
+        if not os.path.exists(changelog_path):
+            missing_changelogs.append(package.name)
+            continue
+        changelog = get_changelog_from_path(changelog_path, package.name)
+        try:
+            changelog.get_content_of_version(new_version)
+        except KeyError:
+            missing_changelogs.append(package.name)
+    if missing_changelogs:
+        print('Warning: the following packages do not have a changelog file or entry for the to be released version: %s' % ', '.join(sorted(missing_changelogs)), file=sys.stderr)
+        if not args.non_interactive and not prompt_continue('Continue without changelogs', default=False):
+            raise RuntimeError("Skipping release, populate the changelog with 'catkin_generate_changelog' or manually.")
 
     # verify that repository is pushable
     try_repo_push(base_path, vcs_type)
