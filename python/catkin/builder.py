@@ -426,37 +426,41 @@ def build_cmake_package(
         return
     cprint(blue_arrow + " Generating an env.sh")
     # Generate env.sh for chaining to catkin packages
+    # except if using --merge which implies that new_env_path equals last_env
     new_env_path = os.path.join(install_target, 'env.sh')
-    variables = {
-        'SETUP_DIR': install_target,
-        'SETUP_FILENAME': 'setup'
-    }
-    with open(os.path.join(new_env_path), 'w') as f:
-        f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'env.sh.in'), variables))
-    os.chmod(new_env_path, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+    if new_env_path != last_env:
+        variables = {
+            'SETUP_DIR': install_target,
+            'SETUP_FILENAME': 'setup'
+        }
+        with open(os.path.join(new_env_path), 'w') as f:
+            f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'env.sh.in'), variables))
+        os.chmod(new_env_path, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
 
     # Generate setup.sh for chaining to catkin packages
+    # except if using --merge which implies that new_setup_path equals last_setup_env
     new_setup_path = os.path.join(install_target, 'setup.sh')
-    subs = {}
-    subs['cmake_prefix_path'] = install_target + ":"
-    subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
-    pythonpath = os.path.join(install_target, get_python_install_dir())
-    subs['pythonpath'] = pythonpath + ':'
-    subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
-    subs['pkgcfg_path'] += ":"
-    subs['path'] = os.path.join(install_target, 'bin') + ":"
-    if not os.path.exists(install_target):
-        os.mkdir(install_target)
-    with open(new_setup_path, 'w+') as file_handle:
-        file_handle.write("""\
+    last_setup_env = os.path.join(os.path.dirname(last_env), 'setup.sh') if last_env is not None else None
+    if new_setup_path != last_setup_env:
+        subs = {}
+        subs['cmake_prefix_path'] = install_target + ":"
+        subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
+        pythonpath = os.path.join(install_target, get_python_install_dir())
+        subs['pythonpath'] = pythonpath + ':'
+        subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
+        subs['pkgcfg_path'] += ":"
+        subs['path'] = os.path.join(install_target, 'bin') + ":"
+        if not os.path.exists(install_target):
+            os.mkdir(install_target)
+        with open(new_setup_path, 'w+') as file_handle:
+            file_handle.write("""\
 #!/usr/bin/env sh
 # generated from catkin.builder module
 
 """)
-        if last_env is not None:
-            last_setup_env = os.path.join(os.path.dirname(last_env), 'setup.sh')
-            file_handle.write('. %s\n\n' % last_setup_env)
-        file_handle.write("""\
+            if last_env is not None:
+                file_handle.write('. %s\n\n' % last_setup_env)
+            file_handle.write("""\
 # detect if running on Darwin platform
 _UNAME=`uname -s`
 IS_DARWIN=0
