@@ -323,7 +323,7 @@ def build_catkin_package(
             '-DCMAKE_INSTALL_PREFIX=' + installspace
         ]
         cmake_cmd.extend(cmake_args)
-        isolation_print_command(' '.join(cmake_cmd))
+        isolation_print_command(' '.join(cmake_cmd), build_dir)
         if last_env is not None:
             cmake_cmd = [last_env] + cmake_cmd
         try:
@@ -391,7 +391,7 @@ def build_cmake_package(
             '-DCMAKE_INSTALL_PREFIX=' + install_target
         ]
         cmake_cmd.extend(cmake_args)
-        isolation_print_command(' '.join(cmake_cmd))
+        isolation_print_command(' '.join(cmake_cmd), build_dir)
         if last_env is not None:
             cmake_cmd = [last_env] + cmake_cmd
         run_command_colorized(cmake_cmd, build_dir, quiet)
@@ -563,7 +563,7 @@ def build_workspace_isolated(
     :param develspace: path to devel space location, ``str``
     :param installspace: path to install space (CMAKE_INSTALL_PREFIX), ``str``
     :param merge: if True, build each catkin package into the same
-        devel space. does not work with non-catkin packages, ``bool``
+        devel space (not affecting plain cmake packages), ``bool``
     :param install: if True, install all packages to the install space,
         ``bool``
     :param force_cmake: (optional), if True calls cmake explicitly for each
