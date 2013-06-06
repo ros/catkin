@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.66 (2013-06-06)
+-------------------
 * add new CMake function catkin_download_test_data, mark download_test_data as deprecated (`#426 <https://github.com/ros/catkin/issues/426>`_, `#431 <https://github.com/ros/catkin/issues/431>`_)
 * catkin_make and catkin_make_isolated:
 
@@ -40,7 +40,7 @@ Forthcoming
   * add generated CMake API to appear in the wiki (`#384 <https://github.com/ros/catkin/issues/384>`_)
 
 * add and install LICENSE file (`#398 <https://github.com/ros/catkin/issues/398>`_)
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.65...groovy-devel>`_
+* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.65...0.5.66>`_
 
 0.5.65 (2013-03-21)
 -------------------
