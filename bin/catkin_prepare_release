@@ -49,13 +49,31 @@ def prompt_continue(msg, default):
         print("Response '%s' was not recognized, please use one of the following options: y, Y, n, N" % response, file=sys.stderr)
 
 
+def get_git_remote_and_branch(base_path):
+    cmd_remote = [_find_executable('git'), 'remote', 'show']
+    try:
+        remote = subprocess.check_output(cmd_remote, cwd=base_path).rstrip()
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError('Could not determine git remote: %s' % str(e))
+
+    cmd_branch = [_find_executable('git'), 'rev-parse', '--abbrev-ref', 'HEAD']
+    try:
+        branch = subprocess.check_output(cmd_branch, cwd=base_path).rstrip()
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError('Could not determine git branch: %s' % str(e))
+
+    return (remote, branch)
+
+
 def try_repo_push(base_path, vcs_type):
     if vcs_type in ['bzr', 'git', 'hg']:
         cmd = [_find_executable(vcs_type), 'push']
+        if vcs_type == 'git':
+            cmd.extend(get_git_remote_and_branch(base_path))
         try:
-            output = subprocess.check_output(cmd, cwd=base_path, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            raise RuntimeError("Failed to push to repository: %s\n%s" % (str(e), output))
+            subprocess.check_call(cmd, cwd=base_path)
+        except (subprocess.CalledProcessError, RuntimeError) as e:
+            raise RuntimeError("Failed to push to repository: %s" % str(e))
 
 
 def commit_package_xml_files(base_path, vcs_type, packages, message):
@@ -89,9 +107,9 @@ def tag_repository(base_path, vcs_type, new_version):
     else:
         assert False, 'Unknown vcs type: %s' % vcs_type
     try:
-        output = subprocess.check_output(cmd, cwd=base_path, stderr=subprocess.STDOUT)
+        subprocess.check_call(cmd, cwd=base_path)
     except subprocess.CalledProcessError as e:
-        raise RuntimeError("Failed to tag repository: %s\n%s" % (str(e), output))
+        raise RuntimeError("Failed to tag repository: %s" % str(e))
 
 
 def _find_executable(vcs_type):
@@ -173,24 +191,26 @@ def main():
     if vcs_type in ['bzr', 'git', 'hg']:
         print('Pushing changes to the repository...')
         cmd = [_find_executable(vcs_type), 'push']
+        if vcs_type == 'git':
+            cmd.extend(get_git_remote_and_branch(base_path))
         try:
-            output = subprocess.check_output(cmd, cwd=base_path, stderr=subprocess.STDOUT)
+            subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
-            raise RuntimeError("Failed to push changes to the repository: %s\n%s\n\nYou need to manually push the changes/tag to the repository." % (str(e), output))
+            raise RuntimeError("Failed to push changes to the repository: %s\n%s\n\nYou need to manually push the changes/tag to the repository." % str(e))
 
     # push tags to the repository
     if vcs_type in ['git']:
         print('Pushing tag to the repository...')
         cmd = [_find_executable(vcs_type), 'push', '--tags']
         try:
-            output = subprocess.check_output(cmd, cwd=base_path, stderr=subprocess.STDOUT)
+            subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
-            raise RuntimeError("Failed to push tag to the repository: %s\n%s\n\nYou need to manually push the new tag to the repository." % (str(e), output))
+            raise RuntimeError("Failed to push tag to the repository: %s\n%s\n\nYou need to manually push the new tag to the repository." % str(e))
 
 
 if __name__ == '__main__':
     try:
         main()
-    except Exception as e:
+    except RuntimeError as e:
         print(e, file=sys.stderr)
         sys.exit(1)
