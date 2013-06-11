@@ -67,8 +67,8 @@ In addition to the XML elements mentioned above, a metapackage
     <metapackage/>
   </export>
 
-In addition to the required ``<buildtool_depends>`` for catkin,
-metapackages list the packages in the group using ``<run_depends>``
+In addition to the required ``<buildtool_depend>`` for catkin,
+metapackages list the packages in the group using ``<run_depend>``
 tags::
 
   <run_depend>your_custom_msgs</run_depend>

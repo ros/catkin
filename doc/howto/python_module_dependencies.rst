@@ -24,14 +24,23 @@ like other system packages, using the rosdep name::
   <run_depend>python-rosdep</run_depend>
   <run_depend>python-rospkg</run_depend>
 
-When you import from another ROS catkin package, like ``rospy`` or
-``std_msgs``, always use the catkin package name::
+When you import from another ROS Python package, like ``rospy`` or
+``roslaunch``, always use the catkin package name::
 
+  <run_depend>roslaunch</run_depend>
   <run_depend>rospy</run_depend>
-  <run_depend>std_msgs</run_depend>
+
+ROS message or service definitions are similarly defined as modules by
+ROS packages like std_msgs_ and sensor_msgs_, used as examples here.
+For them, use a ``<depend>`` tag with the ROS package name::
+
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
 
 Your ``CMakeLists.txt`` need not specify Python-only dependencies.
 They are resolved automatically via ``sys.path``.
 
 .. _`fork that repository and add them`: http://ros.org/doc/independent/api/rosdep/html/contributing_rules.html
 .. _`rosdistro repository`: https://github.com/ros/rosdistro/blob/master/rosdep/python.yaml
+.. _sensor_msgs: http://www.ros.org/wiki/sensor_msgs
+.. _std_msgs: http://www.ros.org/wiki/std_msgs

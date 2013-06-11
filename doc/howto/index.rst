@@ -28,7 +28,6 @@ on other packages are handled automatically by catkin.
    catkin_library_dependencies
    system_library_dependencies
    cpp_msg_dependencies
-   python_msg_dependencies
    python_module_dependencies
 
 
