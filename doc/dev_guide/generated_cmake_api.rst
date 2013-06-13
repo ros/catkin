@@ -15,6 +15,7 @@ Public CMake functions / macros
  * :cmake:macro:`catkin_add_env_hooks`
  * :cmake:macro:`catkin_add_gtest`
  * :cmake:macro:`catkin_add_nosetests`
+ * :cmake:macro:`catkin_download_test_data`
  * :cmake:macro:`catkin_metapackage`
  * :cmake:macro:`catkin_package`
  * :cmake:macro:`catkin_package_xml`
@@ -142,6 +143,26 @@ Public CMake functions / macros
 
 
 
+.. _`catkin_download_test_data_ref`:
+
+`catkin_download_test_data`
+---------------------------
+
+.. cmake:macro:: catkin_download_test_data(target, url)
+
+ *[function defined in test/catkin_download_test_data.cmake]*
+
+ :param DESTINATION: the directory where the file is downloaded to
+   (default: ${PROJECT_BINARY_DIR})
+ :type DESTINATION: string
+ :param FILENAME: the filename of the downloaded file
+   (default: the basename of the url)
+ :type FILENAME: string
+ :param MD5: the expected md5 hash to compare against
+   (default: empty, skipping the check)
+ :type MD5: string
+
+
 .. _`catkin_metapackage_ref`:
 
 `catkin_metapackage`
@@ -181,10 +202,10 @@ Public CMake functions / macros
  about include directories, libraries, further dependencies and
  CMake variables are used.
 
- .. note:: It must be called once for each package.  Best practice
-   is to call this macro early in your root CMakeLists.txt,
-   immediately after calling ``project()`` and
-   ``find_package(catkin REQUIRED)``.
+ .. note:: It must be called once for each package.  It is indirectly
+   calling``catkin_destinations()`` which will provide additional
+   output variables.  Please make sure to call ``catkin_package()``
+   before using those variables.
 
  :param INCLUDE_DIRS: ``CMAKE_CURRENT_SOURCE_DIR``-relative paths to
    C/C++ includes
