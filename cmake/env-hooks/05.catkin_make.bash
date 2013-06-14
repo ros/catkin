@@ -28,18 +28,18 @@ function _catkin_make()
     else
         # check if custom workspace root has been specified on the command line
         local workspace_dir="."
-        for (( i=0; i < ${#words[@]}; i++ )); do
-            if [[ ${words[i]} == -@(C|-directory) ]]; then
+        for (( i=0; i < ${#COMP_WORDS[@]}; i++ )); do
+            if [[ ${COMP_WORDS[i]} == -@(C|-directory) ]]; then
                 # eval to expand tilde
-                eval workspace_dir=${words[i+1]}
+                eval workspace_dir=${COMP_WORDS[i+1]}
             fi
         done
         # check if custom build folder has been specified on the command line
         local build_dir="build"
-        for (( i=0; i < ${#words[@]}; i++ )); do
-            if [[ ${words[i]} == --build ]]; then
+        for (( i=0; i < ${#COMP_WORDS[@]}; i++ )); do
+            if [[ ${COMP_WORDS[i]} == --build ]]; then
                 # eval to expand tilde
-                eval build_dir=${words[i+1]}
+                eval build_dir=${COMP_WORDS[i+1]}
             fi
         done
 
