@@ -16,6 +16,7 @@ Changelog for package catkin
   * add --catkin-make-args which enables calling 'catkin_make_isolated run_tests' (`#414 <https://github.com/ros/catkin/issues/414>`_)
 
 * catkin_prepare_release:
+
   * execute the commands rather than printing them (`#417 <https://github.com/ros/catkin/issues/417>`_)
   * warn about missing changelog files
   * validate metapackages (`#404 <https://github.com/ros/catkin/issues/404>`_)
