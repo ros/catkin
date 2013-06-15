@@ -27,7 +27,7 @@ function _catkin_make_isolated()
         # check if custom workspace root has been specified on the command line
         local workspace_dir="."
         for (( i=0; i < ${#COMP_WORDS[@]}; i++ )); do
-            if [[ ${COMP_WORDS[i]} == -@(C|-directory) ]]; then
+            if [[ ${COMP_WORDS[i]} == -C || ${COMP_WORDS[i]} == --directory ]]; then
                 # eval to expand tilde
                 eval workspace_dir=${COMP_WORDS[i+1]}
             fi
