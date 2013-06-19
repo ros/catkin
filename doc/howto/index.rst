@@ -58,8 +58,6 @@ headers, and other objects.  Various targets require special handling.
 Configuring unit tests
 ----------------------
 
-.. todo:: still need to write these sections
-
 .. toctree::
    :maxdepth: 1
 
