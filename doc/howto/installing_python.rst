@@ -74,7 +74,6 @@ layout, it looks like this::
   setup_args = generate_distutils_setup(
       packages=['your_package'],
       package_dir={'': 'src'})
-  )
   
   setup(**setup_args)
 
