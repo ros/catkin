@@ -61,6 +61,7 @@ Configuring unit tests
 .. toctree::
    :maxdepth: 1
 
+   downloading_test_data
    gtest_configuration
    python_nose_configuration
    rostest_configuration

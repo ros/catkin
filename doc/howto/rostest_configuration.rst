@@ -16,7 +16,7 @@ the ``add_rostest()`` CMake command::
 
   <build_depend>rostest</build_depend>
 
-Do not declare a ``<test_depend>``, that will conflict with the
+Do not declare a ``<test_depend>``, because it will conflict with the
 required ``<build_depend>``.
 
 
