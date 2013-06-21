@@ -11,7 +11,7 @@ pure C++ framework.  No ROS environment is available.  See:
 package.xml
 :::::::::::
 
-The ``rosunit`` package is needed for testing::
+The rosunit_ package is needed for testing::
 
   <test_depend>rosunit</test_depend>
 
@@ -32,3 +32,4 @@ If other libraries are needed to compile your test program, see
 
 .. _Gtest: http://www.ros.org/wiki/gtest
 .. _roscore: http://www.ros.org/wiki/roscore
+.. _rosunit: http://www.ros.org/wiki/rosunit
