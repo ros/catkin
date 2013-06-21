@@ -1,4 +1,4 @@
-.. _dynamic_reconfiguration:
+.. _dynamic_reconfiguration_1:
 
 Dynamic reconfiguration
 -----------------------

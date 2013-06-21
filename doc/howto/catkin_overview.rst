@@ -1,4 +1,4 @@
-.. _catkin_overview:
+.. _catkin_overview_1:
 
 Catkin configuration overview
 -----------------------------
@@ -105,7 +105,7 @@ arguments::
   ...
   catkin_metapackage(...)
 
-:ref:`how_to_do_common_tasks` pages describe those tasks in detail.
+:ref:`how_to_do_common_tasks_1` pages describe those tasks in detail.
 Follow them, observing the usual order of ``CMakeLists.txt`` commands:
 
 #. ``cmake_minimum_required()``
