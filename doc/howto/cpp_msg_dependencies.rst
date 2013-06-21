@@ -1,4 +1,4 @@
-.. _cpp_msg_dependencies:
+.. _cpp_msg_dependencies_1:
 
 C++ message or service dependencies
 -----------------------------------
@@ -15,15 +15,16 @@ references.
 package.xml
 :::::::::::
 
-For each C++ message dependency, ``package.xml`` should provide a
-``<depend>`` with the ROS package name::
+For each C++ message dependency, ``package.xml`` should provide both
+``<build_depend>`` and ``<run_depend>`` tags with the ROS package
+name::
 
-  <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
+  <build_depend>std_msgs</build_depend>
+  <run_depend>std_msgs</run_depend>
 
-The ``<depend>`` element is equivalent to specifying both
-``<build_depend>`` and ``<run_depend>``, which are both recommended
-for message dependencies.
+  <build_depend>sensor_msgs</build_depend>
+  <run_depend>sensor_msgs</run_depend>
+
 
 CMakeLists.txt
 ::::::::::::::

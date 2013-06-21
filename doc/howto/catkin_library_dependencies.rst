@@ -1,4 +1,4 @@
-.. _catkin_library_dependencies:
+.. _catkin_library_dependencies_1:
 
 C++ catkin library dependencies
 -------------------------------
@@ -45,15 +45,7 @@ In either case, declare the dependency this way::
   <run_depend>roscpp</run_depend>
 
 Most existing ROS packages combine their build and run-time files
-within a single package.  When both ``<build_depend>`` and
-``<run_depend>`` are required, you can avoid repeating declarations by
-using the ``<depend>`` tag, which is equivalent to both::
-
-  <depend>roscpp</depend>
-
-Users of your package will need to install all its listed
-dependencies, so avoid using ``<depend>`` unless it is really
-appropriate.
+within a single package.
 
 
 CMakeLists.txt
@@ -103,11 +95,11 @@ Next steps
 ::::::::::
 
 If your package also depends on non-catkin libraries provided by the
-operating system, you must provide :ref:`system_library_dependencies`,
+operating system, you must provide :ref:`system_library_dependencies_1`,
 too.
 
-Then, you are ready for :ref:`building_libraries` and
-:ref:`building_executables`.
+Then, you are ready for :ref:`building_libraries_1` and
+:ref:`building_executables_1`.
 
 .. _`contributing the missing rules`: http://ros.org/doc/independent/api/rosdep/html/contributing_rules.html
 .. _pkg-config: http://www.freedesktop.org/wiki/Software/pkg-config/

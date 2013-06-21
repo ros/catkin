@@ -1,4 +1,4 @@
-.. _python_module_dependencies:
+.. _python_module_dependencies_1:
 
 Python module dependencies
 --------------------------
@@ -32,10 +32,14 @@ When you import from another ROS Python package, like ``rospy`` or
 
 ROS message or service definitions are similarly defined as modules by
 ROS packages like std_msgs_ and sensor_msgs_, used as examples here.
-For them, use a ``<depend>`` tag with the ROS package name::
+For them, use both ``<build_depend>`` and ``<run_depend>`` tags with
+the ROS package name::
 
-  <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
+  <build_depend>std_msgs</build_depend>
+  <run_depend>std_msgs</run_depend>
+
+  <build_depend>sensor_msgs</build_depend>
+  <run_depend>sensor_msgs</run_depend>
 
 Your ``CMakeLists.txt`` need not specify Python-only dependencies.
 They are resolved automatically via ``sys.path``.

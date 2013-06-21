@@ -1,4 +1,4 @@
-.. _building_msgs:
+.. _building_msgs_1:
 
 Building messages, services or actions
 --------------------------------------
@@ -18,10 +18,10 @@ Your messages services, or actions will probably include fields
 defined in other ROS messages, like std_msgs_.  Declare them like
 this::
 
-  <depend>std_msgs</depend>
+  <build_depend>std_msgs</build_depend>
+  <run_depend>std_msgs</run_depend>
 
-The ``<depend>`` element is equivalent to specifying both
-``<build_depend>`` and ``<run_depend>``.  Both are recommended for
+Both ``<build_depend>`` and ``<run_depend>`` are recommended for
 message dependencies.  That example assumes ``std_msgs`` is the only
 dependency.  Be sure to mention all your message package dependencies
 here, and substitute them all for ``std_msgs`` in the examples that
@@ -29,7 +29,8 @@ follow.
 
 To generate actions, add ``actionlib_msgs`` as a dependency::
   
-  <depend>actionlib_msgs</depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <run_depend>actionlib_msgs</run_depend>
 
 
 CMakeLists.txt

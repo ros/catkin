@@ -1,4 +1,4 @@
-.. _installing_cmake:
+.. _installing_cmake_1:
 
 Installing CMake files
 ----------------------
