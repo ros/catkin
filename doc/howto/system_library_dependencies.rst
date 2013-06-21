@@ -1,4 +1,4 @@
-.. _system_library_dependencies:
+.. _system_library_dependencies_1:
 
 C++ system library dependencies
 -------------------------------
@@ -56,16 +56,6 @@ dependency declarations::
 
   <build_depend>curl</build_depend>
   <run_depend>curl</run_depend>
-
-When both ``<build_depend>`` and ``<run_depend>`` are required for the
-same package, you can avoid repetition by using the ``<depend>`` tag.
-This is equivalent to the previous example::
-
-  <depend>curl</depend>
-
-Users of your package will need to install all its listed
-dependencies, so avoid using ``<depend>`` unless it is really
-appropriate.
 
 Some C++ packages, like Eigen, have no run-time library.  Everything
 is defined in the header files.  As long as you do not export any
@@ -154,8 +144,8 @@ define the usual CMake variables.  If they do not, ask for help on
 Next steps
 ::::::::::
 
-At this point, you are ready for :ref:`building_libraries` and
-:ref:`building_executables`.
+At this point, you are ready for :ref:`building_libraries_1` and
+:ref:`building_executables_1`.
 
 .. _`answers.ros.org`: http://answers.ros.org
 .. _`contributing the missing rules`: http://ros.org/doc/independent/api/rosdep/html/contributing_rules.html

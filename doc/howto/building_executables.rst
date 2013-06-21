@@ -1,4 +1,4 @@
-.. _building_executables:
+.. _building_executables_1:
 
 Building and installing C++ executables
 ---------------------------------------
@@ -22,7 +22,7 @@ needed only if that subdirectory of your source package contains
 headers used to compile your programs.  All your catkin package header
 dependencies are resolved via ``${catkin_INCLUDE_DIRS}``.
 
-Other :ref:`how_to_do_common_tasks` pages describe how to resolve
+Other :ref:`how_to_do_common_tasks_1` pages describe how to resolve
 header dependencies in more detail.
 
 Building

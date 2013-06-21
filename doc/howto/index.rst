@@ -3,11 +3,9 @@
 How to do common tasks
 ======================
 
-.. warning::
+.. note::
 
-   These instructions are for `<package format="2">`.  For older
-   catkin packages still using the original `<package>` tag, see:
-   :ref:`how_to_do_common_tasks_1`
+   These instructions are for the original `<package format="1">`.
 
 When writing a new ROS package or converting an old one to catkin,
 several tasks often need to be solved.  These pages give examples for

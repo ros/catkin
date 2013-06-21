@@ -1,4 +1,4 @@
-.. _installing_other:
+.. _installing_other_1:
 
 Installing other files
 ----------------------
