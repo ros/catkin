@@ -1,13 +1,13 @@
-.. _how_to_do_common_tasks:
+.. _how_to_do_common_tasks_1:
 
-How to do common tasks
-======================
+How to do common tasks (format 1)
+=================================
 
 .. warning::
 
-   These instructions are for `<package format="2">`.  For older
-   catkin packages still using the original `<package>` tag, see:
-   :ref:`how_to_do_common_tasks_1`
+   These instructions are for the original `<package format="1">`.
+
+   For the most recent package format, see: :ref:`how_to_do_common_tasks`.
 
 When writing a new ROS package or converting an old one to catkin,
 several tasks often need to be solved.  These pages give examples for
@@ -54,14 +54,3 @@ headers, and other objects.  Various targets require special handling.
    installing_cmake
    installing_other
 
-
-Configuring unit tests
-----------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   downloading_test_data
-   gtest_configuration
-   python_nose_configuration
-   rostest_configuration

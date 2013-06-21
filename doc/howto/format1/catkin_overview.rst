@@ -1,4 +1,4 @@
-.. _catkin_overview:
+.. _catkin_overview_1:
 
 Catkin configuration overview
 -----------------------------
@@ -13,7 +13,7 @@ package.xml
 Your package must contain an XML file named package.xml_, as specified
 by REP-0127_.  These components are all required::
 
-  <package format="2">
+  <package>
     <name>your_package</name>
     <version>1.2.4</version>
     <description>
@@ -105,7 +105,7 @@ arguments::
   ...
   catkin_metapackage(...)
 
-:ref:`how_to_do_common_tasks` pages describe those tasks in detail.
+:ref:`how_to_do_common_tasks_1` pages describe those tasks in detail.
 Follow them, observing the usual order of ``CMakeLists.txt`` commands:
 
 #. ``cmake_minimum_required()``
