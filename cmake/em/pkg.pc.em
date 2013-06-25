@@ -1,3 +1,5 @@
+prefix: @PROJECT_SPACE_DIR
+
 Name: @(CATKIN_PACKAGE_PREFIX + PROJECT_NAME)
 Description: Description of @PROJECT_NAME
 Version: @PROJECT_VERSION
