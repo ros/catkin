@@ -76,17 +76,20 @@ def try_repo_push(base_path, vcs_type):
             raise RuntimeError("Failed to push to repository: %s" % str(e))
 
 
-def commit_package_xml_files(base_path, vcs_type, packages, message):
+def commit_package_xml_files(base_path, vcs_type, packages, message, local_only=False):
     package_xmls = [os.path.join(p, PACKAGE_MANIFEST_FILENAME) for p in packages.keys()]
     cmd = [_find_executable(vcs_type), 'commit', '-m', message]
     cmd += package_xmls
+    if local_only and vcs_type in ['svn']:
+        return cmd
     try:
         subprocess.check_call(cmd, cwd=base_path)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Failed to commit package.xml files: %s" % str(e))
+    return None
 
 
-def tag_repository(base_path, vcs_type, new_version):
+def tag_repository(base_path, vcs_type, new_version, local_only=False):
     if vcs_type in ['bzr', 'git', 'hg']:
         cmd = [_find_executable(vcs_type), 'tag', new_version]
     elif vcs_type == 'svn':
@@ -106,10 +109,13 @@ def tag_repository(base_path, vcs_type, new_version):
         cmd = 'svn cp -m "tagging %s" %s %s' % (new_version, svn_url, tag_url)
     else:
         assert False, 'Unknown vcs type: %s' % vcs_type
+    if local_only and vcs_type in ['svn']:
+        return cmd
     try:
         subprocess.check_call(cmd, cwd=base_path)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Failed to tag repository: %s" % str(e))
+    return None
 
 
 def _find_executable(vcs_type):
@@ -124,6 +130,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Runs the commands to bump the version number, commit the modified %s files and create a tag in the repository.' % PACKAGE_MANIFEST_FILENAME)
     parser.add_argument('--bump', choices=('major', 'minor', 'patch'), default='patch', help='Which part of the version number to bump? (default: %(default)s)')
+    parser.add_argument('-p', '--push', action='store_true', default=False, help='Push changes automatically instead of showing the commands only')
     parser.add_argument('-y', '--non-interactive', action='store_true', default=False,
         help="Run without user interaction, confirming all questions with 'yes'")
     args = parser.parse_args()
@@ -174,38 +181,59 @@ def main():
         if not args.non_interactive and not prompt_continue('Continue without changelogs', default=False):
             raise RuntimeError("Skipping release, populate the changelog with 'catkin_generate_changelog' or manually.")
 
-    # verify that repository is pushable
-    try_repo_push(base_path, vcs_type)
+    if args.push:
+        # verify that repository is pushable
+        try_repo_push(base_path, vcs_type)
 
     # bump version number
     update_versions(packages.keys(), new_version)
     print('Bump version from %s to %s' % (old_version, new_version))
 
+    # commands to run to push changes to remote
+    commands = []
+
     print('Committing the package.xml files...')
-    commit_package_xml_files(base_path, vcs_type, packages, new_version)
+    cmd = commit_package_xml_files(base_path, vcs_type, packages, new_version, local_only=not args.push)
+    if cmd:
+        commands.append(cmd)
 
     print('Tagging the repository...')
-    tag_repository(base_path, vcs_type, new_version)
+    cmd = tag_repository(base_path, vcs_type, new_version, local_only=not args.push)
+    if cmd:
+        commands.append(cmd)
 
     # push changes to the repository
     if vcs_type in ['bzr', 'git', 'hg']:
-        print('Pushing changes to the repository...')
         cmd = [_find_executable(vcs_type), 'push']
         if vcs_type == 'git':
             cmd.extend(get_git_remote_and_branch(base_path))
-        try:
-            subprocess.check_call(cmd, cwd=base_path)
-        except subprocess.CalledProcessError as e:
-            raise RuntimeError("Failed to push changes to the repository: %s\n%s\n\nYou need to manually push the changes/tag to the repository." % str(e))
+        if args.push:
+            print('Pushing changes to the repository...')
+            try:
+                subprocess.check_call(cmd, cwd=base_path)
+            except subprocess.CalledProcessError as e:
+                raise RuntimeError("Failed to push changes to the repository: %s\n%s\n\nYou need to manually push the changes/tag to the repository." % str(e))
+        else:
+            commands.append(cmd)
 
     # push tags to the repository
     if vcs_type in ['git']:
-        print('Pushing tag to the repository...')
         cmd = [_find_executable(vcs_type), 'push', '--tags']
-        try:
-            subprocess.check_call(cmd, cwd=base_path)
-        except subprocess.CalledProcessError as e:
-            raise RuntimeError("Failed to push tag to the repository: %s\n%s\n\nYou need to manually push the new tag to the repository." % str(e))
+        if args.push:
+            print('Pushing tag to the repository...')
+            try:
+                subprocess.check_call(cmd, cwd=base_path)
+            except subprocess.CalledProcessError as e:
+                raise RuntimeError("Failed to push tag to the repository: %s\n%s\n\nYou need to manually push the new tag to the repository." % str(e))
+        else:
+            commands.append(cmd)
+
+    if not args.push:
+        commands = [c for c in commands if c]
+        print('All local changes have been completed.')
+        print('To push the changes to the remote repository execute the following commands:')
+        for cmd in commands:
+            print('  %s' % ' '.join(cmd))
 
 
 if __name__ == '__main__':
