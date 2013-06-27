@@ -50,17 +50,17 @@ def prompt_continue(msg, default):
 
 
 def get_git_remote_and_branch(base_path):
-    cmd_remote = [_find_executable('git'), 'remote', 'show']
-    try:
-        remote = subprocess.check_output(cmd_remote, cwd=base_path).rstrip()
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError('Could not determine git remote: %s' % str(e))
-
     cmd_branch = [_find_executable('git'), 'rev-parse', '--abbrev-ref', 'HEAD']
     try:
         branch = subprocess.check_output(cmd_branch, cwd=base_path).rstrip()
     except subprocess.CalledProcessError as e:
         raise RuntimeError('Could not determine git branch: %s' % str(e))
+
+    cmd_remote = [_find_executable('git'), 'config', '--get', 'branch.%s.remote' % branch]
+    try:
+        remote = subprocess.check_output(cmd_remote, cwd=base_path).rstrip()
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError('Could not determine git remote: %s' % str(e))
 
     return (remote, branch)
 
