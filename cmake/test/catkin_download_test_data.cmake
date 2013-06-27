@@ -1,3 +1,5 @@
+_generate_function_if_testing_is_disabled("catkin_download_test_data")
+
 #
 # Download a file containing test data from a URL.
 #
@@ -27,6 +29,8 @@
 #
 # @public
 function(catkin_download_test_data target url)
+  _warn_if_skip_testing("catkin_download_test_data")
+
   cmake_parse_arguments(ARG "" "DESTINATION;FILENAME;MD5" "" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_download_test_data() called with unused arguments: ${ARG_UNPARSED_ARGUMENTS}")
