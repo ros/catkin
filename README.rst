@@ -7,4 +7,4 @@ to build some parts of `ROS <http://www.ros.org>`_
 Documentation
 -------------
 
-http://ros.org/doc/groovy/api/catkin/html/
+http://ros.org/doc/api/catkin/html/

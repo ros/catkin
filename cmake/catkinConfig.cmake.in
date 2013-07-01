@@ -89,6 +89,14 @@ endforeach()
 list_insert_in_workspace_order(catkin_INCLUDE_DIRS ${catkin_INCLUDE_DIRS})
 list_insert_in_workspace_order(catkin_LIBRARY_DIRS ${catkin_LIBRARY_DIRS})
 
+# add dummy target to catkin_EXPORTED_TARGETS if empty
+if(NOT catkin_EXPORTED_TARGETS)
+  if(NOT TARGET _catkin_empty_exported_target)
+    add_custom_target(_catkin_empty_exported_target)
+  endif()
+  list(APPEND catkin_EXPORTED_TARGETS _catkin_empty_exported_target)
+endif()
+
 # decrement recursion counter
 math(EXPR _CATKIN_FIND_ "${_CATKIN_FIND_} - 1")
 
