@@ -1,3 +1,53 @@
+# check if testing is explicitly disabled
+if(DEFINED CATKIN_ENABLE_TESTING AND NOT CATKIN_ENABLE_TESTING)
+  set(CATKIN_ENABLE_TESTING 0 CACHE BOOL "catkin enable testing")
+  message(STATUS "Using CATKIN_ENABLE_TESTING: off")
+endif()
+
+# check CATKIN_SKIP_TESTING
+if(CATKIN_SKIP_TESTING)
+  set(CATKIN_SKIP_TESTING 1 CACHE BOOL "catkin skip testing")
+  message(STATUS "Using CATKIN_SKIP_TESTING: on (implying CATKIN_ENABLE_TESTING=0)")
+  set(CATKIN_ENABLE_TESTING 0)
+endif()
+
+if(NOT DEFINED CATKIN_ENABLE_TESTING OR CATKIN_ENABLE_TESTING)
+  message(STATUS "Using CATKIN_ENABLE_TESTING: on")
+endif()
+
+# creates a dummy function in case testing has been explicitly disabled (and not only skipping)
+# which outputs an error message when being invoked
+macro(_generate_function_if_testing_is_disabled funcname)
+  if(DEFINED CATKIN_ENABLE_TESTING AND NOT CATKIN_ENABLE_TESTING AND NOT CATKIN_SKIP_TESTING)
+    function(${funcname})
+      message(FATAL_ERROR
+        "${funcname}() is not available when tests are not enabled. The CMake code should only use it inside a conditional block which checks that testing is enabled:\n"
+        "if(CATKIN_ENABLE_TESTING)\n"
+        "  ${funcname}(...)\n"
+        "endif()\n")
+    endfunction()
+    return()
+  endif()
+endmacro()
+
+# checks if a function has been called while testing is skipped
+# and outputs a warning message
+macro(_warn_if_skip_testing funcname)
+  if(DEFINED CATKIN_ENABLE_TESTING AND NOT CATKIN_ENABLE_TESTING)
+    message(WARNING
+      "${funcname}() should only be used inside a conditional block which checks that testing is enabled:\n"
+      "if(CATKIN_ENABLE_TESTING)\n"
+      "  ${funcname}(...)\n"
+      "endif()\n")
+  endif()
+endmacro()
+
+if(DEFINED CATKIN_ENABLE_TESTING AND NOT CATKIN_ENABLE_TESTING AND NOT CATKIN_SKIP_TESTING)
+  return()
+endif()
+
+enable_testing()
+
 # allow overriding CATKIN_TEST_RESULTS_DIR when explicitly passed to CMake as a command line argument
 if(DEFINED CATKIN_TEST_RESULTS_DIR)
   set(CATKIN_TEST_RESULTS_DIR ${CATKIN_TEST_RESULTS_DIR} CACHE INTERNAL "")
@@ -55,16 +105,27 @@ function(catkin_run_tests_target type name xunit_filename)
     add_custom_target(_run_tests_${PROJECT_NAME}_${type})
     add_dependencies(_run_tests_${PROJECT_NAME} _run_tests_${PROJECT_NAME}_${type})
   endif()
-  # create target for test execution
-  set(results ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/${xunit_filename})
-  if (_testing_WORKING_DIRECTORY)
-    set(working_dir_arg "--working-dir" ${_testing_WORKING_DIRECTORY})
+  if(NOT DEFINED CATKIN_ENABLE_TESTING OR CATKIN_ENABLE_TESTING)
+    # create target for test execution
+    set(results ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/${xunit_filename})
+    if (_testing_WORKING_DIRECTORY)
+      set(working_dir_arg "--working-dir" ${_testing_WORKING_DIRECTORY})
+    endif()
+    assert(CATKIN_ENV)
+    set(cmd_wrapper ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
+      ${catkin_EXTRAS_DIR}/test/run_tests.py ${results} ${working_dir_arg})
+    # for ctest the command needs to return non-zero if any test failed
+    set(cmd ${cmd_wrapper} "--return-code" ${_testing_COMMAND})
+    add_test(NAME _ctest_${PROJECT_NAME}_${type}_${name} COMMAND ${cmd})
+    # for the run_tests target the command needs to return zero so that testing is not aborted
+    set(cmd ${cmd_wrapper} ${_testing_COMMAND})
+    add_custom_target(run_tests_${PROJECT_NAME}_${type}_${name}
+      COMMAND ${cmd})
+  else()
+    # create empty dummy target
+    set(cmd "${CMAKE_COMMAND}" "-E" "echo" "Skipping test target \\'run_tests_${PROJECT_NAME}_${type}_${name}\\'. Enable testing via -DCATKIN_ENABLE_TESTING.")
+    add_custom_target(run_tests_${PROJECT_NAME}_${type}_${name} ${cmd})
   endif()
-  assert(CATKIN_ENV)
-  set(cmd ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
-    ${catkin_EXTRAS_DIR}/test/run_tests.py ${results} ${working_dir_arg} ${_testing_COMMAND})
-  add_custom_target(run_tests_${PROJECT_NAME}_${type}_${name}
-    COMMAND ${cmd})
   add_dependencies(run_tests_${PROJECT_NAME}_${type} run_tests_${PROJECT_NAME}_${type}_${name})
   if(_testing_DEPENDENCIES)
     add_dependencies(run_tests_${PROJECT_NAME}_${type}_${name} ${_testing_DEPENDENCIES})

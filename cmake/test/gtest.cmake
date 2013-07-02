@@ -1,3 +1,5 @@
+_generate_function_if_testing_is_disabled("catkin_add_gtest")
+
 #
 # Add a GTest based test target.
 #
@@ -21,6 +23,8 @@
 # @public
 #
 function(catkin_add_gtest target)
+  _warn_if_skip_testing("catkin_add_gtest")
+
   if(NOT GTEST_FOUND AND NOT GTEST_FROM_SOURCE_FOUND)
     message(STATUS "skipping gtest '${target}' in project '${PROJECT_NAME}'")
     return()
