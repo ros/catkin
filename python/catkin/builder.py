@@ -552,7 +552,8 @@ def build_workspace_isolated(
     quiet=False,
     cmake_args=None,
     make_args=None,
-    catkin_make_args=None
+    catkin_make_args=None,
+    continue_from_pkg=False
 ):
     '''
     Runs ``cmake``, ``make`` and optionally ``make install`` for all
@@ -581,6 +582,8 @@ def build_workspace_isolated(
     :param make_args: additional arguments for make, ``[str]``
     :param catkin_make_args: additional arguments for make but only for catkin
         packages, ``[str]``
+    :param continue_from_pkg: indicates whether or not cmi should continue
+        when a package is reached, ``bool``
     '''
     if not colorize:
         disable_ANSI_colors()
@@ -706,6 +709,8 @@ def build_workspace_isolated(
         else:
             pkg_develspace = os.path.join(develspace, package.name)
         if not build_packages or package.name in build_packages:
+            if continue_from_pkg and build_packages and package.name in build_packages:
+                build_packages = None
             try:
                 export_tags = [e.tagname for e in package.exports]
                 is_cmake_package = 'cmake' in [e.content for e in package.exports if e.tagname == 'build_type']
