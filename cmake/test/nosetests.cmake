@@ -1,3 +1,5 @@
+_generate_function_if_testing_is_disabled("catkin_add_nosetests")
+
 #
 # Add Python nose tests.
 #
@@ -24,6 +26,8 @@
 # @public
 #
 function(catkin_add_nosetests path)
+  _warn_if_skip_testing("catkin_add_nosetests")
+
   if(NOT NOSETESTS)
     message(STATUS "skipping nosetests(${path}) in project '${PROJECT_NAME}'")
     return()

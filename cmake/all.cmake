@@ -120,11 +120,11 @@ foreach(filename
     platform/lsb
     platform/ubuntu
     platform/windows
+    test/tests # defines CATKIN_ENABLE_TESTING, required by other test functions
     test/catkin_download_test_data
     test/download_test_data
     test/gtest
     test/nosetests
-    test/tests
     tools/doxygen
     tools/libraries
     tools/rt
