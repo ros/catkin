@@ -50,8 +50,11 @@ def parse_args(args=None):
         help='Runs cmake explicitly for each catkin package.')
     add('--no-color', action='store_true', default=False,
         help='Disables colored output (only for catkin_make and CMake)')
-    add('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
-        help='Invoke "make" on specific packages (only after initial invocation)')
+    pkg = parser.add_mutually_exclusive_group(required=False)
+    pkg.add_argument('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
+                     help='Invoke "make" on specific packages (only after initial invocation)')
+    pkg.add_argument('--from-pkg', metavar='PKGNAME', dest='from_package',
+                     help='Restart catkin_make_isolated at the given package continuing from there.')
     add('-q', '--quiet', action='store_true', default=False,
         help='Suppresses the cmake and make output until an error occurs.')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
@@ -114,11 +117,12 @@ def main():
         install=opts.install,
         force_cmake=opts.force_cmake,
         colorize=not opts.no_color,
-        build_packages=opts.packages,
+        build_packages=opts.packages or ([] if opts.from_package is None else [opts.from_package]),
         quiet=opts.quiet,
         cmake_args=cmake_args,
         make_args=opts.make_args,
-        catkin_make_args=opts.catkin_make_args
+        catkin_make_args=opts.catkin_make_args,
+        continue_from_pkg=opts.from_package is not None
     )
 
 if __name__ == '__main__':
