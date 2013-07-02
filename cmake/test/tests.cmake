@@ -112,11 +112,15 @@ function(catkin_run_tests_target type name xunit_filename)
       set(working_dir_arg "--working-dir" ${_testing_WORKING_DIRECTORY})
     endif()
     assert(CATKIN_ENV)
-    set(cmd ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
-      ${catkin_EXTRAS_DIR}/test/run_tests.py ${results} ${working_dir_arg} ${_testing_COMMAND})
+    set(cmd_wrapper ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
+      ${catkin_EXTRAS_DIR}/test/run_tests.py ${results} ${working_dir_arg})
+    # for ctest the command needs to return non-zero if any test failed
+    set(cmd ${cmd_wrapper} "--return-code" ${_testing_COMMAND})
+    add_test(NAME _ctest_${PROJECT_NAME}_${type}_${name} COMMAND ${cmd})
+    # for the run_tests target the command needs to return zero so that testing is not aborted
+    set(cmd ${cmd_wrapper} ${_testing_COMMAND})
     add_custom_target(run_tests_${PROJECT_NAME}_${type}_${name}
       COMMAND ${cmd})
-    add_test(NAME _ctest_${PROJECT_NAME}_${type}_${name} COMMAND ${cmd})
   else()
     # create empty dummy target
     set(cmd "${CMAKE_COMMAND}" "-E" "echo" "Skipping test target \\'run_tests_${PROJECT_NAME}_${type}_${name}\\'. Enable testing via -DCATKIN_ENABLE_TESTING.")
