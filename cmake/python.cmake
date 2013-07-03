@@ -7,15 +7,18 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/python_version
 
 set(PYTHON_VERSION_XDOTY ${PYTHON_VERSION_XDOTY} CACHE STRING "Python version")
 
-set(python_use_debian_layout FALSE)
+set(enable_setuptools_deb_layout OFF)
 if(EXISTS "/etc/debian_version")
-  set(python_use_debian_layout TRUE)
+  set(enable_setuptools_deb_layout ON)
 endif()
+option(SETUPTOOLS_DEB_LAYOUT "Enable debian style python package layout" ${enable_setuptools_deb_layout})
 
-if(python_use_debian_layout)
+if(SETUPTOOLS_DEB_LAYOUT)
+  message(STATUS "Using Debian Python package layout")
   set(PYTHON_PACKAGES_DIR dist-packages)
   set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb")
 else()
+  message(STATUS "Using default Python package layout")
   set(PYTHON_PACKAGES_DIR site-packages)
   # setuptools is fussy about windows paths, make sure the install prefix is in native format
   file(TO_NATIVE_PATH "${CMAKE_INSTALL_PREFIX}" SETUPTOOLS_INSTALL_PREFIX)
