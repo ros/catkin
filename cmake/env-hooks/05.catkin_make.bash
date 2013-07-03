@@ -14,6 +14,9 @@ function _catkin_make()
     if [[ "$cur" == -DCMAKE_BUILD_TYPE=* ]]; then
         # autocomplete CMake argument CMAKE_BUILD_TYPE with its options
         COMPREPLY=( $( compgen -W "None Debug Release RelWithDebInfo MinSizeRel" -- "${cur:19}" ) )
+    elif [[ "$cur" == -DCATKIN_ENABLE_TESTING=* ]]; then
+        # autocomplete catkin argument CATKIN_ENABLE_TESTING with its options
+        COMPREPLY=( $( compgen -W "0 1" -- "${cur:24}" ) )
     elif [[ "$cur" == -DCATKIN_DEVEL_PREFIX=* || "$cur" == -DCMAKE_INSTALL_PREFIX=* ]]; then
         COMPREPLY=()
     elif [[ "$cur" == -* ]]; then
@@ -21,7 +24,7 @@ function _catkin_make()
         [[ $opts ]] || opts="$( _parse_usage "$1" )"
         if [[ "$cur" == -* ]]; then
             # suggest some common CMake arguments
-            opts="$opts -DCMAKE_BUILD_TYPE= -DCATKIN_DEVEL_PREFIX= -DCMAKE_INSTALL_PREFIX="
+            opts="$opts -DCATKIN_DEVEL_PREFIX= -DCATKIN_ENABLE_TESTING= -DCMAKE_INSTALL_PREFIX= -DCMAKE_BUILD_TYPE="
         fi
         COMPREPLY=( $( compgen -W "$opts" -- "$cur" ) )
         [[ $COMPREPLY == *= ]] && compopt -o nospace
