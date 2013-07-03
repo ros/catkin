@@ -2,12 +2,34 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.68 (2013-07-03)
+-------------------
+* add option CATKIN_ENABLE_TESTING to configure without tests
+* add CTest support for all registered test types: gtest, nosetest, rostest
+* add the --from-pkg option to catkin_make_isolated
+* catkin_prepare_release:
+
+  * fix if git repo has multiple remotes (`#450 <https://github.com/ros/catkin/issues/450>`_)
+  * modify to not change the remote repo by default, add option --push for old behavior (`#451 <https://github.com/ros/catkin/issues/451>`_)
+
+* add 'prefix' to generated pkg-config files (`#444 <https://github.com/ros/catkin/issues/444>`_)
+* add dummy target to catkin_EXPORTED_TARGETS if empty (`#453 <https://github.com/ros/catkin/issues/453>`_)
+* expose SETUPTOOLS_DEB_LAYOUT as option again (`#418 <https://github.com/ros/catkin/issues/418>`_)
+* suppress stacktrace when topologic_order raises within generating CMake files (`#442 <https://github.com/ros/catkin/issues/442>`_)
+* fixes:
+
+  * update check in generated pkgConfig.cmake files to work independent of cmake policy CMD0012 (`#452 <https://github.com/ros/catkin/issues/452>`_)
+  * fix generating pkg-config files with empty -I directives (fix `#445 <https://github.com/ros/catkin/issues/445>`_)
+
+* update documentation, especially abput testing
+* for a complete list of changes see the `commit log for 0.5.68 <https://github.com/ros/catkin/compare/0.5.67...0.5.68>`_
+
 0.5.67 (2013-06-18)
 -------------------
 * fix --build and --directory auto completion for catkin_make(_isolated) (`#325 <https://github.com/ros/catkin/issues/325>`_)
 * fix catkin_make(_isolated) auto completion on older versions of bash on OS X (`#325 <https://github.com/ros/catkin/issues/325>`_)
 * add how-to documentation
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.66...0.5.67>`_
+* for a complete list of changes see the `commit log for 0.5.67 <https://github.com/ros/catkin/compare/0.5.66...0.5.67>`_
 
 0.5.66 (2013-06-06)
 -------------------
@@ -48,7 +70,7 @@ Changelog for package catkin
   * add generated CMake API to appear in the wiki (`#384 <https://github.com/ros/catkin/issues/384>`_)
 
 * add and install LICENSE file (`#398 <https://github.com/ros/catkin/issues/398>`_)
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.65...0.5.66>`_
+* for a complete list of changes see the `commit log for 0.5.66 <https://github.com/ros/catkin/compare/0.5.65...0.5.66>`_
 
 0.5.65 (2013-03-21)
 -------------------
@@ -64,7 +86,7 @@ Changelog for package catkin
   * fix catkin_prepare_release bumping wrong part of the version (`#386 <https://github.com/ros/catkin/issues/386>`_)
   * handle dependencies that are imported libraries (`#378 <https://github.com/ros/catkin/issues/378>`_)
 
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.64...0.5.65>`_
+* for a complete list of changes see the `commit log for 0.5.65 <https://github.com/ros/catkin/compare/0.5.64...0.5.65>`_
 
 0.5.64 (2013-03-08)
 -------------------
@@ -116,7 +138,7 @@ Changelog for package catkin
   * update doc on CFG_EXTRAS (`#353 <https://github.com/ros/catkin/issues/353>`_)
   * general catkin docs (`#357 <https://github.com/ros/catkin/issues/357>`_)
 
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.63...0.5.64>`_
+* for a complete list of changes see the `commit log for 0.5.64 <https://github.com/ros/catkin/compare/0.5.63...0.5.64>`_
 
 0.5.63 (2013-01-24)
 -------------------
@@ -139,7 +161,7 @@ Changelog for package catkin
   * fix sourcing environment hooks
   * improve several error messages in case of problems (`#318 <https://github.com/ros/catkin/issues/318>`_, `#320 <https://github.com/ros/catkin/issues/320>`_)
 
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.62...0.5.63>`_
+* for a complete list of changes see the `commit log for 0.5.63 <https://github.com/ros/catkin/compare/0.5.62...0.5.63>`_
 
 0.5.62 (2013-01-17)
 -------------------
@@ -150,18 +172,18 @@ Changelog for package catkin
   * source environment hooks for all workspace in correct order (`#316 <https://github.com/ros/catkin/issues/316>`_)
   * fix PYTHON_PACKAGES_DIR and SETUPTOOLS_ARG_EXTRA to be up-to-date when passing -DSETUPTOOLS_DEB_LAYOUT=.. (`#314 <https://github.com/ros/catkin/issues/314>`_)
 
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.61...0.5.62>`_
+* for a complete list of changes see the `commit log for 0.5.62 <https://github.com/ros/catkin/compare/0.5.61...0.5.62>`_
 
 0.5.61 (2013-01-16)
 -------------------
 * yet another workaround for pkg-config handling static libraries (`#300 <https://github.com/ros/catkin/issues/300>`_)
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.60...0.5.61>`_
+* for a complete list of changes see the `commit log for 0.5.61 <https://github.com/ros/catkin/compare/0.5.60...0.5.61>`_
 
 0.5.60 (2013-01-15)
 -------------------
 * work around for pkg-config reordering libs with no -l prefix (`#300 <https://github.com/ros/catkin/issues/300>`_)
 * fix colorizing of unicode text in catkin_make and catkin_make_isolated (`#310 <https://github.com/ros/catkin/issues/310>`_)
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.59...0.5.60>`_
+* for a complete list of changes see the `commit log for 0.5.60 <https://github.com/ros/catkin/compare/0.5.59...0.5.60>`_
 
 0.5.59 (2013-01-13)
 -------------------
@@ -173,7 +195,7 @@ Changelog for package catkin
 * fix catkin_toplogical_order (`#299 <https://github.com/ros/catkin/issues/299>`_)
 * make plain cmake install to devel when --install not present (`#302 <https://github.com/ros/catkin/issues/302>`_)
 * fix creating test_results folder before trying to use it when running tests
-* for a complete list of changes see the `commit log <https://github.com/ros/catkin/compare/0.5.58...0.5.59>`_
+* for a complete list of changes see the `commit log for 0.5.59 <https://github.com/ros/catkin/compare/0.5.58...0.5.59>`_
 
 0.5.58 (2012-12-21)
 -------------------
