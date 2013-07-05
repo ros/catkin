@@ -2,6 +2,12 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.69 (2013-07-05)
+-------------------
+* disable CTest on the farm since it breaks the binarydeb build with the current Debian rules files (`#460 <https://github.com/ros/catkin/issues/460>`_)
+* skip generating CATKIN_IGNORE marker file when build space equals source space (`#459 <https://github.com/ros/catkin/issues/459>`_)
+* fix warning message if gtest is not found (`#458 <https://github.com/ros/catkin/issues/458>`_)
+
 0.5.68 (2013-07-03)
 -------------------
 * add option CATKIN_ENABLE_TESTING to configure without tests
