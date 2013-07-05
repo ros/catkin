@@ -46,7 +46,11 @@ if(DEFINED CATKIN_ENABLE_TESTING AND NOT CATKIN_ENABLE_TESTING AND NOT CATKIN_SK
   return()
 endif()
 
-enable_testing()
+# do not enable ctest's on the farm, since they are automatically executed by the current rules files
+# and since the tests have not been build rostests would hang forever
+if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+  enable_testing()
+endif()
 
 # allow overriding CATKIN_TEST_RESULTS_DIR when explicitly passed to CMake as a command line argument
 if(DEFINED CATKIN_TEST_RESULTS_DIR)
