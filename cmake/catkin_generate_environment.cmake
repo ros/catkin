@@ -5,7 +5,10 @@ function(catkin_generate_environment)
   set(SETUP_DIR ${CATKIN_DEVEL_PREFIX})
 
   # generate empty file to prevent searching for packages in binary dir
-  file(WRITE "${CMAKE_BINARY_DIR}/CATKIN_IGNORE" "")
+  # except if source space and build space are identical (which is the case for dry eclipse projects)
+  if(NOT "${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+    file(WRITE "${CMAKE_BINARY_DIR}/CATKIN_IGNORE" "")
+  endif()
 
   # generate Python setup util
   configure_file(${catkin_EXTRAS_DIR}/templates/_setup_util.py.in
