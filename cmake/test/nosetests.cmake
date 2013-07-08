@@ -88,7 +88,7 @@ endfunction()
 find_program(NOSETESTS nosetests)
 if(NOT nosetests_path)
   # retry with name including major version number
-  find_program(NOSETESTS nosetests2)
+  find_program(NOSETESTS NAMES nosetests2 nosetests-2)
 endif()
 if(NOT NOSETESTS)
   message(WARNING "nosetests not found, Python tests can not be run (try installing package 'python-nose')")
