@@ -60,7 +60,9 @@ def get_git_remote_and_branch(base_path):
     try:
         remote = subprocess.check_output(cmd_remote, cwd=base_path).rstrip()
     except subprocess.CalledProcessError as e:
-        raise RuntimeError('Could not determine git remote: %s' % str(e))
+        msg = 'Could not determine git remote: %s' % str(e)
+        msg += "\n\nMay be the branch '%s' is not tracking a remote branch?" % branch
+        raise RuntimeError(msg)
 
     return (remote, branch)
 
@@ -184,6 +186,10 @@ def main():
     if args.push:
         # verify that repository is pushable
         try_repo_push(base_path, vcs_type)
+    elif vcs_type == 'git':
+        # check that branch is known and is tracking a remote branch
+        # since this is required to generated the commands even when not performing the push
+        get_git_remote_and_branch(base_path)
 
     # bump version number
     update_versions(packages.keys(), new_version)
@@ -212,7 +218,7 @@ def main():
             try:
                 subprocess.check_call(cmd, cwd=base_path)
             except subprocess.CalledProcessError as e:
-                raise RuntimeError("Failed to push changes to the repository: %s\n%s\n\nYou need to manually push the changes/tag to the repository." % str(e))
+                raise RuntimeError('Failed to push changes to the repository: %s\n\nYou need to manually push the changes/tag to the repository.' % str(e))
         else:
             commands.append(cmd)
 
@@ -224,7 +230,7 @@ def main():
             try:
                 subprocess.check_call(cmd, cwd=base_path)
             except subprocess.CalledProcessError as e:
-                raise RuntimeError("Failed to push tag to the repository: %s\n%s\n\nYou need to manually push the new tag to the repository." % str(e))
+                raise RuntimeError('Failed to push tag to the repository: %s\n\nYou need to manually push the new tag to the repository.' % str(e))
         else:
             commands.append(cmd)
 
