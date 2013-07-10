@@ -1,18 +1,12 @@
-# check if testing is explicitly disabled
-if(DEFINED CATKIN_ENABLE_TESTING AND NOT CATKIN_ENABLE_TESTING)
-  set(CATKIN_ENABLE_TESTING 0 CACHE BOOL "catkin enable testing")
-  message(STATUS "Using CATKIN_ENABLE_TESTING: off")
-endif()
+option(CATKIN_ENABLE_TESTING "Catkin enable testing" ON)
+option(CATKIN_SKIP_TESTING "Catkin skip testing" OFF)
 
-# check CATKIN_SKIP_TESTING
+# check if testing is explicity skipped
 if(CATKIN_SKIP_TESTING)
-  set(CATKIN_SKIP_TESTING 1 CACHE BOOL "catkin skip testing")
-  message(STATUS "Using CATKIN_SKIP_TESTING: on (implying CATKIN_ENABLE_TESTING=0)")
-  set(CATKIN_ENABLE_TESTING 0)
-endif()
-
-if(NOT DEFINED CATKIN_ENABLE_TESTING OR CATKIN_ENABLE_TESTING)
-  message(STATUS "Using CATKIN_ENABLE_TESTING: on")
+  set(CATKIN_ENABLE_TESTING OFF)
+  message(STATUS "Using CATKIN_SKIP_TESTING: ${CATKIN_SKIP_TESTING} (implying CATKIN_ENABLE_TESTING=${CATKIN_ENABLE_TESTING})")
+else()
+  message(STATUS "Using CATKIN_ENABLE_TESTING: ${CATKIN_ENABLE_TESTING}")
 endif()
 
 # creates a dummy function in case testing has been explicitly disabled (and not only skipping)
