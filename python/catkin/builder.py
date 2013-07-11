@@ -538,6 +538,11 @@ def _get_build_type(package):
     return build_type
 
 
+def _print_build_error(package, e):
+    e_msg = 'KeyboardInterrupt' if isinstance(e, KeyboardInterrupt) else str(e)
+    cprint('@{rf}@!<==@| Failed to process package \'@!@{bf}' + package.name + '@|\': \n  ' + e_msg)
+
+
 def build_workspace_isolated(
     workspace='.',
     sourcespace=None,
@@ -721,20 +726,21 @@ def build_workspace_isolated(
                     quiet, last_env, cmake_args, make_args, catkin_make_args,
                     number=index + 1, of=len(ordered_packages)
                 )
+            except subprocess.CalledProcessError as e:
+                _print_build_error(package, e)
+                # Let users know how to reproduce
+                # First add the cd to the buildspace
+                cmd = 'cd ' + buildspace + ' && '
+                # Then reproduce the command called
+                cmd += ' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd
+                print(fmt("\n@{rf}Reproduce this error by running:"))
+                print(fmt("@{gf}@!==> @|") + cmd + "\n")
+                sys.exit('Command failed, exiting.')
             except Exception as e:
+                print("Unhandled exception of type '{0}':".format(type(e).__name__))
                 import traceback
                 traceback.print_exc()
-                cprint(
-                    '@{rf}@!<==@| ' +
-                    'Failed to process package \'@!@{bf}' +
-                    package.name + '@|\': \n  ' +
-                    ('KeyboardInterrupt' if isinstance(e, KeyboardInterrupt)
-                        else str(e))
-                )
-                if isinstance(e, subprocess.CalledProcessError):
-                    cmd = ' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd
-                    print(fmt("\n@{rf}Reproduce this error by running:"))
-                    print(fmt("@{gf}@!==> @|") + cmd + "\n")
+                _print_build_error(package, e)
                 sys.exit('Command failed, exiting.')
         else:
             cprint("Skipping package: '@!@{bf}" + package.name + "@|'")
