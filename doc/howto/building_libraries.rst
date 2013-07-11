@@ -80,9 +80,12 @@ library build target names for ``your_library``::
                  LIBRARIES your_library)
 
   install(TARGETS your_library
-          RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
           ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-          LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+          LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+          RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+The runtime destination is used for `.dll` file on Windows which must
+be placed in the global bin folder.
 
 Libraries typically provide headers defining their interfaces.  Please
 follow standard ROS practice and place all external header files under
