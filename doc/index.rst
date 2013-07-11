@@ -15,15 +15,6 @@ This version of the documentation covers the `Groovy
 <http://ros.org/wiki/groovy>`_ version and also Hydro, which is coming
 soon.
 
-Code & tickets
---------------
-
-+--------------+-------------------------------------+
-| Catkin       | http://github.com/ros/catkin        |
-+--------------+-------------------------------------+
-| Issues       | http://github.com/ros/catkin/issues |
-+--------------+-------------------------------------+
-
 
 Contents
 --------
@@ -35,3 +26,12 @@ Contents
    user_guide/user_guide
    adv_user_guide/adv_user_guide
    dev_guide/dev_guide
+
+Code & support
+--------------
+
++--------------+-------------------------------------+
+| Catkin       | http://github.com/ros/catkin        |
++--------------+-------------------------------------+
+| Issues       | http://github.com/ros/catkin/issues |
++--------------+-------------------------------------+
