@@ -722,8 +722,10 @@ def build_workspace_isolated(
                     number=index + 1, of=len(ordered_packages)
                 )
             except Exception as e:
-                import traceback
-                traceback.print_exc()
+                if not isinstance(e, subprocess.CalledProcessError):
+                    print("Unhandled exception of type '{0}':".format(type(e).__name__))
+                    import traceback
+                    traceback.print_exc()
                 cprint(
                     '@{rf}@!<==@| ' +
                     'Failed to process package \'@!@{bf}' +
