@@ -7,7 +7,6 @@ This section of the documentation is provided for advanced users.
    :maxdepth: 2
 
    catkin_migration
+   builddocs
    underlay
    variables
-   environment
-   glossary
