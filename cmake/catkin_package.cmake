@@ -185,6 +185,27 @@ function(_catkin_package)
         if(_index EQUAL -1)
           message(FATAL_ERROR "catkin_package() the catkin package '${depend_name}' has been find_package()-ed but is not listed as a build dependency in the package.xml")
         endif()
+        # verify versioned dependency constraints
+        if(DEFINED ${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_LT AND
+            NOT "${${depend_name}_VERSION}" VERSION_LESS "${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_LT}")
+          message(WARNING "catkin_package() version mismatch: the package.xml of '${PROJECT_NAME}' build_depends on '${depend_name} < ${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_LT}', but '${depend_name} ${${depend_name}_VERSION}' found")
+        endif()
+        if(DEFINED ${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_LTE AND
+            "${${depend_name}_VERSION}" VERSION_GREATER "${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_LTE}")
+          message(WARNING "catkin_package() version mismatch: the package.xml of '${PROJECT_NAME}' build_depends on '${depend_name} <= ${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_LTE}', but '${depend_name} ${${depend_name}_VERSION}' found")
+        endif()
+        if(DEFINED ${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_EQ AND
+            NOT "${${depend_name}_VERSION}" VERSION_EQUAL "${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_EQ}")
+          message(WARNING "catkin_package() version mismatch: the package.xml of '${PROJECT_NAME}' build_depends on '${depend_name} = ${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_EQ}', but '${depend_name} ${${depend_name}_VERSION}' found")
+        endif()
+        if(DEFINED ${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_GTE AND
+            "${${depend_name}_VERSION}" VERSION_LESS "${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_GTE}")
+          message(WARNING "catkin_package() version mismatch: the package.xml of '${PROJECT_NAME}' build_depends on '${depend_name} >= ${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_GTE}', but '${depend_name} ${${depend_name}_VERSION}' found")
+        endif()
+        if(DEFINED ${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_GT AND
+            NOT "${${depend_name}_VERSION}" VERSION_GREATER "${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_GT}")
+          message(WARNING "catkin_package() version mismatch: the package.xml of '${PROJECT_NAME}' build_depends on '${depend_name} > ${${PROJECT_NAME}_BUILD_DEPENDS_${depend_name}_VERSION_GT}', but '${depend_name} ${${depend_name}_VERSION}' found")
+        endif()
       endif()
     endif()
     # verify that all catkin packages are listed as run dependencies

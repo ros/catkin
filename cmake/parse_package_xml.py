@@ -54,9 +54,9 @@ def _get_output(package):
 
     values['MAINTAINER'] = '"%s"' % (', '.join([str(m) for m in package.maintainers]))
 
-    values['BUILD_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.build_depends])
-    values['BUILDTOOL_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.buildtool_depends])
-    values['RUN_DEPENDS'] = ' '.join(['"%s"' % str(d) for d in package.run_depends])
+    values.update(_get_dependency_values('BUILD_DEPENDS', package.build_depends))
+    values.update(_get_dependency_values('BUILDTOOL_DEPENDS', package.buildtool_depends))
+    values.update(_get_dependency_values('RUN_DEPENDS', package.run_depends))
 
     deprecated = [e.content for e in package.exports if e.tagname == 'deprecated']
     values['DEPRECATED'] = '"%s"' % ((deprecated[0] if deprecated[0] else 'TRUE') if deprecated else '')
@@ -66,6 +66,17 @@ def _get_output(package):
     for k, v in values.items():
         output.append('set(%s_%s %s)' % (package.name, k, v))
     return output
+
+def _get_dependency_values(key, depends):
+    values = {}
+    values[key] = ' '.join(['"%s"' % str(d) for d in depends])
+    for d in depends:
+        comparisons = ['version_lt', 'version_lte', 'version_eq', 'version_gte', 'version_gt']
+        for comp in comparisons:
+            value = getattr(d, comp, None)
+            if value is not None:
+                values['%s_%s_%s' % (key, str(d), comp.upper())] = '"%s"' % value
+    return values
 
 
 def main(argv=sys.argv[1:]):
