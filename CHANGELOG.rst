@@ -2,6 +2,25 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.70 (2013-07-14)
+-------------------
+* add warning if versioned dependencies are not fulfilled (`#472 <https://github.com/ros/catkin/issues/472>`_)
+* catkin_prepare_release:
+
+  * add checks for local changes in the working copy (`#471 <https://github.com/ros/catkin/issues/471>`_)
+  * remove '--push' option in favor of interactive questions
+  * improve error message when branch is not tracked (`#463 <https://github.com/ros/catkin/issues/463>`_)
+  * colorize output for improved readability
+
+* catkin_make_isolated:
+
+  * suppress traceback when a package fails to build (`#470 <https://github.com/ros/catkin/issues/470>`_)
+  * improve output to include 'cd' command to reproduce a failing command more easily
+
+* fix initialization issue with CATKIN_ENABLE_TESTING variable (`#464 <https://github.com/ros/catkin/issues/464>`_)
+* find nosetest under different name on QNX (`#461 <https://github.com/ros/catkin/issues/461>`_)
+* update documentation (`#438 <https://github.com/ros/catkin/issues/438>`_, `#465 <https://github.com/ros/catkin/issues/465>`_, `#468 <https://github.com/ros/catkin/issues/468>`_)
+
 0.5.69 (2013-07-05)
 -------------------
 * disable CTest on the farm since it breaks the binarydeb build with the current Debian rules files (`#460 <https://github.com/ros/catkin/issues/460>`_)
@@ -27,7 +46,7 @@ Changelog for package catkin
   * update check in generated pkgConfig.cmake files to work independent of cmake policy CMD0012 (`#452 <https://github.com/ros/catkin/issues/452>`_)
   * fix generating pkg-config files with empty -I directives (fix `#445 <https://github.com/ros/catkin/issues/445>`_)
 
-* update documentation, especially abput testing
+* update documentation, especially about testing
 * for a complete list of changes see the `commit log for 0.5.68 <https://github.com/ros/catkin/compare/0.5.67...0.5.68>`_
 
 0.5.67 (2013-06-18)
