@@ -263,7 +263,7 @@ def main():
 
     # bump version number
     update_versions(packages.keys(), new_version)
-    print(fmt("@{gf}Bump version@{reset} of all packages from '@{bf}%s@{reset}' to '@{bf}@{boldon}%s@{boldoff}'" % (old_version, new_version)))
+    print(fmt("@{gf}Bump version@{reset} of all packages from '@{bf}%s@{reset}' to '@{bf}@{boldon}%s@{boldoff}@{reset}'" % (old_version, new_version)))
 
     if vcs_type in ['svn']:
         # for svn everything affects the remote repository immediately
