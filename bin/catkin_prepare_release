@@ -206,6 +206,16 @@ def main():
         raise RuntimeError(fmt('@{rf}No packages found'))
     print('Found packages: %s' % ', '.join([fmt('@{bf}@{boldon}%s@{boldoff}@{reset}' % p.name) for p in packages.values()]))
 
+    # complain about packages with upper case character since they won't be releasable with bloom
+    invalid_pkg_names = []
+    for package in packages.values():
+        if package.name != package.name.lower():
+            invalid_pkg_names.append(package.name)
+    if invalid_pkg_names:
+        print(fmt("@{yf}Warning: the following package names contain upper case characters which violate both ROS and Debian naming conventions': %s" % ', '.join([('@{boldon}%s@{boldoff}' % p) for p in sorted(invalid_pkg_names)])), file=sys.stderr)
+        if not args.non_interactive and not prompt_continue('Continue anyway', default=False):
+            raise RuntimeError(fmt("@{rf}Aborted release, fix the names of the packages."))
+
     local_modifications = []
     for pkg_path, package in packages.iteritems():
         # verify that the package.xml files don't have modifications pending
