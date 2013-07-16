@@ -91,7 +91,7 @@ Libraries typically provide headers defining their interfaces.  Please
 follow standard ROS practice and place all external header files under
 ``include/your_package/``::
 
-  install(DIRECTORY include/${PACKAGE_NAME}/
+  install(DIRECTORY include/${PROJECT_NAME}/
           DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
 That command installs all the files in your package's include subtree.
@@ -99,7 +99,7 @@ Place only your exported headers there.  If yours is a Subversion_
 repository, don't forget to exclude the ``.svn`` subdirectories like
 this::
 
-  install(DIRECTORY include/${PACKAGE_NAME}/
+  install(DIRECTORY include/${PROJECT_NAME}/
           DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
           PATTERN ".svn" EXCLUDE)
 
