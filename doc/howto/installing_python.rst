@@ -26,6 +26,7 @@ that directory::
 
   install(DIRECTORY scripts/
           DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+          USE_SOURCE_PERMISSIONS
           PATTERN ".svn" EXCLUDE)
 
 The ``PATTERN ".svn" EXCLUDE`` is only needed if you use a Subversion_
