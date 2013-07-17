@@ -180,7 +180,7 @@ def run_command(cmd, cwd, quiet=False, colorize=False):
     out = io.StringIO() if quiet else sys.stdout
     if capture:
         while True:
-            line = unicode(proc.stdout.readline())
+            line = unicode(proc.stdout.readline().decode('utf8', 'replace'))
             if proc.returncode is not None or not line:
                 break
             try:
