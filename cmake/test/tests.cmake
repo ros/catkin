@@ -43,7 +43,15 @@ endif()
 # do not enable ctest's on the farm, since they are automatically executed by the current rules files
 # and since the tests have not been build rostests would hang forever
 if(NOT CATKIN_BUILD_BINARY_PACKAGE)
-  enable_testing()
+  # do not enable ctest's for dry packages, since they have a custom test target which must not be overwritten
+  if(NOT ROSBUILD_init_called)
+    message(STATUS "Call enable_testing()")
+    enable_testing()
+  else()
+    message(STATUS "Skip enable_testing() for dry packages")
+  endif()
+else()
+  message(STATUS "Skip enable_testing() when building binary package")
 endif()
 
 # allow overriding CATKIN_TEST_RESULTS_DIR when explicitly passed to CMake as a command line argument
