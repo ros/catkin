@@ -2,6 +2,14 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.71 (2013-07-20)
+-------------------
+* catkin_make_isolated: show progress in terminal title bar on Linux and Darwin (`#482 <https://github.com/ros/catkin/issues/482>`_)
+* catkin_prepare_release: add warning if package names contain upper case characters (`#473 <https://github.com/ros/catkin/issues/473>`_)
+* catkin_make: fix handling of non-ascii characters (`#476 <https://github.com/ros/catkin/issues/476>`_)
+* fix dry tests by disabling CTest for dry packages (`#483 <https://github.com/ros/catkin/issues/483>`_)
+* update documentation (`#474 <https://github.com/ros/catkin/issues/474>`_)
+
 0.5.70 (2013-07-14)
 -------------------
 * add warning if versioned dependencies are not fulfilled (`#472 <https://github.com/ros/catkin/issues/472>`_)
