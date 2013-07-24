@@ -30,6 +30,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import unicode_literals
 import codecs
 import os
 import re
@@ -37,12 +38,14 @@ import re
 # unit test suites are not good about screening out illegal unicode characters (#603)
 # recipe from http://boodebr.org/main/python/all-about-python-and-unicode#UNI_XML
 # code copied from rosunit/src/junitxml.py
-RE_XML_ILLEGAL = u'([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \
-                 u'|' + \
-                 u'([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
-                 (unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
-                  unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
-                  unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff))
+
+
+RE_XML_ILLEGAL = '([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \
+    '|' + \
+    '([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
+    (unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
+     unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
+     unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff))
 _SAFE_XML_REGEX = re.compile(RE_XML_ILLEGAL)
 
 
