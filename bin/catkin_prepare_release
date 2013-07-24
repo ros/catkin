@@ -108,9 +108,9 @@ def commit_package_xml_files(base_path, vcs_type, packages, message, dry_run=Fal
     return None
 
 
-def tag_repository(base_path, vcs_type, new_version, dry_run=False):
+def tag_repository(base_path, vcs_type, tag_name, dry_run=False):
     if vcs_type in ['bzr', 'git', 'hg']:
-        cmd = [_find_executable(vcs_type), 'tag', new_version]
+        cmd = [_find_executable(vcs_type), 'tag', tag_name]
     elif vcs_type == 'svn':
         TRUNK = '/trunk'
         BRANCHES = '/branches'
@@ -124,8 +124,8 @@ def tag_repository(base_path, vcs_type, new_version, dry_run=False):
             base_url = os.path.dirname(svn_url)[:-len(TAGS)]
         else:
             raise RuntimeError(fmt("@{rf}Could not determine base URL of SVN repository '%s'" % svn_url))
-        tag_url = '%s/tags/%s' % (base_url, new_version)
-        cmd = ['svn', 'cp', '-m', '"tagging %s"' % new_version, svn_url, tag_url]
+        tag_url = '%s/tags/%s' % (base_url, tag_name)
+        cmd = ['svn', 'cp', '-m', '"tagging %s"' % tag_name, svn_url, tag_url]
     else:
         assert False, 'Unknown vcs type: %s' % vcs_type
     if not dry_run:
@@ -176,6 +176,7 @@ def main():
         description='Runs the commands to bump the version number, commit the modified %s files and create a tag in the repository.' % PACKAGE_MANIFEST_FILENAME)
     parser.add_argument('--bump', choices=('major', 'minor', 'patch'), default='patch', help='Which part of the version number to bump? (default: %(default)s)')
     parser.add_argument('--no-color', action='store_true', default=False, help='Disables colored output')
+    parser.add_argument('-t', '--tag-prefix', help='release tag name prefix', default='')
     parser.add_argument('-y', '--non-interactive', action='store_true', default=False,
         help="Run without user interaction, confirming all questions with 'yes'")
     args = parser.parse_args()
@@ -279,22 +280,22 @@ def main():
         # for svn everything affects the remote repository immediately
         commands = []
         commands.append(commit_package_xml_files(base_path, vcs_type, packages, new_version, dry_run=True))
-        commands.append(tag_repository(base_path, vcs_type, new_version, dry_run=True))
+        commands.append(tag_repository(base_path, vcs_type, args.tag_prefix+new_version, dry_run=True))
         print(fmt('@{gf}The following commands will be executed to commit the changes and tag the new version:'))
         for cmd in commands:
             print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
         if not args.non_interactive and not prompt_continue('Perform commands which will modify the repository', default=True):
             raise RuntimeError(fmt('@{rf}Skipping commands, to finish the release execute the commands manually.'))
         commit_package_xml_files(base_path, vcs_type, packages, new_version)
-        tag_repository(base_path, vcs_type, new_version)
+        tag_repository(base_path, vcs_type, args.tag_prefix+new_version)
 
     else:
         # for other vcs types the changes are first done locally
         print(fmt('@{gf}Committing the package.xml files...'))
         commit_package_xml_files(base_path, vcs_type, packages, new_version)
 
-        print(fmt("@{gf}Creating tag '@{boldon}%s@{boldoff}'..." % new_version))
-        tag_repository(base_path, vcs_type, new_version)
+        print(fmt("@{gf}Creating tag '@{boldon}%s@{boldoff}'..." % (args.tag_prefix+new_version)))
+        tag_repository(base_path, vcs_type, args.tag_prefix+new_version)
 
         # confirm commands to push to remote repository
         commands = push_changes(base_path, vcs_type, dry_run=True)
