@@ -200,7 +200,9 @@ def find_env_hooks(environ, cmake_prefix_path):
     lines.append(comment('found environment hooks in workspaces'))
 
     generic_env_hooks = []
+    generic_env_hooks_workspace = []
     specific_env_hooks = []
+    specific_env_hooks_workspace = []
     generic_env_hooks_by_filename = {}
     specific_env_hooks_by_filename = {}
     generic_env_hook_ext = 'bat' if IS_WINDOWS else 'sh'
@@ -212,18 +214,32 @@ def find_env_hooks(environ, cmake_prefix_path):
         if os.path.isdir(env_hook_dir):
             for filename in sorted(os.listdir(env_hook_dir)):
                 if filename.endswith('.%s' % generic_env_hook_ext):
-                    generic_env_hooks.append(os.path.join(env_hook_dir, filename))
                     # remove previous env hook with same name if present
                     if filename in generic_env_hooks_by_filename:
-                        generic_env_hooks.remove(generic_env_hooks_by_filename[filename])
+                        i = generic_env_hooks.index(generic_env_hooks_by_filename[filename])
+                        generic_env_hooks.pop(i)
+                        generic_env_hooks_workspace.pop(i)
+                    # append env hook
+                    generic_env_hooks.append(os.path.join(env_hook_dir, filename))
+                    generic_env_hooks_workspace.append(workspace)
                     generic_env_hooks_by_filename[filename] = generic_env_hooks[-1]
                 elif specific_env_hook_ext is not None and filename.endswith('.%s' % specific_env_hook_ext):
-                    specific_env_hooks.append(os.path.join(env_hook_dir, filename))
                     # remove previous env hook with same name if present
                     if filename in specific_env_hooks_by_filename:
-                        specific_env_hooks.remove(specific_env_hooks_by_filename[filename])
+                        i = specific_env_hooks.index(specific_env_hooks_by_filename[filename])
+                        specific_env_hooks.pop(i)
+                        specific_env_hooks_workspace.pop(i)
+                    # append env hook
+                    specific_env_hooks.append(os.path.join(env_hook_dir, filename))
+                    specific_env_hooks_workspace.append(workspace)
                     specific_env_hooks_by_filename[filename] = specific_env_hooks[-1]
-    lines.append(assignment('_CATKIN_ENVIRONMENT_HOOKS', os.pathsep.join(generic_env_hooks + specific_env_hooks)))
+    env_hooks = generic_env_hooks + specific_env_hooks
+    env_hooks_workspace = generic_env_hooks_workspace + specific_env_hooks_workspace
+    count = len(env_hooks)
+    lines.append(assignment('_CATKIN_ENVIRONMENT_HOOKS_COUNT', count))
+    for i in range(count):
+        lines.append(assignment('_CATKIN_ENVIRONMENT_HOOKS_%d' % i, env_hooks[i]))
+        lines.append(assignment('_CATKIN_ENVIRONMENT_HOOKS_%d_WORKSPACE' % i, env_hooks_workspace[i]))
     return lines
 
 
