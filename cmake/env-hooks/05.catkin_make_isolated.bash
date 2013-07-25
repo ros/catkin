@@ -1,7 +1,8 @@
 function _catkin_make_isolated()
 {
     local cur prev
-    _init_completion -s || return
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
 
     # autocomplete path arguments for -C, --directory, --source, --build, --devel, --install
     case $prev in
