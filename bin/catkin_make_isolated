@@ -107,6 +107,8 @@ def main():
     if not sys.stdout.isatty():
         opts.no_color = True
 
+    destdir = os.environ['DESTDIR'] if 'DESTDIR' in os.environ else None
+
     build_workspace_isolated(
         workspace=opts.workspace or '.',
         sourcespace=opts.source,
@@ -122,7 +124,8 @@ def main():
         cmake_args=cmake_args,
         make_args=opts.make_args,
         catkin_make_args=opts.catkin_make_args,
-        continue_from_pkg=opts.from_package is not None
+        continue_from_pkg=opts.from_package is not None,
+        destdir=destdir
     )
 
 if __name__ == '__main__':
