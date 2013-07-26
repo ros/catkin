@@ -355,11 +355,21 @@ def build_catkin_package(
 
     # Make install
     if install:
-        make_install_cmd = ['make', 'install']
-        isolation_print_command(' '.join(make_install_cmd), build_dir)
-        if last_env is not None:
-            make_install_cmd = [last_env] + make_install_cmd
-        run_command(make_install_cmd, build_dir, quiet)
+        if has_make_target(build_dir, 'install'):
+            make_install_cmd = ['make', 'install']
+            isolation_print_command(' '.join(make_install_cmd), build_dir)
+            if last_env is not None:
+                make_install_cmd = [last_env] + make_install_cmd
+            run_command(make_install_cmd, build_dir, quiet)
+        else:
+            print(fmt('@{yf}Package has no "@{boldon}install@{boldoff}" target, skipping "make install" invocation...'))
+
+
+def has_make_target(path, target):
+    output = run_command(['make', '-pn'], path, quiet=True)
+    lines = output.splitlines()
+    targets = [m.group(1) for m in [re.match('^([a-zA-Z0-9][a-zA-Z0-9_\.]*):', l) for l in lines] if m]
+    return target in targets
 
 
 def build_cmake_package(
