@@ -41,13 +41,6 @@ import os
 import platform
 import sys
 
-# environment at generation time
-CMAKE_PREFIX_PATH = '@CMAKE_PREFIX_PATH_AS_IS@'.split(';')
-setup_dir = '@SETUP_DIR@'
-if setup_dir and setup_dir not in CMAKE_PREFIX_PATH:
-    CMAKE_PREFIX_PATH.insert(0, setup_dir)
-CMAKE_PREFIX_PATH = os.pathsep.join(CMAKE_PREFIX_PATH)
-
 CATKIN_MARKER_FILE = '.catkin'
 
 system = platform.system()
@@ -255,6 +248,14 @@ if __name__ == '__main__':
     except Exception as e:
         print(e, file=sys.stderr)
         exit(1)
+
+    # environment at generation time
+    CMAKE_PREFIX_PATH = '@CMAKE_PREFIX_PATH_AS_IS@'.split(';')
+    # prepend current workspace if not already part of CPP
+    base_path = os.path.dirname(__file__)
+    if base_path not in CMAKE_PREFIX_PATH:
+        CMAKE_PREFIX_PATH.insert(0, base_path)
+    CMAKE_PREFIX_PATH = os.pathsep.join(CMAKE_PREFIX_PATH)
 
     environ = dict(os.environ)
     lines = []

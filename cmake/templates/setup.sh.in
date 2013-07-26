@@ -6,7 +6,10 @@
 # Supported command line options:
 # --extend: skips the undoing of changes from a previously sourced setup file
 
-_SETUP_UTIL="@SETUP_DIR@/_setup_util.py"
+# since this file is sourced either use the provided CATKIN_SETUP_DIR
+# or fall back to the destination set at configure time
+: ${CATKIN_SETUP_DIR:=@SETUP_DIR@}
+_SETUP_UTIL="$CATKIN_SETUP_DIR/_setup_util.py"
 
 if [ ! -f "$_SETUP_UTIL" ]; then
   echo "Missing Python script: $_SETUP_UTIL"
