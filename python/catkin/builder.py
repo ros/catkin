@@ -768,8 +768,8 @@ def build_workspace_isolated(
             except subprocess.CalledProcessError as e:
                 _print_build_error(package, e)
                 # Let users know how to reproduce
-                # First add the cd to the buildspace
-                cmd = 'cd ' + buildspace + ' && '
+                # First add the cd to the build folder of the package
+                cmd = 'cd ' + os.path.join(buildspace, package.name) + ' && '
                 # Then reproduce the command called
                 cmd += ' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd
                 print(fmt("\n@{rf}Reproduce this error by running:"))
