@@ -31,8 +31,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+import datetime
+import docutils.core
 import os
 import re
+
+from catkin_pkg.changelog_generator import FORTHCOMING_LABEL
 
 
 def _replace_version(package_str, new_version):
@@ -92,3 +96,51 @@ def update_versions(paths, new_version):
     for package_path, new_package_str in files.iteritems():
         with open(package_path, 'w') as f:
             f.write(new_package_str)
+
+
+def get_forthcoming_label(rst):
+    document = docutils.core.publish_doctree(rst)
+    forthcoming_label = None
+    for child in document.children:
+        title = None
+        if isinstance(child, docutils.nodes.subtitle):
+            title = child
+        elif isinstance(child, docutils.nodes.section):
+            section = child
+            if len(section.children) > 0 and isinstance(section.children[0], docutils.nodes.title):
+                title = section.children[0]
+        if title and len(title.children) > 0 and isinstance(title.children[0], docutils.nodes.Text):
+            title_text = title.children[0].rawsource
+            if FORTHCOMING_LABEL.lower() in title_text.lower():
+                if forthcoming_label:
+                    raise RuntimeError('Found multiple forthcoming sections')
+                forthcoming_label = title_text
+    return forthcoming_label
+
+
+def update_changelog_sections(changelogs, new_version):
+    # rename forthcoming sections to new_version including current date
+    new_changelog_data = {}
+    new_label = '%s (%s)' % (new_version, datetime.date.today().isoformat())
+    for pkg_name, (changelog_path, changelog, forthcoming_label) in changelogs.items():
+        data = rename_section(changelog.rst, forthcoming_label, new_label)
+        new_changelog_data[changelog_path] = data
+
+    for changelog_path, data in new_changelog_data.items():
+        with open(changelog_path, 'w') as f:
+            f.write(data)
+
+
+def rename_section(data, old_label, new_label):
+    valid_section_characters = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+
+    def replace_section(match):
+        section_char = match.group(2)[0]
+        return new_label + '\n' + section_char * len(new_label)
+    pattern = '^(' + re.escape(old_label) + ')\n([' + re.escape(valid_section_characters) + ']+)$'
+    data, count = re.subn(pattern, replace_section, data, flags=re.MULTILINE)
+    if count == 0:
+        raise RuntimeError('Could not find section')
+    if count > 1:
+        raise RuntimeError('Found multiple matching sections')
+    return data
