@@ -9,15 +9,18 @@ For inspiration, look at the guideline examples here:
 `CMake Style recommendations <http://www.cmake.org/cgi-bin/viewcvs.cgi/Modules/readme.txt?root=CMake&view=markup>`_
 `KDE cmake coding guidelines <http://techbase.kde.org/Policies/CMake_Coding_Style>`_
 
-**Call catkin_package early**
+**Call catkin_package before any targets**
 
-The following line should always appear like this in this order
-without other commands in between::
+The following lines must always appear the CMakeLists.txt in this order::
 
   cmake_minimum_required(VERSION 2.8.3)
   project(myproject)
   find_package(catkin REQUIRED <COMPONENTS ...>)
   catkin_package(<...>)
+
+While there might be additional function calls before catkin_package()
+(e.g. for finding other libraries or generating messages)
+it must be invoked before any targets are added.
 
 **Use ${PROJECT_NAME} wherever possible**
 
