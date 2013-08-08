@@ -8,5 +8,6 @@ User Guide
    find_package
    setup_dot_py
    standards
+   variables
    environment
    glossary
