@@ -33,6 +33,14 @@ Finally, declare your rostest launch scripts::
   add_rostest(tests/your_first_rostest.test)
   add_rostest(tests/your_second_rostest.test)
 
+If your rostest should contain a gtest executable you can use the
+following convenient function::
+
+  add_rostest_gtest(your_third_rostest_target tests/your_third_rostest.test src/test/your_third_rostest.cpp [more cpp files])
+  target_link_libraries(your_third_rostest_target [libraries to depend on, e.g. ${catkin_LIBRARIES}])
+
+For more information how to write and run rostests please go to the
+Rostest_ wiki page.
 
 .. _roscore: http://www.ros.org/wiki/roscore
 .. _Rostest: http://ros.org/wiki/rostest

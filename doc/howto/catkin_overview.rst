@@ -116,7 +116,8 @@ Follow them, observing the usual order of ``CMakeLists.txt`` commands:
 #. ``catkin_package()``
 #. ``add_library()``, ``add_executable()``, ``target_link_libraries()``
 #. ``install()``
-#. ``catkin_add_gtest()``, ``catkin_add_nosetests()``, ``add_rostest()``
+#. ``catkin_add_gtest()``, ``catkin_add_nosetests()``
+#. ``add_rostest()``, ``add_rostest_gtest()``
 
 .. _package.xml: http://www.ros.org/wiki/catkin/package.xml
 .. _REP-0127: http://ros.org/reps/rep-0127.html
