@@ -21,8 +21,10 @@ CMakeLists.txt
 
 Declare each gtest like this::
 
-  catkin_add_gtest(test_your_node tests/test_your_node.cpp)
-  target_link_libraries(test_your_node ${catkin_LIBRARIES})
+  if (CATKIN_ENABLE_TESTING)
+    catkin_add_gtest(test_your_node tests/test_your_node.cpp)
+    target_link_libraries(test_your_node ${catkin_LIBRARIES})
+  endif()
 
 This example assumes your tests are defined in the ``tests/``
 subdirectory in your source tree.

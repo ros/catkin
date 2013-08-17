@@ -4,7 +4,8 @@ Downloading test data
 ---------------------
 
 When unit tests require large data files, it is better to download
-them from the web than include them in your source repository.
+them from the web than include them in your source repository.  This
+should only happen in a conditional block when testing is enabled.
 
 Each of these files declares a target name.  Running ``"make tests"``
 or ``"make run_tests"`` will automatically download them all.
@@ -15,10 +16,12 @@ you can use it to download them before running one::
 
 Catkin provides a convenient command, used like this::
 
-  catkin_download_test_data(
-    ${PROJECT_NAME}_32e.pcap
-    http://pr.willowgarage.com/data/velodyne/32e.pcap
-    MD5 e41d02aac34f0967c03a5597e1d554a9)
+  if (CATKIN_ENABLE_TESTING)
+    catkin_download_test_data(
+      ${PROJECT_NAME}_32e.pcap
+      http://pr.willowgarage.com/data/velodyne/32e.pcap
+      MD5 e41d02aac34f0967c03a5597e1d554a9)
+  endif()
 
 The first parameter is the target name, which should normally include
 your project name to avoid conflicts with other packages.
@@ -39,11 +42,13 @@ For example, sometimes a rostest_ script wants to use ``$(find
 your_package)`` to access the test data.  Here is how to put the file
 in devel-space, where roslaunch_ can resolve it::
 
-  catkin_download_test_data(
-    ${PROJECT_NAME}_32e.pcap
-    http://pr.willowgarage.com/data/velodyne/32e.pcap
-    DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/tests
-    MD5 e41d02aac34f0967c03a5597e1d554a9)
+  if (CATKIN_ENABLE_TESTING)
+    catkin_download_test_data(
+      ${PROJECT_NAME}_32e.pcap
+      http://pr.willowgarage.com/data/velodyne/32e.pcap
+      DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/tests
+      MD5 e41d02aac34f0967c03a5597e1d554a9)
+  endif()
 
 Then, the test script can pass it as a parameter, like this::
 
