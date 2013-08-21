@@ -2,6 +2,26 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* make catkin packages relocatable (`#490 <https://github.com/ros/catkin/issues/490>`_)
+
+* catkin_prepare_release:
+
+  * add tagging changelog sections (`#489 <https://github.com/ros/catkin/issues/489>`_)
+  * add warning when trying to release non-catkin packages (`#478 <https://github.com/ros/catkin/issues/478>`_)
+  * add --tag-prefix option (`#447 <https://github.com/ros/catkin/issues/447>`_)
+
+* catkin_make_isolated:
+
+  * support installation with DESTDIR (`#490 <https://github.com/ros/catkin/issues/490>`_)
+  * handle missing install target gracefully
+  * fix message with command to reproduce (`#496 <https://github.com/ros/catkin/issues/496>`_)
+
+* fix completion for catkin_make(_isolated) for older bash completion (`#485 <https://github.com/ros/catkin/issues/485>`_)
+* fix Python3.2 compatibility (`#487 <https://github.com/ros/catkin/issues/487>`_)
+* update documentation (`#438 <https://github.com/ros/catkin/issues/438>`_, `#467 <https://github.com/ros/catkin/issues/467>`_, `#495 <https://github.com/ros/catkin/issues/495>`_, `#497 <https://github.com/ros/catkin/issues/497>`_)
+
 0.5.71 (2013-07-20)
 -------------------
 * catkin_make_isolated: show progress in terminal title bar on Linux and Darwin (`#482 <https://github.com/ros/catkin/issues/482>`_)
