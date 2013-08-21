@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.72 (2013-08-21)
+-------------------
 * make catkin packages relocatable (`#490 <https://github.com/ros/catkin/issues/490>`_)
 
 * catkin_prepare_release:
