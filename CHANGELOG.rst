@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix include dirs in generated CMake config file when a non-catkin package depends on a catkin package (regression of `#490 <https://github.com/ros/catkin/issues/490>`_)
+
 0.5.72 (2013-08-21)
 -------------------
 * make catkin packages relocatable (`#490 <https://github.com/ros/catkin/issues/490>`_)
