@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.73 (2013-08-23)
+-------------------
 * fix include dirs in generated CMake config file when a non-catkin package depends on a catkin package (regression of `#490 <https://github.com/ros/catkin/issues/490>`_)
 
 0.5.72 (2013-08-21)
