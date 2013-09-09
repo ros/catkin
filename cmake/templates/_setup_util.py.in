@@ -55,6 +55,7 @@ ENV_VAR_SUBFOLDERS = {
     'PATH': '@CATKIN_GLOBAL_BIN_DESTINATION@',
     'PKG_CONFIG_PATH': 'lib/pkgconfig',
     'PYTHONPATH': '@PYTHON_INSTALL_DIR@',
+    'RUBYLIB': 'lib/ruby/vendor_ruby',
 }
 
 
