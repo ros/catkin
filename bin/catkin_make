@@ -100,8 +100,14 @@ def main():
     # verify that specified package exists in workspace
     if args.pkg:
         packages_by_name = {p.name: path for path, p in packages.iteritems()}
-        if args.pkg not in packages_by_name:
-            return fmt('@{rf}Package @{boldon}"%s"@{boldoff} not found in the workspace' % args.pkg)
+        unknown_packages = [name for name in args.pkg if name not in packages_by_name]
+        if len(unknown_packages) == len(args.pkg):
+            # all package names are unknown
+            return fmt('@{rf}Packages @{boldon}"%s"@{boldoff} not found in the workspace' % ', '.join(args.pkg))
+        if unknown_packages:
+            # ignore unknown packages
+            print(fmt('@{yf}Packages @{boldon}"%s"@{boldoff} not found in the workspace - ignoring them' % ', '.join(sorted(unknown_packages))), file=sys.stderr)
+            args.pkg = [name for name in args.pkg if name in packages_by_name]
 
     # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
     force_cmake, _ = cmake_input_changed(packages, build_path, cmake_args=cmake_args)
@@ -139,11 +145,13 @@ def main():
     cmd = ['make']
     cmd.extend(handle_make_arguments(args.make_args, force_single_threaded_when_running_tests=True))
     try:
-        make_path = build_path
-        if args.pkg:
-            make_path = os.path.join(make_path, packages_by_name[args.pkg])
-        print_command_banner(cmd, make_path, color=not args.no_color)
-        run_command(cmd, make_path)
+        if not args.pkg:
+            make_paths = [build_path]
+        else:
+            make_paths = [os.path.join(build_path, packages_by_name[name]) for name in args.pkg]
+        for make_path in make_paths:
+            print_command_banner(cmd, make_path, color=not args.no_color)
+            run_command(cmd, make_path)
     except subprocess.CalledProcessError:
         return fmt('@{rf}Invoking @{boldon}"make"@{boldoff} failed')
 
@@ -170,7 +178,7 @@ def _parse_args(args=sys.argv[1:]):
     add('--build', help='The path to the build space (default "build")')
     add('--force-cmake', action='store_true', help='Invoke "cmake" even if it has been executed before')
     add('--no-color', action='store_true', help='Disables colored output (only for catkin_make and CMake)')
-    add('--pkg', help='Invoke "make" on a specific package only')
+    add('--pkg', nargs='+', help='Invoke "make" on specific packages only')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to CMake. '
              'It must be passed after other arguments since it collects all following options.')
