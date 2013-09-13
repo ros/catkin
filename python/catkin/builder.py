@@ -384,7 +384,7 @@ def has_make_target(path, target):
 def get_additional_environment(install, destdir, installspace):
     add_env = {}
     if install and destdir:
-        add_env['CATKIN_SETUP_DIR'] = os.path.join(destdir, installspace[1:])
+        add_env['_CATKIN_SETUP_DIR'] = os.path.join(destdir, installspace[1:])
     return add_env
 
 
