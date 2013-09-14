@@ -456,6 +456,7 @@ def build_cmake_package(
     # Generate env.sh for chaining to catkin packages
     # except if using --merge which implies that new_env_path equals last_env
     new_env_path = os.path.join(install_target, 'env.sh')
+    new_env_path = prefix_destdir(new_env_path, destdir)
     if new_env_path != last_env:
         variables = {
             'SETUP_DIR': install_target,
@@ -468,6 +469,7 @@ def build_cmake_package(
     # Generate setup.sh for chaining to catkin packages
     # except if using --merge which implies that new_setup_path equals last_setup_env
     new_setup_path = os.path.join(install_target, 'setup.sh')
+    new_setup_path = prefix_destdir(new_setup_path, destdir)
     last_setup_env = os.path.join(os.path.dirname(last_env), 'setup.sh') if last_env is not None else None
     if new_setup_path != last_setup_env:
         subs = {}
@@ -478,8 +480,8 @@ def build_cmake_package(
         subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
         subs['pkgcfg_path'] += ":"
         subs['path'] = os.path.join(install_target, 'bin') + ":"
-        if not os.path.exists(install_target):
-            os.mkdir(install_target)
+        if not os.path.exists(os.path.dirname(new_setup_path)):
+            os.mkdir(os.path.dirname(new_setup_path))
         with open(new_setup_path, 'w+') as file_handle:
             file_handle.write("""\
 #!/usr/bin/env sh
@@ -562,9 +564,14 @@ def get_new_env(package, develspace, installspace, install, last_env, destdir=No
             installspace if install else develspace,
             'env.sh'
         )
-        if destdir is not None:
-            new_env = os.path.join(destdir, new_env[1:])
+        new_env = prefix_destdir(new_env, destdir)
     return new_env
+
+
+def prefix_destdir(path, destdir=None):
+    if destdir is not None:
+        path = os.path.join(destdir, path[1:])
+    return path
 
 
 def _get_build_type(package):
