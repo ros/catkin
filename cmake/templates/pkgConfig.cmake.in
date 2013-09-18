@@ -83,10 +83,10 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(@PROJECT_NAME@_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "@PROJECT_ABSOLUTE_INCLUDE_DIRS@" STREQUAL "")
+if(NOT "@PROJECT_CMAKE_CONFIG_INCLUDE_DIRS@" STREQUAL "")
   set(@PROJECT_NAME@_INCLUDE_DIRS "")
-  set(absolute_include_dirs "@PROJECT_ABSOLUTE_INCLUDE_DIRS@")
-  foreach(idir ${absolute_include_dirs})
+  set(_include_dirs "@PROJECT_CMAKE_CONFIG_INCLUDE_DIRS@")
+  foreach(idir ${_include_dirs})
     if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
       set(include ${idir})
     elseif("${idir}" STREQUAL "@CATKIN_GLOBAL_INCLUDE_DESTINATION@")

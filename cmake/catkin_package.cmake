@@ -69,7 +69,7 @@
 #   catkin_package(
 #     INCLUDE_DIRS include
 #     LIBRARIES projlib1 projlib2
-#     CATKIN-DEPENDS roscpp
+#     CATKIN_DEPENDS roscpp
 #     DEPENDS Eigen
 #     CFG_EXTRAS proj-extras[.cmake|.cmake.in|.cmake(.develspace|.installspace)?.em]
 #   )
@@ -325,7 +325,8 @@ function(_catkin_package)
   set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
 
   # absolute path to include dirs and validate that they are existing either absolute or relative to packages source
-  set(PROJECT_ABSOLUTE_INCLUDE_DIRS "")
+  set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "")
+  set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "")
   foreach(idir ${PROJECT_INCLUDE_DIRS})
     if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
       set(include ${idir})
@@ -334,10 +335,12 @@ function(_catkin_package)
     else()
       message(FATAL_ERROR "catkin_package() include dir '${idir}' is neither an absolute directory nor exists relative to '${CMAKE_CURRENT_SOURCE_DIR}'")
     endif()
-    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${include})
+    list(APPEND PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${include})
+    list(APPEND PROJECT_PKG_CONFIG_INCLUDE_DIRS ${include})
   endforeach()
   if(PROJECT_DEPENDENCIES_INCLUDE_DIRS)
-    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
+    list(APPEND PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
+    list(APPEND PROJECT_PKG_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
   endif()
 
   # prepend library path of this workspace
@@ -432,12 +435,15 @@ function(_catkin_package)
   set(PKG_INCLUDE_PREFIX ${PROJECT_SPACE_DIR})
 
   # absolute path to include dir under install prefix if any include dir is set
-  set(PROJECT_ABSOLUTE_INCLUDE_DIRS "")
+  set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "")
+  set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "")
   if(NOT "${PROJECT_INCLUDE_DIRS}" STREQUAL "")
-    set(PROJECT_ABSOLUTE_INCLUDE_DIRS "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
+    set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
+    set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "${PKG_INCLUDE_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
   endif()
   if(PROJECT_DEPENDENCIES_INCLUDE_DIRS)
-    list(APPEND PROJECT_ABSOLUTE_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
+    list(APPEND PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
+    list(APPEND PROJECT_PKG_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
   endif()
 
   # prepend library path of this workspace
