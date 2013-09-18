@@ -54,7 +54,7 @@ def parse_args(args=None):
     pkg.add_argument('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
                      help='Invoke "make" on specific packages (only after initial invocation)')
     pkg.add_argument('--from-pkg', metavar='PKGNAME', dest='from_package',
-                     help='Restart catkin_make_isolated at the given package continuing from there.')
+                     help='Restart catkin_make_isolated at the given package continuing from there (do not change CMake arguments, add/move/remove packages or toggle the install flag when using this option since this may result in an inconsistent workspace state).')
     add('-q', '--quiet', action='store_true', default=False,
         help='Suppresses the cmake and make output until an error occurs.')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
