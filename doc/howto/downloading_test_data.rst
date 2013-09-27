@@ -19,7 +19,7 @@ Catkin provides a convenient command, used like this::
   if (CATKIN_ENABLE_TESTING)
     catkin_download_test_data(
       ${PROJECT_NAME}_32e.pcap
-      http://pr.willowgarage.com/data/velodyne/32e.pcap
+      http://download.ros.org/data/velodyne/32e.pcap
       MD5 e41d02aac34f0967c03a5597e1d554a9)
   endif()
 
@@ -45,7 +45,7 @@ in devel-space, where roslaunch_ can resolve it::
   if (CATKIN_ENABLE_TESTING)
     catkin_download_test_data(
       ${PROJECT_NAME}_32e.pcap
-      http://pr.willowgarage.com/data/velodyne/32e.pcap
+      http://download.ros.org/data/velodyne/32e.pcap
       DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/tests
       MD5 e41d02aac34f0967c03a5597e1d554a9)
   endif()
