@@ -797,10 +797,9 @@ def build_workspace_isolated(
         os.makedirs(develspace)
     if not build_packages:
         generated_env_sh = os.path.join(develspace, 'env.sh')
-        generated_setup_sh = os.path.join(develspace, 'setup.sh')
         generated_setup_util_py = os.path.join(develspace, '_setup_util.py')
         if not merge and pkg_develspace:
-            # generate env.sh and setup.sh which relay to last devel space
+            # generate env.sh and setup.sh|bash|zsh which relay to last devel space
             with open(generated_env_sh, 'w') as f:
                 f.write("""\
 #!/usr/bin/env sh
@@ -809,16 +808,22 @@ def build_workspace_isolated(
 {0} "$@"
 """.format(os.path.join(pkg_develspace, 'env.sh')))
             os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
-            with open(generated_setup_sh, 'w') as f:
-                f.write("""\
-#!/usr/bin/env sh
+
+            for shell in ['sh', 'bash', 'zsh']:
+                with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
+                    f.write("""\
+#!/usr/bin/env {1}
 # generated from catkin.builder module
 
-. "{0}/setup.sh"
-""".format(pkg_develspace))
+. "{0}/setup.{1}"
+""".format(pkg_develspace, shell))
+
+            # remove _setup_util.py file which might have been generated for an empty devel space before
+            if os.path.exists(generated_setup_util_py):
+                os.remove(generated_setup_util_py)
 
         elif not pkg_develspace:
-            # generate env.sh and setup.sh for an empty devel space
+            # generate env.sh and setup.sh|bash|zsh for an empty devel space
             if 'CMAKE_PREFIX_PATH' in os.environ.keys():
                 variables = {
                     'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
@@ -832,28 +837,15 @@ def build_workspace_isolated(
             else:
                 sys.exit("Unable to process CMAKE_PREFIX_PATH from environment. Cannot generate environment files.")
 
-            variables = {
-                'SETUP_FILENAME': 'setup'
-            }
+            variables = {'SETUP_FILENAME': 'setup'}
             with open(generated_env_sh, 'w') as f:
                 f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'env.sh.in'), variables))
             os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
-            variables = {'SETUP_DIR': develspace}
-            with open(generated_setup_sh, 'w') as f:
-                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.sh.in'), variables))
 
-        if not merge and pkg_develspace:
-            # remove _setup_util.py file which might have been generated for an empty
-            if os.path.exists(generated_setup_util_py):
-                os.remove(generated_setup_util_py)
-
-        if not merge or not pkg_develspace:
-            # generate setup.bash and setup.zsh for convenience
             variables = {'SETUP_DIR': develspace}
-            with open(os.path.join(develspace, 'setup.bash'), 'w') as f:
-                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.bash.in'), variables))
-            with open(os.path.join(develspace, 'setup.zsh'), 'w') as f:
-                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.zsh.in'), variables))
+            for shell in ['sh', 'bash', 'zsh']:
+                with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
+                    f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.%s.in' % shell), variables))
 
 
 def cmake_input_changed(packages, build_path, install=None, cmake_args=None, filename='catkin_make'):
