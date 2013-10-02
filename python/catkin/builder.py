@@ -463,7 +463,20 @@ def build_cmake_package(
             'SETUP_FILENAME': 'setup'
         }
         with open(os.path.join(new_env_path), 'w') as f:
-            f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'env.sh.in'), variables))
+            f.write("""\
+#!/usr/bin/env sh
+# generated from catkin.builder module
+
+if [ $# -eq 0 ] ; then
+  /bin/echo "Usage: env.sh COMMANDS"
+  /bin/echo "Calling env.sh without arguments is not supported anymore. Instead spawn a subshell and source a setup file manually."
+  exit 1
+fi
+
+# source {SETUP_FILENAME}.sh from same directory as this file
+. "$(cd "`dirname "$0"`" && pwd)/{SETUP_FILENAME}.sh"
+exec "$@"
+""".format(**variables))
         os.chmod(new_env_path, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
 
     # Generate setup.sh for chaining to catkin packages
@@ -482,7 +495,7 @@ def build_cmake_package(
         subs['path'] = os.path.join(install_target, 'bin') + ":"
         if not os.path.exists(os.path.dirname(new_setup_path)):
             os.mkdir(os.path.dirname(new_setup_path))
-        with open(new_setup_path, 'w+') as file_handle:
+        with open(new_setup_path, 'w') as file_handle:
             file_handle.write("""\
 #!/usr/bin/env sh
 # generated from catkin.builder module
