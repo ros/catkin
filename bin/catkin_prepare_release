@@ -307,7 +307,7 @@ def main():
     if vcs_type in ['svn']:
         # for svn everything affects the remote repository immediately
         print(fmt('@{gf}The following commands will be executed to commit the changes and tag the new version:'))
-        commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version, dry_run=True)
+        commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, fmt('"%s"' % tag_name), dry_run=True)
         tag_repository(base_path, vcs_type, tag_name, dry_run=True)
         if not args.non_interactive and not prompt_continue('Perform commands which will modify the repository', default=True):
             raise RuntimeError(fmt('@{rf}Skipping commands, to finish the release execute the commands manually.'))
