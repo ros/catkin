@@ -105,6 +105,10 @@ def commit_files(base_path, vcs_type, packages, packages_with_changelogs, messag
             subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(fmt("@{rf}Failed to commit package.xml files: %s" % str(e)))
+    else:
+        if vcs_type == 'svn' :
+            print(fmt('@{gf}Committing the package.xml files...'))
+            print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
     return None
 
 
@@ -133,6 +137,9 @@ def tag_repository(base_path, vcs_type, tag_name, dry_run=False):
             subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(fmt("@{rf}Failed to tag repository: %s" % str(e)))
+    else:
+        print(fmt("@{gf}Creating tag '@{boldon}%s@{boldoff}'..." % (tag_name)))
+        print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
     return None
 
 
@@ -299,12 +306,9 @@ def main():
 
     if vcs_type in ['svn']:
         # for svn everything affects the remote repository immediately
-        commands = []
-        commands.append(commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version, dry_run=True))
-        commands.append(tag_repository(base_path, vcs_type, tag_name, dry_run=True))
         print(fmt('@{gf}The following commands will be executed to commit the changes and tag the new version:'))
-        for cmd in commands:
-            print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
+        commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version, dry_run=True)
+        tag_repository(base_path, vcs_type, tag_name, dry_run=True)
         if not args.non_interactive and not prompt_continue('Perform commands which will modify the repository', default=True):
             raise RuntimeError(fmt('@{rf}Skipping commands, to finish the release execute the commands manually.'))
         commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version)
