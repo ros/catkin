@@ -105,7 +105,7 @@ def commit_files(base_path, vcs_type, packages, packages_with_changelogs, messag
             subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(fmt("@{rf}Failed to commit package.xml files: %s" % str(e)))
-    return None
+    return cmd
 
 
 def tag_repository(base_path, vcs_type, tag_name, dry_run=False):
@@ -133,7 +133,7 @@ def tag_repository(base_path, vcs_type, tag_name, dry_run=False):
             subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(fmt("@{rf}Failed to tag repository: %s" % str(e)))
-    return None
+    return cmd
 
 
 def push_changes(base_path, vcs_type, dry_run=False):
