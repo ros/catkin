@@ -97,7 +97,7 @@ def check_clean_working_copy(base_path, vcs_type):
 
 
 def commit_files(base_path, vcs_type, packages, packages_with_changelogs, message, dry_run=False):
-    cmd = [_find_executable(vcs_type), 'commit', '-m', message]
+    cmd = [_find_executable(vcs_type), 'commit', '-m', '"%s"' % message]
     cmd += [os.path.join(p, PACKAGE_MANIFEST_FILENAME) for p in packages.keys()]
     cmd += [path for path, _, _ in packages_with_changelogs.values()]
     if not dry_run:
@@ -300,7 +300,7 @@ def main():
     if vcs_type in ['svn']:
         # for svn everything affects the remote repository immediately
         commands = []
-        commands.append(commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version, dry_run=True))
+        commands.append(commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, tag_name, dry_run=True))
         commands.append(tag_repository(base_path, vcs_type, tag_name, dry_run=True))
         print(fmt('@{gf}The following commands will be executed to commit the changes and tag the new version:'))
         for cmd in commands:
