@@ -105,6 +105,10 @@ def commit_files(base_path, vcs_type, packages, packages_with_changelogs, messag
             subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(fmt("@{rf}Failed to commit package.xml files: %s" % str(e)))
+    else:
+        if vcs_type == 'svn' :
+            print(fmt('@{gf}Committing the package.xml files...'))
+            print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
     return None
 
 
@@ -116,12 +120,12 @@ def tag_repository(base_path, vcs_type, tag_name, dry_run=False):
         BRANCHES = '/branches'
         TAGS = '/tags'
         svn_url = vcs_remotes(base_path, 'svn')[5:]
-        if svn_url.endswith(TRUNK):
-            base_url = svn_url[:-len(TRUNK)]
-        elif os.path.dirname(svn_url).endswith(BRANCHES):
-            base_url = os.path.dirname(svn_url)[:-len(BRANCHES)]
-        elif os.path.dirname(svn_url).endswith(TAGS):
-            base_url = os.path.dirname(svn_url)[:-len(TAGS)]
+        if svn_url.find(TRUNK) > 0 :
+            base_url = svn_url[:svn_url.find(TRUNK)]
+        elif os.path.dirname(svn_url).find(BRANCHES) > 0 :
+            base_url = os.path.dirname(svn_url)[:os.path.dirname(svn_url).find(BRANCHES)]
+        elif os.path.dirname(svn_url).find(TAGS) > 0:
+            base_url = os.path.dirname(svn_url)[:os.path.dirname(svn_url)(TAGS)]
         else:
             raise RuntimeError(fmt("@{rf}Could not determine base URL of SVN repository '%s'" % svn_url))
         tag_url = '%s/tags/%s' % (base_url, tag_name)
@@ -133,6 +137,9 @@ def tag_repository(base_path, vcs_type, tag_name, dry_run=False):
             subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(fmt("@{rf}Failed to tag repository: %s" % str(e)))
+    else:
+        print(fmt("@{gf}Creating tag '@{boldon}%s@{boldoff}'..." % (tag_name)))
+        print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
     return None
 
 
@@ -299,12 +306,9 @@ def main():
 
     if vcs_type in ['svn']:
         # for svn everything affects the remote repository immediately
-        commands = []
-        commands.append(commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version, dry_run=True))
-        commands.append(tag_repository(base_path, vcs_type, tag_name, dry_run=True))
         print(fmt('@{gf}The following commands will be executed to commit the changes and tag the new version:'))
-        for cmd in commands:
-            print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
+        commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, fmt('"%s"' % tag_name), dry_run=True)
+        tag_repository(base_path, vcs_type, tag_name, dry_run=True)
         if not args.non_interactive and not prompt_continue('Perform commands which will modify the repository', default=True):
             raise RuntimeError(fmt('@{rf}Skipping commands, to finish the release execute the commands manually.'))
         commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version)
