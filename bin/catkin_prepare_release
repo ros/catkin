@@ -97,7 +97,7 @@ def check_clean_working_copy(base_path, vcs_type):
 
 
 def commit_files(base_path, vcs_type, packages, packages_with_changelogs, message, dry_run=False):
-    cmd = [_find_executable(vcs_type), 'commit', '-m', message]
+    cmd = [_find_executable(vcs_type), 'commit', '-m', '"%s"' % message]
     cmd += [os.path.join(p, PACKAGE_MANIFEST_FILENAME) for p in packages.keys()]
     cmd += [path for path, _, _ in packages_with_changelogs.values()]
     if not dry_run:
@@ -105,23 +105,30 @@ def commit_files(base_path, vcs_type, packages, packages_with_changelogs, messag
             subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(fmt("@{rf}Failed to commit package.xml files: %s" % str(e)))
-    return None
+    return cmd
 
 
-def tag_repository(base_path, vcs_type, tag_name, dry_run=False):
+def tag_repository(base_path, vcs_type, tag_name, has_tag_prefix, dry_run=False):
     if vcs_type in ['bzr', 'git', 'hg']:
         cmd = [_find_executable(vcs_type), 'tag', tag_name]
     elif vcs_type == 'svn':
-        TRUNK = '/trunk'
-        BRANCHES = '/branches'
-        TAGS = '/tags'
         svn_url = vcs_remotes(base_path, 'svn')[5:]
-        if svn_url.endswith(TRUNK):
-            base_url = svn_url[:-len(TRUNK)]
-        elif os.path.dirname(svn_url).endswith(BRANCHES):
-            base_url = os.path.dirname(svn_url)[:-len(BRANCHES)]
-        elif os.path.dirname(svn_url).endswith(TAGS):
-            base_url = os.path.dirname(svn_url)[:-len(TAGS)]
+        if os.path.basename(svn_url) == 'trunk':
+            # tag "trunk"
+            base_url = os.path.dirname(svn_url)
+        elif os.path.basename(os.path.dirname(svn_url)) == 'branches':
+            # tag a direct subfolder of "branches"
+            base_url = os.path.dirname(os.path.dirname(svn_url))
+        elif svn_url.rfind('/trunk/') != -1:
+            # tag any subfolder of trunk but require a tag prefix
+            if not has_tag_prefix:
+                raise RuntimeError(fmt('@{rf}When tagging a subfolder you must use --tag-prefix to make your tag name unique'))
+            base_url = svn_url[:svn_url.rfind('/trunk/')]
+        elif svn_url.rfind('/branches/') != -1:
+            # tag any subfolder of trunk but require a tag prefix
+            if not has_tag_prefix:
+                raise RuntimeError(fmt('@{rf}When tagging a subfolder you must use --tag-prefix to make your tag name unique'))
+            base_url = svn_url[:svn_url.rfind('/branches/')]
         else:
             raise RuntimeError(fmt("@{rf}Could not determine base URL of SVN repository '%s'" % svn_url))
         tag_url = '%s/tags/%s' % (base_url, tag_name)
@@ -133,7 +140,7 @@ def tag_repository(base_path, vcs_type, tag_name, dry_run=False):
             subprocess.check_call(cmd, cwd=base_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(fmt("@{rf}Failed to tag repository: %s" % str(e)))
-    return None
+    return cmd
 
 
 def push_changes(base_path, vcs_type, dry_run=False):
@@ -289,6 +296,10 @@ def main():
         if not args.non_interactive and not prompt_continue('Continue anyway', default=False):
             raise RuntimeError(fmt("@{rf}Aborted release, clean the working copy before trying again."))
 
+    # for svn verify that we know how to tag that repository
+    if vcs_type in ['svn']:
+        tag_svn_cmd = tag_repository(base_path, vcs_type, tag_name, args.tag_prefix != '', dry_run=True)
+
     # tag forthcoming changelog sections
     update_changelog_sections(missing_changelogs_but_forthcoming, new_version)
     print(fmt("@{gf}Rename the forthcoming section@{reset} of the following packages to version '@{bf}@{boldon}%s@{boldoff}@{reset}': %s" % (new_version, ', '.join([('@{boldon}%s@{boldoff}' % p) for p in sorted(missing_changelogs_but_forthcoming.keys())]))))
@@ -300,23 +311,23 @@ def main():
     if vcs_type in ['svn']:
         # for svn everything affects the remote repository immediately
         commands = []
-        commands.append(commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version, dry_run=True))
-        commands.append(tag_repository(base_path, vcs_type, tag_name, dry_run=True))
+        commands.append(commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, tag_name, dry_run=True))
+        commands.append(tag_svn_cmd)
         print(fmt('@{gf}The following commands will be executed to commit the changes and tag the new version:'))
         for cmd in commands:
             print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
         if not args.non_interactive and not prompt_continue('Perform commands which will modify the repository', default=True):
             raise RuntimeError(fmt('@{rf}Skipping commands, to finish the release execute the commands manually.'))
-        commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version)
-        tag_repository(base_path, vcs_type, tag_name)
+        commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, tag_name)
+        tag_repository(base_path, vcs_type, tag_name, args.tag_prefix != '')
 
     else:
         # for other vcs types the changes are first done locally
         print(fmt('@{gf}Committing the package.xml files...'))
-        commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, new_version)
+        commit_files(base_path, vcs_type, packages, missing_changelogs_but_forthcoming, tag_name)
 
         print(fmt("@{gf}Creating tag '@{boldon}%s@{boldoff}'..." % (tag_name)))
-        tag_repository(base_path, vcs_type, tag_name)
+        tag_repository(base_path, vcs_type, tag_name, args.tag_prefix != '')
 
         # confirm commands to push to remote repository
         commands = push_changes(base_path, vcs_type, dry_run=True)
