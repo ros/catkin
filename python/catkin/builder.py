@@ -440,7 +440,10 @@ def build_cmake_package(
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
-    run_command(make_cmd, build_dir, quiet)
+    if install:
+        run_command(make_cmd, build_dir, quiet)
+    else:
+        run_command(make_cmd, build_dir, quiet, add_env={'DESTDIR': ''})
 
     # Make install
     make_install_cmd = ['make', 'install']
@@ -456,7 +459,8 @@ def build_cmake_package(
     # Generate env.sh for chaining to catkin packages
     # except if using --merge which implies that new_env_path equals last_env
     new_env_path = os.path.join(install_target, 'env.sh')
-    new_env_path = prefix_destdir(new_env_path, destdir)
+    if install:
+        new_env_path = prefix_destdir(new_env_path, destdir)
     if new_env_path != last_env:
         variables = {
             'SETUP_DIR': install_target,
@@ -482,7 +486,8 @@ exec "$@"
     # Generate setup.sh for chaining to catkin packages
     # except if using --merge which implies that new_setup_path equals last_setup_env
     new_setup_path = os.path.join(install_target, 'setup.sh')
-    new_setup_path = prefix_destdir(new_setup_path, destdir)
+    if install:
+        new_setup_path = prefix_destdir(new_setup_path, destdir)
     last_setup_env = os.path.join(os.path.dirname(last_env), 'setup.sh') if last_env is not None else None
     if new_setup_path != last_setup_env:
         subs = {}
@@ -577,7 +582,8 @@ def get_new_env(package, develspace, installspace, install, last_env, destdir=No
             installspace if install else develspace,
             'env.sh'
         )
-        new_env = prefix_destdir(new_env, destdir)
+        if install:
+            new_env = prefix_destdir(new_env, destdir)
     return new_env
 
 
