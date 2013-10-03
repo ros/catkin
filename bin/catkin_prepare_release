@@ -97,7 +97,7 @@ def check_clean_working_copy(base_path, vcs_type):
 
 
 def commit_files(base_path, vcs_type, packages, packages_with_changelogs, message, dry_run=False):
-    cmd = [_find_executable(vcs_type), 'commit', '-m', message]
+    cmd = [_find_executable(vcs_type), 'commit', '-m', '"%s"' % message]
     cmd += [os.path.join(p, PACKAGE_MANIFEST_FILENAME) for p in packages.keys()]
     cmd += [path for path, _, _ in packages_with_changelogs.values()]
     if not dry_run:
