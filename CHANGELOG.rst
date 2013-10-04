@@ -2,6 +2,18 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add --all option to catkin_test_results
+* improve svn support in catkin_prepare_release
+* keep build folder of plain CMake packages completely isolated between devel and install (`#374 <https://github.com/ros/catkin/issues/374>`_)
+* fix handling of spaces in path (`#519 <https://github.com/ros/catkin/issues/519>`_)
+* fix generated setup.bash|zsh for isolated devel space (`#520 <https://github.com/ros/catkin/issues/520>`_)
+* fix env.sh for plain cmake packages to not define _CATKIN_SETUP_DIR (`#521 <https://github.com/ros/catkin/issues/521>`_)
+* fix crash when DESTDIR is specified but install not asked for (`#526 <https://github.com/ros/catkin/issues/526>`_)
+* update doc for downloading test data from download.ros.org
+* update environment hook doc (`#516 <https://github.com/ros/catkin/issues/516>`_)
+
 0.5.74 (2013-09-18)
 -------------------
 * support multiple package names for catkin_make --pkg (`#504 <https://github.com/ros/catkin/issues/504>`_)
