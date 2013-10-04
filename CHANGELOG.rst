@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.75 (2013-10-04)
+-------------------
 * add --all option to catkin_test_results
 * improve svn support in catkin_prepare_release
 * keep build folder of plain CMake packages completely isolated between devel and install (`#374 <https://github.com/ros/catkin/issues/374>`_)
