@@ -251,8 +251,15 @@ def main():
     old_version = verify_equal_package_versions(packages.values())
     new_version = bump_version(old_version, args.bump)
     tag_name = args.tag_prefix + new_version
+    
+    # When tag_name differs from new_version, create a string to show
+    # the whole tag name in addition to version (eg. In the case discussed in
+    # https://github.com/ros/catkin/pull/528#issuecomment-25739909).
+    promptmsg_tag_name = ''
+    if tag_name is not new_version:
+        promptmsg_tag_name = fmt(" (tag name '@{bf}@{boldon}%s@{boldoff}@{reset}') " % tag_name)
 
-    if not args.non_interactive and not prompt_continue(fmt("Prepare release of version '@{bf}@{boldon}%s@{boldoff}@{reset}'" % new_version), default=True):
+    if not args.non_interactive and not prompt_continue(fmt("Prepare release of version '@{bf}@{boldon}%s@{boldoff}@{reset}'" % new_version) + promptmsg_tag_name, default=True):
         raise RuntimeError(fmt("@{rf}Aborted release, use option '--bump' to release a different version."))
 
     # check for changelog entries
