@@ -110,7 +110,7 @@ def main():
             args.pkg = [name for name in args.pkg if name in packages_by_name]
 
     # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
-    force_cmake, _ = cmake_input_changed(packages, build_path, cmake_args=cmake_args)
+    force_cmake = cmake_input_changed(packages, build_path, cmake_args=cmake_args)
 
     # consider calling cmake
     makefile = os.path.join(build_path, 'Makefile')
