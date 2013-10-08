@@ -252,7 +252,7 @@ def main():
     new_version = bump_version(old_version, args.bump)
     tag_name = args.tag_prefix + new_version
 
-    if not args.non_interactive and not prompt_continue(fmt("Prepare release of version '@{bf}@{boldon}%s@{boldoff}@{reset}'" % new_version), default=True):
+    if not args.non_interactive and not prompt_continue(fmt("Prepare release of version '@{bf}@{boldon}%s@{boldoff}@{reset}'" % tag_name), default=True):
         raise RuntimeError(fmt("@{rf}Aborted release, use option '--bump' to release a different version."))
 
     # check for changelog entries
