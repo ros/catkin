@@ -295,11 +295,7 @@ def build_catkin_package(
     )
 
     # Make the build dir
-    if install:
-        build_dir_name = '%s_install' % package.name
-    else:
-        build_dir_name = '%s_devel' % package.name
-    build_dir = _check_build_dir(build_dir_name, workspace, buildspace)
+    build_dir = _check_build_dir(package.name, workspace, buildspace)
 
     # Check last_env
     if last_env is not None:
@@ -405,7 +401,11 @@ def build_cmake_package(
     )
 
     # Make the build dir
-    build_dir = _check_build_dir(package.name, workspace, buildspace)
+    if install:
+        build_dir_name = '%s_install' % package.name
+    else:
+        build_dir_name = '%s_devel' % package.name
+    build_dir = _check_build_dir(build_dir_name, workspace, buildspace)
 
     # Check last_env
     if last_env is not None:
