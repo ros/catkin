@@ -511,9 +511,13 @@ exec "$@"
 #!/usr/bin/env sh
 # generated from catkin.builder module
 
+# remember type of shell if not already set
+if [ -z "$CATKIN_SHELL" ]; then
+  CATKIN_SHELL=sh
+fi
 """)
             if last_env is not None:
-                file_handle.write('. %s\n\n' % last_setup_env)
+                file_handle.write('. %s.$CATKIN_SHELL\n\n' % last_setup_env[:-3])
             file_handle.write("""\
 # detect if running on Darwin platform
 _UNAME=`uname -s`
@@ -533,6 +537,20 @@ export PATH="{path}$PATH"
 export PKG_CONFIG_PATH="{pkgcfg_path}$PKG_CONFIG_PATH"
 export PYTHONPATH="{pythonpath}$PYTHONPATH"
 """.format(**subs))
+
+        # generate setup.bash|zsh scripts
+        for shell in ['bash', 'zsh']:
+            setup_path = os.path.join(install_target, 'setup.%s' % shell)
+            if install:
+                setup_path = prefix_destdir(setup_path, destdir)
+            with open(setup_path, 'w') as f:
+                f.write("""\
+#!/usr/bin/env {1}
+# generated from catkin.builder module
+
+CATKIN_SHELL={1}
+. "{0}/setup.sh"
+""".format(os.path.dirname(setup_path), shell))
 
 
 def build_package(
