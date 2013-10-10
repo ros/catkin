@@ -214,7 +214,7 @@ def _check_build_dir(name, workspace, buildspace):
             blue_arrow + ' Creating build directory: \'' +
             os.path.relpath(package_build_dir, workspace) + '\'@|'
         )
-        os.mkdir(package_build_dir)
+        os.makedirs(package_build_dir)
     return package_build_dir
 
 
@@ -402,9 +402,9 @@ def build_cmake_package(
 
     # Make the build dir
     if install:
-        build_dir_name = '%s_install' % package.name
+        build_dir_name = '%s%sinstall' % (package.name, os.sep)
     else:
-        build_dir_name = '%s_devel' % package.name
+        build_dir_name = '%s%sdevel' % (package.name, os.sep)
     build_dir = _check_build_dir(build_dir_name, workspace, buildspace)
 
     # Check last_env
