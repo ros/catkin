@@ -2,6 +2,17 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* catkin_prepare_release: show tag name explicitly when using tag prefix (`#528 <https://github.com/ros/catkin/issues/528>`_)
+
+* catkin_make_isolated:
+
+  * separate devel and install build folders for plain cmake packages cleanly without polluting namespace (`#532 <https://github.com/ros/catkin/issues/532>`_)
+  * fix build folder naming (regression from 0.5.75)
+  * fix setup generation if last package in workspace is plain cmake (`#530 <https://github.com/ros/catkin/issues/530>`_)
+  * fix creating missing folder
+
 0.5.76 (2013-10-06)
 -------------------
 * fix regression in catkin_make from 0.5.75
