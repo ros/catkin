@@ -5,12 +5,27 @@ cmake_minimum_required(VERSION 2.8.3)
 
 set(CATKIN_TOPLEVEL TRUE)
 
-# include catkin directly or via find_package()
-if(EXISTS "${CMAKE_SOURCE_DIR}/catkin/cmake/all.cmake" AND EXISTS "${CMAKE_SOURCE_DIR}/catkin/CMakeLists.txt")
-  set(catkin_EXTRAS_DIR "${CMAKE_SOURCE_DIR}/catkin/cmake")
+# search for catkin within the workspace
+set(_cmd "catkin_find_pkg" "catkin" "${CMAKE_SOURCE_DIR}")
+execute_process(COMMAND ${_cmd}
+  RESULT_VARIABLE _res
+  OUTPUT_VARIABLE _out
+  ERROR_VARIABLE _err
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_STRIP_TRAILING_WHITESPACE
+)
+if(NOT _res EQUAL 0 AND NOT _res EQUAL 2)
+  # searching fot catkin resulted in an error
+  string(REPLACE ";" " " _cmd_str "${_cmd}")
+  message(FATAL_ERROR "Search for 'catkin' in workspace failed (${_cmd_str}): ${_err}")
+endif()
+
+# include catkin from workspace or via find_package()
+if(_res EQUAL 0)
+  set(catkin_EXTRAS_DIR "${CMAKE_SOURCE_DIR}/${_out}/cmake")
   # include all.cmake without add_subdirectory to let it operate in same scope
-  include(catkin/cmake/all.cmake NO_POLICY_SCOPE)
-  add_subdirectory(catkin)
+  include(${catkin_EXTRAS_DIR}/all.cmake NO_POLICY_SCOPE)
+  add_subdirectory("${_out}")
 
 else()
   # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
