@@ -34,7 +34,9 @@ endif()
 
 # mark as found
 if(NOT catkin_FOUND)
-  set(catkin_FOUND)
+  # cmake will set catkin_FOUND automatically after this config file has been read
+  # but other cmake configuration files of packages mentioned in the COMPONENTS list might need it already
+  set(catkin_FOUND True)
   set(CATKIN_PACKAGE_PREFIX "" CACHE STRING "Prefix to apply to package generated via gendebian")
 endif()
 
