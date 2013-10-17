@@ -645,6 +645,7 @@ def build_workspace_isolated(
     make_args=None,
     catkin_make_args=None,
     continue_from_pkg=False,
+    only_pkg_with_deps=None,
     destdir=None
 ):
     '''
@@ -676,6 +677,9 @@ def build_workspace_isolated(
         packages, ``[str]``
     :param continue_from_pkg: indicates whether or not cmi should continue
         when a package is reached, ``bool``
+    :param only_pkg_with_deps: only consider the specific packages and their
+        recursive dependencies and ignore all other packages in the workspace,
+        ``[str]``
     :param destdir: define DESTDIR for cmake/invocation, ``string``
     '''
     if not colorize:
@@ -735,6 +739,17 @@ def build_workspace_isolated(
     packages = find_packages(sourcespace, exclude_subspaces=True)
     if not packages:
         print(fmt("@{yf}No packages found in source space: %s@|" % sourcespace))
+
+    # whitelist packages and their dependencies in workspace
+    if only_pkg_with_deps:
+        package_names = [p.name for p in packages.values()]
+        unknown_packages = [name for name in only_pkg_with_deps if name not in package_names]
+        if unknown_packages:
+            sys.exit('Packages not found in the workspace: %s' % ', '.join(unknown_packages))
+
+        whitelist_pkg_names = get_package_names_with_recursive_dependencies(packages, only_pkg_with_deps)
+        print('Whitelisted packages: %s' % ', '.join(sorted(whitelist_pkg_names)))
+        packages = {path: p for path, p in packages.iteritems() if p.name in whitelist_pkg_names}
 
     # verify that specified package exists in workspace
     if build_packages:
@@ -905,3 +920,18 @@ def cmake_input_changed(packages, build_path, cmake_args=None, filename='catkin_
         f.write('%s\n%s' % (package_paths, cmake_args))
 
     return changed
+
+
+def get_package_names_with_recursive_dependencies(packages, pkg_names):
+    dependencies = set([])
+    check_pkg_names = set(pkg_names)
+    packages_by_name = {p.name: p for path, p in packages.iteritems()}
+    while check_pkg_names:
+        pkg_name = check_pkg_names.pop()
+        if pkg_name in packages_by_name:
+            pkg = packages_by_name[pkg_name]
+            dependencies.add(pkg_name)
+            for dep in [dep.name for dep in (pkg.build_depends + pkg.buildtool_depends)]:
+                if dep in packages_by_name and dep not in check_pkg_names and dep not in dependencies:
+                    check_pkg_names.add(dep)
+    return dependencies

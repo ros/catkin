@@ -55,6 +55,7 @@ def parse_args(args=None):
                      help='Invoke "make" on specific packages (only after initial invocation)')
     pkg.add_argument('--from-pkg', metavar='PKGNAME', dest='from_package',
                      help='Restart catkin_make_isolated at the given package continuing from there (do not change CMake arguments, add/move/remove packages or toggle the install flag when using this option since this may result in an inconsistent workspace state).')
+    add('--only-pkg-with-deps', nargs='+', help='Only consider the specific packages and their recursive dependencies and ignore all other packages in the workspace (only works together with --merge or --install)')
     add('-q', '--quiet', action='store_true', default=False,
         help='Suppresses the cmake and make output until an error occurs.')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
@@ -67,6 +68,8 @@ def parse_args(args=None):
         help='Arbitrary arguments which are passes to make but only for catkin packages.'
              'It must be passed after other arguments since it collects all following options.')
     opts = parser.parse_args(args)
+    if opts.only_pkg_with_deps and not opts.merge and not opts.install:
+        parser.error("The '--only-pkg-with-deps' option can only be used together with '--merge' or '--install'")
     opts.cmake_args = cmake_args
     opts.make_args = make_args + (jobs_flags or [])
     opts.catkin_make_args = catkin_make_args
@@ -125,6 +128,7 @@ def main():
         make_args=opts.make_args,
         catkin_make_args=opts.catkin_make_args,
         continue_from_pkg=opts.from_package is not None,
+        only_pkg_with_deps=opts.only_pkg_with_deps,
         destdir=destdir
     )
 
