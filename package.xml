@@ -26,7 +26,7 @@
   <run_depend>cmake</run_depend>
   <run_depend>gtest</run_depend>
   <run_depend>python-argparse</run_depend>
-  <run_depend version_gte="0.1.12">python-catkin-pkg</run_depend>
+  <run_depend version_gte="0.1.21">python-catkin-pkg</run_depend>
   <run_depend>python-empy</run_depend>
   <run_depend>python-nose</run_depend>
 
