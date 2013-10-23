@@ -186,7 +186,11 @@ def run_command(cmd, cwd, quiet=False, colorize=False, add_env=None):
     out = io.StringIO() if quiet else sys.stdout
     if capture:
         while True:
-            line = unicode(proc.stdout.readline().decode('utf8', 'replace'))
+            line = proc.stdout.readline().decode('utf8', 'replace')
+            try:
+                line = unicode(line)
+            except NameError:
+                pass
             if proc.returncode is not None or not line:
                 break
             try:
@@ -749,11 +753,11 @@ def build_workspace_isolated(
 
         whitelist_pkg_names = get_package_names_with_recursive_dependencies(packages, only_pkg_with_deps)
         print('Whitelisted packages: %s' % ', '.join(sorted(whitelist_pkg_names)))
-        packages = {path: p for path, p in packages.iteritems() if p.name in whitelist_pkg_names}
+        packages = {path: p for path, p in packages.items() if p.name in whitelist_pkg_names}
 
     # verify that specified package exists in workspace
     if build_packages:
-        packages_by_name = {p.name: path for path, p in packages.iteritems()}
+        packages_by_name = {p.name: path for path, p in packages.items()}
         unknown_packages = [p for p in build_packages if p not in packages_by_name]
         if unknown_packages:
             sys.exit('Packages not found in the workspace: %s' % ', '.join(unknown_packages))
@@ -925,7 +929,7 @@ def cmake_input_changed(packages, build_path, cmake_args=None, filename='catkin_
 def get_package_names_with_recursive_dependencies(packages, pkg_names):
     dependencies = set([])
     check_pkg_names = set(pkg_names)
-    packages_by_name = {p.name: p for path, p in packages.iteritems()}
+    packages_by_name = {p.name: p for path, p in packages.items()}
     while check_pkg_names:
         pkg_name = check_pkg_names.pop()
         if pkg_name in packages_by_name:

@@ -23,7 +23,10 @@ class BuilderTest(unittest.TestCase):
 
             def readline(self):
                 self.__popen.returncode = 0
-                return unichr(2018)
+                try:
+                    return unichr(2018)
+                except NameError:
+                    return chr(2018)
 
         class MockPopen(object):
             def __init__(self, *args, **kwargs):

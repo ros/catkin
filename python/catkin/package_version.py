@@ -93,7 +93,7 @@ def update_versions(paths, new_version):
             raise RuntimeError('Could not bump version number in file %s: %s' % (package_path, str(rue)))
         files[package_path] = new_package_str
     # if all replacements successful, write back modified package.xml
-    for package_path, new_package_str in files.iteritems():
+    for package_path, new_package_str in files.items():
         with open(package_path, 'w') as f:
             f.write(new_package_str)
 

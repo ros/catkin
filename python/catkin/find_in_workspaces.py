@@ -129,7 +129,7 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
                     source_paths = get_source_paths(workspace)
                     for source_path in source_paths:
                         packages = find_packages(source_path)
-                        matching_packages = [p for p, pkg in packages.iteritems() if pkg.name == project]
+                        matching_packages = [p for p, pkg in packages.items() if pkg.name == project]
                         if matching_packages:
                             p = os.path.join(source_path, matching_packages[0])
                             if path is not None:
