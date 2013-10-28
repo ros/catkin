@@ -502,8 +502,8 @@ exec "$@"
                           os.path.join(install_target, 'lib', 'x86_64-linux-gnu') + ":"
         pythonpath = os.path.join(install_target, get_python_install_dir())
         subs['pythonpath'] = pythonpath + ':'
-        subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
-        subs['pkgcfg_path'] += ":"
+        subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig') + ":" + \
+                              os.path.join(install_target, 'lib', 'x86_64-linux-gnu', 'pkgconfig') + ":"
         subs['path'] = os.path.join(install_target, 'bin') + ":"
         if not os.path.exists(os.path.dirname(new_setup_path)):
             os.mkdir(os.path.dirname(new_setup_path))
