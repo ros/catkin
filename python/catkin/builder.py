@@ -498,7 +498,8 @@ exec "$@"
     if new_setup_path != last_setup_env:
         subs = {}
         subs['cmake_prefix_path'] = install_target + ":"
-        subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
+        subs['ld_path'] = os.path.join(install_target, 'lib') + ":" + \
+                          os.path.join(install_target, 'lib', 'x86_64-linux-gnu') + ":"
         pythonpath = os.path.join(install_target, get_python_install_dir())
         subs['pythonpath'] = pythonpath + ':'
         subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
