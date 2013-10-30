@@ -22,7 +22,7 @@ CMakeLists.txt
 Declare each nose test like this::
 
   if (CATKIN_ENABLE_TESTING)
-    catkin_add_nosetest(test_your_node tests/test_your_node.py)
+    catkin_add_nosetests(test_your_node tests/test_your_node.py)
   endif()
 
 This example assumes your tests are defined in the ``tests/``
