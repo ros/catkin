@@ -2,8 +2,9 @@
 # Append elements to a list if they are not already in the list.
 #
 # .. note:: Using CMake's ``list(APPEND ..)`` and
-#   ``list(REMOVE_DUPLICATES ..)`` since its implementation uses a
-#   set internally which make the operation unstable.
+#   ``list(REMOVE_DUPLICATES ..)`` is not sufficient since its
+#   implementation uses a set internally which makes the operation
+#   unstable.
 #
 macro(list_append_unique listname)
   foreach(_item ${ARGN})
