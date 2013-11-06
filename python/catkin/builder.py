@@ -517,7 +517,7 @@ if [ -z "$CATKIN_SHELL" ]; then
 fi
 """)
             if last_env is not None:
-                file_handle.write('. %s.$CATKIN_SHELL\n\n' % last_setup_env[:-3])
+                file_handle.write('. "%s.$CATKIN_SHELL"\n\n' % last_setup_env[:-3])
             file_handle.write("""\
 # detect if running on Darwin platform
 _UNAME=`uname -s`
