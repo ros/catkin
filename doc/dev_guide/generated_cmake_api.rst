@@ -266,7 +266,7 @@ Public CMake functions / macros
    catkin_package(
      INCLUDE_DIRS include
      LIBRARIES projlib1 projlib2
-     CATKIN-DEPENDS roscpp
+     CATKIN_DEPENDS roscpp
      DEPENDS Eigen
      CFG_EXTRAS proj-extras[.cmake|.cmake.in|.cmake(.develspace|.installspace)?.em]
    )
@@ -336,13 +336,28 @@ Public CMake functions / macros
 Non-public CMake functions / macros
 -----------------------------------
 
+ * :cmake:macro:`_generate_function_if_testing_is_disabled`
  * :cmake:macro:`_set_cmake_policy_to_new_if_available`
+ * :cmake:macro:`_warn_if_skip_testing`
  * :cmake:macro:`catkin_destinations`
  * :cmake:macro:`catkin_run_tests_target`
  * :cmake:macro:`catkin_workspace`
+ * :cmake:macro:`list_append_deduplicate`
  * :cmake:macro:`list_append_unique`
  * :cmake:macro:`parse_arguments`
  * :cmake:macro:`stamp`
+
+.. _`_generate_function_if_testing_is_disabled_ref`:
+
+`_generate_function_if_testing_is_disabled`
+-------------------------------------------
+
+.. cmake:macro:: _generate_function_if_testing_is_disabled(funcname)
+
+ *[macro defined in test/tests.cmake]*
+
+ creates a dummy function in case testing has been explicitly disabled (and not only skipping)
+ which outputs an error message when being invoked
 
 .. _`_set_cmake_policy_to_new_if_available_ref`:
 
@@ -354,6 +369,18 @@ Non-public CMake functions / macros
  *[macro defined in all.cmake]*
 
  enable all new policies (if available)
+
+.. _`_warn_if_skip_testing_ref`:
+
+`_warn_if_skip_testing`
+-----------------------
+
+.. cmake:macro:: _warn_if_skip_testing(funcname)
+
+ *[macro defined in test/tests.cmake]*
+
+ checks if a function has been called while testing is skipped
+ and outputs a warning message
 
 .. _`catkin_destinations_ref`:
 
@@ -435,6 +462,24 @@ Non-public CMake functions / macros
  contains multiple packages).
 
 
+.. _`list_append_deduplicate_ref`:
+
+`list_append_deduplicate`
+-------------------------
+
+.. cmake:macro:: list_append_deduplicate(listname)
+
+ *[macro defined in list_append_deduplicate.cmake]*
+
+
+ Append elements to a list and remove existing duplicates from the list.
+
+ .. note:: Using CMake's ``list(APPEND ..)`` and
+   ``list(REMOVE_DUPLICATES ..)`` is not sufficient since its
+   implementation uses a set internally which makes the operation
+   unstable.
+
+
 .. _`list_append_unique_ref`:
 
 `list_append_unique`
@@ -448,8 +493,9 @@ Non-public CMake functions / macros
  Append elements to a list if they are not already in the list.
 
  .. note:: Using CMake's ``list(APPEND ..)`` and
-   ``list(REMOVE_DUPLICATES ..)`` since its implementation uses a
-   set internally which make the operation unstable.
+   ``list(REMOVE_DUPLICATES ..)`` is not sufficient since its
+   implementation uses a set internally which makes the operation
+   unstable.
 
 
 .. _`parse_arguments_ref`:
