@@ -233,11 +233,13 @@ def isolation_print_command(cmd, path=None, add_env=None):
 def get_python_install_dir():
     # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
     python_install_dir = 'lib'
+    python_use_debian_layout = os.path.exists('/etc/debian_version')
     if os.name != 'nt':
-        python_version_xdoty = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
+        python_version_xdoty = str(sys.version_info[0])
+        if not python_use_debian_layout:
+            python_version_xdoty += '.' + str(sys.version_info[1])
         python_install_dir = os.path.join(python_install_dir, 'python' + python_version_xdoty)
 
-    python_use_debian_layout = os.path.exists('/etc/debian_version')
     python_packages_dir = 'dist-packages' if python_use_debian_layout else 'site-packages'
     python_install_dir = os.path.join(python_install_dir, python_packages_dir)
     return python_install_dir

@@ -14,7 +14,6 @@ fi
 
 cd "@INSTALL_CMD_WORKING_DIRECTORY@"
 
-# todo --install-layout=deb per platform
 # Note that PYTHONPATH is pulled from the environment to support installing
 # into one location when some dependencies were installed in another
 # location, #123.
