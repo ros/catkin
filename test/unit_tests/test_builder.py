@@ -24,6 +24,7 @@ class BuilderTest(unittest.TestCase):
             def readline(self):
                 self.__popen.returncode = 0
                 try:
+                    # for Python 2 compatibility only
                     return unichr(2018)
                 except NameError:
                     return chr(2018)

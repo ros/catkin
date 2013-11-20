@@ -188,6 +188,7 @@ def run_command(cmd, cwd, quiet=False, colorize=False, add_env=None):
         while True:
             line = proc.stdout.readline().decode('utf8', 'replace')
             try:
+                # for Python 2 compatibility only
                 line = unicode(line)
             except NameError:
                 pass
