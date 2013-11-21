@@ -811,6 +811,7 @@ def build_workspace_isolated(
             if continue_from_pkg and build_packages and package.name in build_packages:
                 build_packages = None
             try:
+                print()
                 last_env = build_package(
                     path, package,
                     workspace, buildspace, pkg_develspace, installspace,
