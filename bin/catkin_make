@@ -112,12 +112,12 @@ def main():
 
         whitelist_pkg_names = get_package_names_with_recursive_dependencies(packages, args.only_pkg_with_deps)
         print('Whitelisted packages: %s' % ', '.join(sorted(whitelist_pkg_names)))
-        packages = {path: p for path, p in packages.iteritems() if p.name in whitelist_pkg_names}
+        packages = {path: p for path, p in packages.items() if p.name in whitelist_pkg_names}
         cmake_args += ['-DCATKIN_WHITELIST_PACKAGES=%s' % ';'.join(sorted(whitelist_pkg_names))]
 
     # verify that specified package exists in workspace
     if args.pkg:
-        packages_by_name = {p.name: path for path, p in packages.iteritems()}
+        packages_by_name = {p.name: path for path, p in packages.items()}
         unknown_packages = [name for name in args.pkg if name not in packages_by_name]
         if len(unknown_packages) == len(args.pkg):
             # all package names are unknown

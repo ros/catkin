@@ -3,7 +3,10 @@
 from __future__ import print_function
 import os
 import sys
-import urllib
+try:
+    from urllib.request import urlretrieve
+except ImportError:
+    from urllib import urlretrieve
 import hashlib
 from optparse import OptionParser
 
@@ -21,7 +24,7 @@ def download_md5(uri, dest):
 
     sys.stdout.write('Downloading %s to %s...' % (uri, dest))
     sys.stdout.flush()
-    urllib.urlretrieve(uri, dest)
+    urlretrieve(uri, dest)
     sys.stdout.write('Done\n')
 
 

@@ -17,6 +17,8 @@ if(SETUPTOOLS_DEB_LAYOUT)
   message(STATUS "Using Debian Python package layout")
   set(PYTHON_PACKAGES_DIR dist-packages)
   set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb")
+  # use major version only when installing with debian layout
+  string(SUBSTRING "${PYTHON_VERSION_XDOTY}" 0 1 PYTHON_VERSION_XDOTY)
 else()
   message(STATUS "Using default Python package layout")
   set(PYTHON_PACKAGES_DIR site-packages)
