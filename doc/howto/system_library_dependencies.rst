@@ -138,8 +138,14 @@ packages::
 
 For this to work, you must have found those dependencies earlier,
 using ``find_package()`` or ``pkg_check_modules()``, and they must
-define the usual CMake variables.  If they do not, ask for help on
-`answers.ros.org`_.
+define the CMake variables ``${name}_INCLUDE_DIRS`` and
+``${name}_LIBRARIES``.  Note that the package name is case sensitive.
+While catkin packages always use a lowercase name other packages might
+use uppercase (as ``GSTREAMER``) or mixed case (as ``Boost``).
+
+Some packages only provide variables which do not comply with these
+recommendations.  Then you have to pass the absolute paths explicitly as
+`INCLUDE_DIRS`` and ``LIBRARIES``.
 
 Next steps
 ::::::::::
