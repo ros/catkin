@@ -464,7 +464,7 @@ def build_cmake_package(
     run_command(make_install_cmd, build_dir, quiet)
 
     # If we are installing, and a env.sh exists, don't overwrite it
-    if install and os.path.exists(os.path.join(installspace, 'env.sh')):
+    if install and os.path.exists(prefix_destdir(os.path.join(install_target, 'env.sh'), destdir)):
         return
     cprint(blue_arrow + " Generating an env.sh")
     # Generate env.sh for chaining to catkin packages
