@@ -33,14 +33,14 @@ class RunTestsTest(unittest.TestCase):
             os.remove(placeholder)
             ###
             main([results_file,
-                  "echo '<testsuite></testsuite>' > %s" % results_file,
+                  "echo '<testsuite tests=\"0\" failures=\"0\" errors=\"0\"></testsuite>' > %s" % results_file,
                   '--working-dir', rootdir])
             self.assertTrue(os.path.exists(results_file))
             self.assertFalse(os.path.exists(placeholder))
             os.remove(results_file)
             ### no working dir given
             main([results_file,
-                  "echo '<testsuite></testsuite>' > %s" % results_file])
+                  "echo '<testsuite tests=\"0\" failures=\"0\" errors=\"0\"></testsuite>' > %s" % results_file])
             self.assertTrue(os.path.exists(results_file))
             self.assertFalse(os.path.exists(placeholder))
             os.remove(results_file)

@@ -33,12 +33,15 @@
 from __future__ import print_function
 
 import copy
-import io
 import multiprocessing
 import os
 import platform
 import re
 import stat
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
 import subprocess
 import sys
 
@@ -183,15 +186,16 @@ def run_command(cmd, cwd, quiet=False, colorize=False, add_env=None):
         )
     except OSError as e:
         raise OSError("Failed command '%s': %s" % (cmd, e))
-    out = io.StringIO() if quiet else sys.stdout
+    out = StringIO() if quiet else sys.stdout
     if capture:
         while True:
-            line = proc.stdout.readline().decode('utf8', 'replace')
+            line = proc.stdout.readline()
             try:
-                # for Python 2 compatibility only
-                line = unicode(line)
-            except NameError:
+                # in case the input is already unicode
+                line = line.encode('utf8')
+            except UnicodeDecodeError:
                 pass
+            line = line.decode('utf8', 'replace')
             if proc.returncode is not None or not line:
                 break
             try:
