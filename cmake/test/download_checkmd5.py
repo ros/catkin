@@ -33,7 +33,13 @@ def checkmd5(dest, md5sum=None):
     checks file at dest against md5.
     :returns (boolean, hexdigest): True if dest contents matches md5sum
     """
-    md5value = hashlib.md5(open(dest).read())
+    with open(dest, 'rb') as f:
+        md5value = hashlib.md5()
+        while True:
+            buf = f.read(4096)
+            if not buf:
+                break
+            md5value.update(buf)
     hexdigest = md5value.hexdigest()
 
     print('Checking md5sum on %s' % (dest))
