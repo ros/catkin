@@ -39,6 +39,14 @@ import stat
 from catkin.cmi.common import create_build_space
 from catkin.cmi.common import get_python_install_dir
 from catkin.cmi.common import handle_make_arguments
+from catkin.cmi.common import which
+
+CMAKE_EXEC = which('cmake')
+if CMAKE_EXEC is None:
+    raise RuntimeError("Executable 'cmake' could not be found in PATH.")
+MAKE_EXEC = which('make')
+if MAKE_EXEC is None:
+    raise RuntimeError("Executable 'make' could not be found in PATH.")
 
 
 class Command(object):
@@ -77,8 +85,10 @@ class Job(object):
 
 def create_env_file(package, build_space, devel_space, merge_devel, workspace_packages):
     source_snippet = ". {source_path} --extend\n"
+    abs_devel_space = os.path.abspath(devel_space)
     # If merge_devel then you only ever need to use the env file for the merged devel space
-    sources = [source_snippet.format(source_path=os.path.join(devel_space, 'setup.sh'))]
+    setup_file = os.path.join(abs_devel_space, 'setup.sh')
+    sources = [source_snippet.format(source_path=setup_file)] if os.path.exists(setup_file) else []
     if not merge_devel:
         # Otherwise you need to source each of the devel spaces which you depend on, recursively
         sources = []  # Clear the list
@@ -102,7 +112,7 @@ def create_env_file(package, build_space, devel_space, merge_devel, workspace_pa
             # print('> ', dep, 'dependencies:', [d.name for d in pkg_depends])
             deps.update(set([d.name for d in pkg_depends]))
             # Add a snippet to try and source this dep
-            source_path = os.path.join(devel_space, dep, 'setup.sh')
+            source_path = os.path.join(abs_devel_space, dep, 'setup.sh')
             sources.append(source_snippet.format(source_path=source_path))
     env_file = """\
 #!/usr/bin/env sh
@@ -120,6 +130,7 @@ fi
 exec "$@"
 """.format(sources=''.join(sources))
     env_file_path = os.path.join(build_space, package.name, 'cmi_env.sh')
+    env_file_path = os.path.abspath(env_file_path)
     with open(env_file_path, 'w') as f:
         f.write(env_file)
     os.chmod(env_file_path, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
@@ -137,7 +148,7 @@ class CMakeJob(Job):
     def get_commands(self):
         commands = []
         # Setup build variables
-        pkg_dir = os.path.join(self.context.source_space, self.package.name)
+        pkg_dir = os.path.join(self.context.source_space, self.package_path)
         build_space = create_build_space(self.context.build_space, self.package.name)
         if self.context.merge_devel:
             devel_space = self.context.devel_space
@@ -157,7 +168,7 @@ class CMakeJob(Job):
             commands.append(Command(
                 [
                     env_cmd,
-                    'cmake',
+                    CMAKE_EXEC,
                     pkg_dir,
                     '-DCMAKE_INSTALL_PREFIX=' + install_target
                 ] + self.context.cmake_args,
@@ -166,15 +177,15 @@ class CMakeJob(Job):
             ))
             commands[-1].cmd.extend(self.context.cmake_args)
         else:
-            commands.append(Command([env_cmd, 'make', 'cmake_check_build_system'], build_space, ['devel']))
+            commands.append(Command([env_cmd, MAKE_EXEC, 'cmake_check_build_system'], build_space, ['devel']))
         # Make command
         commands.append(Command(
-            [env_cmd, 'make'] + handle_make_arguments(self.context.make_args),
+            [env_cmd, MAKE_EXEC] + handle_make_arguments(self.context.make_args),
             build_space,
             ['devel']
         ))
         # Make install command (always run on plain cmake)
-        commands.append(Command([env_cmd, 'make', 'install'], build_space, ['devel', 'install']))
+        commands.append(Command([env_cmd, MAKE_EXEC, 'install'], build_space, ['devel', 'install']))
         # Determine the location of where the setup.sh file should be created
         if self.context.install:
             setup_file_path = os.path.join(install_space, 'setup.sh')
@@ -236,7 +247,7 @@ class CatkinJob(Job):
     def get_commands(self):
         commands = []
         # Setup build variables
-        pkg_dir = os.path.join(self.context.source_space, self.package.name)
+        pkg_dir = os.path.join(self.context.source_space, self.package_path)
         build_space = create_build_space(self.context.build_space, self.package.name)
         if self.context.merge_devel:
             devel_space = self.context.devel_space
@@ -255,7 +266,7 @@ class CatkinJob(Job):
             commands.append(Command(
                 [
                     env_cmd,
-                    'cmake',
+                    CMAKE_EXEC,
                     pkg_dir,
                     '-DCATKIN_DEVEL_PREFIX=' + devel_space,
                     '-DCMAKE_INSTALL_PREFIX=' + install_space
@@ -264,14 +275,14 @@ class CatkinJob(Job):
                 ['devel']
             ))
         else:
-            commands.append(Command([env_cmd, 'make', 'cmake_check_build_system'], build_space, ['devel']))
+            commands.append(Command([env_cmd, MAKE_EXEC, 'cmake_check_build_system'], build_space, ['devel']))
         # Make command
         commands.append(Command(
-            [env_cmd, 'make'] + handle_make_arguments(self.context.make_args),
+            [env_cmd, MAKE_EXEC] + handle_make_arguments(self.context.make_args),
             build_space,
             ['devel']
         ))
         # Make install command, if installing
         if self.context.install:
-            commands.append(Command([env_cmd, 'make', 'install'], build_space, ['devel', 'install']))
+            commands.append(Command([env_cmd, MAKE_EXEC, 'install'], build_space, ['devel', 'install']))
         return commands
