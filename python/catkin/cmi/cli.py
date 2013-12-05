@@ -128,15 +128,6 @@ def parse_args(args):
     return opts
 
 
-def get_reverse_depends(package, packages):
-    rdepends = []
-    name = package.name
-    for pth, pkg in packages:
-        if name in [dep.name for dep in (pkg.build_depends + pkg.buildtool_depends + pkg.run_depends)]:
-            rdepends.append((pth, pkg))
-    return rdepends
-
-
 def list_only(context, packages, no_deps):
     # Print Summary
     log(context.summary())
