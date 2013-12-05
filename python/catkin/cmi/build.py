@@ -53,6 +53,7 @@ except ImportError as e:
 
 from catkin.cmi.common import FakeLock
 from catkin.cmi.common import get_build_type
+from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
 from catkin.cmi.common import log
 from catkin.cmi.common import wide_log
 
@@ -80,31 +81,17 @@ def get_ready_packages(packages, running_jobs, completed):
     :rtype: list
     """
     ready_packages = []
-    workspace_packages = dict([(pkg.name, pkg) for path, pkg in packages])
+    workspace_packages = [(path, pkg) for path, pkg in packages]
     for path, package in packages:
         if package.name in (running_jobs.keys() + completed):
             continue
         # Collect build and buildtool depends, plus recursive build, buildtool, and run depends,
         # Excluding depends which are not in the workspace or which are completed
-        uncompleted_depends = set()
-        depends = set([dep.name for dep in (package.build_depends + package.buildtool_depends)])
-        checked_depends = set()
-        while list(depends - checked_depends):
-            # Get a dep
-            dep = list(depends - checked_depends).pop()
-            # Add the dep to the checked list
-            checked_depends.add(dep)
-            # If it is not in the workspace, continue
-            if dep not in workspace_packages:
-                continue
-            # Add the build, buildtool, and run depends of this dep to the list to be checked
-            dep_pkg = workspace_packages[dep]
-            dep_depends = dep_pkg.build_depends + dep_pkg.buildtool_depends + dep_pkg.run_depends
-            depends.update(set([d.name for d in dep_depends]))
-            # If it is not completed, then add it to the blocking list
-            if dep not in completed:
-                uncompleted_depends.add(dep)
-                break  # Once one uncompleted_depends is found, we can stop
+        uncompleted_depends = []
+        depends = get_cached_recursive_build_depends_in_workspace(package, workspace_packages)
+        for dep_pth, dep in depends:
+            if dep.name not in completed:
+                uncompleted_depends.append(dep)
         # If there are no uncompleted dependencies, add this package to the queue
         if not uncompleted_depends:
             ready_packages.append((path, package))

@@ -37,6 +37,7 @@ import os
 import stat
 
 from catkin.cmi.common import create_build_space
+from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
 from catkin.cmi.common import get_python_install_dir
 from catkin.cmi.common import handle_make_arguments
 from catkin.cmi.common import which
@@ -92,35 +93,21 @@ def create_env_file(package, build_space, devel_space, merge_devel, workspace_pa
     if not merge_devel:
         # Otherwise you need to source each of the devel spaces which you depend on, recursively
         sources = []  # Clear the list
-        packages = dict([(x.name, x) for x in workspace_packages])
-        # Seed deps with package's build and buildtool dependnecies
-        deps = set([d.name for d in (package.build_depends + package.buildtool_depends)])
-        processed_deps = set()
-        # print('>', package.name)
-        # Add snippets to try and source dependencies which are in the workspace, recursively
-        while list(deps - processed_deps):
-            # Get a dep
-            dep = list(deps - processed_deps).pop()
-            processed_deps.add(dep)
-            # print('> ', dep)
-            # If the dep is not in the workspace, ignore it
-            if dep not in packages:
-                continue
-            # Add this dep's build, buildtool, and run dependencies to the deps list
-            dep_pkg = packages[dep]
-            pkg_depends = dep_pkg.build_depends + dep_pkg.buildtool_depends + dep_pkg.run_depends
-            # print('> ', dep, 'dependencies:', [d.name for d in pkg_depends])
-            deps.update(set([d.name for d in pkg_depends]))
-            # Add a snippet to try and source this dep
-            source_path = os.path.join(abs_devel_space, dep, 'setup.sh')
+        # Get the recursive dependcies
+        depends = get_cached_recursive_build_depends_in_workspace(package, workspace_packages)
+        # For each dep add a line to source its setup file
+        for dep_pth, dep in depends:
+            source_path = os.path.join(abs_devel_space, dep.name, 'setup.sh')
             sources.append(source_snippet.format(source_path=source_path))
+    # Build the env_file
+    env_file_path = os.path.abspath(os.path.join(build_space, package.name, 'cmi_env.sh'))
     env_file = """\
 #!/usr/bin/env sh
 # generated from within catkin/python/catkin/cmi/job.py
 
 if [ $# -eq 0 ] ; then
-  /bin/echo "Usage: env.sh COMMANDS"
-  /bin/echo "Calling env.sh without arguments is not supported anymore."
+  /bin/echo "Usage: cmi_env.sh COMMANDS"
+  /bin/echo "Calling cmi_env.sh without arguments is not supported anymore."
   /bin/echo "Instead spawn a subshell and source a setup file manually."
   exit 1
 fi
@@ -129,10 +116,9 @@ fi
 {sources}
 exec "$@"
 """.format(sources=''.join(sources))
-    env_file_path = os.path.join(build_space, package.name, 'cmi_env.sh')
-    env_file_path = os.path.abspath(env_file_path)
     with open(env_file_path, 'w') as f:
         f.write(env_file)
+    # Make this file executable
     os.chmod(env_file_path, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
     return env_file_path
 

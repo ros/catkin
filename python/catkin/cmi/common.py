@@ -120,6 +120,42 @@ def get_python_install_dir():
     python_install_dir = os.path.join(python_install_dir, python_packages_dir)
     return python_install_dir
 
+__recursive_depends_cache = {}
+
+
+def get_cached_recursive_build_depends_in_workspace(package, workspace_packages):
+    workspace_key = ','.join([pkg.name for pth, pkg in workspace_packages])
+    if workspace_key not in __recursive_depends_cache:
+        __recursive_depends_cache[workspace_key] = {}
+    cache = __recursive_depends_cache[workspace_key]
+    if package.name not in cache:
+        cache[package.name] = get_recursive_build_depends_in_workspace(package, workspace_packages)
+    __recursive_depends_cache[workspace_key] = cache
+    return __recursive_depends_cache[workspace_key][package.name]
+
+
+def get_recursive_build_depends_in_workspace(package, ordered_packages):
+    workspace_packages_by_name = dict([(pkg.name, (pth, pkg)) for pth, pkg in ordered_packages])
+    workspace_package_names = [pkg.name for pth, pkg in ordered_packages]
+    recursive_depends = []
+    depends = set([dep.name for dep in (package.build_depends + package.buildtool_depends)])
+    checked_depends = set()
+    while list(depends - checked_depends):
+        # Get a dep
+        dep = list(depends - checked_depends).pop()
+        # Add the dep to the checked list
+        checked_depends.add(dep)
+        # If it is not in the workspace, continue
+        if dep not in workspace_package_names:
+            continue
+        # Add the build, buildtool, and run depends of this dep to the list to be checked
+        dep_pth, dep_pkg = workspace_packages_by_name[dep]
+        dep_depends = dep_pkg.build_depends + dep_pkg.buildtool_depends + dep_pkg.run_depends
+        depends.update(set([d.name for d in dep_depends]))
+        # Add this package to the list of recursive dependencies for this package
+        recursive_depends.append((dep_pth, dep_pkg))
+    return recursive_depends
+
 
 class FakeLock(object):
     """Fake lock used to mimic a Lock but without causing synchronization"""
