@@ -130,7 +130,58 @@ def queue_ready_packages(ready_packages, running_jobs, job_queue, context, force
     return running_jobs
 
 
-def build_isolated_workspace(context, jobs=None, force_cmake=False, force_color=False, verbose=False):
+def determine_packages_to_be_built(packages, context):
+    """Returns list of packages which should be built, and those package's deps.
+
+    :param packages: list of packages to be built, if None all packages are built
+    :type packages: list
+    :param context: Workspace context
+    :type context: :py:class:`catkin.cmi.context.Context`
+    :returns: tuple of packages to be built and those package's deps
+    :rtype: tuple
+    """
+    start = time.time()
+    workspace_packages = find_packages(context.source_space, exclude_subspaces=True)
+    # If there are no packages raise
+    if not workspace_packages:
+        sys.exit("No packages were found in the source space '{0}'".format(context.source_space))
+    log("Found '{0}' packages in '{1:.3f}' seconds.".format(len(workspace_packages), time.time() - start))
+
+    # Order the packages by topology
+    ordered_packages = topological_order_packages(workspace_packages)
+    # Set the packages in the workspace for the context
+    context.packages = ordered_packages
+    # Determin the packages which should be built
+    packages_to_be_built = []
+    packages_to_be_built_deps = []
+    if packages:
+        # First assert all of the packages given are in the workspace
+        workspace_package_names = [pkg.name for path, pkg in ordered_packages]
+        for package in packages:
+            if package not in workspace_package_names:
+                sys.exit("Given package '{0}' is not in the workspace".format(package))
+        # Limit the packages to be built to just the provided packages
+        for pkg_path, package in ordered_packages:
+            if package.name in packages:
+                packages_to_be_built.append((pkg_path, package))
+                # Get the recursive dependencies for each of these packages
+                pkg_deps = get_cached_recursive_build_depends_in_workspace(package, ordered_packages)
+                packages_to_be_built_deps.extend(pkg_deps)
+    else:
+        packages_to_be_built = ordered_packages
+    return packages_to_be_built, packages_to_be_built_deps
+
+
+def build_isolated_workspace(
+    context,
+    jobs=None,
+    force_cmake=False,
+    force_color=False,
+    verbose=False,
+    packages=None,
+    start_with=None,
+    no_deps=False
+):
     """Builds a catkin workspace in isolation
 
     This function will find all of the packages in the source space, start some
@@ -149,13 +200,23 @@ def build_isolated_workspace(context, jobs=None, force_cmake=False, force_color=
     :type force_color: bool
     :param verbose: outputs commands output to screen, even if it will interleave
     :type verbose: bool
+    :param packages: list of packages to build, by default their dependencies will also be built
+    :type packages: list
+    :param start_with: package to start with, skipping all packages which proceed it in the topological order
+    :type start_with: str
+    :param no_deps: If True, the dependencies of packages will not be built first
+    :type no_deps: bool
 
-    :raises: RuntimeError if buildspace is a file
+    :raises: SystemExit if buildspace is a file or no packages were found in the source space
+        or if the provided options are invalid
     """
+    # If no_deps is given, ensure packages to build are provided
+    if no_deps and packages is None:
+        sys.exit("With --no-deps, you must specify packages to build.")
     # Make sure there is a build folder and it is not a file
     if os.path.exists(context.build_space):
         if os.path.isfile(context.build_space):
-            raise RuntimeError("Build space '{0}' exists but is a file and not a folder.".format(context.build_space))
+            sys.exit("Build space '{0}' exists but is a file and not a folder.".format(context.build_space))
     # If it dosen't exist, create it
     else:
         log("Creating buildspace directory, '{0}'".format(context.build_space))
@@ -165,16 +226,14 @@ def build_isolated_workspace(context, jobs=None, force_cmake=False, force_color=
     log(context.summary())
 
     # Find list of packages in the workspace
-    start = time.time()
-    packages = find_packages(context.source_space, exclude_subspaces=True)
-    # If there are no packages raise
-    if not packages:
-        raise RuntimeError("No packages were found in the source space '{0}'".format(context.source_space))
-    log("Found '{0}' packages in '{1:.3f}' seconds.".format(len(packages), time.time() - start))
-
-    # Order the packages by topology
-    ordered_packages = topological_order_packages(packages)
-    context.packages = [x[1] for x in ordered_packages]
+    packages_to_be_built, packages_to_be_built_deps = determine_packages_to_be_built(packages, context)
+    completed_packages = []
+    if no_deps:
+        # Consider deps as "completed"
+        completed_packages.extend(packages_to_be_built_deps)
+    else:
+        # Extend packages to be built to include their deps
+        packages_to_be_built.extend(packages_to_be_built_deps)
 
     # Setup pool of executors
     executors = {}
@@ -195,13 +254,12 @@ def build_isolated_workspace(context, jobs=None, force_cmake=False, force_color=
         e.start()
 
     # Variables for tracking running jobs and built/building packages
-    total_packages = len(ordered_packages)
+    total_packages = len(packages_to_be_built)
     package_count = 0
-    completed_packages = []
     running_jobs = {}
 
     # Prime the job_queue
-    ready_packages = get_ready_packages(ordered_packages, running_jobs, completed_packages)
+    ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
     running_jobs = queue_ready_packages(ready_packages, running_jobs, job_queue, context, force_cmake)
     assert running_jobs
 
@@ -258,7 +316,7 @@ def build_isolated_workspace(context, jobs=None, force_cmake=False, force_color=
                 # If shutting down, do not add new packages
                 if error_state:
                     continue
-                ready_packages = get_ready_packages(ordered_packages, running_jobs, completed_packages)
+                ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
                 running_jobs = queue_ready_packages(ready_packages, running_jobs, job_queue, context, force_cmake)
                 # Make sure there are jobs to be/being processed, otherwise kill the executors
                 if not running_jobs:

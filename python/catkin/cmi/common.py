@@ -54,6 +54,51 @@ def create_build_space(buildspace, package_name):
     return package_build_dir
 
 
+def extract_cmake_and_make_arguments(args):
+    args, cmake_args, make_args, _ = _extract_cmake_and_make_arguments(args, extract_catkin_make=False)
+    return args, cmake_args, make_args
+
+
+def extract_cmake_and_make_and_catkin_make_arguments(args):
+    return _extract_cmake_and_make_arguments(args, extract_catkin_make=True)
+
+
+def split_arguments(args, splitter_name, default=None):
+    if splitter_name not in args:
+        return args, default
+    index = args.index(splitter_name)
+    return args[0:index], args[index + 1:]
+
+
+def _extract_cmake_and_make_arguments(args, extract_catkin_make):
+    cmake_args = []
+    make_args = []
+    catkin_make_args = []
+
+    arg_types = {
+        '--cmake-args': cmake_args,
+        '--make-args': make_args
+    }
+    if extract_catkin_make:
+        arg_types['--catkin-make-args'] = catkin_make_args
+
+    arg_indexes = {}
+    for k in arg_types.keys():
+        if k in args:
+            arg_indexes[args.index(k)] = k
+
+    for index in reversed(sorted(arg_indexes.keys())):
+        arg_type = arg_indexes[index]
+        args, specific_args = split_arguments(args, arg_type)
+        arg_types[arg_type].extend(specific_args)
+
+    # classify -D* and -G* arguments as cmake specific arguments
+    implicit_cmake_args = [a for a in args if a.startswith('-D') or a.startswith('-G')]
+    args = [a for a in args if a not in implicit_cmake_args]
+
+    return args, implicit_cmake_args + cmake_args, make_args, catkin_make_args
+
+
 def extract_jobs_flags(mflags):
     regex = r'(?:^|\s)(-?(?:j|l)(?:\s*[0-9]+|\s|$))' + \
             r'|' + \
