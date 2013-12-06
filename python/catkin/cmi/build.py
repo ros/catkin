@@ -174,13 +174,14 @@ def determine_packages_to_be_built(packages, context):
 
 def build_isolated_workspace(
     context,
+    packages=None,
+    start_with=None,
+    no_deps=False,
     jobs=None,
     force_cmake=False,
     force_color=False,
-    verbose=False,
-    packages=None,
-    start_with=None,
-    no_deps=False
+    quiet=False,
+    interleave_output=False
 ):
     """Builds a catkin workspace in isolation
 
@@ -192,20 +193,22 @@ def build_isolated_workspace(
 
     :param context: context in which to build the catkin workspace
     :type context: :py:class:`catkin.cmi.context.Context`
-    :param jobs: number of parallel package build jobs
-    :type jobs: int
-    :param force_cmake: forces invocation of CMake if True, default is False
-    :type force_cmake: bool
-    :param force_color: forces colored output even if terminal does not support it
-    :type force_color: bool
-    :param verbose: outputs commands output to screen, even if it will interleave
-    :type verbose: bool
     :param packages: list of packages to build, by default their dependencies will also be built
     :type packages: list
     :param start_with: package to start with, skipping all packages which proceed it in the topological order
     :type start_with: str
     :param no_deps: If True, the dependencies of packages will not be built first
     :type no_deps: bool
+    :param jobs: number of parallel package build jobs
+    :type jobs: int
+    :param force_cmake: forces invocation of CMake if True, default is False
+    :type force_cmake: bool
+    :param force_color: forces colored output even if terminal does not support it
+    :type force_color: bool
+    :param quiet: suppresses the output of commands unless there is an error
+    :type quiet: bool
+    :param interleave_output: prints the output of commands as they are received
+    :type interleave_output: bool
 
     :raises: SystemExit if buildspace is a file or no packages were found in the source space
         or if the provided options are invalid
@@ -247,6 +250,11 @@ def build_isolated_workspace(
     install_lock = Lock()
     # Determine the number of executors
     jobs = cpu_count() if jobs is None else int(jobs)
+    # If only one set of jobs, turn on interleaving to get more responsive feedback
+    if jobs == 1:
+        # TODO: make the system more intelligent so that it can automatically switch to streaming output
+        #       when only one job is building, even if multiple jobs could be building
+        interleave_output = True
     # Start the executors
     for x in range(jobs):
         e = Executor(x, context, comm_queue, job_queue, devel_lock, install_lock)
@@ -257,6 +265,7 @@ def build_isolated_workspace(
     total_packages = len(packages_to_be_built)
     package_count = 0
     running_jobs = {}
+    command_log_cache = {}
 
     # Prime the job_queue
     ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
@@ -274,20 +283,61 @@ def build_isolated_workspace(
             # If a log event, print it
             if item.event_type == 'log':
                 wide_log('[cmi-{executor_id}]: {message}'.format(**item.__dict__))
+
+            # If a command log, cache it and potentially print it out
             if item.event_type == 'command_log':
-                wide_log('[{package}]: {message}'.format(**item.__dict__), end_with_escape=True)
-                # wide_log('[{package}]: {hex_message}'.format(hex_message=item.message.encode('hex'), **item.__dict__))
+                msg = '[{package}]: {message}'.format(**item.__dict__)
+                assert item.package in command_log_cache, "command log received before command started"
+                command_log_cache[item.package].append(msg)
+                if not quiet and interleave_output:
+                    if jobs == 1:
+                        wide_log(msg[len('[{0}]: '.format(item.package)):])
+                    else:
+                        wide_log(msg)
+
             # If a command started, print message
             if item.event_type == 'command_started':
-                wide_log("[{package}]: ==> '{message[0]}' in '{message[1]}'".format(**item.__dict__))
+                msg = "[{package}]: ==> '{message[0]}' in '{message[1]}'".format(**item.__dict__)
+                assert item.package not in command_log_cache, "command log cache entry exists, this should not happen"
+                command_log_cache[item.package] = []
+                command_log_cache[item.package].append(msg)
+                wide_log(msg)
+
+            # If a command finished or failed and interleave_output is off, print the cached output
+            if item.event_type in ['command_finished', 'command_failed'] and not interleave_output and not quiet:
+                assert item.package in command_log_cache, "command finished or failed before starting"
+                if len(command_log_cache[item.package]) > 1:
+                    wide_log("")  # Empty line
+                    wide_log("OUT [{package}]:".format(**item.__dict__))
+                    for index, line in enumerate(command_log_cache[item.package]):
+                        if index == 0:
+                            # Skip the first line (started message)
+                            continue
+                        wide_log(line[len('[{0}]: '.format(item.package)):])
+
             # If a command finished, print message
             if item.event_type == 'command_finished':
-                wide_log("[{package}]: <== Command '{message[0]}' finished with exit code '{message[1]}'"
-                         .format(**item.__dict__))
+                msg = ("[{package}]: <== Command '{message[0]}' finished with exit code '{message[1]}'"
+                       .format(**item.__dict__))
+                assert item.package in command_log_cache, "command finished before starting"
+                command_log_cache[item.package].append(msg)
+                if not quiet:
+                    wide_log(msg)
+
             # If a command failed, shutdown everything
             if item.event_type == 'command_failed':
-                wide_log("<<< Failed to build {package}, command '{message[0]}' exited with return code '{message[1]}'"
-                         .format(**item.__dict__))
+                msg = ("<== Failed to build {package}, command '{message[0]}' exited with return code '{message[1]}'"
+                       .format(**item.__dict__))
+                assert item.package in command_log_cache, "command failed before starting"
+                command_log_cache[item.package].append(msg)
+                # If interleave_output is off, print out the command's output
+                if not interleave_output:
+                    for index, line in enumerate(command_log_cache[item.package]):
+                        if index == 0:
+                            # Skip the first line (started message)
+                            continue
+                        wide_log(line)
+                wide_log(msg)
                 errors.append(item)
                 # Remove the command from the running jobs
                 del running_jobs[item.package]
@@ -297,20 +347,29 @@ def build_isolated_workspace(
                         job_queue.put(None)
                     # Change loop behavior to prevent new jobs
                     error_state = True
+
+            # If a command finished or failed, clear the command log cache
+            if item.event_type in ['command_finished', 'command_failed']:
+                assert item.package in command_log_cache, "command finished or failed before starting"
+                # TODO: log to a file? or store as part of bigger job cache?
+                del command_log_cache[item.package]
+
             # If an executor exit event, join it and remove it from the executors list
             if item.event_type == 'exit':
                 executors[item.executor_id].join()
                 del executors[item.executor_id]
+
             # If a job started event, assign it a number and a start time
             if item.event_type == 'job_started':
                 package_count += 1
                 running_jobs[item.package]['package_number'] = package_count
                 running_jobs[item.package]['start_time'] = time.time()
-                wide_log(">>> Starting build of package '{0}'".format(item.package))
+                wide_log("==> Starting build of package '{0}'".format(item.package))
+
             # If a job finished event, remove from running_jobs, move to completed, call queue_new_jobs
             if item.event_type == 'job_finished':
                 completed_packages.append(item.package)
-                wide_log("<<< Finished building package '{0}', it took {1:.3f} seconds"
+                wide_log("<== Finished building package '{0}', it took {1:.3f} seconds"
                          .format(item.package, time.time() - running_jobs[item.package]['start_time']))
                 del running_jobs[item.package]
                 # If shutting down, do not add new packages

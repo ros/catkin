@@ -110,10 +110,10 @@ def parse_args(args):
     # Behavior
     add('--force-color', action='store_true', default=False,
         help='Forces cmi to ouput in color, even when the terminal does not appear to support it.')
-    add('--verbose', '-v', action='store_true', default=False,
-        help='Print output from build commands, even if it interleaves with other output.')
-    add('--order-output', '-o', action='store_true', default=False,
-        help='Collects all output from a command before printing it in one contiguous block. (implies verbose)')
+    add('--quiet', '-q', action='store_true', default=False,
+        help='Supresses output from commands unless there is an error.')
+    add('--interleave-output', '-i', action='store_true', default=False,
+        help='Prevents ordering of command output when multiple commands are running at the same time.')
     # Commands
     add('--list-only', '--list', action='store_true', default=False,
         help='List packages in topological order, then exit.')
@@ -170,13 +170,14 @@ def main(sysargs=None):
     try:
         build_isolated_workspace(
             context,
+            packages=opts.packages,
+            start_with=opts.start_with,
+            no_deps=opts.no_deps,
             jobs=opts.parallel_jobs,
             force_cmake=opts.force_cmake,
             force_color=opts.force_color,
-            verbose=opts.verbose,
-            packages=opts.packages,
-            start_with=opts.start_with,
-            no_deps=opts.no_deps
+            quiet=opts.quiet,
+            interleave_output=opts.interleave_output
         )
     except Exception:
         raise

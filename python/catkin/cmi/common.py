@@ -218,10 +218,11 @@ class FakeLock(object):
 
 
 def log(*args, **kwargs):
-    if 'end_with_escape' in kwargs and kwargs['end_with_escape']:
+    if 'end_with_escape' not in kwargs or kwargs['end_with_escape'] is True:
         args = list(args)
         args.append('\033[0m')
-        del kwargs['end_with_escape']
+        if 'end_with_escape' in kwargs:
+            del kwargs['end_with_escape']
     print(*args, **kwargs)
 
 

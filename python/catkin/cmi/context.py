@@ -110,28 +110,39 @@ class Context(object):
         self.packages = []
 
     def summary(self):
-        summary = """\
-----------------------------
-Workspace:                   {_Context__workspace}
-Buildspace:                  {_Context__build_space}
-Develspace:                  {_Context__devel_space}
-Installspace:                {_Context__install_space}
-DESTDIR:                     {_Context__destdir}
-----------------------------
-Merge Develspaces:           {_Context__merge_devel}
-Install Packages:            {_Context__install}
-Isolate Installs:            {_Context__isolate_install}
-----------------------------
-Additional CMake Args:       {cmake_args}
-Additional Make Args:        {make_args}
-Additional catkin Make Args: {catkin_make_args}
-----------------------------"""
-        return summary.format(
-            cmake_args=', '.join(self.__cmake_args or ['None']),
-            make_args=', '.join(self.__make_args or ['None']),
-            catkin_make_args=', '.join(self.__catkin_make_args or ['None']),
-            **self.__dict__
-        )
+        summary = [
+            [
+                "Workspace:                   {_Context__workspace}",
+                "Buildspace:                  {_Context__build_space}",
+                "Develspace:                  {_Context__devel_space}",
+                "Installspace:                {_Context__install_space}",
+                "DESTDIR:                     {_Context__destdir}"
+            ],
+            [
+                "Merge Develspaces:           {_Context__merge_devel}",
+                "Install Packages:            {_Context__install}",
+                "Isolate Installs:            {_Context__isolate_install}"
+            ],
+            [
+                "Additional CMake Args:       {cmake_args}",
+                "Additional Make Args:        {make_args}",
+                "Additional catkin Make Args: {catkin_make_args}"
+            ]
+        ]
+        subs = {
+            'cmake_args': ', '.join(self.__cmake_args or ['None']),
+            'make_args': ', '.join(self.__make_args or ['None']),
+            'catkin_make_args': ', '.join(self.__catkin_make_args or ['None'])
+        }
+        subs.update(**self.__dict__)
+        max_length = 0
+        groups = []
+        for group in summary:
+            for index, line in enumerate(group):
+                group[index] = line.format(**subs)
+                max_length = max(max_length, len(line))
+            groups.append("\n".join(group))
+        return ('-' * max_length) + "\n" + ("\n" + ('-' * max_length) + "\n").join(groups) + "\n" + ('-' * max_length)
 
     @property
     def workspace(self):
