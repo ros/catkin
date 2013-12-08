@@ -83,23 +83,25 @@ class Job(object):
         return self.commands[self.__command_index - 1]
 
 
-def create_env_file(package, build_space, devel_space, merge_devel, workspace_packages):
+def create_env_file(package, context):
     source_snippet = ". {source_path} --extend\n"
-    abs_devel_space = os.path.abspath(devel_space)
-    # If merge_devel then you only ever need to use the env file for the merged devel space
-    setup_file = os.path.join(abs_devel_space, 'setup.sh')
-    sources = [source_snippet.format(source_path=setup_file)] if os.path.exists(setup_file) else []
-    if not merge_devel:
-        # Otherwise you need to source each of the devel spaces which you depend on, recursively
-        sources = []  # Clear the list
+    sources = []
+    # If installing to isolated folders or not installing, but devel spaces are not merged
+    if (context.install and context.isolate_install) or (not context.install and not context.merge_devel):
+        # Source each package's install or devel space
+        space = context.install_space if context.install else context.devel_space
         # Get the recursive dependcies
-        depends = get_cached_recursive_build_depends_in_workspace(package, workspace_packages)
+        depends = get_cached_recursive_build_depends_in_workspace(package, context.workspace_packages)
         # For each dep add a line to source its setup file
         for dep_pth, dep in depends:
-            source_path = os.path.join(abs_devel_space, dep.name, 'setup.sh')
+            source_path = os.path.join(space, dep.name, 'setup.sh')
             sources.append(source_snippet.format(source_path=source_path))
+    else:
+        # Just source common install or devel space
+        source_path = os.path.join(context.install_space if context.install else context.devel_space, 'setup.sh')
+        sources = [source_snippet.format(source_path=source_path)] if os.path.exists(source_path) else []
     # Build the env_file
-    env_file_path = os.path.abspath(os.path.join(build_space, package.name, 'cmi_env.sh'))
+    env_file_path = os.path.abspath(os.path.join(context.build_space, package.name, 'cmi_env.sh'))
     env_file = """\
 #!/usr/bin/env sh
 # generated from within catkin/python/catkin/cmi/job.py
@@ -145,8 +147,7 @@ class CMakeJob(Job):
             install_space = self.context.install_space
         install_target = install_space if self.context.install else devel_space
         # Create an environment file
-        env_cmd = create_env_file(self.package, self.context.build_space,
-                                  self.context.devel_space, self.context.merge_devel, self.context.packages)
+        env_cmd = create_env_file(self.package, self.context)
         # CMake command
         makefile_path = os.path.join(build_space, 'Makefile')
         if not os.path.isfile(makefile_path) or self.force_cmake:
@@ -172,6 +173,8 @@ class CMakeJob(Job):
         # Determine the location of where the setup.sh file should be created
         if self.context.install:
             setup_file_path = os.path.join(install_space, 'setup.sh')
+            if not self.context.isolate_install and os.path.exists(setup_file_path):
+                return commands
         else:  # Create it in the devel space
             setup_file_path = os.path.join(devel_space, 'setup.sh')
             if self.context.merge_devel and os.path.exists(setup_file_path):
@@ -188,7 +191,7 @@ class CMakeJob(Job):
         subs['path'] = os.path.join(install_target, 'bin') + ":"
         setup_file_directory = os.path.dirname(setup_file_path)
         if not os.path.exists(setup_file_directory):
-            os.mkdir(setup_file_directory)
+            os.makedirs(setup_file_directory)
         with open(setup_file_path, 'w') as file_handle:
             file_handle.write("""\
 #!/usr/bin/env sh
@@ -198,8 +201,7 @@ class CMakeJob(Job):
 if [ -z "$CATKIN_SHELL" ]; then
   CATKIN_SHELL=sh
 fi
-""")
-            file_handle.write("""\
+
 # detect if running on Darwin platform
 _UNAME=`uname -s`
 IS_DARWIN=0
@@ -241,8 +243,7 @@ class CatkinJob(Job):
         else:
             install_space = self.context.install_space
         # Create an environment file
-        env_cmd = create_env_file(self.package, self.context.build_space,
-                                  self.context.devel_space, self.context.merge_devel, self.context.packages)
+        env_cmd = create_env_file(self.package, self.context)
         # CMake command
         makefile_path = os.path.join(build_space, 'Makefile')
         if not os.path.isfile(makefile_path) or self.force_cmake:
