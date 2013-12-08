@@ -202,21 +202,6 @@ def get_recursive_build_depends_in_workspace(package, ordered_packages):
     return recursive_depends
 
 
-class FakeLock(object):
-    """Fake lock used to mimic a Lock but without causing synchronization"""
-    def acquire(self, blocking=False):
-        return True
-
-    def release(self):
-        pass
-
-    def __enter__(self):
-        pass
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        pass
-
-
 def log(*args, **kwargs):
     if 'end_with_escape' not in kwargs or kwargs['end_with_escape'] is True:
         args = list(args)

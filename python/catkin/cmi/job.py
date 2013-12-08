@@ -52,10 +52,9 @@ if MAKE_EXEC is None:
 
 class Command(object):
     """Single command which is part of a job"""
-    def __init__(self, cmd, location, spaces=None):
+    def __init__(self, cmd, location):
         self.cmd = cmd
         self.location = location
-        self.spaces = [] if spaces is None else spaces
 
 
 class Job(object):
@@ -158,20 +157,18 @@ class CMakeJob(Job):
                     pkg_dir,
                     '-DCMAKE_INSTALL_PREFIX=' + install_target
                 ] + self.context.cmake_args,
-                build_space,
-                ['devel']
+                build_space
             ))
             commands[-1].cmd.extend(self.context.cmake_args)
         else:
-            commands.append(Command([env_cmd, MAKE_EXEC, 'cmake_check_build_system'], build_space, ['devel']))
+            commands.append(Command([env_cmd, MAKE_EXEC, 'cmake_check_build_system'], build_space))
         # Make command
         commands.append(Command(
             [env_cmd, MAKE_EXEC] + handle_make_arguments(self.context.make_args),
-            build_space,
-            ['devel']
+            build_space
         ))
         # Make install command (always run on plain cmake)
-        commands.append(Command([env_cmd, MAKE_EXEC, 'install'], build_space, ['devel', 'install']))
+        commands.append(Command([env_cmd, MAKE_EXEC, 'install'], build_space))
         # Determine the location of where the setup.sh file should be created
         if self.context.install:
             setup_file_path = os.path.join(install_space, 'setup.sh')
@@ -257,18 +254,16 @@ class CatkinJob(Job):
                     '-DCATKIN_DEVEL_PREFIX=' + devel_space,
                     '-DCMAKE_INSTALL_PREFIX=' + install_space
                 ] + self.context.cmake_args,
-                build_space,
-                ['devel']
+                build_space
             ))
         else:
-            commands.append(Command([env_cmd, MAKE_EXEC, 'cmake_check_build_system'], build_space, ['devel']))
+            commands.append(Command([env_cmd, MAKE_EXEC, 'cmake_check_build_system'], build_space))
         # Make command
         commands.append(Command(
             [env_cmd, MAKE_EXEC] + handle_make_arguments(self.context.make_args),
-            build_space,
-            ['devel']
+            build_space
         ))
         # Make install command, if installing
         if self.context.install:
-            commands.append(Command([env_cmd, MAKE_EXEC, 'install'], build_space, ['devel', 'install']))
+            commands.append(Command([env_cmd, MAKE_EXEC, 'install'], build_space))
         return commands
