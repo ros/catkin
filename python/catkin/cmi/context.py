@@ -61,7 +61,8 @@ class Context(object):
         isolate_install=False,
         cmake_args=None,
         make_args=None,
-        catkin_make_args=None
+        catkin_make_args=None,
+        space_suffix=None
     ):
         """Creates a new Context object, optionally initializing with parameters
 
@@ -87,16 +88,19 @@ class Context(object):
         :type make_args: list
         :param catkin_make_args: extra make arguments to be passed to make for each catkin package
         :type catkin_make_args: list
+        :param space_suffix: suffix for build, devel, and install spaces which are not explicitly set.
+        :type space_suffix: str
         :raises: ValueError if workspace or source space does not exist
         """
         self.__locked = False
+        ss = '' if space_suffix is None else space_suffix
         # Validation is done on assignment
         # Handle *space assignment and defaults
         self.workspace = '.' if workspace is None else workspace
         self.source_space = os.path.join(self.workspace, 'src') if source_space is None else source_space
-        self.build_space = os.path.join(self.workspace, 'build') if build_space is None else build_space
-        self.devel_space = os.path.join(self.workspace, 'devel') if devel_space is None else devel_space
-        self.install_space = os.path.join(self.workspace, 'install') if install_space is None else install_space
+        self.build_space = os.path.join(self.workspace, 'build' + ss) if build_space is None else build_space
+        self.devel_space = os.path.join(self.workspace, 'devel' + ss) if devel_space is None else devel_space
+        self.install_space = os.path.join(self.workspace, 'install' + ss) if install_space is None else install_space
         self.destdir = os.environ['DESTDIR'] if 'DESTDIR' in os.environ else None
         # Handle build options
         self.merge_devel = merge_devel

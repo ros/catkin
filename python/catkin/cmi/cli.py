@@ -95,6 +95,8 @@ def parse_args(args):
         help='Causes each catkin package to be installed.')
     add('--isolate-install', action='store_true', default=False,
         help='Install each catkin package into a separate install space.')
+    add('--space-suffix',
+        help='suffix for build, devel, and install space if they are not otherwise explicitly set')
     # Build options
     add('--parallel-jobs', '--parallel', '-p', default=None,
         help='Maximum number of packages which could be built in parallel (default is cpu count)')
@@ -162,7 +164,8 @@ def main(sysargs=None):
         isolate_install=opts.isolate_install,
         cmake_args=opts.cmake_args,
         make_args=opts.make_args,
-        catkin_make_args=opts.catkin_make_args
+        catkin_make_args=opts.catkin_make_args,
+        space_suffix=opts.space_suffix
     )
 
     if opts.list_only:
