@@ -41,6 +41,18 @@ from subprocess import Popen
 from subprocess import STDOUT
 
 
+def process_incomming_lines(lines, left_over):
+    if not lines:
+        return None, left_over
+    if lines[-1].endswith('\n'):
+        data = b''.join(lines)
+        left_over = b''
+    else:
+        data = b''.join(lines[-1])
+        left_over = lines[-1]
+    return data, left_over
+
+
 def run_command(cmd, cwd=None):
     master, slave = pty.openpty()
 
@@ -49,21 +61,27 @@ def run_command(cmd, cwd=None):
 
     left_over = b''
 
+    # Read data until the process is finished
     while p.poll() is None:
         incomming = left_over
         rlist, wlist, xlist = select.select([master], [], [], 0.1)
         if rlist:
             incomming += os.read(master, 1024)
             lines = incomming.splitlines(True)  # keepends=True
-            if not lines:
+            data, left_over = process_incomming_lines(lines, left_over)
+            if data is None:
                 continue
-            if lines[-1].endswith('\n'):
-                data = b''.join(lines)
-                left_over = b''
-            else:
-                data = b''.join(lines[-1])
-                left_over = lines[-1]
             yield data
+    # Grab any left over data
+    while True:
+        incomming = left_over
+        incomming += os.read(master, 1024)
+        lines = incomming.splitlines(True)  # keepends=True
+        data, left_over = process_incomming_lines(lines, left_over)
+        if data is None:
+            break
+        yield data
+
     # Done
     os.close(master)
     yield p.returncode
