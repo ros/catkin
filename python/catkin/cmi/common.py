@@ -33,6 +33,7 @@
 
 from __future__ import print_function
 
+import datetime
 import multiprocessing
 import os
 import re
@@ -106,6 +107,14 @@ def extract_jobs_flags(mflags):
     matches = re.findall(regex, mflags) or []
     matches = [m[0] or m[1] for m in matches]
     return ' '.join([m.strip() for m in matches]) if matches else None
+
+
+def format_time_delta(delta):
+    hours, minutes, seconds = str(datetime.timedelta(seconds=delta)).split(':')
+    msg = "" if int(hours) == 0 else (hours + ":")
+    msg += "" if int(minutes) == 0 else (minutes + ":")
+    msg += "{0:2.1f}".format(float(seconds))
+    return msg
 
 
 def handle_make_arguments(input_make_args, force_single_threaded_when_running_tests=False):
@@ -241,6 +250,10 @@ def remove_ansi_escape(string):
 
 def wide_log(msg, **kwargs):
     width = terminal_width()
+    if 'truncate' in kwargs:
+        if kwargs['truncate'] and len(msg) >= width - 1:
+            msg = msg[:width - 4] + '...'
+        del kwargs['truncate']
     if len(msg) < width:
         log(msg + (' ' * (width - len(remove_ansi_escape(msg)) - 1)), **kwargs)
     else:

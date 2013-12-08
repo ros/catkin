@@ -52,6 +52,7 @@ except ImportError as e:
 
 from catkin.cmi.common import get_build_type
 from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
+from catkin.cmi.common import format_time_delta
 from catkin.cmi.common import log
 from catkin.cmi.common import wide_log
 
@@ -143,7 +144,8 @@ def determine_packages_to_be_built(packages, context):
     # If there are no packages raise
     if not workspace_packages:
         sys.exit("No packages were found in the source space '{0}'".format(context.source_space))
-    log("Found '{0}' packages in '{1:.3f}' seconds.".format(len(workspace_packages), time.time() - start))
+    log("Found '{0}' packages in '{1}'."
+        .format(len(workspace_packages), format_time_delta(time.time() - start)))
 
     # Order the packages by topology
     ordered_packages = topological_order_packages(workspace_packages)
@@ -324,8 +326,8 @@ def build_isolated_workspace(
                        .format(**item.__dict__))
                 assert item.package in command_log_cache, "command failed before starting"
                 command_log_cache[item.package].append(msg)
-                # If interleave_output is off, print out the command's output
-                if not interleave_output:
+                # If quiet was on, print the error, as it has not been printed before
+                if quiet:
                     for index, line in enumerate(command_log_cache[item.package]):
                         if index == 0:
                             # Skip the first line (started message)
@@ -363,8 +365,10 @@ def build_isolated_workspace(
             # If a job finished event, remove from running_jobs, move to completed, call queue_new_jobs
             if item.event_type == 'job_finished':
                 completed_packages.append(item.package)
-                wide_log("<== Finished building package '{0}', it took {1:.3f} seconds"
-                         .format(item.package, time.time() - running_jobs[item.package]['start_time']))
+                wide_log("<== Finished building package '{0}', it took {1}".format(
+                    item.package,
+                    format_time_delta(time.time() - running_jobs[item.package]['start_time']))
+                )
                 del running_jobs[item.package]
                 # If shutting down, do not add new packages
                 if error_state:
@@ -384,22 +388,29 @@ def build_isolated_workspace(
             break
         finally:
             # Update the status bar on the screen
-            msg = "[cmi] "
             executing_jobs = []
             for name, value in running_jobs.items():
                 number, job, start_time = value['package_number'], value['job'], value['start_time']
                 if number is None or start_time is None:
                     continue
-                executing_jobs.append((number, total_packages, name, time.time() - start_time))
+                executing_jobs.append((number, total_packages, name, format_time_delta(time.time() - start_time)))
+            msg = "[cmi {0}/{1}] ".format(len(executing_jobs), jobs)
+            # If errors post those
+            if errors:
+                for error in errors:
+                    msg += "[!{0}] ".format(error.package)
             # Print them in order of started number
             for job_msg_args in sorted(executing_jobs, key=lambda args: args[0]):
-                msg += "[{0}/{1} {2} - {3:.1f}] ".format(*job_msg_args)
+                msg += "[{0}/{1} {2} - {3}] ".format(*job_msg_args)
             # Update title bar
-            sys.stdout.write("\x1b]2;" + msg + "\x07")
+            job_numbers = [x[0] for x in executing_jobs]
+            if job_numbers:
+                sys.stdout.write("\x1b]2;[cmi] {0}/{1}\x07".format(max(job_numbers), total_packages))
+            else:
+                sys.stdout.write("\x1b]2;[cmi]\x07")
             # Update status bar
-            if msg != "[cmi] ":
-                wide_log(msg, end='\r')
-                sys.stdout.flush()
+            wide_log(msg, truncate=True, end='\r')
+            sys.stdout.flush()
     # All executors have shutdown
     if not errors:
         wide_log("[cmi] Finished.")

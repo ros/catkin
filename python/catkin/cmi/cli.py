@@ -36,9 +36,11 @@ from __future__ import print_function
 import argparse
 import re
 import sys
+import time
 
 from catkin.cmi.common import extract_cmake_and_make_and_catkin_make_arguments
 from catkin.cmi.common import extract_jobs_flags
+from catkin.cmi.common import format_time_delta
 from catkin.cmi.common import get_build_type
 from catkin.cmi.common import log
 
@@ -167,6 +169,7 @@ def main(sysargs=None):
         list_only(context, opts.packages, opts.no_deps)
         return
 
+    start = time.time()
     try:
         build_isolated_workspace(
             context,
@@ -181,3 +184,5 @@ def main(sysargs=None):
         )
     except Exception:
         raise
+    finally:
+        log("[cmi] Runtime: {0}".format(format_time_delta(time.time() - start)))
