@@ -275,7 +275,21 @@ def build_isolated_workspace(
     job_log = {}
 
     # Prime the job_queue
-    ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
+    ready_packages = []
+    if start_with is None:
+        ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
+    while start_with is not None:
+        ready_packages.extend(get_ready_packages(packages_to_be_built, running_jobs, completed_packages))
+        while ready_packages:
+            pth, pkg = ready_packages.pop(0)
+            if pkg.name != start_with:
+                completed_packages.append(pkg.name)
+                package_count += 1
+                wide_log("[cmi] Skipping package '{0}'".format(pkg.name))
+            else:
+                ready_packages.insert(0, (pth, pkg))
+                start_with = None
+                break
     running_jobs = queue_ready_packages(ready_packages, running_jobs, job_queue, context, force_cmake)
     assert running_jobs
 
