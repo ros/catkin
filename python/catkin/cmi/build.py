@@ -172,6 +172,16 @@ def determine_packages_to_be_built(packages, context):
     return packages_to_be_built, packages_to_be_built_deps
 
 
+def write_job_log(job_log, package, context):
+    build_log_dir = os.path.join(context.workspace, 'cmi_log')
+    if not os.path.exists(build_log_dir):
+        os.makedirs(build_log_dir)
+    package_log = os.path.join(build_log_dir, str(package) + '.log')
+    with open(package_log, 'w') as f:
+        f.write('\n'.join(job_log[package]))
+        f.write('\n')
+
+
 def build_isolated_workspace(
     context,
     packages=None,
@@ -262,6 +272,7 @@ def build_isolated_workspace(
     package_count = 0
     running_jobs = {}
     command_log_cache = {}
+    job_log = {}
 
     # Prime the job_queue
     ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
@@ -317,6 +328,8 @@ def build_isolated_workspace(
                        .format(**item.__dict__))
                 assert item.package in command_log_cache, "command finished before starting"
                 command_log_cache[item.package].append(msg)
+                assert item.package in job_log, "command failed before job started " + item.package
+                job_log[item.package].append('\n'.join(command_log_cache[item.package]))
                 if not quiet:
                     wide_log(msg)
 
@@ -337,6 +350,11 @@ def build_isolated_workspace(
                 errors.append(item)
                 # Remove the command from the running jobs
                 del running_jobs[item.package]
+                # Put the job output to a log file
+                assert item.package in job_log, "command failed before job started " + item.package
+                job_log[item.package].append('\n'.join(command_log_cache[item.package]))
+                write_job_log(job_log, item.package, context)
+                del job_log[item.package]
                 if not error_state:
                     # Dispatch kill signal to executors
                     for x in range(jobs):
@@ -347,7 +365,6 @@ def build_isolated_workspace(
             # If a command finished or failed, clear the command log cache
             if item.event_type in ['command_finished', 'command_failed']:
                 assert item.package in command_log_cache, "command finished or failed before starting"
-                # TODO: log to a file? or store as part of bigger job cache?
                 del command_log_cache[item.package]
 
             # If an executor exit event, join it and remove it from the executors list
@@ -360,16 +377,24 @@ def build_isolated_workspace(
                 package_count += 1
                 running_jobs[item.package]['package_number'] = package_count
                 running_jobs[item.package]['start_time'] = time.time()
-                wide_log("==> Starting build of package '{0}'".format(item.package))
+                msg = "==> Starting build of package '{0}'".format(item.package)
+                job_log[item.package] = [msg]
+                wide_log(msg)
 
             # If a job finished event, remove from running_jobs, move to completed, call queue_new_jobs
             if item.event_type == 'job_finished':
                 completed_packages.append(item.package)
-                wide_log("<== Finished building package '{0}', it took {1}".format(
+                msg = "<== Finished building package '{0}', it took {1}".format(
                     item.package,
-                    format_time_delta(time.time() - running_jobs[item.package]['start_time']))
+                    format_time_delta(time.time() - running_jobs[item.package]['start_time'])
                 )
+                assert item.package in job_log, "job finished before starting " + str(item.package)
+                job_log[item.package].append(msg)
+                wide_log(msg)
                 del running_jobs[item.package]
+                # Put the job output to a log file
+                write_job_log(job_log, item.package, context)
+                del job_log[item.package]
                 # If shutting down, do not add new packages
                 if error_state:
                     continue
