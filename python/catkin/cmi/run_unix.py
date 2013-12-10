@@ -36,6 +36,7 @@ from __future__ import print_function
 import os
 import pty
 import select
+import sys
 
 from subprocess import Popen
 from subprocess import STDOUT
@@ -57,7 +58,8 @@ def run_command(cmd, cwd=None):
     master, slave = pty.openpty()
 
     p = Popen(cmd, stdin=slave, stdout=slave, stderr=STDOUT, cwd=cwd)
-    os.close(slave)  # This causes the below select to exit when the subprocess closes
+    if sys.platform.startswith('darwin'):
+        os.close(slave)  # This causes the below select to exit when the subprocess closes
 
     left_over = b''
 
@@ -72,15 +74,6 @@ def run_command(cmd, cwd=None):
             if data is None:
                 continue
             yield data
-    # Grab any left over data
-    while True:
-        incomming = left_over
-        incomming += os.read(master, 1024)
-        lines = incomming.splitlines(True)  # keepends=True
-        data, left_over = process_incomming_lines(lines, left_over)
-        if data is None:
-            break
-        yield data
 
     # Done
     os.close(master)
