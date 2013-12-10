@@ -248,6 +248,8 @@ def build_isolated_workspace(
     else:
         # Extend packages to be built to include their deps
         packages_to_be_built.extend(packages_to_be_built_deps)
+    # Also resort
+    packages_to_be_built = topological_order_packages(dict(packages_to_be_built))
 
     # Setup pool of executors
     executors = {}
