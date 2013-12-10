@@ -348,8 +348,7 @@ def build_isolated_workspace(
                 assert item.package in job_log, "command failed before job started " + item.package
                 package = item.package
                 stripped_lines = [line[len('[{0}]: '.format(package)):] for line in command_log_cache[package]]
-                stripped_lines = remove_ansi_escape(line)
-                job_log[package].append('\n'.join(stripped_lines))
+                job_log[package].append(remove_ansi_escape('\n'.join(stripped_lines)))
                 if not quiet:
                     wide_log(msg)
 
@@ -372,7 +371,9 @@ def build_isolated_workspace(
                 del running_jobs[item.package]
                 # Put the job output to a log file
                 assert item.package in job_log, "command failed before job started " + item.package
-                job_log[item.package].append('\n'.join(command_log_cache[item.package]))
+                package = item.package
+                stripped_lines = [line[len('[{0}]: '.format(package)):] for line in command_log_cache[package]]
+                job_log[item.package].append(remove_ansi_escape('\n'.join(stripped_lines)))
                 write_job_log(job_log, item.package, context)
                 del job_log[item.package]
                 if not error_state:
@@ -463,7 +464,7 @@ def build_isolated_workspace(
         wide_log("[cmi] There were errors:")
         for error in errors:
             wide_log(("""
-Failed to build package '{package}' becuase the following command:
+Failed to build package '{package}' because the following command:
 
     # Command run in '{message[2]}' directory
     {message[0]}
