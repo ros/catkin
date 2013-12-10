@@ -54,6 +54,7 @@ from catkin.cmi.common import get_build_type
 from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
 from catkin.cmi.common import format_time_delta
 from catkin.cmi.common import log
+from catkin.cmi.common import remove_ansi_escape
 from catkin.cmi.common import wide_log
 
 from catkin.cmi.executor import Executor
@@ -343,7 +344,10 @@ def build_isolated_workspace(
                 assert item.package in command_log_cache, "command finished before starting"
                 command_log_cache[item.package].append(msg)
                 assert item.package in job_log, "command failed before job started " + item.package
-                job_log[item.package].append('\n'.join(command_log_cache[item.package]))
+                package = item.package
+                stripped_lines = [line[len('[{0}]: '.format(package)):] for line in command_log_cache[package]]
+                stripped_lines = remove_ansi_escape(line)
+                job_log[package].append('\n'.join(stripped_lines))
                 if not quiet:
                     wide_log(msg)
 
