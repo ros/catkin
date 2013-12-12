@@ -235,27 +235,35 @@ def log(*args, **kwargs):
     print(*args, **kwargs)
 
 
-def terminal_width():
-    """Estimate the width of the terminal"""
-    width = 0
-    try:
-        import struct
-        import fcntl
-        import termios
-        s = struct.pack('HHHH', 0, 0, 0, 0)
-        x = fcntl.ioctl(1, termios.TIOCGWINSZ, s)
-        width = struct.unpack('HHHH', x)[1]
-    except IOError:
-        pass
-    if width <= 0:
-        try:
-            width = int(os.environ['COLUMNS'])
-        except:
-            pass
-    if width <= 0:
-        width = 80
+def terminal_width_windows():
+    """Returns the estimated width of the terminal on Windows"""
+    from ctypes import windll, create_string_buffer
+    h = windll.kernel32.GetStdHandle(-12)
+    csbi = create_string_buffer(22)
+    res = windll.kernel32.GetConsoleScreenBufferInfo(h, csbi)
+
+    #return default size if actual size can't be determined
+    if not res:
+        return 80, 25
+
+    import struct
+    (bufx, bufy, curx, cury, wattr, left, top, right, bottom, maxx, maxy)\
+        = struct.unpack("hhhhHhhhhhh", csbi.raw)
+    width = right - left + 1
 
     return width
+
+
+def terminal_width_linux():
+    """Returns the estimated width of the terminal on linux"""
+    width = os.popen('tput cols', 'r').readline()
+
+    return int(width)
+
+
+def terminal_width():
+    """Returns the estimated width of the terminal"""
+    return terminal_width_windows() if os.name == 'nt' else terminal_width_linux()
 
 
 def remove_ansi_escape(string):
