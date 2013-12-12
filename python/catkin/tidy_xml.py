@@ -38,22 +38,16 @@ import re
 # unit test suites are not good about screening out illegal unicode characters (#603)
 # recipe from http://boodebr.org/main/python/all-about-python-and-unicode#UNI_XML
 # code copied from rosunit/src/junitxml.py
-
-
 try:
-    RE_XML_ILLEGAL = '([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \
-        '|' + \
-        '([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
-        (unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
-         unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
-         unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff))
+    char = unichr
 except NameError:
-    RE_XML_ILLEGAL = '([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \
-        '|' + \
-        '([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
-        (chr(0xd800), chr(0xdbff), chr(0xdc00), chr(0xdfff),
-         chr(0xd800), chr(0xdbff), chr(0xdc00), chr(0xdfff),
-         chr(0xd800), chr(0xdbff), chr(0xdc00), chr(0xdfff))
+    char = chr
+RE_XML_ILLEGAL = '([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \
+    '|' + \
+    '([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
+    (char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff),
+     char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff),
+     char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff))
 _SAFE_XML_REGEX = re.compile(RE_XML_ILLEGAL)
 
 
