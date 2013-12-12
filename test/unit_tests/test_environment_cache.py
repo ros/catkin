@@ -65,7 +65,7 @@ class PlatformTest(unittest.TestCase):
             catkin.environment_cache.os.environ = fake_environ
             rootdir = tempfile.mkdtemp()
             env_file = os.path.join(rootdir, 'env.sh')
-            with open(env_file, 'ab') as fhand:
+            with open(env_file, 'a') as fhand:
                 fhand.write('''\
 #! /usr/bin/env sh
 export FOO=/foo:/bar

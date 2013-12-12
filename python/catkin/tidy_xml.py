@@ -83,5 +83,5 @@ def tidy_xml(filename):
         data = data[:match.start()] + '?' + data[match.end():]
 
     with open(filename, 'w') as fhand:
-        fhand.write(data.encode('utf-8'))
+        fhand.write(data)
     return True
