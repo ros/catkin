@@ -3,7 +3,10 @@
 from __future__ import print_function
 import os
 import sys
-import urllib2
+try:
+    from urllib2 import urlopen, BaseHandler, build_opener, Request
+except ImportError:
+    from urllib.request import urlopen, BaseHandler, build_opener, Request
 import time
 import hashlib
 from optparse import OptionParser
@@ -12,7 +15,7 @@ NAME = "download_checkmd5.py"
 
 
 # Support retry on dropped connection: #559
-class HTTPRangeHandler(urllib2.BaseHandler):
+class HTTPRangeHandler(BaseHandler):
     """
     handler that enables HTTP Range headers.
     """
@@ -28,49 +31,48 @@ class HTTPRangeHandler(urllib2.BaseHandler):
     def http_error_416(self, req, fp, code, msg, hdrs):
         # HTTP's Range Not Satisfiable error
         raise RangeError('Requested Range Not Satisfiable')
-      
 
-def urlretrieve(url, localfile=None, nRetry=20, append=False, progressFn=None):
-    """ 
+
+def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None):
+    """
     downloads the file pointed to by the url. Supports retrying and resuming
     a partially downloaded file.
 
     Arguments:
     ----------
-    
     url: string or anything supported by urllib
-        The URL of the file to download.
+    The URL of the file to download.
     localfile: string (defaults to None)
-        The name of the resulting file. If None, the basename of the url
-        is used.
+    The name of the resulting file. If None, the basename of the url
+    is used.
     nRetry: integer (defaults to 20)
-        The max number of trials.
+    The max number of trials.
     append: boolean (defaults to False)
-        In case the localfile exists, whether we want to append to it,
-        i.e. resume a partial download. If false, then the localfile is
-        first deleted.
+    In case the localfile exists, whether we want to append to it,
+    i.e. resume a partial download. If false, then the localfile is
+    first deleted.
     progressFn: function (defaults to None)
-        If not None, the function is called when new data is downloaded,
-        with 2 arguments: the number of bytes downloaded so far and
-        the total number of bytes.
+    If not None, the function is called when new data is downloaded,
+    with 2 arguments: the number of bytes downloaded so far and
+    the total number of bytes.
     """
 
     # TODO:
-    #   - there is probably a number of errors that can occur when reading
-    #     where we would want to retry. At the moment we just fail.
-    #   - If the range header is not supported, an exception is thrown.
-    #     There might be a better strategy. For instance: delete the localfile
-    #     and attempt to download it again from scratch ...
+    # - there is probably a number of errors that can occur when reading
+    # where we would want to retry. At the moment we just fail.
+    # - If the range header is not supported, an exception is thrown.
+    # There might be a better strategy. For instance: delete the localfile
+    # and attempt to download it again from scratch ...
 
     if localfile is None:
         localfile = url.split('/')[-1]
-    
+
     # If the file exists but we do not wish to append to it then erase it.
     if not append and os.path.exists(localfile) and os.path.isfile(localfile):
         os.remove(localfile)
 
     range_handler = HTTPRangeHandler()
-    opener = urllib2.build_opener(range_handler)
+    opener = build_opener(range_handler)
 
     for retry in range(nRetry):
         _netfile = opener.open(url)
@@ -83,10 +85,10 @@ def urlretrieve(url, localfile=None, nRetry=20, append=False, progressFn=None):
                 # we are done
                 _netfile.close()
                 return
-                
+
             #print("resuming: %d of %d downloaded." % (count, filesize))
             _netfile.close()
-            req = urllib2.Request(url)
+            req = Request(url)
             req.add_header("Range","bytes=%s-" % (count))
             _netfile = opener.open(req)
 
@@ -114,13 +116,13 @@ def urlretrieve(url, localfile=None, nRetry=20, append=False, progressFn=None):
 
         # is it necessary ???
         time.sleep(1)
-        
+
     raise IOError('Failed to download file. Exceeded number of trials.')
 
 
 def progress_report(bytes_so_far, total_size):
-    """ 
-    progress report function that can be used with urlretrieve().
+    """
+    progress report function that can be used with download_file().
     """
     percent = float(bytes_so_far) / total_size
     percent = round(percent*100, 2)
@@ -140,7 +142,7 @@ def download_md5(uri, dest):
 
     sys.stdout.write('Downloading %s to %s...' % (uri, dest))
     sys.stdout.flush()
-    urlretrieve(uri, dest)
+    download_file(uri, dest)
     sys.stdout.write('Done\n')
 
 
@@ -190,7 +192,7 @@ def main(argv=sys.argv[1:]):
             download_md5(uri, dest)
             result, hexdigest = checkmd5(dest, md5sum)
         if result is False:
-            sys.exit('ERROR: md5sum mismatch (%s != %s) on %s;  aborting' % (hexdigest, md5sum, dest))
+            sys.exit('ERROR: md5sum mismatch (%s != %s) on %s; aborting' % (hexdigest, md5sum, dest))
 
 
 if __name__ == '__main__':
