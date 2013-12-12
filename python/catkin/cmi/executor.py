@@ -52,7 +52,7 @@ class Executor(Process):
     """Multiprocessing executor for the parallel cmi jobs"""
     name_prefix = 'cmi'
 
-    def __init__(self, executor_id, context, comm_queue, job_queue):
+    def __init__(self, executor_id, context, comm_queue, job_queue, install_lock):
         super(Executor, self).__init__()
         self.name = self.name_prefix + '-' + str(executor_id + 1)
         self.executor_id = executor_id
@@ -60,6 +60,7 @@ class Executor(Process):
         self.queue = comm_queue
         self.jobs = job_queue
         self.current_job = None
+        self.install_space_lock = install_lock
 
     def log(self, msg):
         package_name = '' if self.current_job is None else self.current_job.package.name
@@ -106,33 +107,41 @@ class Executor(Process):
                 self.started_new_job(self.current_job)
                 # Execute each command in the job
                 for command in self.current_job:
-                    # Log that the command being run
-                    self.command_started(' '.join(command.cmd), command.location)
-                    # Receive lines from the running command
-                    for line in run_command(command.cmd, cwd=command.location):
-                        # If it is a string, log it
-                        if isinstance(line, str):
-                            # Ensure it is not just ansi escape characters
-                            if remove_ansi_escape(line).strip():
-                                for sub_line in line.split('\n'):
-                                    sub_line = sub_line.rstrip()
-                                    if sub_line:
-                                        self.command_log(sub_line)
-                        else:
-                            # Otherwise it is a return code
-                            retcode = line
-                            # If the return code is not zero
-                            if retcode != 0:
-                                # Log the failure (the build loop will dispatch None's)
-                                self.command_failed(' '.join(command.cmd), retcode, command.location)
-                                # Try to consume and throw away any and all remaining jobs in the queue
-                                while self.jobs.get() is not None:
-                                    pass
-                                # Once we get our None, quit
-                                self.quit()
-                                return
+                    install_space_locked = False
+                    if command.lock_install_space:
+                        self.install_space_lock.acquire()
+                        install_space_locked = True
+                    try:
+                        # Log that the command being run
+                        self.command_started(' '.join(command.cmd), command.location)
+                        # Receive lines from the running command
+                        for line in run_command(command.cmd, cwd=command.location):
+                            # If it is a string, log it
+                            if isinstance(line, str):
+                                # Ensure it is not just ansi escape characters
+                                if remove_ansi_escape(line).strip():
+                                    for sub_line in line.split('\n'):
+                                        sub_line = sub_line.rstrip()
+                                        if sub_line:
+                                            self.command_log(sub_line)
                             else:
-                                self.command_finished(' '.join(command.cmd), retcode)
+                                # Otherwise it is a return code
+                                retcode = line
+                                # If the return code is not zero
+                                if retcode != 0:
+                                    # Log the failure (the build loop will dispatch None's)
+                                    self.command_failed(' '.join(command.cmd), retcode, command.location)
+                                    # Try to consume and throw away any and all remaining jobs in the queue
+                                    while self.jobs.get() is not None:
+                                        pass
+                                    # Once we get our None, quit
+                                    self.quit()
+                                    return
+                                else:
+                                    self.command_finished(' '.join(command.cmd), retcode)
+                    finally:
+                        if install_space_locked:
+                            self.install_space_lock.release()
                 self.finished_job(self.current_job)
         except KeyboardInterrupt:
             pass

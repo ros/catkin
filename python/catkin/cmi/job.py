@@ -52,9 +52,19 @@ if MAKE_EXEC is None:
 
 class Command(object):
     """Single command which is part of a job"""
+    lock_install_space = False
+
     def __init__(self, cmd, location):
         self.cmd = cmd
         self.location = location
+
+
+class InstallCommand(Command):
+    """Command which touches the install space"""
+    lock_install_space = True
+
+    def __init__(self, cmd, location):
+        super(InstallCommand, self).__init__(cmd, location)
 
 
 class Job(object):
@@ -170,7 +180,7 @@ class CMakeJob(Job):
             build_space
         ))
         # Make install command (always run on plain cmake)
-        commands.append(Command([env_cmd, MAKE_EXEC, 'install'], build_space))
+        commands.append(InstallCommand([env_cmd, MAKE_EXEC, 'install'], build_space))
         # Determine the location of where the setup.sh file should be created
         if self.context.install:
             setup_file_path = os.path.join(install_space, 'setup.sh')
@@ -267,5 +277,5 @@ class CatkinJob(Job):
         ))
         # Make install command, if installing
         if self.context.install:
-            commands.append(Command([env_cmd, MAKE_EXEC, 'install'], build_space))
+            commands.append(InstallCommand([env_cmd, MAKE_EXEC, 'install'], build_space))
         return commands

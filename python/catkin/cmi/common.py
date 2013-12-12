@@ -48,6 +48,21 @@ else:
 run_command = run.run_command
 
 
+class FakeLock(object):
+    """Fake lock used to mimic a Lock but without causing synchronization"""
+    def acquire(self, blocking=False):
+        return True
+
+    def release(self):
+        pass
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        pass
+
+
 def create_build_space(buildspace, package_name):
     package_build_dir = os.path.join(buildspace, package_name)
     if not os.path.exists(package_build_dir):

@@ -38,6 +38,7 @@ import time
 from Queue import Empty
 
 from multiprocessing import cpu_count
+from multiprocessing import Lock
 from multiprocessing import Queue
 
 try:
@@ -50,6 +51,7 @@ except ImportError as e:
         '"catkin_pkg", and that it is up to date and on the PYTHONPATH.' % e
     )
 
+from catkin.cmi.common import FakeLock
 from catkin.cmi.common import get_build_type
 from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
 from catkin.cmi.common import format_time_delta
@@ -192,7 +194,8 @@ def build_isolated_workspace(
     force_cmake=False,
     force_color=False,
     quiet=False,
-    interleave_output=False
+    interleave_output=False,
+    lock_install=False
 ):
     """Builds a catkin workspace in isolation
 
@@ -220,6 +223,8 @@ def build_isolated_workspace(
     :type quiet: bool
     :param interleave_output: prints the output of commands as they are received
     :type interleave_output: bool
+    :param lock_install: causes executors to synchronize on access of install commands
+    :type lock_install: bool
 
     :raises: SystemExit if buildspace is a file or no packages were found in the source space
         or if the provided options are invalid
@@ -257,6 +262,8 @@ def build_isolated_workspace(
     comm_queue = Queue()
     # The job queue has Jobs put into it
     job_queue = Queue()
+    # Lock for install space
+    install_lock = Lock() if lock_install else FakeLock()
     # Determine the number of executors
     jobs = cpu_count() if jobs is None else int(jobs)
     # If only one set of jobs, turn on interleaving to get more responsive feedback
@@ -266,7 +273,7 @@ def build_isolated_workspace(
         interleave_output = True
     # Start the executors
     for x in range(jobs):
-        e = Executor(x, context, comm_queue, job_queue)
+        e = Executor(x, context, comm_queue, job_queue, install_lock)
         executors[x] = e
         e.start()
 
