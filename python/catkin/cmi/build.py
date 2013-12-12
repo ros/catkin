@@ -457,8 +457,12 @@ def build_isolated_workspace(
                 msg += "[{0}/{1} {2} - {3}] ".format(*job_msg_args)
             # Update title bar
             job_numbers = [x[0] for x in executing_jobs]
-            if job_numbers:
-                sys.stdout.write("\x1b]2;[cmi] {{{0}-{1}}}/{2}\x07".format(min(job_numbers), max(job_numbers), total_packages))
+            if len(job_numbers) == 1:
+                sys.stdout.write("\x1b]2;[cmi] {0}/{1}\x07"
+                                 .format(job_numbers[0], total_packages))
+            elif job_numbers:
+                sys.stdout.write("\x1b]2;[cmi] {{{0}-{1}}}/{2}\x07"
+                                 .format(min(job_numbers), max(job_numbers), total_packages))
             else:
                 sys.stdout.write("\x1b]2;[cmi]\x07")
             # Update status bar
