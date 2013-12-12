@@ -8,7 +8,7 @@ import sys
 import os
 
 # find the import relatively if available to work before installing catkin or overlaying installed version
-if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
+if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catkin', '__init__.py')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from catkin.init_workspace import init_workspace
 from catkin.terminal_color import disable_ANSI_colors, fmt

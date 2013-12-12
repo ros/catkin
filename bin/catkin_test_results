@@ -6,7 +6,7 @@ import os
 import sys
 
 # find the import relatively if available to work before installing catkin or overlaying installed version
-if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
+if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catkin', '__init__.py')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from catkin.test_results import aggregate_results, print_summary, test_results
 
