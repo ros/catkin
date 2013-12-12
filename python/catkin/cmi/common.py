@@ -128,7 +128,7 @@ def format_time_delta(delta):
     hours, minutes, seconds = str(datetime.timedelta(seconds=delta)).split(':')
     msg = "" if int(hours) == 0 else (hours + ":")
     msg += "" if int(minutes) == 0 else (minutes + ":")
-    msg += "{0:2.1f}".format(float(seconds))
+    msg += ("{0:.1f}" if int(minutes) == 0 else "{0:04.1f}").format(float(seconds))
     return msg
 
 
