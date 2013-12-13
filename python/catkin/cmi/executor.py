@@ -33,7 +33,7 @@
 
 from __future__ import print_function
 
-from multiprocessing import Process
+from threading import Thread
 
 from catkin.cmi.common import remove_ansi_escape
 from catkin.cmi.common import run_command
@@ -48,7 +48,7 @@ class ExecutorEvent(object):
         self.package = package
 
 
-class Executor(Process):
+class Executor(Thread):
     """Multiprocessing executor for the parallel cmi jobs"""
     name_prefix = 'cmi'
 

@@ -38,8 +38,13 @@ import time
 from Queue import Empty
 
 from multiprocessing import cpu_count
-from multiprocessing import Lock
-from multiprocessing import Queue
+from threading import Lock
+try:
+    # Python3
+    from queue import Queue
+except ImportError:
+    # Python2
+    from Queue import Queue
 
 try:
     from catkin_pkg.packages import find_packages
@@ -60,6 +65,7 @@ from catkin.cmi.common import remove_ansi_escape
 from catkin.cmi.common import wide_log
 
 from catkin.cmi.executor import Executor
+from catkin.cmi.executor import ExecutorEvent
 
 from catkin.cmi.job import CatkinJob
 from catkin.cmi.job import CMakeJob
@@ -308,9 +314,14 @@ def build_isolated_workspace(
 
     # While the executors are all running, process executor events
     while executors:
-        # Try to get data from the communications queue
         try:
-            item = comm_queue.get(True, 0.1)
+            # Try to get data from the communications queue
+            try:
+                item = comm_queue.get(True, 0.1)
+            except Empty:
+                # timeout occured
+                item = ExecutorEvent(None, None, None, None)
+
             # If a log event, print it
             if item.event_type == 'log':
                 wide_log('[cmi-{executor_id}]: {message}'.format(**item.__dict__))
@@ -433,13 +444,7 @@ def build_isolated_workspace(
                     # Kill the executors by sending a None to the job queue for each of them
                     for x in range(jobs):
                         job_queue.put(None)
-        except Empty:
-            # timeout occured
-            item = None
-        except KeyboardInterrupt:
-            wide_log("[cmi] User interrupted, stopping.")
-            break
-        finally:
+
             # Update the status bar on the screen
             executing_jobs = []
             for name, value in running_jobs.items():
@@ -468,6 +473,16 @@ def build_isolated_workspace(
             # Update status bar
             wide_log(msg, truncate=True, end='\r')
             sys.stdout.flush()
+        except KeyboardInterrupt:
+            wide_log("[cmi] User interrupted, stopping.")
+            # Set the error state to prevent new jobs
+            error_state = True
+            # Empty the job queue
+            while not job_queue.empty():
+                job_queue.get()
+            # Kill the executors by sending a None to the job queue for each of them
+            for x in range(jobs):
+                job_queue.put(None)
     # All executors have shutdown
     if not errors:
         wide_log("[cmi] Finished.")

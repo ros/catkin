@@ -34,10 +34,11 @@
 from __future__ import print_function
 
 import datetime
-import multiprocessing
 import os
 import re
 import sys
+
+from multiprocessing import cpu_count
 
 if os.name == 'nt':
     import catkin.cmi.run_windows as run
@@ -159,7 +160,7 @@ def handle_make_arguments(input_make_args, force_single_threaded_when_running_te
             else:
                 # Else Use the number of CPU cores
                 try:
-                    jobs = multiprocessing.cpu_count()
+                    jobs = cpu_count()
                     make_args.append('-j{0}'.format(jobs))
                     make_args.append('-l{0}'.format(jobs))
                 except NotImplementedError:
