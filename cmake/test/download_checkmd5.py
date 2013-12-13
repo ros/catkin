@@ -4,9 +4,9 @@ from __future__ import print_function
 import os
 import sys
 try:
-    from urllib2 import urlopen, BaseHandler, build_opener, Request
+    from urllib2 import urlopen, BaseHandler, build_opener, Request, addinfourl
 except ImportError:
-    from urllib.request import urlopen, BaseHandler, build_opener, Request
+    from urllib.request import urlopen, BaseHandler, build_opener, Request, addinfourl
 import time
 import hashlib
 from optparse import OptionParser
@@ -23,7 +23,7 @@ class HTTPRangeHandler(BaseHandler):
 
     def http_error_206(self, req, fp, code, msg, hdrs):
         # 206 Partial Content Response
-        r = urllib.addinfourl(fp, hdrs, req.get_full_url())
+        r = addinfourl(fp, hdrs, req.get_full_url())
         r.code = code
         r.msg = msg
         return r
@@ -71,6 +71,8 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
     if not append and os.path.exists(localfile) and os.path.isfile(localfile):
         os.remove(localfile)
 
+    lastProgressReportPercent = None
+    
     range_handler = HTTPRangeHandler()
     opener = build_opener(range_handler)
 
@@ -81,10 +83,12 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
         count = 0
         if os.path.exists(localfile) and os.path.isfile(localfile):
             count = os.path.getsize(localfile)
-            if count >= filesize:
+            if count == filesize:
                 # we are done
                 _netfile.close()
                 return
+            elif count > filesize:
+                raise IOError('Resulting file is larger than source file')
 
             #print("resuming: %d of %d downloaded." % (count, filesize))
             _netfile.close()
@@ -100,10 +104,13 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
             _outfile.write(data)
             count += len(data)
 
-            if progressFn:
-                progressFn(count, filesize)
+            if progressFn is not None:
+                percent = float(count)/filesize*100
+                if lastProgressReportPercent is None or percent >= lastProgressReportPercent+1:
+                    progressFn(count, filesize)
+                    lastProgressReportPercent = int(float(count)/filesize*100)
 
-            if count >= filesize:
+            if count == filesize:
                 # we are done
                 _netfile.close()
                 _outfile.close()
@@ -114,7 +121,9 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
         _netfile.close()
         _outfile.close()
 
-        # is it necessary ???
+        # wget waits 1 second after the first failure, 2 seconds after the
+        # the second, etc.
+        # here we will just wait 1 second each time.
         time.sleep(1)
 
     raise IOError('Failed to download file. Exceeded number of trials.')
@@ -127,6 +136,7 @@ def progress_report(bytes_so_far, total_size):
     percent = float(bytes_so_far) / total_size
     percent = round(percent*100, 2)
     sys.stdout.write("Downloaded %d of %d bytes (%0.2f%%)\r" % (bytes_so_far, total_size, percent))
+    sys.stdout.flush()
     if bytes_so_far >= total_size:
         sys.stdout.write('\n')
 
