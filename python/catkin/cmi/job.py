@@ -100,7 +100,7 @@ def create_env_file(package, context):
         # Source each package's install or devel space
         space = context.install_space if context.install else context.devel_space
         # Get the recursive dependcies
-        depends = get_cached_recursive_build_depends_in_workspace(package, context.workspace_packages)
+        depends = get_cached_recursive_build_depends_in_workspace(package, context.packages)
         # For each dep add a line to source its setup file
         source_snippet = ". {source_path} --extend\n"
         for dep_pth, dep in depends:
