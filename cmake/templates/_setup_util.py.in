@@ -37,6 +37,7 @@
 from __future__ import print_function
 import argparse
 import copy
+import errno
 import os
 import platform
 import sys
@@ -244,24 +245,36 @@ def _parse_arguments(args=None):
 
 if __name__ == '__main__':
     try:
-        args = _parse_arguments()
-    except Exception as e:
-        print(e, file=sys.stderr)
-        exit(1)
+        try:
+            args = _parse_arguments()
+        except Exception as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
 
-    # environment at generation time
-    CMAKE_PREFIX_PATH = '@CMAKE_PREFIX_PATH_AS_IS@'.split(';')
-    # prepend current workspace if not already part of CPP
-    base_path = os.path.dirname(__file__)
-    if base_path not in CMAKE_PREFIX_PATH:
-        CMAKE_PREFIX_PATH.insert(0, base_path)
-    CMAKE_PREFIX_PATH = os.pathsep.join(CMAKE_PREFIX_PATH)
+        # environment at generation time
+        CMAKE_PREFIX_PATH = '@CMAKE_PREFIX_PATH_AS_IS@'.split(';')
+        # prepend current workspace if not already part of CPP
+        base_path = os.path.dirname(__file__)
+        if base_path not in CMAKE_PREFIX_PATH:
+            CMAKE_PREFIX_PATH.insert(0, base_path)
+        CMAKE_PREFIX_PATH = os.pathsep.join(CMAKE_PREFIX_PATH)
 
-    environ = dict(os.environ)
-    lines = []
-    if not args.extend:
-        lines += rollback_env_variables(environ, ENV_VAR_SUBFOLDERS)
-    lines += prepend_env_variables(environ, ENV_VAR_SUBFOLDERS, CMAKE_PREFIX_PATH)
-    lines += find_env_hooks(environ, CMAKE_PREFIX_PATH)
-    print('\n'.join(lines))
+        environ = dict(os.environ)
+        lines = []
+        if not args.extend:
+            lines += rollback_env_variables(environ, ENV_VAR_SUBFOLDERS)
+        lines += prepend_env_variables(environ, ENV_VAR_SUBFOLDERS, CMAKE_PREFIX_PATH)
+        lines += find_env_hooks(environ, CMAKE_PREFIX_PATH)
+        print('\n'.join(lines))
+
+        # need to explicitly flush the output
+        sys.stdout.flush()
+    except IOError as e:
+        # and catch potantial "broken pipe" if stdout is not writable
+        # which can happen when piping the output to a file but the disk is full
+        if e.errno == errno.EPIPE:
+            print(e, file=sys.stderr)
+            sys.exit(2)
+        raise
+
     sys.exit(0)
