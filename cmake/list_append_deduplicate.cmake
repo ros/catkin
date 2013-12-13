@@ -8,7 +8,9 @@
 #
 macro(list_append_deduplicate listname)
   if(NOT "${ARGN}" STREQUAL "")
-    list(REMOVE_ITEM ${listname} ${ARGN})
+    if(${listname})
+      list(REMOVE_ITEM ${listname} ${ARGN})
+    endif()
     list(APPEND ${listname} ${ARGN})
   endif()
 endmacro()
