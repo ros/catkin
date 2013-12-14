@@ -50,6 +50,20 @@ if [ $? -ne 0 -o ! -f "$_SETUP_TMP" ]; then
   return 1
 fi
 CATKIN_SHELL=$CATKIN_SHELL "$_SETUP_UTIL" $@ > $_SETUP_TMP
+_RC=$?
+if [ $_RC -ne 0 ]; then
+  if [ $_RC -eq 2 ]; then
+    echo "Could not write the output of '$_SETUP_UTIL' to temporary file '$_SETUP_TMP': may be the disk if full?"
+  else
+    echo "Failed to run '\"$_SETUP_UTIL\" $@': return code $_RC"
+  fi
+  unset _RC
+  unset _SETUP_UTIL
+  rm -f $_SETUP_TMP
+  unset _SETUP_TMP
+  return 1
+fi
+unset _RC
 unset _SETUP_UTIL
 . $_SETUP_TMP
 rm -f $_SETUP_TMP
