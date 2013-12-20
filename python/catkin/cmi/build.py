@@ -430,6 +430,7 @@ def build_isolated_workspace(
             wide_log("[cmi] User interrupted, stopping.")
             set_error_state(error_state)
     # All executors have shutdown
+    sys.stdout.write("\x1b]2;\x07")
     if not errors:
         wide_log("[cmi] Finished.")
     else:
