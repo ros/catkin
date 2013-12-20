@@ -41,10 +41,10 @@ from catkin.cmi.common import run_command
 
 class ExecutorEvent(object):
     """This is returned by the Executor when terminating, possibly other times"""
-    def __init__(self, executor_id, event_type, message, package):
+    def __init__(self, executor_id, event_type, data, package):
         self.executor_id = executor_id
         self.event_type = event_type
-        self.message = message
+        self.data = data
         self.package = package
 
 
@@ -62,35 +62,46 @@ class Executor(Thread):
         self.current_job = None
         self.install_space_lock = install_lock
 
-    def log(self, msg):
-        package_name = '' if self.current_job is None else self.current_job.package.name
-        self.queue.put(ExecutorEvent(self.executor_id, 'log', msg, package_name))
-
-    def command_log(self, msg):
-        package_name = '' if self.current_job is None else self.current_job.package.name
-        self.queue.put(ExecutorEvent(self.executor_id, 'command_log', msg, package_name))
+    def job_started(self, job):
+        self.queue.put(ExecutorEvent(self.executor_id, 'job_started', {}, job.package.name))
 
     def command_started(self, cmd, location):
         package_name = '' if self.current_job is None else self.current_job.package.name
-        self.queue.put(ExecutorEvent(self.executor_id, 'command_started', (cmd, location), package_name))
+        data = {
+            'cmd': cmd,
+            'location': location
+        }
+        self.queue.put(ExecutorEvent(self.executor_id, 'command_started', data, package_name))
 
-    def command_finished(self, cmd, retcode):
+    def command_log(self, msg):
         package_name = '' if self.current_job is None else self.current_job.package.name
-        self.queue.put(ExecutorEvent(self.executor_id, 'command_finished', (cmd, retcode), package_name))
+        data = {'message': msg}
+        self.queue.put(ExecutorEvent(self.executor_id, 'command_log', data, package_name))
 
-    def command_failed(self, cmd, retcode, location):
+    def command_failed(self, cmd, location, retcode):
         package_name = '' if self.current_job is None else self.current_job.package.name
-        self.queue.put(ExecutorEvent(self.executor_id, 'command_failed', (cmd, retcode, location), package_name))
+        data = {
+            'cmd': cmd,
+            'location': location,
+            'retcode': retcode
+        }
+        self.queue.put(ExecutorEvent(self.executor_id, 'command_failed', data, package_name))
 
-    def started_new_job(self, job):
-        self.queue.put(ExecutorEvent(self.executor_id, 'job_started', '', job.package.name))
+    def command_finished(self, cmd, location, retcode):
+        package_name = '' if self.current_job is None else self.current_job.package.name
+        data = {
+            'cmd': cmd,
+            'location': location,
+            'retcode': retcode
+        }
+        self.queue.put(ExecutorEvent(self.executor_id, 'command_finished', data, package_name))
 
-    def finished_job(self, job):
-        self.queue.put(ExecutorEvent(self.executor_id, 'job_finished', '', job.package.name))
+    def job_finished(self, job):
+        self.queue.put(ExecutorEvent(self.executor_id, 'job_finished', {}, job.package.name))
 
     def quit(self):
         package_name = '' if self.current_job is None else self.current_job.package.name
-        self.queue.put(ExecutorEvent(self.executor_id, 'exit', 'Finished processing.', package_name))
+        self.queue.put(ExecutorEvent(self.executor_id, 'exit', {}, package_name))
 
     def run(self):
         try:
@@ -104,7 +115,7 @@ class Executor(Thread):
                     self.quit()
                     break
                 # Notify that a new job was started
-                self.started_new_job(self.current_job)
+                self.job_started(self.current_job)
                 # Execute each command in the job
                 for command in self.current_job:
                     install_space_locked = False
@@ -130,7 +141,7 @@ class Executor(Thread):
                                 # If the return code is not zero
                                 if retcode != 0:
                                     # Log the failure (the build loop will dispatch None's)
-                                    self.command_failed(' '.join(command.cmd), retcode, command.location)
+                                    self.command_failed(' '.join(command.cmd), command.location, retcode)
                                     # Try to consume and throw away any and all remaining jobs in the queue
                                     while self.jobs.get() is not None:
                                         pass
@@ -138,10 +149,13 @@ class Executor(Thread):
                                     self.quit()
                                     return
                                 else:
-                                    self.command_finished(' '.join(command.cmd), retcode)
+                                    self.command_finished(' '.join(command.cmd), command.location, retcode)
                     finally:
                         if install_space_locked:
                             self.install_space_lock.release()
-                self.finished_job(self.current_job)
+                self.job_finished(self.current_job)
         except KeyboardInterrupt:
-            pass
+            self.quit()
+        except Exception:
+            self.quit()
+            raise

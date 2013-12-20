@@ -60,8 +60,8 @@ from catkin.cmi.common import FakeLock
 from catkin.cmi.common import get_build_type
 from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
 from catkin.cmi.common import format_time_delta
+from catkin.cmi.common import format_time_delta_short
 from catkin.cmi.common import log
-from catkin.cmi.common import remove_ansi_escape
 from catkin.cmi.common import wide_log
 
 from catkin.cmi.executor import Executor
@@ -69,6 +69,8 @@ from catkin.cmi.executor import ExecutorEvent
 
 from catkin.cmi.job import CatkinJob
 from catkin.cmi.job import CMakeJob
+
+from catkin.cmi.output import OutputController
 
 
 def get_ready_packages(packages, running_jobs, completed):
@@ -153,7 +155,7 @@ def determine_packages_to_be_built(packages, context):
     # If there are no packages raise
     if not workspace_packages:
         sys.exit("No packages were found in the source space '{0}'".format(context.source_space))
-    log("Found '{0}' packages in '{1}'."
+    log("Found '{0}' packages in {1}."
         .format(len(workspace_packages), format_time_delta(time.time() - start)))
 
     # Order the packages by topology
@@ -165,10 +167,16 @@ def determine_packages_to_be_built(packages, context):
     packages_to_be_built_deps = []
     if packages:
         # First assert all of the packages given are in the workspace
-        workspace_package_names = [pkg.name for path, pkg in ordered_packages]
+        workspace_package_names = dict([(pkg.name, (path, pkg)) for path, pkg in ordered_packages])
         for package in packages:
             if package not in workspace_package_names:
                 sys.exit("Given package '{0}' is not in the workspace".format(package))
+            # If metapackage, include run depends which are in the workspace
+            package_obj = workspace_package_names[package][1]
+            if 'metapackage' in [e.tagname for e in package_obj.exports]:
+                for rdep in package_obj.run_depends:
+                    if rdep.name in workspace_package_names:
+                        packages.append(rdep.name)
         # Limit the packages to be built to just the provided packages
         for pkg_path, package in ordered_packages:
             if package.name in packages:
@@ -287,8 +295,11 @@ def build_isolated_workspace(
     total_packages = len(packages_to_be_built)
     package_count = 0
     running_jobs = {}
-    command_log_cache = {}
-    job_log = {}
+    log_dir = os.path.join(context.build_space, 'cmi_logs')
+    color = True
+    if not force_color and not sys.stdout.isatty():
+        color = True
+    out = OutputController(log_dir, quiet, interleave_output, color, prefix_output=(jobs == 1))
 
     # Prime the job_queue
     ready_packages = []
@@ -312,138 +323,77 @@ def build_isolated_workspace(
     error_state = False
     errors = []
 
-    # While the executors are all running, process executor events
+    def set_error_state(error_state):
+        if error_state:
+            return
+        # Set the error state to prevent new jobs
+        error_state = True
+        # Empty the job queue
+        while not job_queue.empty():
+            job_queue.get()
+        # Kill the executors by sending a None to the job queue for each of them
+        for x in range(jobs):
+            job_queue.put(None)
+
+    # While any executors are running, process executor events
     while executors:
         try:
-            # Try to get data from the communications queue
+            # Try to get an event from the communications queue
             try:
-                item = comm_queue.get(True, 0.1)
+                event = comm_queue.get(True, 0.1)
             except Empty:
-                # timeout occured
-                item = ExecutorEvent(None, None, None, None)
+                # timeout occured, create null event to pass through checks
+                event = ExecutorEvent(None, None, None, None)
 
-            # If a log event, print it
-            if item.event_type == 'log':
-                wide_log('[cmi-{executor_id}]: {message}'.format(**item.__dict__))
-
-            # If a command log, cache it and potentially print it out
-            if item.event_type == 'command_log':
-                msg = '[{package}]: {message}'.format(**item.__dict__)
-                assert item.package in command_log_cache, "command log received before command started"
-                command_log_cache[item.package].append(msg)
-                if not quiet and interleave_output:
-                    if jobs == 1:
-                        wide_log(msg[len('[{0}]: '.format(item.package)):])
-                    else:
-                        wide_log(msg)
-
-            # If a command started, print message
-            if item.event_type == 'command_started':
-                msg = "[{package}]: ==> '{message[0]}' in '{message[1]}'".format(**item.__dict__)
-                assert item.package not in command_log_cache, "command log cache entry exists, this should not happen"
-                command_log_cache[item.package] = []
-                command_log_cache[item.package].append(msg)
-                wide_log(msg)
-
-            # If a command finished or failed and interleave_output is off, print the cached output
-            if item.event_type in ['command_finished', 'command_failed'] and not interleave_output and not quiet:
-                assert item.package in command_log_cache, "command finished or failed before starting"
-                if len(command_log_cache[item.package]) > 1:
-                    wide_log("")  # Empty line
-                    wide_log("OUT [{package}]:".format(**item.__dict__))
-                    for index, line in enumerate(command_log_cache[item.package]):
-                        if index == 0:
-                            # Skip the first line (started message)
-                            continue
-                        wide_log(line[len('[{0}]: '.format(item.package)):])
-
-            # If a command finished, print message
-            if item.event_type == 'command_finished':
-                msg = ("[{package}]: <== Command '{message[0]}' finished with exit code '{message[1]}'"
-                       .format(**item.__dict__))
-                assert item.package in command_log_cache, "command finished before starting"
-                command_log_cache[item.package].append(msg)
-                assert item.package in job_log, "command failed before job started " + item.package
-                package = item.package
-                stripped_lines = [line[len('[{0}]: '.format(package)):] for line in command_log_cache[package]]
-                job_log[package].append(remove_ansi_escape('\n'.join(stripped_lines)))
-                if not quiet:
-                    wide_log(msg)
-
-            # If a command failed, shutdown everything
-            if item.event_type == 'command_failed':
-                msg = ("<== Failed to build {package}, command '{message[0]}' exited with return code '{message[1]}'"
-                       .format(**item.__dict__))
-                assert item.package in command_log_cache, "command failed before starting"
-                command_log_cache[item.package].append(msg)
-                # If quiet was on, print the error, as it has not been printed before
-                if quiet:
-                    for index, line in enumerate(command_log_cache[item.package]):
-                        if index == 0:
-                            # Skip the first line (started message)
-                            continue
-                        wide_log(line)
-                wide_log(msg)
-                errors.append(item)
-                # Remove the command from the running jobs
-                del running_jobs[item.package]
-                # Put the job output to a log file
-                assert item.package in job_log, "command failed before job started " + item.package
-                package = item.package
-                stripped_lines = [line[len('[{0}]: '.format(package)):] for line in command_log_cache[package]]
-                job_log[item.package].append(remove_ansi_escape('\n'.join(stripped_lines)))
-                write_job_log(job_log, item.package, context)
-                del job_log[item.package]
-                if not error_state:
-                    # Dispatch kill signal to executors
-                    for x in range(jobs):
-                        job_queue.put(None)
-                    # Change loop behavior to prevent new jobs
-                    error_state = True
-
-            # If a command finished or failed, clear the command log cache
-            if item.event_type in ['command_finished', 'command_failed']:
-                assert item.package in command_log_cache, "command finished or failed before starting"
-                del command_log_cache[item.package]
-
-            # If an executor exit event, join it and remove it from the executors list
-            if item.event_type == 'exit':
-                executors[item.executor_id].join()
-                del executors[item.executor_id]
-
-            # If a job started event, assign it a number and a start time
-            if item.event_type == 'job_started':
+            if event.event_type == 'job_started':
                 package_count += 1
-                running_jobs[item.package]['package_number'] = package_count
-                running_jobs[item.package]['start_time'] = time.time()
-                msg = "==> Starting build of package '{0}'".format(item.package)
-                job_log[item.package] = [msg]
-                wide_log(msg)
+                running_jobs[event.package]['package_number'] = package_count
+                running_jobs[event.package]['start_time'] = time.time()
+                out.job_started(event.package)
 
-            # If a job finished event, remove from running_jobs, move to completed, call queue_new_jobs
-            if item.event_type == 'job_finished':
-                completed_packages.append(item.package)
-                msg = "<== Finished building package '{0}', it took {1}".format(
-                    item.package,
-                    format_time_delta(time.time() - running_jobs[item.package]['start_time'])
-                )
-                assert item.package in job_log, "job finished before starting " + str(item.package)
-                job_log[item.package].append(msg)
-                wide_log(msg)
-                del running_jobs[item.package]
-                # Put the job output to a log file
-                write_job_log(job_log, item.package, context)
-                del job_log[item.package]
+            if event.event_type == 'command_started':
+                out.command_started(event.package, event.data['cmd'], event.data['location'])
+
+            if event.event_type == 'command_log':
+                out.command_log(event.package, event.data['message'])
+
+            if event.event_type == 'command_failed':
+                out.command_failed(event.package, event.data['cmd'], event.data['location'], event.data['retcode'])
+                # Add to list of errors
+                errors.append(event)
+                # Remove the command from the running jobs
+                del running_jobs[event.package]
+                # If it hasn't already been done, stop the executors
+                set_error_state(error_state)
+
+            if event.event_type == 'command_finished':
+                out.command_finished(event.package, event.data['cmd'], event.data['location'], event.data['retcode'])
+
+            if event.event_type == 'job_finished':
+                completed_packages.append(event.package)
+                run_time = format_time_delta(time.time() - running_jobs[event.package]['start_time'])
+                out.job_finished(event.package, run_time)
+                del running_jobs[event.package]
                 # If shutting down, do not add new packages
                 if error_state:
                     continue
+                # Calculate new packages
+                wide_log('[cmi] Calculating new jobs...', end='\r')
+                sys.stdout.flush()
                 ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
                 running_jobs = queue_ready_packages(ready_packages, running_jobs, job_queue, context, force_cmake)
+                wide_log('[cmi] Uh...', end='\r')
+                sys.stdout.flush()
                 # Make sure there are jobs to be/being processed, otherwise kill the executors
                 if not running_jobs:
                     # Kill the executors by sending a None to the job queue for each of them
                     for x in range(jobs):
                         job_queue.put(None)
+
+            # If an executor exit event, join it and remove it from the executors list
+            if event.event_type == 'exit':
+                executors[event.executor_id].join()
+                del executors[event.executor_id]
 
             # Update the status bar on the screen
             executing_jobs = []
@@ -451,38 +401,34 @@ def build_isolated_workspace(
                 number, job, start_time = value['package_number'], value['job'], value['start_time']
                 if number is None or start_time is None:
                     continue
-                executing_jobs.append((number, total_packages, name, format_time_delta(time.time() - start_time)))
-            msg = "[cmi {0}/{1}] ".format(len(executing_jobs), jobs)
+                executing_jobs.append({
+                    'number': number,
+                    'name': name,
+                    'run_time': format_time_delta_short(time.time() - start_time)
+                })
+            msg = "[cmi] "
             # If errors post those
             if errors:
                 for error in errors:
                     msg += "[!{0}] ".format(error.package)
             # Print them in order of started number
-            for job_msg_args in sorted(executing_jobs, key=lambda args: args[0]):
-                msg += "[{0}/{1} {2} - {3}] ".format(*job_msg_args)
+            for job_msg_args in sorted(executing_jobs, key=lambda args: args['number']):
+                msg += "[{name} - {run_time}] ".format(**job_msg_args)
+            msg_rhs = "[{0}/{1} Active | {2}/{3} Completed]".format(
+                len(executing_jobs),
+                len(executors),
+                len(completed_packages),
+                total_packages
+            )
             # Update title bar
-            job_numbers = [x[0] for x in executing_jobs]
-            if len(job_numbers) == 1:
-                sys.stdout.write("\x1b]2;[cmi] {0}/{1}\x07"
-                                 .format(job_numbers[0], total_packages))
-            elif job_numbers:
-                sys.stdout.write("\x1b]2;[cmi] {{{0}-{1}}}/{2}\x07"
-                                 .format(min(job_numbers), max(job_numbers), total_packages))
-            else:
-                sys.stdout.write("\x1b]2;[cmi]\x07")
+            sys.stdout.write("\x1b]2;[cmi] {0}/{1}\x07"
+                             .format(len(completed_packages), total_packages))
             # Update status bar
-            wide_log(msg, truncate=True, end='\r')
+            wide_log(msg, rhs=msg_rhs, end='\r')
             sys.stdout.flush()
         except KeyboardInterrupt:
             wide_log("[cmi] User interrupted, stopping.")
-            # Set the error state to prevent new jobs
-            error_state = True
-            # Empty the job queue
-            while not job_queue.empty():
-                job_queue.get()
-            # Kill the executors by sending a None to the job queue for each of them
-            for x in range(jobs):
-                job_queue.put(None)
+            set_error_state(error_state)
     # All executors have shutdown
     if not errors:
         wide_log("[cmi] Finished.")
@@ -492,7 +438,7 @@ def build_isolated_workspace(
             wide_log(("""
 Failed to build package '{package}' because the following command:
 
-    # Command run in '{message[2]}' directory
-    {message[0]}
+    # Command run in '{location}' directory
+    {cmd}
 
-Exited with return code: {message[1]}""").format(**error.__dict__))
+Exited with return code: {retcode}""").format(package=error.package, **error.data))

@@ -148,7 +148,10 @@ def list_only(context, packages, no_deps):
     log("Packages to be built:")
     max_name_len = str(max([len(pkg.name) for pth, pkg in packages_to_be_built]))
     for pkg_path, pkg in packages_to_be_built:
-        log(("- {name:<" + max_name_len + "} ({build_type})").format(name=pkg.name, build_type=get_build_type(pkg)))
+        build_type = get_build_type(pkg)
+        if build_type == 'catkin' and 'metapackage' in [e.tagname for e in pkg.exports]:
+            build_type = 'metapackage'
+        log(("- {name:<" + max_name_len + "} ({build_type})").format(name=pkg.name, build_type=build_type))
     log("Total packages: " + str(len(packages_to_be_built)))
 
 

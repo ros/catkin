@@ -126,8 +126,27 @@ def extract_jobs_flags(mflags):
 
 
 def format_time_delta(delta):
-    hours, minutes, seconds = str(datetime.timedelta(seconds=delta)).split(':')
-    msg = "" if int(hours) == 0 else (hours + ":")
+    days = "0"
+    date_str = str(datetime.timedelta(seconds=delta))
+    if ', ' in date_str:
+        days, date_str = date_str.split(', ')
+    hours, minutes, seconds = date_str.split(':')
+    msg = "" if int(days.split(' ')[0]) == 0 else days + " "
+    msg += "" if int(hours) == 0 else (hours + " hour{0} ".format('' if int(hours) <= 1 else 's'))
+    msg += "" if int(minutes) == 0 else ("{0} minute{1} and ".format(int(minutes), '' if int(minutes) <= 1 else 's'))
+    msg += "{0:.1f}".format(float(seconds))
+    msg += " seconds"
+    return msg
+
+
+def format_time_delta_short(delta):
+    days = "0"
+    date_str = str(datetime.timedelta(seconds=delta))
+    if ', ' in date_str:
+        days, date_str = date_str.split(', ')
+    hours, minutes, seconds = date_str.split(':')
+    msg = "" if int(days.split(' ')[0]) == 0 else days + " "
+    msg += "" if int(hours) == 0 else (hours + ":")
     msg += "" if int(minutes) == 0 else (minutes + ":")
     msg += ("{0:.1f}" if int(minutes) == 0 else "{0:04.1f}").format(float(seconds))
     return msg
@@ -274,12 +293,18 @@ def remove_ansi_escape(string):
 
 def wide_log(msg, **kwargs):
     width = terminal_width()
+    rhs = ''
+    if 'rhs' in kwargs:
+        rhs = ' ' + kwargs['rhs']
+        del kwargs['rhs']
+    if rhs:
+        kwargs['truncate'] = True
     if 'truncate' in kwargs:
         if kwargs['truncate'] and len(msg) >= width - 1:
-            msg = msg[:width - 4] + '...'
+            msg = msg[:width - len(rhs) - 4] + '...'
         del kwargs['truncate']
-    if len(msg) < width:
-        log(msg + (' ' * (width - len(remove_ansi_escape(msg)) - 1)), **kwargs)
+    if len(msg) + len(rhs) < width:
+        log(msg + (' ' * (width - len(remove_ansi_escape(msg)) - len(rhs) - 1)) + rhs, **kwargs)
     else:
         log(msg, **kwargs)
 
