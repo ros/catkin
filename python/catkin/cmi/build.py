@@ -299,7 +299,7 @@ def build_isolated_workspace(
     color = True
     if not force_color and not sys.stdout.isatty():
         color = True
-    out = OutputController(log_dir, quiet, interleave_output, color, prefix_output=(jobs == 1))
+    out = OutputController(log_dir, quiet, interleave_output, color, prefix_output=(jobs > 1))
 
     # Prime the job_queue
     ready_packages = []

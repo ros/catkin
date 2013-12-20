@@ -108,7 +108,7 @@ class OutputController(object):
                                .format(package, msg))
         self.__command_log[package].append(msg)
         if not self.quiet and self.interleave:
-            if self.prefix_output:
+            if self.interleave and self.prefix_output:
                 wide_log('[{package}]: {msg}'.format(**locals()))
             else:
                 wide_log(msg)
@@ -140,7 +140,7 @@ class OutputController(object):
                 .format(package, cmd, location, retcode))
         msg = "[{package}]: <== '{cmd}' in '{location}' finished with return code '{retcode}'".format(**locals())
         self.__command_log[package].finish_command(msg)
-        if not self.quiet and self.interleave:
+        if not self.quiet and not self.interleave:
             self.__command_log[package].print_log()
 
     def job_finished(self, package, time):
