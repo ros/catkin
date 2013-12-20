@@ -99,9 +99,13 @@ class Executor(Thread):
     def job_finished(self, job):
         self.queue.put(ExecutorEvent(self.executor_id, 'job_finished', {}, job.package.name))
 
-    def quit(self):
+    def quit(self, exc=None):
         package_name = '' if self.current_job is None else self.current_job.package.name
-        self.queue.put(ExecutorEvent(self.executor_id, 'exit', {}, package_name))
+        data = {
+            'reason': 'normal' if exc is None else 'exception',
+            'exc': str(exc)
+        }
+        self.queue.put(ExecutorEvent(self.executor_id, 'exit', data, package_name))
 
     def run(self):
         try:
@@ -156,6 +160,7 @@ class Executor(Thread):
                 self.job_finished(self.current_job)
         except KeyboardInterrupt:
             self.quit()
-        except Exception:
-            self.quit()
+        except Exception as exc:
+            import traceback
+            self.quit(traceback.format_exc() + str(exc))
             raise

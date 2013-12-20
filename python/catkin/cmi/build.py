@@ -392,6 +392,11 @@ def build_isolated_workspace(
 
             # If an executor exit event, join it and remove it from the executors list
             if event.event_type == 'exit':
+                # If an executor has an exception, set the error state
+                if event.data['reason'] == 'exception':
+                    set_error_state(error_state)
+                    errors.append(event)
+                # Join and remove it
                 executors[event.executor_id].join()
                 del executors[event.executor_id]
 
@@ -436,10 +441,16 @@ def build_isolated_workspace(
     else:
         wide_log("[cmi] There were errors:")
         for error in errors:
-            wide_log(("""
+            if error.event_type == 'exit':
+                wide_log("""Executor '{exec_id}' had an unhandle exception while processing package '{package}':
+
+{data[exc]}
+""".format(exec_id=error.executor_id + 1, **error.__dict__))
+            else:
+                wide_log("""
 Failed to build package '{package}' because the following command:
 
     # Command run in '{location}' directory
     {cmd}
 
-Exited with return code: {retcode}""").format(package=error.package, **error.data))
+Exited with return code: {retcode}""".format(package=error.package, **error.data))
