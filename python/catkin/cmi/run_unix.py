@@ -37,6 +37,7 @@ import os
 import pty
 import select
 import sys
+import time
 
 from subprocess import Popen
 from subprocess import STDOUT
@@ -57,7 +58,16 @@ def process_incomming_lines(lines, left_over):
 def run_command(cmd, cwd=None):
     master, slave = pty.openpty()
 
-    p = Popen(cmd, stdin=slave, stdout=slave, stderr=STDOUT, cwd=cwd)
+    p = None
+    while p is None:
+        try:
+            p = Popen(cmd, stdin=slave, stdout=slave, stderr=STDOUT, cwd=cwd)
+        except OSError as exc:
+            if 'Text file busy' in str(exc):
+                # This is a transient error, try again shortly
+                time.sleep(0.01)
+                continue
+            raise
     if sys.platform.startswith('darwin'):
         os.close(slave)  # This causes the below select to exit when the subprocess closes
 

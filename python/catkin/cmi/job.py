@@ -35,6 +35,7 @@ from __future__ import print_function
 
 import os
 import stat
+import tempfile
 
 from catkin.cmi.common import create_build_space
 from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
@@ -203,10 +204,12 @@ class CMakeJob(Job):
         setup_file_directory = os.path.dirname(setup_file_path)
         if not os.path.exists(setup_file_directory):
             os.makedirs(setup_file_directory)
-        with open(setup_file_path, 'w') as file_handle:
+        temp_setup_file_dir = tempfile.mkdtemp()
+        temp_setup_file_path = os.path.join(temp_setup_file_dir, 'setup.sh')
+        with open(temp_setup_file_path, 'w') as file_handle:
             file_handle.write("""\
 #!/usr/bin/env sh
-# generated from catkin.builder module
+# generated from catkin.cmi.job module
 
 # remember type of shell if not already set
 if [ -z "$CATKIN_SHELL" ]; then
@@ -231,6 +234,8 @@ export PATH="{path}$PATH"
 export PKG_CONFIG_PATH="{pkgcfg_path}$PKG_CONFIG_PATH"
 export PYTHONPATH="{pythonpath}$PYTHONPATH"
 """.format(**subs))
+        os.rename(temp_setup_file_path, setup_file_path)
+        os.rmdir(temp_setup_file_dir)
         return commands
 
 
