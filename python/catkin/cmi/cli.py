@@ -38,6 +38,8 @@ import re
 import sys
 import time
 
+from catkin.cmi.color import clr
+
 from catkin.cmi.common import extract_cmake_and_make_and_catkin_make_arguments
 from catkin.cmi.common import extract_jobs_flags
 from catkin.cmi.common import format_time_delta
@@ -147,15 +149,15 @@ def list_only(context, packages, no_deps, start_with):
     # Print packages
     log("Packages to be built:")
     max_name_len = str(max([len(pkg.name) for pth, pkg in packages_to_be_built]))
-    prefix = '------ ' if start_with else '- '
+    prefix = clr('@{pf}' + ('------ ' if start_with else '- ') + '@|')
     for pkg_path, pkg in packages_to_be_built:
         build_type = get_build_type(pkg)
         if build_type == 'catkin' and 'metapackage' in [e.tagname for e in pkg.exports]:
             build_type = 'metapackage'
         if start_with and pkg.name == start_with:
             start_with = None
-        log(("{prefix}{name:<" + max_name_len + "} ({build_type})")
-            .format(prefix='(skip) ' if start_with else prefix, name=pkg.name, build_type=build_type))
+        log(clr("{prefix}@{cf}{name:<" + max_name_len + "}@| (@{yf}{build_type}@|)")
+            .format(prefix=clr('@!@{kf}(skip)@| ') if start_with else prefix, name=pkg.name, build_type=build_type))
     log("Total packages: " + str(len(packages_to_be_built)))
 
 
