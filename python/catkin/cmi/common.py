@@ -45,6 +45,8 @@ if os.name == 'nt':
 else:
     import catkin.cmi.run_unix as run
 
+from catkin.cmi.color import clr
+
 # Get platform specific run command
 run_command = run.run_command
 
@@ -285,10 +287,24 @@ def terminal_width():
     """Returns the estimated width of the terminal"""
     return terminal_width_windows() if os.name == 'nt' else terminal_width_linux()
 
+_ansi_escape = re.compile(r'\x1b[^m]*m')
+
 
 def remove_ansi_escape(string):
-    ansi_escape = re.compile(r'\x1b[^m]*m')
-    return ansi_escape.sub('', string)
+    global _ansi_escape
+    return _ansi_escape.sub('', string)
+
+
+def slice_to_printed_length(string, length):
+    global _ansi_escape
+    lookup_arry = []
+    current_index = 0
+    for m in _ansi_escape.finditer(string):
+        for x in range(m.start() - current_index):
+            lookup_arry.append(current_index)
+            current_index += 1
+        current_index += len(m.group())
+    return string[:lookup_arry[length]] + clr('@|')
 
 
 def wide_log(msg, **kwargs):
@@ -303,7 +319,7 @@ def wide_log(msg, **kwargs):
     msg_len = len(remove_ansi_escape(msg))
     if 'truncate' in kwargs:
         if kwargs['truncate'] and msg_len >= width - 1:
-            msg = msg[:width - rhs_len - 4] + '...'
+            msg = slice_to_printed_length(msg, width - rhs_len - 4) + '...'
             msg_len = len(remove_ansi_escape(msg))
         del kwargs['truncate']
     if msg_len + rhs_len < width:
