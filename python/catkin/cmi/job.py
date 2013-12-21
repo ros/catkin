@@ -306,5 +306,5 @@ class CatkinJob(Job):
         ))
         # Make install command, if installing
         if self.context.install:
-            commands.append(InstallCommand([env_cmd, MAKE_EXEC, 'install'], build_space))
+            commands.append(InstallCommand(env_cmd, [MAKE_EXEC, 'install'], build_space))
         return commands
