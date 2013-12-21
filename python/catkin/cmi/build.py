@@ -56,6 +56,8 @@ except ImportError as e:
         '"catkin_pkg", and that it is up to date and on the PYTHONPATH.' % e
     )
 
+from catkin.cmi.color import clr
+
 from catkin.cmi.common import FakeLock
 from catkin.cmi.common import get_build_type
 from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
@@ -415,11 +417,11 @@ def build_isolated_workspace(
             # If errors post those
             if errors:
                 for error in errors:
-                    msg += "[!{0}] ".format(error.package)
+                    msg += clr("[!{package}] ").format(package=error.package)
             # Print them in order of started number
             for job_msg_args in sorted(executing_jobs, key=lambda args: args['number']):
-                msg += "[{name} - {run_time}] ".format(**job_msg_args)
-            msg_rhs = "[{0}/{1} Active | {2}/{3} Completed]".format(
+                msg += clr("[{name} - {run_time}] ").format(**job_msg_args)
+            msg_rhs = clr("[{0}/{1} Active | {2}/{3} Completed]").format(
                 len(executing_jobs),
                 len(executors),
                 len(completed_packages),
@@ -438,8 +440,9 @@ def build_isolated_workspace(
     sys.stdout.write("\x1b]2;\x07")
     if not errors:
         wide_log("[cmi] Finished.")
+        return 0
     else:
-        wide_log("[cmi] There were errors:")
+        wide_log(clr("[cmi] There were @!@{rf}errors@|:"))
         for error in errors:
             if error.event_type == 'exit':
                 wide_log("""Executor '{exec_id}' had an unhandle exception while processing package '{package}':
@@ -447,10 +450,11 @@ def build_isolated_workspace(
 {data[exc]}
 """.format(exec_id=error.executor_id + 1, **error.__dict__))
             else:
-                wide_log("""
-Failed to build package '{package}' because the following command:
+                wide_log(clr("""
+@{rf}Failed@| to build package '@{cf}{package}@|' because the following command:
 
-    # Command run in '{location}' directory
-    {cmd}
+    @!@{kf}# Command run in directory: @|{location}
+    {cmd.cmd_str}
 
-Exited with return code: {retcode}""".format(package=error.package, **error.data))
+@{rf}Exited@| with return code: @!{retcode}@|""").format(package=error.package, **error.data))
+        sys.exit(1)

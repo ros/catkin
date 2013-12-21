@@ -35,6 +35,8 @@ from __future__ import print_function
 
 import os
 
+from catkin.cmi.color import clr
+
 from catkin.cmi.common import remove_ansi_escape
 from catkin.cmi.common import wide_log
 
@@ -49,14 +51,18 @@ class FileBackedLogCache(object):
             os.makedirs(self.log_dir)
         self.file_handle = open(self.log_path, 'w')
         self.current_cmd = None
+        self.last_command_line = None
+        self.current_line = 0
 
     def start_command(self, cmd, msg):
+        self.last_command_line = self.current_line
         self.current_cmd = cmd
         self.append(msg)
 
     def append(self, msg):
         self.file_handle.write(msg + '\n')
         self.file_handle.flush()
+        self.current_line += 1
 
     def finish_command(self, msg):
         self.current_cmd = None
@@ -66,10 +72,15 @@ class FileBackedLogCache(object):
         self.file_handle.close()
         self.file_handle = None
 
-    def print_log(self):
+    def print_last_command_log(self):
         wide_log("")
         with open(self.log_path, 'r') as f:
+            line_number = 0
             for line in f:
+                if line_number is not None and line_number != self.last_command_line:
+                    line_number += 1
+                    continue
+                line_number = None
                 if not self.color:
                     wide_log(remove_ansi_escape(line.rstrip('\n')))
                 else:
@@ -88,13 +99,13 @@ class OutputController(object):
 
     def job_started(self, package):
         self.__command_log[package] = FileBackedLogCache(package, self.log_dir, self.color)
-        wide_log("Starting ==> {package}".format(**locals()))
+        wide_log(clr("Starting ==> {package}").format(**locals()))
 
     def command_started(self, package, cmd, location):
         if package not in self.__command_log:
             raise RuntimeError("Command started received for package '{0}' before package job started: '{1}' in '{2}'"
-                               .format(package, cmd, location))
-        msg = "[{package}]: ==> '{cmd}' in '{location}'".format(**locals())
+                               .format(package, cmd.pretty, location))
+        msg = clr("[{package}]: ==> '{cmd.cmd_str}' in '{location}'").format(**locals())
         self.__command_log[package].start_command(cmd, msg)
         if not self.quiet and self.interleave:
             wide_log(msg)
@@ -107,9 +118,11 @@ class OutputController(object):
             raise RuntimeError("Command log received for package '{0}' before command started: '{1}'"
                                .format(package, msg))
         self.__command_log[package].append(msg)
+        if not self.color:
+            msg = remove_ansi_escape(msg)
         if not self.quiet and self.interleave:
             if self.interleave and self.prefix_output:
-                wide_log('[{package}]: {msg}'.format(**locals()))
+                wide_log(clr("[{package}]: {msg}").format(**locals()))
             else:
                 wide_log(msg)
 
@@ -117,35 +130,33 @@ class OutputController(object):
         if package not in self.__command_log:
             raise RuntimeError(
                 "Command failed received for package '{0}' before package job started: '{1}' in '{2}' returned '{3}'"
-                .format(package, cmd, location, retcode))
+                .format(package, cmd.pretty, location, retcode))
         if self.__command_log[package].current_cmd is None:
             raise RuntimeError(
                 "Command failed received for package '{0}' before command started: '{1}' in '{2}' returned '{3}'"
-                .format(package, cmd, location, retcode))
-        msg = "[{package}]: <== '{cmd}' in '{location}' failed with return code '{retcode}'".format(**locals())
+                .format(package, cmd.pretty, location, retcode))
+        msg = clr("[{package}]: <== '{cmd.cmd_str}' failed with return code '{retcode}'").format(**locals())
         self.__command_log[package].finish_command(msg)
         self.__command_log[package].close()
         if not self.interleave:
-            self.__command_log[package].print_log()
+            self.__command_log[package].print_last_command_log()
         del self.__command_log[package]
 
     def command_finished(self, package, cmd, location, retcode):
         if package not in self.__command_log:
             raise RuntimeError(
                 "Command finished received for package '{0}' before package job started: '{1}' in '{2}' returned '{3}'"
-                .format(package, cmd, location, retcode))
+                .format(package, cmd.pretty, location, retcode))
         if self.__command_log[package].current_cmd is None:
             raise RuntimeError(
                 "Command finished received for package '{0}' before command started: '{1}' in '{2}' returned '{3}'"
-                .format(package, cmd, location, retcode))
-        msg = "[{package}]: <== '{cmd}' in '{location}' finished with return code '{retcode}'".format(**locals())
+                .format(package, cmd.pretty, location, retcode))
+        msg = clr("[{package}]: <== '{cmd.cmd_str}' finished with return code '{retcode}'").format(**locals())
         self.__command_log[package].finish_command(msg)
         if not self.quiet and not self.interleave:
-            self.__command_log[package].print_log()
+            self.__command_log[package].print_last_command_log()
 
     def job_finished(self, package, time):
         self.__command_log[package].close()
-        if not self.quiet and not self.interleave:
-            self.__command_log[package].print_log()
         del self.__command_log[package]
-        wide_log("Finished <== {package} [ {time} ]".format(**locals()))
+        wide_log(clr("Finished <== {package} [ {time} ]").format(**locals()))

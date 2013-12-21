@@ -35,6 +35,8 @@ from __future__ import print_function
 
 from threading import Thread
 
+from catkin.cmi.color import colorize_cmake
+
 from catkin.cmi.common import remove_ansi_escape
 from catkin.cmi.common import run_command
 
@@ -128,7 +130,7 @@ class Executor(Thread):
                         install_space_locked = True
                     try:
                         # Log that the command being run
-                        self.command_started(' '.join(command.cmd), command.location)
+                        self.command_started(command, command.location)
                         # Receive lines from the running command
                         for line in run_command(command.cmd, cwd=command.location):
                             # If it is a string, log it
@@ -138,6 +140,8 @@ class Executor(Thread):
                                     for sub_line in line.split('\n'):
                                         sub_line = sub_line.rstrip()
                                         if sub_line:
+                                            if command.stage_name == 'cmake':
+                                                sub_line = colorize_cmake(sub_line)
                                             self.command_log(sub_line)
                             else:
                                 # Otherwise it is a return code
@@ -145,7 +149,7 @@ class Executor(Thread):
                                 # If the return code is not zero
                                 if retcode != 0:
                                     # Log the failure (the build loop will dispatch None's)
-                                    self.command_failed(' '.join(command.cmd), command.location, retcode)
+                                    self.command_failed(command, command.location, retcode)
                                     # Try to consume and throw away any and all remaining jobs in the queue
                                     while self.jobs.get() is not None:
                                         pass
@@ -153,7 +157,7 @@ class Executor(Thread):
                                     self.quit()
                                     return
                                 else:
-                                    self.command_finished(' '.join(command.cmd), command.location, retcode)
+                                    self.command_finished(command, command.location, retcode)
                     finally:
                         if install_space_locked:
                             self.install_space_lock.release()

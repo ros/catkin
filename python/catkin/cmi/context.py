@@ -37,6 +37,10 @@ from __future__ import print_function
 
 import os
 
+from catkin.cmi.color import clr
+
+from catkin.cmi.common import remove_ansi_escape
+
 
 # TODO: extend builtin prototype to handle locking
 class Context(object):
@@ -116,21 +120,21 @@ class Context(object):
     def summary(self):
         summary = [
             [
-                "Workspace:                   {_Context__workspace}",
-                "Buildspace:                  {_Context__build_space}",
-                "Develspace:                  {_Context__devel_space}",
-                "Installspace:                {_Context__install_space}",
-                "DESTDIR:                     {_Context__destdir}"
+                clr("@{cf}Workspace:@|                   @{yf}{_Context__workspace}@|"),
+                clr("@{cf}Buildspace:@|                  @{yf}{_Context__build_space}@|"),
+                clr("@{cf}Develspace:@|                  @{yf}{_Context__devel_space}@|"),
+                clr("@{cf}Installspace:@|                @{yf}{_Context__install_space}@|"),
+                clr("@{cf}DESTDIR:@|                     @{yf}{_Context__destdir}@|"),
             ],
             [
-                "Merge Develspaces:           {_Context__merge_devel}",
-                "Install Packages:            {_Context__install}",
-                "Isolate Installs:            {_Context__isolate_install}"
+                clr("@{cf}Merge Develspaces:@|           @{yf}{_Context__merge_devel}@|"),
+                clr("@{cf}Install Packages:@|            @{yf}{_Context__install}@|"),
+                clr("@{cf}Isolate Installs:@|            @{yf}{_Context__isolate_install}@|"),
             ],
             [
-                "Additional CMake Args:       {cmake_args}",
-                "Additional Make Args:        {make_args}",
-                "Additional catkin Make Args: {catkin_make_args}"
+                clr("@{cf}Additional CMake Args:@|       @{yf}{cmake_args}@|"),
+                clr("@{cf}Additional Make Args:@|        @{yf}{make_args}@|"),
+                clr("@{cf}Additional catkin Make Args:@| @{yf}{catkin_make_args}@|"),
             ]
         ]
         subs = {
@@ -144,9 +148,10 @@ class Context(object):
         for group in summary:
             for index, line in enumerate(group):
                 group[index] = line.format(**subs)
-                max_length = max(max_length, len(line))
+                max_length = max(max_length, len(remove_ansi_escape(group[index])))
             groups.append("\n".join(group))
-        return ('-' * max_length) + "\n" + ("\n" + ('-' * max_length) + "\n").join(groups) + "\n" + ('-' * max_length)
+        divider = clr('@{pf}' + ('-' * max_length) + '@|')
+        return divider + "\n" + ("\n" + divider + "\n").join(groups) + "\n" + divider
 
     @property
     def workspace(self):

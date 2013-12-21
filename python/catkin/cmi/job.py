@@ -54,18 +54,40 @@ if MAKE_EXEC is None:
 class Command(object):
     """Single command which is part of a job"""
     lock_install_space = False
+    stage_name = ''
 
-    def __init__(self, cmd, location):
-        self.cmd = cmd
+    def __init__(self, env_loader, cmd, location):
+        self.cmd = [env_loader] + cmd
+        self.cmd_str = ' '.join(self.cmd)
+        self.executable = os.path.basename(cmd[0])
+        self.pretty = ' '.join([self.executable] + cmd[1:])
+        self.plain_cmd = cmd
+        self.plain_cmd_str = ' '.join(self.plain_cmd)
+        self.env_loader = env_loader
         self.location = location
 
 
-class InstallCommand(Command):
+class MakeCommand(Command):
+    stage_name = 'make'
+
+    def __init__(self, env_loader, cmd, location):
+        super(MakeCommand, self).__init__(env_loader, cmd, location)
+
+
+class CMakeCommand(Command):
+    stage_name = 'cmake'
+
+    def __init__(self, env_loader, cmd, location):
+        super(CMakeCommand, self).__init__(env_loader, cmd, location)
+
+
+class InstallCommand(MakeCommand):
     """Command which touches the install space"""
     lock_install_space = True
+    stage_name = 'make install'
 
-    def __init__(self, cmd, location):
-        super(InstallCommand, self).__init__(cmd, location)
+    def __init__(self, env_loader, cmd, location):
+        super(InstallCommand, self).__init__(env_loader, cmd, location)
 
 
 class Job(object):
@@ -163,9 +185,9 @@ class CMakeJob(Job):
         # CMake command
         makefile_path = os.path.join(build_space, 'Makefile')
         if not os.path.isfile(makefile_path) or self.force_cmake:
-            commands.append(Command(
+            commands.append(CMakeCommand(
+                env_cmd,
                 [
-                    env_cmd,
                     CMAKE_EXEC,
                     pkg_dir,
                     '-DCMAKE_INSTALL_PREFIX=' + install_target
@@ -174,14 +196,15 @@ class CMakeJob(Job):
             ))
             commands[-1].cmd.extend(self.context.cmake_args)
         else:
-            commands.append(Command([env_cmd, MAKE_EXEC, 'cmake_check_build_system'], build_space))
+            commands.append(MakeCommand(env_cmd, [MAKE_EXEC, 'cmake_check_build_system'], build_space))
         # Make command
-        commands.append(Command(
-            [env_cmd, MAKE_EXEC] + handle_make_arguments(self.context.make_args),
+        commands.append(MakeCommand(
+            env_cmd,
+            [MAKE_EXEC] + handle_make_arguments(self.context.make_args),
             build_space
         ))
         # Make install command (always run on plain cmake)
-        commands.append(InstallCommand([env_cmd, MAKE_EXEC, 'install'], build_space))
+        commands.append(InstallCommand(env_cmd, [MAKE_EXEC, 'install'], build_space))
         # Determine the location of where the setup.sh file should be created
         if self.context.install:
             setup_file_path = os.path.join(install_space, 'setup.sh')
@@ -263,9 +286,9 @@ class CatkinJob(Job):
         # CMake command
         makefile_path = os.path.join(build_space, 'Makefile')
         if not os.path.isfile(makefile_path) or self.force_cmake:
-            commands.append(Command(
+            commands.append(CMakeCommand(
+                env_cmd,
                 [
-                    env_cmd,
                     CMAKE_EXEC,
                     pkg_dir,
                     '-DCATKIN_DEVEL_PREFIX=' + devel_space,
@@ -274,10 +297,11 @@ class CatkinJob(Job):
                 build_space
             ))
         else:
-            commands.append(Command([env_cmd, MAKE_EXEC, 'cmake_check_build_system'], build_space))
+            commands.append(MakeCommand(env_cmd, [MAKE_EXEC, 'cmake_check_build_system'], build_space))
         # Make command
-        commands.append(Command(
-            [env_cmd, MAKE_EXEC] + handle_make_arguments(self.context.make_args),
+        commands.append(MakeCommand(
+            env_cmd,
+            [MAKE_EXEC] + handle_make_arguments(self.context.make_args),
             build_space
         ))
         # Make install command, if installing

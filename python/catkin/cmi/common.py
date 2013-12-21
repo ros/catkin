@@ -299,12 +299,15 @@ def wide_log(msg, **kwargs):
         del kwargs['rhs']
     if rhs:
         kwargs['truncate'] = True
+    rhs_len = len(remove_ansi_escape(rhs))
+    msg_len = len(remove_ansi_escape(msg))
     if 'truncate' in kwargs:
-        if kwargs['truncate'] and len(msg) >= width - 1:
-            msg = msg[:width - len(rhs) - 4] + '...'
+        if kwargs['truncate'] and msg_len >= width - 1:
+            msg = msg[:width - rhs_len - 4] + '...'
+            msg_len = len(remove_ansi_escape(msg))
         del kwargs['truncate']
-    if len(msg) + len(rhs) < width:
-        log(msg + (' ' * (width - len(remove_ansi_escape(msg)) - len(rhs) - 1)) + rhs, **kwargs)
+    if msg_len + rhs_len < width:
+        log(msg + (' ' * (width - msg_len - rhs_len - 1)) + rhs, **kwargs)
     else:
         log(msg, **kwargs)
 

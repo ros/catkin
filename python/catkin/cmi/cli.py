@@ -183,7 +183,7 @@ def main(sysargs=None):
 
     start = time.time()
     try:
-        build_isolated_workspace(
+        return build_isolated_workspace(
             context,
             packages=opts.packages,
             start_with=opts.start_with,
