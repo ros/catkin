@@ -11,19 +11,19 @@ function(catkin_generate_environment)
   endif()
 
   # generate Python setup util
-  configure_file(${catkin_EXTRAS_DIR}/templates/_setup_util.py.in
+  atomic_configure_file(${catkin_EXTRAS_DIR}/templates/_setup_util.py.in
     ${CATKIN_DEVEL_PREFIX}/_setup_util.py
     @ONLY)
 
   if(NOT WIN32)
     # non-windows
     # generate env
-    configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
+    atomic_configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
       ${CATKIN_DEVEL_PREFIX}/env.sh
       @ONLY)
     # generate setup for various shells
     foreach(shell bash sh zsh)
-      configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
+      atomic_configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
         ${CATKIN_DEVEL_PREFIX}/setup.${shell}
         @ONLY)
     endforeach()
@@ -31,17 +31,17 @@ function(catkin_generate_environment)
   else()
     # windows
     # generate env
-    configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
+    atomic_configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
       ${CATKIN_DEVEL_PREFIX}/env.bat
       @ONLY)
     # generate setup
-    configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.in
+    atomic_configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.in
       ${CATKIN_DEVEL_PREFIX}/setup.bat
       @ONLY)
   endif()
 
   # generate rosinstall file referencing setup.sh
-  configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
+  atomic_configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
     ${CATKIN_DEVEL_PREFIX}/.rosinstall
     @ONLY)
 

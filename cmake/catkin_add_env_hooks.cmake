@@ -83,7 +83,7 @@ function(catkin_add_env_hooks file_prefix)
       else()
         set(in_template ${base}.in)
       endif()
-      configure_file(${in_template}
+      atomic_configure_file(${in_template}
         ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d/${ENV_HOOK}
         @ONLY)
     elseif (EXISTS ${base})

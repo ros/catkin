@@ -110,7 +110,7 @@ function(catkin_python_setup)
       message(FATAL_ERROR "The script '${name}' as listed in 'setup.py' of '${PROJECT_NAME}' doesn't exist")
     endif()
     set(PYTHON_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/${script})
-    configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
+    atomic_configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
       ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${name}
       @ONLY)
   endforeach()

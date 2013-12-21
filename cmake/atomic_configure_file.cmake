@@ -1,0 +1,5 @@
+function(atomic_configure_file input output)
+  set(atomic_file "${CMAKE_BINARY_DIR}/atomic_configure_file")
+  configure_file("${input}" "${atomic_file}" ${ARGN})
+  file(RENAME "${atomic_file}" "${output}")
+endfunction()
