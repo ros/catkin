@@ -76,8 +76,6 @@ def colorize_cmake(line):
         if ':' in cline:
             split_cline = cline.split(':')
             cline = split_cline[0] + ':@{yf}' + ':'.join(split_cline[1:]) + '@|'
-        cline = cline.replace('-- works', '@!-- works@|')
-        cline = cline.replace('- done', '@!- done@|')
     if line.lower().startswith('warning'):
         # WARNING
         cline = fmt('@{yf}') + cline
