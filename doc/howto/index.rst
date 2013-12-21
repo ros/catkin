@@ -53,12 +53,12 @@ headers, and other objects.  Various targets require special handling.
    installing_other
 
 
-Configuring unit tests
-----------------------
+Configuring and running unit tests
+----------------------------------
 
 All configuration steps related to testing should be only done
 conditionally if ``CATKIN_ENABLE_TESTING`` is set (which is true by
-default).  Passing -DCATKIN_ENABLE_TESTING=0 to CMake enables to
+default).  Passing ``-DCATKIN_ENABLE_TESTING=0`` to CMake enables to
 configure and build packages without any testing overhead.
 
 If the CMake configuration of packages fails because they use test
@@ -73,3 +73,4 @@ but providing mock functions in order to not break the build.
    gtest_configuration
    python_nose_configuration
    rostest_configuration
+   run_tests

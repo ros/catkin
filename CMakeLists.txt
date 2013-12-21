@@ -22,9 +22,6 @@ install(FILES cmake/Modules/eigen-config.cmake cmake/Modules/eigen-config-versio
   DESTINATION share/eigen/cmake
 )
 
-# install catkin scripts
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/bin)
-
 # install cmake files for catkin (except some files only used at build time of catkin)
 install(DIRECTORY cmake
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}

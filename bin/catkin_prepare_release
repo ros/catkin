@@ -13,7 +13,7 @@ from catkin_pkg.package_version import bump_version
 from catkin_pkg.packages import find_packages, verify_equal_package_versions
 
 # find the import relatively if available to work before installing catkin or overlaying installed version
-if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
+if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catkin', '__init__.py')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from catkin.package_version import get_forthcoming_label, update_versions, update_changelog_sections
 from catkin.terminal_color import disable_ANSI_colors, fmt
@@ -238,7 +238,7 @@ def main():
             raise RuntimeError(fmt("@{rf}Aborted release, fix the names of the packages."))
 
     local_modifications = []
-    for pkg_path, package in packages.iteritems():
+    for pkg_path, package in packages.items():
         # verify that the package.xml files don't have modifications pending
         package_xml_path = os.path.join(pkg_path, PACKAGE_MANIFEST_FILENAME)
         if has_changes(base_path, package_xml_path, vcs_type):
@@ -261,7 +261,7 @@ def main():
     # check for changelog entries
     missing_changelogs = []
     missing_changelogs_but_forthcoming = {}
-    for pkg_path, package in packages.iteritems():
+    for pkg_path, package in packages.items():
         changelog_path = os.path.join(pkg_path, CHANGELOG_FILENAME)
         if not os.path.exists(changelog_path):
             missing_changelogs.append(package.name)

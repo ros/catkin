@@ -14,10 +14,10 @@ function _catkin_make()
 
     if [[ "$cur" == -DCMAKE_BUILD_TYPE=* ]]; then
         # autocomplete CMake argument CMAKE_BUILD_TYPE with its options
-        COMPREPLY=( $( compgen -W "None Debug Release RelWithDebInfo MinSizeRel" -- "${cur:19}" ) )
+        COMPREPLY=( $( compgen -P "-DCMAKE_BUILD_TYPE=" -W "None Debug Release RelWithDebInfo MinSizeRel" -- "${cur:19}" ) )
     elif [[ "$cur" == -DCATKIN_ENABLE_TESTING=* ]]; then
         # autocomplete catkin argument CATKIN_ENABLE_TESTING with its options
-        COMPREPLY=( $( compgen -W "0 1" -- "${cur:24}" ) )
+        COMPREPLY=( $( compgen -P "-DCATKIN_ENABLE_TESTING=" -W "0 1" -- "${cur:24}" ) )
     elif [[ "$cur" == -DCATKIN_DEVEL_PREFIX=* || "$cur" == -DCMAKE_INSTALL_PREFIX=* ]]; then
         COMPREPLY=()
     elif [[ "$cur" == -* ]]; then

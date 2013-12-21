@@ -3,7 +3,10 @@
 from __future__ import print_function
 import os
 import sys
-import urllib
+try:
+    from urllib.request import urlretrieve
+except ImportError:
+    from urllib import urlretrieve
 import hashlib
 from optparse import OptionParser
 
@@ -21,7 +24,7 @@ def download_md5(uri, dest):
 
     sys.stdout.write('Downloading %s to %s...' % (uri, dest))
     sys.stdout.flush()
-    urllib.urlretrieve(uri, dest)
+    urlretrieve(uri, dest)
     sys.stdout.write('Done\n')
 
 
@@ -30,7 +33,13 @@ def checkmd5(dest, md5sum=None):
     checks file at dest against md5.
     :returns (boolean, hexdigest): True if dest contents matches md5sum
     """
-    md5value = hashlib.md5(open(dest).read())
+    with open(dest, 'rb') as f:
+        md5value = hashlib.md5()
+        while True:
+            buf = f.read(4096)
+            if not buf:
+                break
+            md5value.update(buf)
     hexdigest = md5value.hexdigest()
 
     print('Checking md5sum on %s' % (dest))

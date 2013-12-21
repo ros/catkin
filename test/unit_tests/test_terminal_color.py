@@ -7,6 +7,11 @@ except ImportError as e:
         'Please adjust your pythonpath before running this test: %s' % str(e)
     )
 
+try:
+    char = unichr
+except NameError:
+    char = chr
+
 
 class TerminalColorTest(unittest.TestCase):
 
@@ -18,7 +23,7 @@ class TerminalColorTest(unittest.TestCase):
         test = sanitize(test)
         rslt = 'This has bad stuff @! @/ @_ @| OK!\033[0m'
         assert fmt(test) == rslt
-        test = u'\u2018@'
+        test = char(2018)
         test = sanitize(test)
-        rslt = u'\u2018@@'
+        rslt = char(2018)
         assert test == rslt

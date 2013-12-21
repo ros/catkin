@@ -38,14 +38,16 @@ import re
 # unit test suites are not good about screening out illegal unicode characters (#603)
 # recipe from http://boodebr.org/main/python/all-about-python-and-unicode#UNI_XML
 # code copied from rosunit/src/junitxml.py
-
-
+try:
+    char = unichr
+except NameError:
+    char = chr
 RE_XML_ILLEGAL = '([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \
     '|' + \
     '([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
-    (unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
-     unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff),
-     unichr(0xd800), unichr(0xdbff), unichr(0xdc00), unichr(0xdfff))
+    (char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff),
+     char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff),
+     char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff))
 _SAFE_XML_REGEX = re.compile(RE_XML_ILLEGAL)
 
 
@@ -81,5 +83,5 @@ def tidy_xml(filename):
         data = data[:match.start()] + '?' + data[match.end():]
 
     with open(filename, 'w') as fhand:
-        fhand.write(data.encode('utf-8'))
+        fhand.write(data)
     return True
