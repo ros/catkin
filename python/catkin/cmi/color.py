@@ -94,16 +94,23 @@ def colorize_cmake(line):
                               '@{cf}@_Call Stack (most recent call first):@|')
     return fmt(cline)
 
+_color_on = True
+
 
 def set_color(state):
+    global _color_on
     if state:
         enable_ANSI_colors()
+        _color_on = True
     else:
         disable_ANSI_colors()
+        _color_on = False
 
 
 def clr(key):
-    global _color_translation_map
+    global _color_translation_map, _color_on
+    if not _color_on:
+        return fmt(key)
     val = _color_translation_map.get(key, None)
     if val is None:
         return fmt(key)
