@@ -391,8 +391,6 @@ def build_isolated_workspace(
                 sys.stdout.flush()
                 ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
                 running_jobs = queue_ready_packages(ready_packages, running_jobs, job_queue, context, force_cmake)
-                wide_log('[cmi] Uh...', end='\r')
-                sys.stdout.flush()
                 # Make sure there are jobs to be/being processed, otherwise kill the executors
                 if not running_jobs:
                     # Kill the executors by sending a None to the job queue for each of them
