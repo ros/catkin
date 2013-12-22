@@ -337,11 +337,11 @@ def wide_log_(msg, **kwargs):
     else:
         log(msg, **kwargs)
 
-wide_log = wide_log_
+wide_log_fn = wide_log_
 
 
 def disable_wide_log():
-    global wide_log
+    global wide_log_fn
 
     def disabled_wide_log(msg, **kwargs):
         if 'rhs' in kwargs:
@@ -350,7 +350,12 @@ def disable_wide_log():
             del kwargs['truncate']
         log(msg, **kwargs)
 
-    wide_log = disabled_wide_log
+    wide_log_fn = disabled_wide_log
+
+
+def wide_log(msg, **kwargs):
+    global wide_log_fn
+    wide_log_fn(msg, **kwargs)
 
 
 def which(program):
