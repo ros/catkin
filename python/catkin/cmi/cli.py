@@ -122,6 +122,8 @@ def parse_args(args):
         help='Supresses output from commands unless there is an error.')
     add('--interleave-output', '-i', action='store_true', default=False,
         help='Prevents ordering of command output when multiple commands are running at the same time.')
+    add('--no-status', action='store_true', default=False,
+        help='Suppresses status line, useful in situations where carriage return is not properly supported.')
     # Commands
     add('--list-only', '--list', action='store_true', default=False,
         help='List packages in topological order, then exit.')
@@ -195,6 +197,7 @@ def main(sysargs=None):
             force_color=opts.force_color,
             quiet=opts.quiet,
             interleave_output=opts.interleave_output,
+            no_status=opts.no_status,
             lock_install=opts.lock_install
         )
     except Exception:

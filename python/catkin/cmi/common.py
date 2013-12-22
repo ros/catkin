@@ -266,7 +266,7 @@ def terminal_width_windows():
 
     #return default size if actual size can't be determined
     if not res:
-        return 80, 25
+        return 80
 
     import struct
     (bufx, bufy, curx, cury, wattr, left, top, right, bottom, maxx, maxy)\
@@ -285,7 +285,11 @@ def terminal_width_linux():
 
 def terminal_width():
     """Returns the estimated width of the terminal"""
-    return terminal_width_windows() if os.name == 'nt' else terminal_width_linux()
+    try:
+        return terminal_width_windows() if os.name == 'nt' else terminal_width_linux()
+    except ValueError:
+        # Failed to get the width, use the default 80
+        return 80
 
 _ansi_escape = re.compile(r'\x1b[^m]*m')
 
@@ -307,7 +311,7 @@ def slice_to_printed_length(string, length):
     return string[:lookup_arry[length]] + clr('@|')
 
 
-def wide_log(msg, **kwargs):
+def wide_log_(msg, **kwargs):
     width = terminal_width()
     rhs = ''
     if 'rhs' in kwargs:
@@ -326,6 +330,21 @@ def wide_log(msg, **kwargs):
         log(msg + (' ' * (width - msg_len - rhs_len - 1)) + rhs, **kwargs)
     else:
         log(msg, **kwargs)
+
+wide_log = wide_log_
+
+
+def disable_wide_log():
+    global wide_log
+
+    def disabled_wide_log(msg, **kwargs):
+        if 'rhs' in kwargs:
+            del kwargs['rhs']
+        if 'truncate' in kwargs:
+            del kwargs['truncate']
+        log(msg, **kwargs)
+
+    wide_log = disabled_wide_log
 
 
 def which(program):

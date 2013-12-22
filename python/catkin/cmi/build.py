@@ -59,6 +59,7 @@ except ImportError as e:
 from catkin.cmi.color import clr
 
 from catkin.cmi.common import FakeLock
+from catkin.cmi.common import disable_wide_log
 from catkin.cmi.common import get_build_type
 from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
 from catkin.cmi.common import format_time_delta
@@ -211,6 +212,7 @@ def build_isolated_workspace(
     force_color=False,
     quiet=False,
     interleave_output=False,
+    no_status=False,
     lock_install=False
 ):
     """Builds a catkin workspace in isolation
@@ -239,6 +241,8 @@ def build_isolated_workspace(
     :type quiet: bool
     :param interleave_output: prints the output of commands as they are received
     :type interleave_output: bool
+    :param no_status: disables status bar
+    :type no_status: bool
     :param lock_install: causes executors to synchronize on access of install commands
     :type lock_install: bool
 
@@ -302,6 +306,8 @@ def build_isolated_workspace(
     if not force_color and not sys.stdout.isatty():
         color = True
     out = OutputController(log_dir, quiet, interleave_output, color, prefix_output=(jobs > 1))
+    if no_status:
+        disable_wide_log()
 
     # Prime the job_queue
     ready_packages = []
@@ -402,37 +408,38 @@ def build_isolated_workspace(
                 executors[event.executor_id].join()
                 del executors[event.executor_id]
 
-            # Update the status bar on the screen
-            executing_jobs = []
-            for name, value in running_jobs.items():
-                number, job, start_time = value['package_number'], value['job'], value['start_time']
-                if number is None or start_time is None:
-                    continue
-                executing_jobs.append({
-                    'number': number,
-                    'name': name,
-                    'run_time': format_time_delta_short(time.time() - start_time)
-                })
-            msg = "[cmi] "
-            # If errors post those
-            if errors:
-                for error in errors:
-                    msg += clr("[!{package}] ").format(package=error.package)
-            # Print them in order of started number
-            for job_msg_args in sorted(executing_jobs, key=lambda args: args['number']):
-                msg += clr("[{name} - {run_time}] ").format(**job_msg_args)
-            msg_rhs = clr("[{0}/{1} Active | {2}/{3} Completed]").format(
-                len(executing_jobs),
-                len(executors),
-                len(completed_packages),
-                total_packages
-            )
-            # Update title bar
-            sys.stdout.write("\x1b]2;[cmi] {0}/{1}\x07"
-                             .format(len(completed_packages), total_packages))
-            # Update status bar
-            wide_log(msg, rhs=msg_rhs, end='\r')
-            sys.stdout.flush()
+            if not no_status:
+                # Update the status bar on the screen
+                executing_jobs = []
+                for name, value in running_jobs.items():
+                    number, job, start_time = value['package_number'], value['job'], value['start_time']
+                    if number is None or start_time is None:
+                        continue
+                    executing_jobs.append({
+                        'number': number,
+                        'name': name,
+                        'run_time': format_time_delta_short(time.time() - start_time)
+                    })
+                msg = "[cmi] "
+                # If errors post those
+                if errors:
+                    for error in errors:
+                        msg += clr("[!{package}] ").format(package=error.package)
+                # Print them in order of started number
+                for job_msg_args in sorted(executing_jobs, key=lambda args: args['number']):
+                    msg += clr("[{name} - {run_time}] ").format(**job_msg_args)
+                msg_rhs = clr("[{0}/{1} Active | {2}/{3} Completed]").format(
+                    len(executing_jobs),
+                    len(executors),
+                    len(completed_packages),
+                    total_packages
+                )
+                # Update title bar
+                sys.stdout.write("\x1b]2;[cmi] {0}/{1}\x07"
+                                 .format(len(completed_packages), total_packages))
+                # Update status bar
+                wide_log(msg, rhs=msg_rhs, end='\r')
+                sys.stdout.flush()
         except KeyboardInterrupt:
             wide_log("[cmi] User interrupted, stopping.")
             set_error_state(error_state)
