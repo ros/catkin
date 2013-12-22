@@ -248,6 +248,10 @@ def get_recursive_build_depends_in_workspace(package, ordered_packages):
     return recursive_depends
 
 
+def is_tty(stream):
+    return hasattr(stream, 'isatty') and stream.isatty()
+
+
 def log(*args, **kwargs):
     if 'end_with_escape' not in kwargs or kwargs['end_with_escape'] is True:
         args = list(args)

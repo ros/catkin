@@ -39,11 +39,13 @@ import sys
 import time
 
 from catkin.cmi.color import clr
+from catkin.cmi.color import set_color
 
 from catkin.cmi.common import extract_cmake_and_make_and_catkin_make_arguments
 from catkin.cmi.common import extract_jobs_flags
 from catkin.cmi.common import format_time_delta
 from catkin.cmi.common import get_build_type
+from catkin.cmi.common import is_tty
 from catkin.cmi.common import log
 
 from catkin.cmi.context import Context
@@ -165,6 +167,9 @@ def list_only(context, packages, no_deps, start_with):
 
 def main(sysargs=None):
     opts = parse_args(sysargs)
+
+    if not opts.force_color and not is_tty(sys.stdout):
+        set_color(False)
 
     context = Context(
         workspace=opts.workspace,
