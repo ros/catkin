@@ -64,6 +64,7 @@ from catkin.cmi.common import get_build_type
 from catkin.cmi.common import get_cached_recursive_build_depends_in_workspace
 from catkin.cmi.common import format_time_delta
 from catkin.cmi.common import format_time_delta_short
+from catkin.cmi.common import is_tty
 from catkin.cmi.common import log
 from catkin.cmi.common import wide_log
 
@@ -303,7 +304,7 @@ def build_isolated_workspace(
     running_jobs = {}
     log_dir = os.path.join(context.build_space, 'cmi_logs')
     color = True
-    if not force_color and not sys.stdout.isatty():
+    if not force_color and not is_tty(sys.stdout):
         color = True
     out = OutputController(log_dir, quiet, interleave_output, color, prefix_output=(jobs > 1))
     if no_status:
