@@ -35,16 +35,16 @@ import os
 import sys
 import time
 
-from Queue import Empty
-
 from multiprocessing import cpu_count
 from threading import Lock
 try:
     # Python3
     from queue import Queue
+    from queue import Empty
 except ImportError:
     # Python2
     from Queue import Queue
+    from Queue import Empty
 
 try:
     from catkin_pkg.packages import find_packages
