@@ -5,7 +5,8 @@ from __future__ import print_function
 import os
 import sys
 
-if os.path.exists(os.path.join(os.path.dirname(__file__), 'CMakeLists.txt')):
+# find the import relatively if available to work before installing catkin or overlaying installed version
+if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catkin', '__init__.py')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 
 from catkin.cmi.cli import main
