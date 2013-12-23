@@ -99,6 +99,7 @@ include(CMakeParseArguments)
 # python-integration: catkin_python_setup.cmake, interrogate_setup_dot_py.py, templates/__init__.py.in, templates/script.py.in, templates/python_distutils_install.bat.in, templates/python_distutils_install.sh.in, templates/safe_execute_install.cmake.in
 foreach(filename
     assert
+    atomic_configure_file
     catkin_add_env_hooks
     catkin_destinations
     catkin_generate_environment
