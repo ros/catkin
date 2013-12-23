@@ -193,16 +193,6 @@ def determine_packages_to_be_built(packages, context):
     return packages_to_be_built, packages_to_be_built_deps
 
 
-def write_job_log(job_log, package, context):
-    build_log_dir = os.path.join(context.workspace, 'cmi_log')
-    if not os.path.exists(build_log_dir):
-        os.makedirs(build_log_dir)
-    package_log = os.path.join(build_log_dir, str(package) + '.log')
-    with open(package_log, 'w') as f:
-        f.write('\n'.join(job_log[package]))
-        f.write('\n')
-
-
 def build_isolated_workspace(
     context,
     packages=None,
