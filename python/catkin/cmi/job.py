@@ -147,9 +147,17 @@ if [ $# -eq 0 ] ; then
   exit 1
 fi
 
+# save original args for later
+_ARGS=$@
+# remove all passed in args, resetting $@, $*, $#, $n
+shift $#
+# set the args for the sourced scripts
+set $@=--extend
 # source setup.sh with --extend argument for each direct build depend in the workspace
 {sources}
-exec "$@"
+
+# execute given args
+exec $_ARGS
 """.format(sources=''.join(sources))
     with open(env_file_path, 'w') as f:
         f.write(env_file)
