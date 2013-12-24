@@ -31,11 +31,14 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""This module implements many of the colorization functions used by cmi"""
+
 from catkin.cmi.terminal_color import enable_ANSI_colors
 from catkin.cmi.terminal_color import disable_ANSI_colors
 from catkin.cmi.terminal_color import fmt
 from catkin.cmi.terminal_color import sanitize
 
+# This map translates more human reable format strings into colorized versions
 _color_translation_map = {
     # 'output': 'colorized_output'
     '': fmt('@!' + sanitize('') + '@|'),
@@ -70,6 +73,11 @@ _color_translation_map = {
 
 
 def colorize_cmake(line):
+    """Colorizes output from CMake
+
+    :param line: one, new line terminated, line from `cmake` which needs coloring.
+    :type line: str
+    """
     cline = sanitize(line)
     if line.startswith('-- '):
         cline = '@{cf}-- @|' + cline[len('-- '):]
@@ -98,6 +106,14 @@ _color_on = True
 
 
 def set_color(state):
+    """Sets the global colorization setting.
+
+    Setting this to False will cause all ansi colorization sequences to get
+    replaced with empty strings.
+
+    :parma state: colorization On or Off, True or False respectively
+    :type state: bool
+    """
     global _color_on
     if state:
         enable_ANSI_colors()
@@ -108,6 +124,14 @@ def set_color(state):
 
 
 def clr(key):
+    """Returns a colorized version of the string given.
+
+    This is occomplished by either returning a hit from the color translation
+    map or by calling :py:func:`fmt` on the string and returning it.
+
+    :param key: string to be colorized
+    :type key: str
+    """
     global _color_translation_map, _color_on
     if not _color_on:
         return fmt(key)

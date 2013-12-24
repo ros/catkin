@@ -31,6 +31,8 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""Executor implementation, these objects create threads and process jobs in them"""
+
 from __future__ import print_function
 
 from threading import Thread
@@ -42,7 +44,12 @@ from catkin.cmi.common import run_command
 
 
 class ExecutorEvent(object):
-    """This is returned by the Executor when terminating, possibly other times"""
+    """This is returned by the Executor when an event occurs
+
+    Events can be jobs starting/finishing, commands starting/failing/finishing,
+    commands producing output (each line is an event), or when the executor
+    quits or failes.
+    """
     def __init__(self, executor_id, event_type, data, package):
         self.executor_id = executor_id
         self.event_type = event_type
@@ -51,7 +58,7 @@ class ExecutorEvent(object):
 
 
 class Executor(Thread):
-    """Multiprocessing executor for the parallel cmi jobs"""
+    """Threaded executor for the parallel cmi jobs"""
     name_prefix = 'cmi'
 
     def __init__(self, executor_id, context, comm_queue, job_queue, install_lock):

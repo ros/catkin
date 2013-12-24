@@ -67,26 +67,19 @@ class FakeLock(object):
 
 
 def create_build_space(buildspace, package_name):
+    """Creates a build space, if it does not already exist, in the build space
+
+    :param buildspace: folder in which packages are built
+    :type buildspace: str
+    :param package_name: name of the package this build space is for
+    :type package_name: str
+    :returns: package specific build directory
+    :rtype: str
+    """
     package_build_dir = os.path.join(buildspace, package_name)
     if not os.path.exists(package_build_dir):
         os.makedirs(package_build_dir)
     return package_build_dir
-
-
-def extract_cmake_and_make_arguments(args):
-    args, cmake_args, make_args, _ = _extract_cmake_and_make_arguments(args, extract_catkin_make=False)
-    return args, cmake_args, make_args
-
-
-def extract_cmake_and_make_and_catkin_make_arguments(args):
-    return _extract_cmake_and_make_arguments(args, extract_catkin_make=True)
-
-
-def split_arguments(args, splitter_name, default=None):
-    if splitter_name not in args:
-        return args, default
-    index = args.index(splitter_name)
-    return args[0:index], args[index + 1:]
 
 
 def _extract_cmake_and_make_arguments(args, extract_catkin_make):
@@ -106,6 +99,12 @@ def _extract_cmake_and_make_arguments(args, extract_catkin_make):
         if k in args:
             arg_indexes[args.index(k)] = k
 
+    def split_arguments(args, splitter_name):
+        if splitter_name not in args:
+            return args, None
+        index = args.index(splitter_name)
+        return args[0:index], args[index + 1:]
+
     for index in reversed(sorted(arg_indexes.keys())):
         arg_type = arg_indexes[index]
         args, specific_args = split_arguments(args, arg_type)
@@ -118,7 +117,37 @@ def _extract_cmake_and_make_arguments(args, extract_catkin_make):
     return args, implicit_cmake_args + cmake_args, make_args, catkin_make_args
 
 
+def extract_cmake_and_make_and_catkin_make_arguments(args):
+    """Extracts cmake, make, and catkin specific make arguments from given system arguments
+
+    :param args: system arguments from which special arguments need to be extracted
+    :type args: list
+    :returns: tuple of separate args, cmake_args, make args, and catkin make args
+    :rtype: tuple
+    """
+    return _extract_cmake_and_make_arguments(args, extract_catkin_make=True)
+
+
+def extract_cmake_and_make_arguments(args):
+    """Extracts cmake and make arguments from the given system arguments
+
+    :param args: system arguments from which special arguments need to be extracted
+    :param args: list
+    :returns: tuple of separate args, cmake_args, and make_args
+    :rtype: tuple
+    """
+    args, cmake_args, make_args, _ = _extract_cmake_and_make_arguments(args, extract_catkin_make=False)
+    return args, cmake_args, make_args
+
+
 def extract_jobs_flags(mflags):
+    """Extracts make job flags from a list of other make flags, i.e. -j8 -l8
+
+    :param mflags: string of space separated make arguments
+    :type mflags: str
+    :returns: space separated list of make jobs flags
+    :rtype: str
+    """
     regex = r'(?:^|\s)(-?(?:j|l)(?:\s*[0-9]+|\s|$))' + \
             r'|' + \
             r'(?:^|\s)((?:--)?(?:jobs|load-average)(?:(?:=|\s+)[0-9]+|(?:\s|$)))'
@@ -128,6 +157,24 @@ def extract_jobs_flags(mflags):
 
 
 def format_time_delta(delta):
+    """Formats a given time delta, in seconds, into a day-hour-minute-second string
+
+    Seconds are limited to one decimal point accuracy. Days, hours, and minutes
+    are not printed unless required.
+
+    Examples:
+        1.45        => 1.4 seconds
+        61.45       => 1 minute and 1.4 seconds
+        121.45      => 2 minutes and 1.4 seconds
+        3721.45     => 1 hour 2 minutes and 1.4 seconds
+        7321.45     => 2 hours 2 minutes and 1.4 seconds
+        93821.45    => 1 days, 2 hours 2 minutes and 1.4 seconds
+
+    :param delta: time delta to format, in seconds
+    :type delta: float
+    :returns: formatted time string
+    :rtype: str
+    """
     days = "0"
     date_str = str(datetime.timedelta(seconds=delta))
     if ', ' in date_str:
@@ -142,6 +189,24 @@ def format_time_delta(delta):
 
 
 def format_time_delta_short(delta):
+    """Formats a given time delta, in seconds, into a short day-hour-minute-second string
+
+    Seconds are limited to one decimal point accuracy. Days, hours, and minutes
+    are not printed unless required.
+
+    Examples:
+        1.45        => 1.4
+        61.45       => 1:01.4
+        121.45      => 2:01.4
+        3721.45     => 1:02:01.4
+        7321.45     => 2:02:01.4
+        93821.45    => 1 days, 2:02:01.4
+
+    :param delta: time delta to format, in seconds
+    :type delta: float
+    :returns: formatted time string
+    :rtype: str
+    """
     days = "0"
     date_str = str(datetime.timedelta(seconds=delta))
     if ', ' in date_str:
@@ -155,14 +220,28 @@ def format_time_delta_short(delta):
 
 
 def handle_make_arguments(input_make_args, force_single_threaded_when_running_tests=False):
+    """Special handling for make arguments.
+
+    If force_single_threaded_when_running_tests is True, jobs flags are
+    replaced with -j1, because tests cannot handle parallelization.
+
+    If no job flags are present and there are none in the MAKEFLAGS environment
+    variable, then make flags are set to the cpu_count, e.g. -j4 -l4.
+
+    :param input_make_args: list of make arguments to be handled
+    :type input_make_args: list
+    :param force_single_threaded_when_running_tests: self explanatory
+    :type force_single_threaded_when_running_tests: bool
+    :returns: copied list of make arguments, potentially with some modifications
+    :rtype: list
+    """
     make_args = list(input_make_args)
-    # make_args = ['-j1']
 
     if force_single_threaded_when_running_tests:
         # force single threaded execution when running test since rostest does not support multiple parallel runs
         run_tests = [a for a in make_args if a.startswith('run_tests')]
         if run_tests:
-            print('Forcing "-j1" for running unit tests.')
+            wide_log('Forcing "-j1" for running unit tests.')
             make_args.append('-j1')
 
     # If no -j/--jobs/-l/--load-average flags are in make_args
@@ -173,24 +252,25 @@ def handle_make_arguments(input_make_args, force_single_threaded_when_running_te
             pass
         else:
             # Else extend the make_arguments to include some jobs flags
-            # If ROS_PARALLEL_JOBS is set use those flags
-            if 'ROS_PARALLEL_JOBS' in os.environ:
-                # ROS_PARALLEL_JOBS is a set of make variables, not just a number
-                ros_parallel_jobs = os.environ['ROS_PARALLEL_JOBS']
-                make_args.extend(ros_parallel_jobs.split())
-            else:
-                # Else Use the number of CPU cores
-                try:
-                    jobs = cpu_count()
-                    make_args.append('-j{0}'.format(jobs))
-                    make_args.append('-l{0}'.format(jobs))
-                except NotImplementedError:
-                    # If the number of cores cannot be determined, do not extend args
-                    pass
+            # Use the number of CPU cores
+            try:
+                jobs = cpu_count()
+                make_args.append('-j{0}'.format(jobs))
+                make_args.append('-l{0}'.format(jobs))
+            except NotImplementedError:
+                # If the number of cores cannot be determined, do not extend args
+                pass
     return make_args
 
 
 def get_build_type(package):
+    """Returns the build type for a given package
+
+    :param package: package object
+    :type package: :py:class:`catkin_pkg.package.Package`
+    :returns: build type of the package, e.g. 'catkin' or 'cmake'
+    :rtype: str
+    """
     export_tags = [e.tagname for e in package.exports]
     if 'build_type' in export_tags:
         build_type_tag = [e.content for e in package.exports if e.tagname == 'build_type'][0]
@@ -200,7 +280,15 @@ def get_build_type(package):
 
 
 def get_python_install_dir():
-    # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
+    """Returns the same value as the CMake variable PYTHON_INSTALL_DIR
+
+    The PYTHON_INSTALL_DIR variable is normally set from the CMake file:
+
+        catkin/cmake/python.cmake
+
+    :returns: Python install directory for the system Python
+    :rtype: str
+    """
     python_install_dir = 'lib'
     if os.name != 'nt':
         python_version_xdoty = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
@@ -215,6 +303,21 @@ __recursive_depends_cache = {}
 
 
 def get_cached_recursive_build_depends_in_workspace(package, workspace_packages):
+    """Returns cached or calculated recursive build dependes for a given package
+
+    If the recursive build depends for this package and this set of workspace
+    packages has already been calculated, the cached results are returned.
+
+    :param package: package for which the recursive depends should be calculated
+    :type package: :py:class:`catkin_pkg.package.Package`
+    :param workspace_packages: packages in the workspace, keyed by name, with
+        value being a tuple of package path and package object
+    :type workspace_packages: dict(package_name, tuple(package path,
+        :py:class:`catkin_pkg.package.Package`))
+    :returns: list of package path, package object tuples which are the
+        recursive build depends for the given package
+    :rtype: list(tuple(package path, :py:class:`catkin_pkg.package.Package`))
+    """
     workspace_key = ','.join([pkg.name for pth, pkg in workspace_packages])
     if workspace_key not in __recursive_depends_cache:
         __recursive_depends_cache[workspace_key] = {}
@@ -226,6 +329,18 @@ def get_cached_recursive_build_depends_in_workspace(package, workspace_packages)
 
 
 def get_recursive_build_depends_in_workspace(package, ordered_packages):
+    """Calculates the recursive build dependencies of a package which are also in the ordered_packages
+
+    :param package: package for which the recursive depends should be calculated
+    :type package: :py:class:`catkin_pkg.package.Package`
+    :param workspace_packages: packages in the workspace, keyed by name, with
+        value being a tuple of package path and package object
+    :type workspace_packages: dict(package_name, tuple(package path,
+        :py:class:`catkin_pkg.package.Package`))
+    :returns: list of package path, package object tuples which are the
+        recursive build depends for the given package
+    :rtype: list(tuple(package path, :py:class:`catkin_pkg.package.Package`))
+    """
     workspace_packages_by_name = dict([(pkg.name, (pth, pkg)) for pth, pkg in ordered_packages])
     workspace_package_names = [pkg.name for pth, pkg in ordered_packages]
     recursive_depends = []
@@ -249,10 +364,12 @@ def get_recursive_build_depends_in_workspace(package, ordered_packages):
 
 
 def is_tty(stream):
+    """Returns True if the given stream is a tty, else False"""
     return hasattr(stream, 'isatty') and stream.isatty()
 
 
 def log(*args, **kwargs):
+    """Wrapper for print, allowing for special handling where necessary"""
     if 'end_with_escape' not in kwargs or kwargs['end_with_escape'] is True:
         args = list(args)
         escape_reset = clr('@|')
@@ -301,23 +418,46 @@ _ansi_escape = re.compile(r'\x1b[^m]*m')
 
 
 def remove_ansi_escape(string):
+    """Removes any ansi escape sequences from a string and returns it"""
     global _ansi_escape
     return _ansi_escape.sub('', string)
 
 
 def slice_to_printed_length(string, length):
+    """Truncates a string, which may contain non-printable characters, to a printed length
+
+    For example:
+
+        msg = '\033[32mfoo\033[31mbar\033[0m'
+
+    has a length of 20, but a printed length of 6. If you wanted to truncate the
+    printed string to 4, then printing ``msg[4]`` would not provide the desired
+    result. Instead the actual slice index must consider the non-printable
+    characters.
+
+    :param string: string to be truncated
+    :type string: str
+    :param length: printed length of the resulting string
+    :type length: int
+    :returns: truncated string
+    :rtype: str
+    """
     global _ansi_escape
-    lookup_arry = []
+    lookup_array = []
     current_index = 0
-    for m in _ansi_escape.finditer(string):
+    matches = list(_ansi_escape.finditer(string))
+    for m in matches:
         for x in range(m.start() - current_index):
-            lookup_arry.append(current_index)
+            lookup_array.append(current_index)
             current_index += 1
         current_index += len(m.group())
-    return string[:lookup_arry[length]] + clr('@|')
+    if not matches:
+        # If no matches, then set the lookup_array to a plain range
+        lookup_array = range(len(string))
+    return string[:lookup_array[length]] + clr('@|')
 
 
-def wide_log_(msg, **kwargs):
+def __wide_log(msg, **kwargs):
     width = terminal_width()
     rhs = ''
     if 'rhs' in kwargs:
@@ -337,10 +477,14 @@ def wide_log_(msg, **kwargs):
     else:
         log(msg, **kwargs)
 
-wide_log_fn = wide_log_
+wide_log_fn = __wide_log
 
 
 def disable_wide_log():
+    """Disables wide logging globally
+
+    :see: :py:func:`wide_log`
+    """
     global wide_log_fn
 
     def disabled_wide_log(msg, **kwargs):
@@ -354,6 +498,29 @@ def disable_wide_log():
 
 
 def wide_log(msg, **kwargs):
+    """Prints a message to the screen, filling the remainder of the screen with spaces
+
+    This is useful for printing lines which will completely overwrite previous
+    content printed with a carriage return at the end.
+
+    If the message is wider than the terminal, then no filling is done.
+
+    The wide logging can be disabled with :py:func:`disable_wide_log`, in order
+    to prevent queries to the terminal width, which is useful when output is
+    not to a terminal, like when being used with Continuous Integration.
+
+    Truncating and right hand side messages are disabled when wide_log is
+    disabled as well.
+
+    When a right hand side message is given, it implies truncate is True.
+
+    :param msg: message to be printed
+    :type msg: str
+    :param rhs: message to print at the right hand side of the screen
+    :type rhs: str
+    :param truncate: If True, messages wider the then terminal will be truncated
+    :type truncate: bool
+    """
     global wide_log_fn
     wide_log_fn(msg, **kwargs)
 
