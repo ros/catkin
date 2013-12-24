@@ -295,6 +295,7 @@ def build_isolated_workspace(
         e.start()
 
     # Variables for tracking running jobs and built/building packages
+    start = time.time()
     total_packages = len(packages_to_be_built)
     package_count = 0
     running_jobs = {}
@@ -416,7 +417,7 @@ def build_isolated_workspace(
                         'name': name,
                         'run_time': format_time_delta_short(time.time() - start_time)
                     })
-                msg = "[cmi] "
+                msg = "[cmi - {run_time}] ".format(run_time=format_time_delta_short(time.time() - start))
                 # If errors post those
                 if errors:
                     for error in errors:
