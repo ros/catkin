@@ -31,6 +31,8 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""This modules implements the engine for building packages in parallel"""
+
 import os
 import sys
 import time
@@ -276,7 +278,11 @@ def build_isolated_workspace(
     # Lock for install space
     install_lock = Lock() if lock_install else FakeLock()
     # Determine the number of executors
-    jobs = cpu_count() if jobs is None else int(jobs)
+    try:
+        jobs = cpu_count() if jobs is None else int(jobs)
+    except NotImplementedError:
+        log('Failed to determine the cpu_count, falling back to 1 jobs as the default.')
+        jobs = 1 if jobs is None else int(jobs)
     # If only one set of jobs, turn on interleaving to get more responsive feedback
     if jobs == 1:
         # TODO: make the system more intelligent so that it can automatically switch to streaming output
@@ -377,8 +383,9 @@ def build_isolated_workspace(
                 if error_state:
                     continue
                 # Calculate new packages
-                wide_log('[cmi] Calculating new jobs...', end='\r')
-                sys.stdout.flush()
+                if not no_status:
+                    wide_log('[cmi] Calculating new jobs...', end='\r')
+                    sys.stdout.flush()
                 ready_packages = get_ready_packages(packages_to_be_built, running_jobs, completed_packages)
                 running_jobs = queue_ready_packages(ready_packages, running_jobs, job_queue, context, force_cmake)
                 # Make sure there are jobs to be/being processed, otherwise kill the executors
