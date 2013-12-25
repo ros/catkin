@@ -64,6 +64,13 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
     # There might be a better strategy. For instance: delete the localfile
     # and attempt to download it again from scratch ...
 
+    
+    # The 'file://' prefix is mandatory with the our HTTPRangeHandler
+    # (used to be optional with urllib.urlretrieve).
+    # Restoring for backward compatibility.
+    if '://' not in url:
+        url = 'file://' + url
+    
     if localfile is None:
         localfile = url.split('/')[-1]
 
