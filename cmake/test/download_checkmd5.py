@@ -227,8 +227,8 @@ def download_md5(uri, dest):
     sys.stdout.flush()
 
     downloader = FileDownloader()
-    downloader.progressFn = progress_report
-    downloader.verbose = True
+    #downloader.progressFn = progress_report
+    #downloader.verbose = True
     downloader.download_file(uri, dest)
     sys.stdout.write('Done\n')
 
