@@ -74,6 +74,7 @@ class FileBackedLogCache(object):
 
     def print_last_command_log(self):
         wide_log("")
+        command_output = ""
         with open(self.log_path, 'r') as f:
             line_number = 0
             for line in f:
@@ -81,10 +82,11 @@ class FileBackedLogCache(object):
                     line_number += 1
                     continue
                 line_number = None
-                if not self.color:
-                    wide_log(remove_ansi_escape(line.rstrip('\n')))
-                else:
-                    wide_log(line.rstrip('\n'))
+                command_output += line.rstrip('\n') + '\n'
+        if not self.color:
+            wide_log(remove_ansi_escape(command_output.rstrip('\n')))
+        else:
+            wide_log(command_output.rstrip('\n'))
         wide_log("")
 
 
