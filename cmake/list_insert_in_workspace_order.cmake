@@ -19,7 +19,7 @@ macro(list_insert_in_workspace_order listname)
     assert(CATKIN_ENV)
     assert(PYTHON_EXECUTABLE)
     set(cmd
-      ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
+      ${CATKIN_ENV}
       ${catkin_EXTRAS_DIR}/order_paths.py
       ${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/ordered_paths.cmake
       --paths-to-order ${ARGN}

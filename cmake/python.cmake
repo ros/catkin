@@ -1,7 +1,7 @@
 # the CMake variable PYTHON_INSTALL_DIR has the same value as the Python function catkin.builder.get_python_install_dir()
 
 find_package(PythonInterp REQUIRED)
-execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/python_version.py
+execute_process(COMMAND ${catkin_EXTRAS_DIR}/python_version.py
   OUTPUT_VARIABLE PYTHON_VERSION_XDOTY
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 

@@ -59,7 +59,7 @@ function(catkin_python_setup)
   assert(CATKIN_ENV)
   assert(PYTHON_EXECUTABLE)
   set(cmd
-    ${CATKIN_ENV} ${PYTHON_EXECUTABLE}
+    ${CATKIN_ENV}
     ${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py
     ${PROJECT_NAME}
     ${${PROJECT_NAME}_SOURCE_DIR}/setup.py

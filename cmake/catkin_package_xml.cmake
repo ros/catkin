@@ -60,7 +60,7 @@ macro(_catkin_package_xml dest_dir)
   # stamp and parse package.xml
   stamp(${_PACKAGE_XML_DIRECTORY}/package.xml)
   file(MAKE_DIRECTORY ${dest_dir})
-  safe_execute_process(COMMAND ${PYTHON_EXECUTABLE}
+  safe_execute_process(COMMAND
     ${catkin_EXTRAS_DIR}/parse_package_xml.py
     ${_PACKAGE_XML_DIRECTORY}/package.xml
     ${dest_dir}/package.cmake)
