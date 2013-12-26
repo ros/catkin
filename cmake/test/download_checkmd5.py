@@ -33,25 +33,25 @@ class HTTPRangeHandler(BaseHandler):
         raise RangeError('Requested Range Not Satisfiable')
 
 
-def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None):
+def download_file(url, localfile=None, nRetry=3, append=False, progressFn=None):
     """
     downloads the file pointed to by the url. Supports retrying and resuming
     a partially downloaded file.
 
     Arguments:
     ----------
-    url: string or anything supported by urllib
+    - url: string or anything supported by urllib
     The URL of the file to download.
-    localfile: string (defaults to None)
+    - localfile: string (defaults to None)
     The name of the resulting file. If None, the basename of the url
     is used.
-    nRetry: integer (defaults to 20)
-    The max number of trials.
-    append: boolean (defaults to False)
+    - nRetry: integer (defaults to 3)
+    The max number of consecutive failures to download some bytes from the url.
+    - append: boolean (defaults to False)
     In case the localfile exists, whether we want to append to it,
     i.e. resume a partial download. If false, then the localfile is
     first deleted.
-    progressFn: function (defaults to None)
+    - progressFn: function (defaults to None)
     If not None, the function is called when new data is downloaded,
     with 2 arguments: the number of bytes downloaded so far and
     the total number of bytes.
@@ -83,7 +83,8 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
     range_handler = HTTPRangeHandler()
     opener = build_opener(range_handler)
 
-    for retry in range(nRetry):
+    retry = 0
+    while retry < nRetry:
         _netfile = opener.open(url)
         filesize = float(_netfile.info()['Content-Length'])
 
@@ -97,7 +98,7 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
             elif count > filesize:
                 raise IOError('Resulting file is larger than source file')
 
-            #print("resuming: %d of %d downloaded." % (count, filesize))
+            #print("\n\nresuming: %d of %d downloaded.\n" % (count, filesize))
             _netfile.close()
             req = Request(url)
             req.add_header("Range","bytes=%s-" % (count))
@@ -108,6 +109,7 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
         chunk_size = 8 * 1024
         while data is None or len(data)>0:
             data = _netfile.read(chunk_size)
+            if len(data)>0: retry = 0
             _outfile.write(data)
             count += len(data)
 
@@ -127,6 +129,7 @@ def download_file(url, localfile=None, nRetry=20, append=False, progressFn=None)
         # want to retry
         _netfile.close()
         _outfile.close()
+        retry = retry + 1
 
         # wget waits 1 second after the first failure, 2 seconds after the
         # the second, etc.
@@ -160,6 +163,7 @@ def download_md5(uri, dest):
     sys.stdout.write('Downloading %s to %s...' % (uri, dest))
     sys.stdout.flush()
     download_file(uri, dest)
+    #download_file(uri, dest, progressFn=progress_report)
     sys.stdout.write('Done\n')
 
 
