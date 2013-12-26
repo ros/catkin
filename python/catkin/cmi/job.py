@@ -264,7 +264,21 @@ export PATH="{path}$PATH"
 export PKG_CONFIG_PATH="{pkgcfg_path}$PKG_CONFIG_PATH"
 export PYTHONPATH="{pythonpath}$PYTHONPATH"
 """.format(**subs))
-        os.rename(temp_setup_file_path, setup_file_path)
+        try:
+            os.rename(temp_setup_file_path, setup_file_path)
+        except OSError as e:
+            if e.errno != 18:
+                raise
+            # if the source and destination are on different partitions
+            # it might be impossible to atomically move
+            # then fall back to copy to destination (with random suffix) and then move from there
+            import shutil
+            tmp_dst_handle, tmp_dst_path = tempfile.mkstemp(dir=os.path.dirname(setup_file_path), prefix=os.path.basename(setup_file_path) + '.')
+            with open(temp_setup_file_path, 'rb') as f:
+                os.write(tmp_dst_handle, f.read())
+                os.close(tmp_dst_handle)
+            os.remove(temp_setup_file_path)
+            os.rename(tmp_dst_path, setup_file_path)
         os.rmdir(temp_setup_file_dir)
         return commands
 
