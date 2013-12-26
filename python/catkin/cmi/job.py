@@ -118,6 +118,7 @@ class Job(object):
 
 def create_env_file(package, context):
     sources = []
+    source_snippet = ". {source_path}\n"
     # If installing to isolated folders or not installing, but devel spaces are not merged
     if (context.install and context.isolate_install) or (not context.install and not context.merge_devel):
         # Source each package's install or devel space
@@ -125,13 +126,11 @@ def create_env_file(package, context):
         # Get the recursive dependcies
         depends = get_cached_recursive_build_depends_in_workspace(package, context.packages)
         # For each dep add a line to source its setup file
-        source_snippet = ". {source_path} --extend\n"
         for dep_pth, dep in depends:
             source_path = os.path.join(space, dep.name, 'setup.sh')
             sources.append(source_snippet.format(source_path=source_path))
     else:
         # Just source common install or devel space
-        source_snippet = ". {source_path}\n"
         source_path = os.path.join(context.install_space if context.install else context.devel_space, 'setup.sh')
         sources = [source_snippet.format(source_path=source_path)] if os.path.exists(source_path) else []
     # Build the env_file
@@ -152,8 +151,8 @@ _ARGS=$@
 # remove all passed in args, resetting $@, $*, $#, $n
 shift $#
 # set the args for the sourced scripts
-set $@=--extend
-# source setup.sh with --extend argument for each direct build depend in the workspace
+set -- $@ "--extend"
+# source setup.sh with implicit --extend argument for each direct build depend in the workspace
 {sources}
 
 # execute given args
