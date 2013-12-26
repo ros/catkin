@@ -106,8 +106,8 @@ def parse_args(args):
         help='Maximum number of packages which could be built in parallel (default is cpu count)')
     add('--force-cmake', action='store_true', default=False,
         help='Runs cmake explicitly for each catkin package.')
-    add('--lock-install', action='store_true', default=False,
-        help='Prevents multiple jobs from simultaneously running install targets')
+    add('--no-install-lock', action='store_true', default=False,
+        help='Prevents serialization of the install steps, which is on by default to prevent file install collisions')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to CMake. '
              'It must be passed after other arguments since it collects all following options.')
@@ -203,7 +203,7 @@ def main(sysargs=None):
             quiet=opts.quiet,
             interleave_output=opts.interleave_output,
             no_status=opts.no_status,
-            lock_install=opts.lock_install
+            lock_install=not opts.no_install_lock
         )
     except Exception:
         raise
