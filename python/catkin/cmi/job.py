@@ -272,8 +272,9 @@ export PYTHONPATH="{pythonpath}$PYTHONPATH"
             # if the source and destination are on different partitions
             # it might be impossible to atomically move
             # then fall back to copy to destination (with random suffix) and then move from there
-            import shutil
-            tmp_dst_handle, tmp_dst_path = tempfile.mkstemp(dir=os.path.dirname(setup_file_path), prefix=os.path.basename(setup_file_path) + '.')
+            tmp_dst_handle, tmp_dst_path = tempfile.mkstemp(
+                dir=os.path.dirname(setup_file_path),
+                prefix=os.path.basename(setup_file_path) + '.')
             with open(temp_setup_file_path, 'rb') as f:
                 os.write(tmp_dst_handle, f.read())
                 os.close(tmp_dst_handle)
@@ -322,7 +323,7 @@ class CatkinJob(Job):
         # Make command
         commands.append(MakeCommand(
             env_cmd,
-            [MAKE_EXEC] + handle_make_arguments(self.context.make_args),
+            [MAKE_EXEC] + handle_make_arguments(self.context.make_args + self.context.catkin_make_args),
             build_space
         ))
         # Make install command, if installing
