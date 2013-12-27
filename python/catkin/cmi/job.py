@@ -234,10 +234,12 @@ class CMakeJob(Job):
         setup_file_directory = os.path.dirname(setup_file_path)
         if not os.path.exists(setup_file_directory):
             os.makedirs(setup_file_directory)
-        temp_setup_file_dir = tempfile.mkdtemp()
-        temp_setup_file_path = os.path.join(temp_setup_file_dir, 'setup.sh')
-        with open(temp_setup_file_path, 'w') as file_handle:
-            file_handle.write("""\
+        # Create a temporary file in the setup_file_directory, so os.rename cannot fail
+        tmp_dst_handle, tmp_dst_path = tempfile.mkstemp(
+            dir=setup_file_directory,
+            prefix=os.path.basename(setup_file_path) + '.')
+        # Write the fulfilled template to the file
+        os.write(tmp_dst_handle, """\
 #!/usr/bin/env sh
 # generated from catkin.cmi.job module
 
@@ -264,23 +266,12 @@ export PATH="{path}$PATH"
 export PKG_CONFIG_PATH="{pkgcfg_path}$PKG_CONFIG_PATH"
 export PYTHONPATH="{pythonpath}$PYTHONPATH"
 """.format(**subs))
-        try:
-            os.rename(temp_setup_file_path, setup_file_path)
-        except OSError as e:
-            if e.errno != 18:
-                raise
-            # if the source and destination are on different partitions
-            # it might be impossible to atomically move
-            # then fall back to copy to destination (with random suffix) and then move from there
-            tmp_dst_handle, tmp_dst_path = tempfile.mkstemp(
-                dir=os.path.dirname(setup_file_path),
-                prefix=os.path.basename(setup_file_path) + '.')
-            with open(temp_setup_file_path, 'rb') as f:
-                os.write(tmp_dst_handle, f.read())
-                os.close(tmp_dst_handle)
-            os.remove(temp_setup_file_path)
-            os.rename(tmp_dst_path, setup_file_path)
-        os.rmdir(temp_setup_file_dir)
+        # Close the file
+        os.close(tmp_dst_handle)
+        # Do an atomic rename
+        os.rename(tmp_dst_path, setup_file_path)
+        # Remove the temporary file
+        os.remove(tmp_dst_path)
         return commands
 
 
