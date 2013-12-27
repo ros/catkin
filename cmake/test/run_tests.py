@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 import argparse
+import errno
 import os
 import sys
 import subprocess
@@ -63,7 +64,12 @@ def main(argv=sys.argv[1:]):
         print('Cannot find results, writing failure results to "%s"' % placeholder, file=sys.stderr)
         # create folder if necessary
         if not os.path.exists(os.path.dirname(args.results)):
-            os.makedirs(os.path.dirname(args.results))
+            try:
+                os.makedirs(os.path.dirname(args.results))
+            except OSError as e:
+                # catch case where folder has been created in the mean time
+                if e.errno != errno.EEXIST:
+                    raise
         with open(placeholder, 'w') as f:
             data = {'test': os.path.basename(args.results), 'test_file': args.results}
             f.write('''<?xml version="1.0" encoding="UTF-8"?>
