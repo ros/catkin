@@ -43,7 +43,7 @@ function(catkin_download_test_data target url)
   endif()
   set(output "${ARG_DESTINATION}/${ARG_FILENAME}")
   add_custom_command(OUTPUT ${output}
-    COMMAND ${catkin_EXTRAS_DIR}/test/download_checkmd5.py ${url} ${output} ${ARG_MD5}
+    COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/test/download_checkmd5.py ${url} ${output} ${ARG_MD5}
     VERBATIM)
   add_custom_target(${target} DEPENDS ${output})
   if(TARGET tests)
