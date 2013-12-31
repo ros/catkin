@@ -33,7 +33,7 @@ def main():
             sys.exit(1)
     except Exception as e:
         sys.stderr.write(str(e))
-        exit(2)
+        sys.exit(2)
 
 
 if __name__ == '__main__':
