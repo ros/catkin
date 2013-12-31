@@ -35,7 +35,7 @@ def main():
         sys.stderr.write('Workspace "%s" seems to not contain any projects.'
                          ' Have you passed the correct path to a '
                          'catkin workspace?' % workspace)
-        exit(3)
+        sys.exit(3)
 
     for (path, package) in ordered_projects:
         if args.only_folders:
