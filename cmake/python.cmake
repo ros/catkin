@@ -1,11 +1,14 @@
 # the CMake variable PYTHON_INSTALL_DIR has the same value as the Python function catkin.builder.get_python_install_dir()
 
-find_package(PythonInterp REQUIRED)
-execute_process(COMMAND ${PYTHON_EXECUTABLE} ${catkin_EXTRAS_DIR}/python_version.py
-  OUTPUT_VARIABLE PYTHON_VERSION_XDOTY
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
+set(PYTHON_VERSION "" CACHE STRING "Specify specific Python version to use ('major.minor' or 'major')")
+if(PYTHON_VERSION)
+  set(PythonInterp_FIND_VERSION "${PYTHON_VERSION}")
+endif()
 
-set(PYTHON_VERSION_XDOTY ${PYTHON_VERSION_XDOTY} CACHE STRING "Python version")
+find_package(PythonInterp REQUIRED)
+message(STATUS "Using PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
+
+set(_PYTHON_PATH_VERSION_SUFFIX "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
 
 set(enable_setuptools_deb_layout OFF)
 if(EXISTS "/etc/debian_version")
@@ -18,9 +21,8 @@ if(SETUPTOOLS_DEB_LAYOUT)
   set(PYTHON_PACKAGES_DIR dist-packages)
   set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb")
   # use major version only when installing 3.x with debian layout
-  string(SUBSTRING "${PYTHON_VERSION_XDOTY}" 0 1 PYTHON_VERSION_X)
-  if("${PYTHON_VERSION_X}" STREQUAL "3")
-    set(PYTHON_VERSION_XDOTY "${PYTHON_VERSION_X}")
+  if("${PYTHON_VERSION_MAJOR}" STREQUAL "3")
+    set(_PYTHON_PATH_VERSION_SUFFIX "${PYTHON_VERSION_MAJOR}")
   endif()
 else()
   message(STATUS "Using default Python package layout")
@@ -30,10 +32,10 @@ else()
 endif()
 
 if(NOT WIN32)
-  set(PYTHON_INSTALL_DIR lib/python${PYTHON_VERSION_XDOTY}/${PYTHON_PACKAGES_DIR}
+  set(PYTHON_INSTALL_DIR lib/python${_PYTHON_PATH_VERSION_SUFFIX}/${PYTHON_PACKAGES_DIR}
     CACHE INTERNAL "This needs to be in PYTHONPATH when 'setup.py install' is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
 else()
-  # Windows setuptools installs to lib/site-packages not lib/python2.7/site-packages 
+  # Windows setuptools installs to lib/site-packages not lib/python2.7/site-packages
   set(PYTHON_INSTALL_DIR lib/${PYTHON_PACKAGES_DIR}
     CACHE INTERNAL "This needs to be in PYTHONPATH when 'setup.py install' is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
 endif()
