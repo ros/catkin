@@ -76,7 +76,10 @@ endif()
 
 set(libraries "@PKG_CONFIG_LIBRARIES@")
 foreach(library ${libraries})
-  if(TARGET ${library})
+  # keep build configuration keywords, target names and absolute libraries as-is
+  if("${library}" MATCHES "^debug|optimized|general$")
+    list(APPEND @PROJECT_NAME@_LIBRARIES ${library})
+  elseif(TARGET ${library})
     list(APPEND @PROJECT_NAME@_LIBRARIES ${library})
   elseif(IS_ABSOLUTE ${library})
     list(APPEND @PROJECT_NAME@_LIBRARIES ${library})

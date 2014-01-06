@@ -104,6 +104,7 @@ foreach(filename
     catkin_destinations
     catkin_generate_environment
     catkin_install_python
+    catkin_libraries
     catkin_metapackage
     catkin_package
     catkin_package_xml
