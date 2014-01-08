@@ -129,7 +129,7 @@ if __name__ == '__main__':
         args = _parse_arguments()
     except Exception as e:
         print(e, file=sys.stderr)
-        exit(1)
+        sys.exit(1)
 
     # dispatch to requested operation
     if args.get_reversed_workspaces:
