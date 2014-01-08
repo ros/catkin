@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.78 (2014-01-07)
+-------------------
 * add support for py_modules in setup.py (`#399 <https://github.com/ros/catkin/issues/399>`_)
 * fix order and deduplication of of catkin_LIBRARIES (`#558 <https://github.com/ros/catkin/issues/558>`_)
 * update handling of library deduplication to support build configuration keywords in the whole process (`#565 <https://github.com/ros/catkin/issues/565>`_)
