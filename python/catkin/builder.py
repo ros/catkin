@@ -194,7 +194,7 @@ def run_command(cmd, cwd, quiet=False, colorize=False, add_env=None):
                 # in case the input is already unicode
                 line = line.encode('utf8')
             except (AttributeError, UnicodeDecodeError):
-                pass
+                continue
             line = line.decode('utf8', 'replace')
             if proc.returncode is not None or not line:
                 break
