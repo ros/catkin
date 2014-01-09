@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix handling of not found imported libraries (`#565 <https://github.com/ros/catkin/issues/565>`_)
+
 0.5.78 (2014-01-07)
 -------------------
 * add support for py_modules in setup.py (`#399 <https://github.com/ros/catkin/issues/399>`_)
