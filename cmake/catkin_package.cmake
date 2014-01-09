@@ -246,11 +246,9 @@ function(_catkin_package)
   # deduplicate libraries while maintaining build configuration keywords
   catkin_pack_libraries_with_build_configuration(_PKG_CONFIG_LIBRARIES ${_PKG_CONFIG_LIBRARIES})
   set(PKG_CONFIG_LIBRARIES "")
-  if(_PKG_CONFIG_LIBRARIES)
-    foreach(library ${_PKG_CONFIG_LIBRARIES})
-      list_append_deduplicate(PKG_CONFIG_LIBRARIES ${library})
-    endforeach()
-  endif()
+  foreach(library ${_PKG_CONFIG_LIBRARIES})
+    list_append_deduplicate(PKG_CONFIG_LIBRARIES ${library})
+  endforeach()
   catkin_unpack_libraries_with_build_configuration(PKG_CONFIG_LIBRARIES ${PKG_CONFIG_LIBRARIES})
 
   # .pc files can not handle build configuration keywords therefore filter them out based on the current build type
