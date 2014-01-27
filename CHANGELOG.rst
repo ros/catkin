@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.80 (2014-01-27)
+-------------------
 * fix library deduplication (`#565 <https://github.com/ros/catkin/issues/565>`_)
 
 0.5.79 (2014-01-09)
