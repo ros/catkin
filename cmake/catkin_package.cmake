@@ -55,7 +55,7 @@
 #   file will ensure that the targets exists.
 #   If the global variable ${PROJECT_NAME}_EXPORTED_TARGETS is
 #   set it will be prepended to the explicitly passed argument.
-# :type EXPORTED_TARGETS: string
+# :type EXPORTED_TARGETS: list of strings
 # :param SKIP_CMAKE_CONFIG_GENERATION: the option to skip the generation
 #   of the CMake config files for the package
 # :type SKIP_CMAKE_CONFIG_GENERATION: bool
@@ -99,7 +99,7 @@ macro(catkin_package)
 endmacro()
 
 function(_catkin_package)
-  cmake_parse_arguments(PROJECT "SKIP_CMAKE_CONFIG_GENERATION;SKIP_PKG_CONFIG_GENERATION" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS" ${ARGN})
+  cmake_parse_arguments(PROJECT "SKIP_CMAKE_CONFIG_GENERATION;SKIP_PKG_CONFIG_GENERATION" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS;EXPORTED_TARGETS" ${ARGN})
   if(PROJECT_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_UNPARSED_ARGUMENTS}")
   endif()
