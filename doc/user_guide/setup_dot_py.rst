@@ -97,7 +97,7 @@ one distributes to pypi.
   installing such python scripts is to add the following to
   the CMakeLists.txt::
 
-    install(PROGRAMS scripts/myscript
+    catkin_install_python(PROGRAMS scripts/myscript
       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 
