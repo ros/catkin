@@ -323,7 +323,7 @@ Public CMake functions / macros
    file will ensure that the targets exists.
    If the global variable ${PROJECT_NAME}_EXPORTED_TARGETS is
    set it will be prepended to the explicitly passed argument.
- :type EXPORTED_TARGETS: string
+ :type EXPORTED_TARGETS: list of strings
  :param SKIP_CMAKE_CONFIG_GENERATION: the option to skip the generation
    of the CMake config files for the package
  :type SKIP_CMAKE_CONFIG_GENERATION: bool
