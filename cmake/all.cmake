@@ -118,7 +118,6 @@ foreach(filename
     list_append_deduplicate
     list_append_unique
     list_insert_in_workspace_order
-    parse_arguments
     safe_execute_process
     stamp
     platform/lsb
@@ -126,7 +125,6 @@ foreach(filename
     platform/windows
     test/tests # defines CATKIN_ENABLE_TESTING, required by other test functions
     test/catkin_download_test_data
-    test/download_test_data
     test/gtest
     test/nosetests
     tools/doxygen

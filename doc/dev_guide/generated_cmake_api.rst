@@ -454,7 +454,6 @@ Non-public CMake functions / macros
  * :cmake:macro:`catkin_workspace`
  * :cmake:macro:`list_append_deduplicate`
  * :cmake:macro:`list_append_unique`
- * :cmake:macro:`parse_arguments`
  * :cmake:macro:`stamp`
 
 .. _`_generate_function_if_testing_is_disabled_ref`:
@@ -608,22 +607,6 @@ Non-public CMake functions / macros
    unstable.
 
 
-.. _`parse_arguments_ref`:
-
-`parse_arguments`
------------------
-
-.. cmake:macro:: parse_arguments(prefix, arg_names, option_names)
-
- *[macro defined in parse_arguments.cmake]*
-
-
- parse_arguments() taken from
- http://www.itk.org/Wiki/CMakeMacroParseArguments
-
- @deprecated use CMakeParseArguments instead
-
-
 .. _`stamp_ref`:
 
 `stamp`
@@ -670,24 +653,6 @@ Not documented CMake functions / macros
 .. cmake:macro:: _strip_path_prefix(var, value, prefix)
 
  *[macro defined in test/nosetests.cmake]*
-
-.. _`add_gtest_ref`:
-
-`add_gtest`
------------
-
-.. cmake:macro:: add_gtest()
-
- *[function defined in test/gtest.cmake]*
-
-.. _`add_nosetests_ref`:
-
-`add_nosetests`
----------------
-
-.. cmake:macro:: add_nosetests()
-
- *[function defined in test/nosetests.cmake]*
 
 .. _`assert_ref`:
 

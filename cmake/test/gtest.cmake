@@ -58,11 +58,6 @@ function(catkin_add_gtest target)
   catkin_run_tests_target("gtest" ${target} "gtest-${target}.xml" COMMAND ${cmd} DEPENDENCIES ${target} WORKING_DIRECTORY ${_gtest_WORKING_DIRECTORY})
 endfunction()
 
-function(add_gtest)
-  message(WARNING "add_gtest() is deprecated, please rename the function call to catkin_add_gtest()")
-  catkin_add_gtest(${ARGN})
-endfunction()
-
 find_package(GTest QUIET)
 if(NOT GTEST_FOUND)
   # only add gtest directory once per workspace

@@ -80,11 +80,6 @@ function(catkin_add_nosetests path)
   catkin_run_tests_target("nosetests" ${output_file_name} "nosetests-${output_file_name}.xml" COMMAND ${cmd} DEPENDENCIES ${_nose_DEPENDENCIES} WORKING_DIRECTORY ${_nose_WORKING_DIRECTORY})
 endfunction()
 
-function(add_nosetests)
-  message(WARNING "add_nosetests() is deprecated, please rename the function call to catkin_add_nosetests()")
-  catkin_add_nosetests(${ARGN})
-endfunction()
-
 find_program(NOSETESTS nosetests)
 if(NOT nosetests_path)
   # retry with name including major version number
