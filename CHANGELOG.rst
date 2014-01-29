@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.0 (2014-01-29)
+------------------
 * remove deprecated functionality (`#582 <https://github.com/ros/catkin/issues/582>`_)
 * remove eigen CMake config files (`#492 <https://github.com/ros/catkin/issues/492>`_)
 * fix EXPORTED_TARGETS argument for catkin_package() (`#581 <https://github.com/ros/catkin/issues/581>`_)
