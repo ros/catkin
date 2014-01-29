@@ -14,20 +14,11 @@ install(FILES LICENSE
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-# for convenience we provide eigen-config(-version).cmake files
-file(COPY cmake/Modules/eigen-config.cmake cmake/Modules/eigen-config-version.cmake
-  DESTINATION ${CATKIN_DEVEL_PREFIX}/share/eigen/cmake
-)
-install(FILES cmake/Modules/eigen-config.cmake cmake/Modules/eigen-config-version.cmake
-  DESTINATION share/eigen/cmake
-)
-
 # install cmake files for catkin (except some files only used at build time of catkin)
 install(DIRECTORY cmake
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   USE_SOURCE_PERMISSIONS
-  PATTERN "catkinConfig.cmake.in" EXCLUDE
-  PATTERN "Modules" EXCLUDE)
+  PATTERN "catkinConfig.cmake.in" EXCLUDE)
 
 catkin_python_setup()
 
