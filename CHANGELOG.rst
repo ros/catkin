@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.1 (2014-01-29)
+------------------
 * remove more obsolete files (`#582 <https://github.com/ros/catkin/issues/582>`_)
 
 0.6.0 (2014-01-29)
