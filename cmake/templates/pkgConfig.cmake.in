@@ -46,7 +46,6 @@ macro(_pack_libraries_with_build_configuration VAR)
     endif()
     math(EXPR _index "${_index} + 1")
   endwhile()
-  debug_message(10 "_pack_libraries_with_build_configuration(${VAR} ${ARGN}) ${${VAR}}")
 endmacro()
 
 # unpack a list of libraries with optional build configuration keyword prefixes
@@ -58,7 +57,6 @@ macro(_unpack_libraries_with_build_configuration VAR)
     string(REGEX REPLACE "^(debug|optimized|general)${CATKIN_BUILD_CONFIGURATION_KEYWORD_SEPARATOR}(.+)$" "\\1;\\2" lib "${lib}")
     list(APPEND ${VAR} "${lib}")
   endforeach()
-  debug_message(10 "_unpack_libraries_with_build_configuration(${VAR} ${ARGN}) ${${VAR}}")
 endmacro()
 
 
