@@ -67,19 +67,24 @@ find_package(GTest QUIET)
 if(NOT GTEST_FOUND)
   # only add gtest directory once per workspace
   if(NOT TARGET gtest)
+    # fall back to system installed path (i.e. on Ubuntu)
+    set(_paths "/usr/src/gtest/src")
+    if(CATKIN_TOPLEVEL)
+      # search in the current workspace before
+      list(INSERT _paths 0 "${CMAKE_SOURCE_DIR}/gtest/src")
+    endif()
     find_file(_CATKIN_GTEST_SRC "gtest.cc"
-      PATHS
-      # search in the current workspace
-      "${CMAKE_SOURCE_DIR}/gtest/src"
-      # fall back to system installed path (i.e. on Ubuntu)
-      "/usr/src/gtest/src"
+      PATHS ${_paths}
       NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
-    find_file(_CATKIN_GTEST_INCLUDE "gtest/gtest.h"
-      PATHS
-      # search in the current workspace
-      "${CMAKE_SOURCE_DIR}/gtest/include"
-      # fall back to system installed path (i.e. on Ubuntu)
-      "/usr/include/gtest"
+
+    # fall back to system installed path (i.e. on Ubuntu)
+    set(_paths "/usr/include/gtest")
+    if(CATKIN_TOPLEVEL)
+      # search in the current workspace before
+      list(INSERT _paths 0 "${CMAKE_SOURCE_DIR}/gtest/include/gtest")
+    endif()
+    find_file(_CATKIN_GTEST_INCLUDE "gtest.h"
+      PATHS ${_paths}
       NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 
     if(_CATKIN_GTEST_SRC)
@@ -101,7 +106,11 @@ if(NOT GTEST_FOUND)
       message(STATUS "Found gtest sources under '${_CATKIN_GTEST_BASE_DIR}': gtests will be built")
     endif()
     if(NOT GTEST_FROM_SOURCE_FOUND)
-      message(STATUS "gtest not found, C++ tests can not be built. You can run 'svn checkout http://googletest.googlecode.com/svn/tags/release-1.6.0 gtest' in the source space '${CMAKE_SOURCE_DIR}' of your workspace")
+      if(CATKIN_TOPLEVEL)
+        message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system or checkout gtest (by running 'svn checkout http://googletest.googlecode.com/svn/tags/release-1.6.0 gtest' in the source space '${CMAKE_SOURCE_DIR}' of your workspace) to enable gtests")
+      else()
+        message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system to enable gtests")
+      endif()
     endif()
   endif()
   if(GTEST_FROM_SOURCE_FOUND)
