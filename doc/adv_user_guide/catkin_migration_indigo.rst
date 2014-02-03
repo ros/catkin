@@ -1,15 +1,15 @@
-Updating a catkin for Indigo
-============================
+Updating a catkin package for Indigo
+====================================
 
-If you catkin package is working in Groovy/Hydro it should be easy to
-get it working in Indigo too.
+If your catkin package is working in Groovy/Hydro it should be easy
+to get it working in Indigo too.
 
-Removed deprected functions
----------------------------
+Removed deprecated functions
+----------------------------
 
-The following CMake functions and macros which have were deprecated
-before have been removed from catkin in Indigo. Please replace them
-with there replacement:
+The following CMake functions and macros which were deprecated before
+have been removed from catkin in Indigo. Please replace them with
+their replacement:
 
 * ``add_gtest(..)`` => ``catkin_add_gtest(..)``
 * ``add_nosetests(..)`` => ``catkin_add_nosetests(..)``
