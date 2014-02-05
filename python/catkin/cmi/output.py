@@ -57,16 +57,16 @@ class FileBackedLogCache(object):
     def start_command(self, cmd, msg):
         self.last_command_line = self.current_line
         self.current_cmd = cmd
-        self.append(msg)
+        self.append(msg.rstrip('\n') + '\n')
 
     def append(self, msg):
-        self.file_handle.write(msg + '\n')
+        self.file_handle.write(msg)
         self.file_handle.flush()
         self.current_line += 1
 
     def finish_command(self, msg):
         self.current_cmd = None
-        self.append(msg)
+        self.append(msg.rstrip('\n') + '\n')
 
     def close(self):
         self.file_handle.close()
@@ -82,11 +82,11 @@ class FileBackedLogCache(object):
                     line_number += 1
                     continue
                 line_number = None
-                command_output += line.rstrip('\n') + '\n'
+                command_output += line
         if not self.color:
-            wide_log(remove_ansi_escape(command_output.rstrip('\n')))
+            wide_log(remove_ansi_escape(command_output), end='')
         else:
-            wide_log(command_output.rstrip('\n'))
+            wide_log(command_output, end='')
         wide_log("")
 
 
@@ -123,6 +123,7 @@ class OutputController(object):
         if not self.color:
             msg = remove_ansi_escape(msg)
         if not self.quiet and self.interleave:
+            msg = msg.rstrip()
             if self.interleave and self.prefix_output:
                 wide_log(clr("[{package}]: {msg}").format(**locals()))
             else:

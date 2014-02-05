@@ -144,8 +144,7 @@ class Executor(Thread):
                             if isinstance(line, str):
                                 # Ensure it is not just ansi escape characters
                                 if remove_ansi_escape(line).strip():
-                                    for sub_line in line.split('\n'):
-                                        sub_line = sub_line.rstrip()
+                                    for sub_line in line.splitlines(True):  # keepends=True
                                         if sub_line:
                                             if command.stage_name == 'cmake':
                                                 sub_line = colorize_cmake(sub_line)
