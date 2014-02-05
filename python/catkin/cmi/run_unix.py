@@ -50,7 +50,7 @@ def process_incomming_lines(lines, left_over):
         data = b''.join(lines)
         left_over = b''
     else:
-        data = b''.join(lines[-1])
+        data = b''.join(lines[:-1])
         left_over = lines[-1]
     return data, left_over
 
