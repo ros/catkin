@@ -17,6 +17,7 @@ except ImportError as e:
 def main():
     parser = argparse.ArgumentParser(description='Outputs the catkin projects of a workspace in topological order.')
     parser.add_argument('workspace', nargs='?', default='.', help='The path to a workspace (default: .)')
+    parser.add_argument('--underlay-workspaces', nargs='*', default=[], help='The paths to underlay workspaces which are only used to resolve dependencies')
     parser.add_argument('--only-folders', action='store_true', help='Only output the project folders')
     parser.add_argument('--only-names', action='store_true', help='Only output the project names')
     args = parser.parse_args()
@@ -30,7 +31,7 @@ def main():
     if not os.path.isdir(workspace):
         sys.exit('Workspace "%s" does not exist' % workspace)
 
-    ordered_projects = topological_order(workspace)
+    ordered_projects = topological_order(workspace, underlay_workspaces=args.underlay_workspaces)
     if not ordered_projects:
         sys.stderr.write('Workspace "%s" seems to not contain any projects.'
                          ' Have you passed the correct path to a '
