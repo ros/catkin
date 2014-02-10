@@ -15,7 +15,7 @@ except ImportError as e:
     raise RuntimeError('ImportError: "from catkin_pkg.package import InvalidPackage" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH.' % e)
 # vars defined in order_packages.context.py.in
 try:
-    ordered_packages = topological_order(os.path.normpath(source_root_dir), whitelisted_packages, blacklisted_packages)
+    ordered_packages = topological_order(os.path.normpath(source_root_dir), whitelisted=whitelisted_packages, blacklisted=blacklisted_packages, underlay_workspaces=underlay_workspaces)
 except InvalidPackage as e:
     print('message(FATAL_ERROR "%s")' % e)
     ordered_packages = []
