@@ -80,13 +80,20 @@ function(catkin_add_nosetests path)
   catkin_run_tests_target("nosetests" ${output_file_name} "nosetests-${output_file_name}.xml" COMMAND ${cmd} DEPENDENCIES ${_nose_DEPENDENCIES} WORKING_DIRECTORY ${_nose_WORKING_DIRECTORY})
 endfunction()
 
-find_program(NOSETESTS nosetests)
-if(NOT nosetests_path)
-  # retry with name including major version number
-  find_program(NOSETESTS NAMES nosetests2 nosetests-2)
-endif()
-if(NOT NOSETESTS)
-  message(WARNING "nosetests not found, Python tests can not be run (try installing package 'python-nose')")
+find_program(NOSETESTS NAMES
+  "nosetests${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
+  "nosetests-${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
+  "nosetests${PYTHON_VERSION_MAJOR}"
+  "nosetests-${PYTHON_VERSION_MAJOR}"
+  "nosetests")
+if(NOSETESTS)
+  message(STATUS "Using Python nosetests: ${NOSETESTS}")
+else()
+  if("${PYTHON_VERSION_MAJOR}" STREQUAL "3")
+    message(WARNING "nosetests not found, Python tests can not be run (try installing package 'python3-nose')")
+  else()
+    message(WARNING "nosetests not found, Python tests can not be run (try installing package 'python-nose')")
+  endif()
 endif()
 
 macro(_strip_path_prefix var value prefix)
