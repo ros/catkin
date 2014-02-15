@@ -22,7 +22,8 @@ class OrderPackagesEmTest(unittest.TestCase):
         result = em.expand(template, gdict,
                            source_root_dir='/tmp/nowhere_dir',
                            whitelisted_packages=[],
-                           blacklisted_packages=[])
+                           blacklisted_packages=[],
+                           underlay_workspaces=[])
         self.assertTrue('set(CATKIN_ORDERED_PACKAGES "")' in result, result)
         self.assertTrue('set(CATKIN_ORDERED_PACKAGE_PATHS "")' in result, result)
         self.assertTrue('set(CATKIN_ORDERED_PACKAGES_IS_META "")' in result, result)

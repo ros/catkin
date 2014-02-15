@@ -104,7 +104,8 @@ class MockTest(AbstractCatkinWorkspaceTest):
         result = em.expand(template, gdict,
                            source_root_dir=self.workspacedir,
                            whitelisted_packages=None,
-                           blacklisted_packages=None)
+                           blacklisted_packages=None,
+                           underlay_workspaces=None)
         self.assertTrue('set(CATKIN_ORDERED_PACKAGES "")' in result, result)
         self.assertTrue('set(CATKIN_ORDERED_PACKAGE_PATHS "")' in result, result)
         self.assertTrue('set(CATKIN_ORDERED_PACKAGES_IS_META "")' in result, result)
