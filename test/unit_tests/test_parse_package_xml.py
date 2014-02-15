@@ -24,13 +24,13 @@ class ParsePackageXmlTest(unittest.TestCase):
         pack.run_depends = ['rd1', 'rd2']
         pack.exports = []
         result = _get_output(pack)
-        self.assertEqual(['set(_CATKIN_CURRENT_PACKAGE "foopack")',
-                          'set(foopack_MAINTAINER "m1, m2")',
-                          'set(foopack_DEPRECATED "")',
-                          'set(foopack_VERSION "0.1.2")',
-                          'set(foopack_BUILD_DEPENDS "bd1" "bd2")',
-                          'set(foopack_RUN_DEPENDS "rd1" "rd2")',
-                          'set(foopack_BUILDTOOL_DEPENDS "catkin")'], result)
+        self.assertEqual(set(['set(_CATKIN_CURRENT_PACKAGE "foopack")',
+                              'set(foopack_MAINTAINER "m1, m2")',
+                              'set(foopack_DEPRECATED "")',
+                              'set(foopack_VERSION "0.1.2")',
+                              'set(foopack_BUILD_DEPENDS "bd1" "bd2")',
+                              'set(foopack_RUN_DEPENDS "rd1" "rd2")',
+                              'set(foopack_BUILDTOOL_DEPENDS "catkin")']), set(result))
 
     def test_main(self):
         try:
@@ -53,12 +53,12 @@ class ParsePackageXmlTest(unittest.TestCase):
             self.assertTrue(os.path.isfile(check_file))
             with open(check_file, 'r') as fhand:
                 contents = fhand.read()
-            self.assertEqual('''set(_CATKIN_CURRENT_PACKAGE "foopack")
-set(foopack_MAINTAINER "foo <foo@bar.com>")
-set(foopack_DEPRECATED "")
-set(foopack_VERSION "0.1.2")
-set(foopack_BUILD_DEPENDS "bd1" "bd2")
-set(foopack_RUN_DEPENDS "rd1" "rd2")
-set(foopack_BUILDTOOL_DEPENDS )''', contents)
+            self.assertEqual(set(['set(_CATKIN_CURRENT_PACKAGE "foopack")',
+                                  'set(foopack_MAINTAINER "foo <foo@bar.com>")',
+                                  'set(foopack_DEPRECATED "")',
+                                  'set(foopack_VERSION "0.1.2")',
+                                  'set(foopack_BUILD_DEPENDS "bd1" "bd2")',
+                                  'set(foopack_RUN_DEPENDS "rd1" "rd2")',
+                                  'set(foopack_BUILDTOOL_DEPENDS )']), set(contents.splitlines()))
         finally:
             shutil.rmtree(rootdir)

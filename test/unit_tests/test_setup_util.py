@@ -12,12 +12,12 @@ data = configure_file(os.path.join(os.path.dirname(__file__), '..', '..', 'cmake
                           'PYTHON_INSTALL_DIR': 'pythonX.Y/packages',
                           'CMAKE_PREFIX_PATH_AS_IS': '',
                       })
-with tempfile.TemporaryFile() as setup_util_file:
+with tempfile.NamedTemporaryFile('w+') as setup_util_file:
     setup_util_file.write(data)
     setup_util_file.seek(0)
 
     import imp
-    imp.load_source('setup_util', '/somewhere/_setup_util.py', setup_util_file)
+    imp.load_source('setup_util', setup_util_file.name, setup_util_file.file)
 
 import setup_util
 from setup_util import _get_workspaces, _prefix_env_variable, _rollback_env_variable, CATKIN_MARKER_FILE
