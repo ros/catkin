@@ -25,4 +25,10 @@ catkin_python_setup()
 if(CATKIN_ENABLE_TESTING)
   catkin_add_nosetests(test/local_tests)
   catkin_add_nosetests(test/unit_tests)
+
+  add_custom_target(catkin_cmake_tests
+    COMMAND cmake -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_tests/cmake_tests.cmake
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_tests
+  )
+  add_dependencies(_run_tests_${PROJECT_NAME} catkin_cmake_tests)
 endif()
