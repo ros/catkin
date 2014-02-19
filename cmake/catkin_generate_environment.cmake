@@ -58,7 +58,7 @@ function(catkin_generate_environment)
     configure_file(${catkin_EXTRAS_DIR}/templates/_setup_util.py.in
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/_setup_util.py
       @ONLY)
-    install(PROGRAMS
+    catkin_install_python(PROGRAMS
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/_setup_util.py
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()

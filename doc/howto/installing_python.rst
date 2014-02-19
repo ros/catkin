@@ -21,19 +21,10 @@ install in the global ``bin/`` directory.
 Standard ROS practice is to place all your executable Python programs
 in a ``scripts/`` subdirectory.  To keep the user API clean,
 executable script names generally do not include a ``.py`` suffix.
-Your ``CMakeLists.txt`` can conveniently install all the scripts in
-that directory::
-
-  install(DIRECTORY scripts/
-          DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-          USE_SOURCE_PERMISSIONS
-          PATTERN ".svn" EXCLUDE)
-
-The ``PATTERN ".svn" EXCLUDE`` is only needed if you use a Subversion_
-repository.  For other types of repositories, it can be omitted.
-
-Other directory names are allowed.  If you mixed the scripts with
-other files, you should install them one by one::
+Your ``CMakeLists.txt`` should install all the scripts explictly
+using the special install function ``catkin_install_python``.
+This will make sure that shebang lines are updated to use the
+specific Python version used at configure time::
 
   install(PROGRAMS scripts/your_node1 scripts/your_node2
           DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
