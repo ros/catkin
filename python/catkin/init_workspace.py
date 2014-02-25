@@ -77,6 +77,9 @@ def init_workspace(workspace_dir):
     dst = os.path.join(workspace_dir, 'CMakeLists.txt')
     if os.path.exists(dst):
         raise RuntimeError('File "%s" already exists' % dst)
+    if os.path.islink(dst):
+        print('Removing symlink "%s" which points to non-existing file' % dst)
+        os.unlink(dst)
 
     src_file_path = None
     checked = []
