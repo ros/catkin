@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.2 (2014-02-24)
+------------------
 * use underlay workspaces when calculating topological order (`#590 <https://github.com/ros/catkin/issues/590>`_)
 * remove restriction to run unit test single threaded (`#597 <https://github.com/ros/catkin/issues/597>`_)
 * support using nosetests with Python3 (`#593 <https://github.com/ros/catkin/issues/593>`_)
