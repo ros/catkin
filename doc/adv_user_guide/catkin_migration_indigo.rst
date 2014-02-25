@@ -22,3 +22,7 @@ Removed Eigen CMake config file
 The previously provided CMake config file for Eigen has been removed.
 Instead you might want to use the CMake module provided by the
 `cmake_modules <http://wiki.ros.org/cmake_modules>`_ package.
+
+When up update you must find_package cmake_modules before find_package Eigen. 
+And add cmake_modules as a build_depend for your package. 
+
