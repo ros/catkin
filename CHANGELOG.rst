@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.82 (2014-02-25)
+-------------------
 * fix detection of Python version for CMake 2.8.6 and older (regression from 0.5.78, `#570 <https://github.com/ros/catkin/issues/570>`_)
 
 0.5.81 (2014-01-30)
