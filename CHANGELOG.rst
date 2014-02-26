@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix detection of Python version for CMake 2.8.6 and older (regression from 0.5.78, `#570 <https://github.com/ros/catkin/issues/570>`_)
+
 0.5.81 (2014-01-30)
 -------------------
 * fix generated find_package() logic when used from dry packages: remove debug_message usage from generated pkgConfig.cmake files (`#583 <https://github.com/ros/catkin/issues/583>`_)
