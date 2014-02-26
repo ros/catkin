@@ -8,6 +8,24 @@ endif()
 find_package(PythonInterp REQUIRED)
 message(STATUS "Using PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
 
+# in CMake 2.8.6 and older PythonInterp does not set the version variables
+if(NOT PYTHON_VERSION_MAJOR OR NOT PYTHON_VERSION_MINOR)
+  message(STATUS "Alternative approach to get Python version since find_package(PythonInterp) does not return it")
+  execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c" "from sys import version_info; print('%u;%u' % (version_info[0], version_info[1]))"
+    RESULT_VARIABLE _res
+    OUTPUT_VARIABLE _out
+    ERROR_VARIABLE _err
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+  )
+  if(NOT _res EQUAL 0)
+    message(FATAL_ERROR "Determine Python version failed")
+  endif()
+  list(GET _out 0 PYTHON_VERSION_MAJOR)
+  list(GET _out 1 PYTHON_VERSION_MINOR)
+endif()
+message(STATUS "Python version: ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+
 set(_PYTHON_PATH_VERSION_SUFFIX "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
 
 set(enable_setuptools_deb_layout OFF)
