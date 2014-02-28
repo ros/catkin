@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix bug in string length calculation (regression from 0.5.84, `#601 <https://github.com/ros/catkin/issues/601>`_)
+
 0.5.84 (2014-02-27)
 -------------------
 * fix handling include directories for generated header in devel space (regression from 0.5.83, `#600 <https://github.com/ros/catkin/issues/600>`_)
