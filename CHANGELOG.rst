@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.83 (2014-02-27)
+-------------------
 * allow passing absolute INCLUDE_DIRS via catkin_package() into CMake config file in install space (`#600 <https://github.com/ros/catkin/issues/600>`_)
 
 0.5.82 (2014-02-25)
