@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.85 (2014-02-28)
+-------------------
 * fix bug in string length calculation (regression from 0.5.84, `#601 <https://github.com/ros/catkin/issues/601>`_)
 
 0.5.84 (2014-02-27)
