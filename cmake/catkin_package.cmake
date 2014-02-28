@@ -396,7 +396,7 @@ function(_catkin_package)
     string(LENGTH "${CATKIN_DEVEL_PREFIX}/" devel_length)
     string(LENGTH "${idir}/" idir_length)
     if(NOT ${idir_length} LESS ${devel_length})
-      string(SUBSTRING "${idir}" 0 ${devel_length} idir_prefix)
+      string(SUBSTRING "${idir}/" 0 ${devel_length} idir_prefix)
       if("${idir_prefix}" STREQUAL "${CATKIN_DEVEL_PREFIX}/")
         # the value doesn't matter as long as it doesn't match IS_ABSOLUTE
         set(idir "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
