@@ -391,6 +391,17 @@ function(_catkin_package)
   set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "")
   set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "")
   foreach(idir ${PROJECT_INCLUDE_DIRS})
+    # include folders in devel space are handled like relative ones
+    # since these files are supposed to be installed to the include folder in install space
+    string(LENGTH "${CATKIN_DEVEL_PREFIX}/" devel_length)
+    string(LENGTH "${idir}/" idir_length)
+    if(NOT ${idir_length} LESS ${devel_length})
+      string(SUBSTRING "${idir}" 0 ${devel_length} idir_prefix)
+      if("${idir_prefix}" STREQUAL "${CATKIN_DEVEL_PREFIX}/")
+        # the value doesn't matter as long as it doesn't match IS_ABSOLUTE
+        set(idir "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
+      endif()
+    endif()
     if(IS_ABSOLUTE ${idir})
       list_append_unique(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "${idir}")
       list_append_unique(PROJECT_PKG_CONFIG_INCLUDE_DIRS "${idir}")
