@@ -391,16 +391,18 @@ function(_catkin_package)
   set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "")
   set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "")
   foreach(idir ${PROJECT_INCLUDE_DIRS})
-    # include folders in devel space are handled like relative ones
+    # include dirs in source / build / devel space are handled like relative ones
     # since these files are supposed to be installed to the include folder in install space
-    string(LENGTH "${CATKIN_DEVEL_PREFIX}/" devel_length)
-    string(LENGTH "${idir}/" idir_length)
-    if(NOT ${idir_length} LESS ${devel_length})
-      string(SUBSTRING "${idir}/" 0 ${devel_length} idir_prefix)
-      if("${idir_prefix}" STREQUAL "${CATKIN_DEVEL_PREFIX}/")
-        # the value doesn't matter as long as it doesn't match IS_ABSOLUTE
-        set(idir "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
+    string_starts_with("${idir}/" "${CMAKE_CURRENT_SOURCE_DIR}/" _is_source_prefix)
+    string_starts_with("${idir}/" "${CMAKE_CURRENT_BINARY_DIR}/" _is_build_prefix)
+    string_starts_with("${idir}/" "${CATKIN_DEVEL_PREFIX}/" _is_devel_prefix)
+    if(_is_source_prefix OR _is_build_prefix OR _is_devel_prefix)
+      # generated header files should be places in the devel space rather then in the build space
+      if(_is_build_prefix)
+        message(WARNING "catkin_package() include dir '${idir}' should be placed in the devel space instead of the build space")
       endif()
+      # the value doesn't matter as long as it doesn't match IS_ABSOLUTE
+      set(idir "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
     endif()
     if(IS_ABSOLUTE ${idir})
       list_append_unique(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "${idir}")

@@ -120,6 +120,7 @@ foreach(filename
     list_insert_in_workspace_order
     safe_execute_process
     stamp
+    string_starts_with
     platform/lsb
     platform/ubuntu
     platform/windows
