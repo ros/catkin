@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.86 (2014-03-03)
+-------------------
 * rewrite exported include dirs when pointing to absolute source / build / devel space (`#600 <https://github.com/ros/catkin/issues/600>`_)
 * improve error messages for wrong include dirs
 
