@@ -456,6 +456,7 @@ Non-public CMake functions / macros
  * :cmake:macro:`list_append_unique`
  * :cmake:macro:`parse_arguments`
  * :cmake:macro:`stamp`
+ * :cmake:macro:`string_starts_with`
 
 .. _`_generate_function_if_testing_is_disabled_ref`:
 
@@ -639,6 +640,26 @@ Non-public CMake functions / macros
    Uses ``configure_file`` to generate a file ``filepath.stamp`` hidden
    somewhere in the build tree.  This will cause cmake to rebuild its
    cache when ``filepath`` is modified.
+
+
+.. _`string_starts_with_ref`:
+
+`string_starts_with`
+--------------------
+
+.. cmake:macro:: string_starts_with(str, prefix, var)
+
+ *[function defined in string_starts_with.cmake]*
+
+
+ Check if a string starts with a prefix.
+
+ :param str: the string
+ :type str: string
+ :param prefix: the prefix
+ :type prefix: string
+ :param var: the output variable name
+ :type var: bool
 
 
 Not documented CMake functions / macros
