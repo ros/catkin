@@ -121,6 +121,7 @@ foreach(filename
     parse_arguments
     safe_execute_process
     stamp
+    string_starts_with
     platform/lsb
     platform/ubuntu
     platform/windows
