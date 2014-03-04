@@ -2,6 +2,11 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* allow passing absolute INCLUDE_DIRS via catkin_package() into CMake config file in install space (`#600 <https://github.com/ros/catkin/issues/600>`_, `#601 <https://github.com/ros/catkin/issues/601>`_)
+* improve error messages for wrong include dirs
+
 0.6.2 (2014-02-24)
 ------------------
 * use underlay workspaces when calculating topological order (`#590 <https://github.com/ros/catkin/issues/590>`_)
