@@ -16,10 +16,15 @@ Public CMake functions / macros
  * :cmake:macro:`catkin_add_gtest`
  * :cmake:macro:`catkin_add_nosetests`
  * :cmake:macro:`catkin_download_test_data`
+ * :cmake:macro:`catkin_filter_libraries_for_build_configuration`
+ * :cmake:macro:`catkin_install_python`
  * :cmake:macro:`catkin_metapackage`
+ * :cmake:macro:`catkin_pack_libraries_with_build_configuration`
  * :cmake:macro:`catkin_package`
  * :cmake:macro:`catkin_package_xml`
  * :cmake:macro:`catkin_python_setup`
+ * :cmake:macro:`catkin_replace_imported_library_targets`
+ * :cmake:macro:`catkin_unpack_libraries_with_build_configuration`
 
 .. _`catkin_add_env_hooks_ref`:
 
@@ -163,6 +168,51 @@ Public CMake functions / macros
  :type MD5: string
 
 
+.. _`catkin_filter_libraries_for_build_configuration_ref`:
+
+`catkin_filter_libraries_for_build_configuration`
+-------------------------------------------------
+
+.. cmake:macro:: catkin_filter_libraries_for_build_configuration(VAR)
+
+ *[macro defined in catkin_libraries.cmake]*
+
+
+ Filter libraries based on optional build configuration keywords.
+
+ :param VAR: the output variable name
+ :type VAR: string
+ :param ARGN: a list of libraries
+ :type ARGN: list of strings
+ :param BUILD_TYPE: a keyword for the build type (default:
+   ``CMAKE_BUILD_TYPE``)
+ :type BUILD_TYPE: list of strings
+
+
+
+.. _`catkin_install_python_ref`:
+
+`catkin_install_python`
+-----------------------
+
+.. cmake:macro:: catkin_install_python(signature)
+
+ *[function defined in catkin_install_python.cmake]*
+
+
+ Install Python files and update their shebang lines
+ to use a different Python executable.
+
+ The signature:
+
+   catkin_install_python(PROGRAMS files... DESTINATION <dir>
+     [OPTIONAL]
+   )
+
+ See the documentation for CMake install() function for more information.
+
+
+
 .. _`catkin_metapackage_ref`:
 
 `catkin_metapackage`
@@ -183,6 +233,27 @@ Public CMake functions / macros
  :param DIRECTORY: the path to the package.xml file if not in the same
    location as the CMakeLists.txt file
  :type DIRECTORY: string
+
+
+
+.. _`catkin_pack_libraries_with_build_configuration_ref`:
+
+`catkin_pack_libraries_with_build_configuration`
+------------------------------------------------
+
+.. cmake:macro:: catkin_pack_libraries_with_build_configuration(VAR)
+
+ *[macro defined in catkin_libraries.cmake]*
+
+
+ Pack a list of libraries with optional build configuration keywords.
+ Each keyword is joined with its library using a separator.
+ A packed library list can be deduplicated correctly.
+
+ :param VAR: the output variable name
+ :type VAR: string
+ :param ARGN: a list of libraries
+ :type ARGN: list of strings
 
 
 
@@ -252,7 +323,7 @@ Public CMake functions / macros
    file will ensure that the targets exists.
    If the global variable ${PROJECT_NAME}_EXPORTED_TARGETS is
    set it will be prepended to the explicitly passed argument.
- :type EXPORTED_TARGETS: string
+ :type EXPORTED_TARGETS: list of strings
  :param SKIP_CMAKE_CONFIG_GENERATION: the option to skip the generation
    of the CMake config files for the package
  :type SKIP_CMAKE_CONFIG_GENERATION: bool
@@ -333,6 +404,45 @@ Public CMake functions / macros
 
 
 
+.. _`catkin_replace_imported_library_targets_ref`:
+
+`catkin_replace_imported_library_targets`
+-----------------------------------------
+
+.. cmake:macro:: catkin_replace_imported_library_targets(VAR)
+
+ *[macro defined in catkin_libraries.cmake]*
+
+
+ Replace imported library target names with the library name.
+
+ :param VAR: the output variable name
+ :type VAR: string
+ :param ARGN: a list of libraries
+ :type ARGN: list of strings
+
+
+
+.. _`catkin_unpack_libraries_with_build_configuration_ref`:
+
+`catkin_unpack_libraries_with_build_configuration`
+--------------------------------------------------
+
+.. cmake:macro:: catkin_unpack_libraries_with_build_configuration(VAR)
+
+ *[macro defined in catkin_libraries.cmake]*
+
+
+ Unpack a list of libraries with optional build configuration keyword prefixes.
+ Libraries prefixed with a keyword are split into the keyword and the library.
+
+ :param VAR: the output variable name
+ :type VAR: string
+ :param ARGN: a list of libraries
+ :type ARGN: list of strings
+
+
+
 Non-public CMake functions / macros
 -----------------------------------
 
@@ -346,6 +456,7 @@ Non-public CMake functions / macros
  * :cmake:macro:`list_append_unique`
  * :cmake:macro:`parse_arguments`
  * :cmake:macro:`stamp`
+ * :cmake:macro:`string_starts_with`
 
 .. _`_generate_function_if_testing_is_disabled_ref`:
 
@@ -531,6 +642,26 @@ Non-public CMake functions / macros
    cache when ``filepath`` is modified.
 
 
+.. _`string_starts_with_ref`:
+
+`string_starts_with`
+--------------------
+
+.. cmake:macro:: string_starts_with(str, prefix, var)
+
+ *[function defined in string_starts_with.cmake]*
+
+
+ Check if a string starts with a prefix.
+
+ :param str: the string
+ :type str: string
+ :param prefix: the prefix
+ :type prefix: string
+ :param var: the output variable name
+ :type var: bool
+
+
 Not documented CMake functions / macros
 ---------------------------------------
 
@@ -605,6 +736,15 @@ Not documented CMake functions / macros
 .. cmake:macro:: assert_unset(VAR)
 
  *[function defined in assert.cmake]*
+
+.. _`atomic_configure_file_ref`:
+
+`atomic_configure_file`
+-----------------------
+
+.. cmake:macro:: atomic_configure_file(input, output)
+
+ *[function defined in atomic_configure_file.cmake]*
 
 .. _`catkin_doxygen_ref`:
 

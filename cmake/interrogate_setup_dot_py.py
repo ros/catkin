@@ -83,7 +83,7 @@ def _get_locations(pkgs, package_dir):
     return locations
 
 
-def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
+def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modules):
     """
     Generates lines to add to a cmake file which will set variables
 
@@ -91,6 +91,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
     :param scripts: [list of str]: relative paths to scripts
     :param package_dir: {modulename: path}
     :pkgs: [list of str] python_packages declared in catkin package
+    :modules: [list of str] python modules
     """
     prefix = '%s_SETUP_PY' % package_name
     result = []
@@ -129,6 +130,21 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs):
 
     result.append(r'set(%s_PACKAGES "%s")' % (prefix, ';'.join(pkgs)))
     result.append(r'set(%s_PACKAGE_DIRS "%s")' % (prefix, ';'.join(resolved_pkgs).replace("\\", "/")))
+
+    # skip modules which collide with package names
+    filtered_modules = []
+    for modname in modules:
+        splits = modname.split('.')
+        # check all parents too
+        equals_package = [('.'.join(splits[:-i]) in locations) for i in range(len(splits))]
+        if any(equals_package):
+            continue
+        filtered_modules.append(modname)
+    module_locations = _get_locations(filtered_modules, package_dir)
+
+    result.append(r'set(%s_MODULES "%s")' % (prefix, ';'.join(['%s.py' % m.replace('.', '/') for m in filtered_modules])))
+    result.append(r'set(%s_MODULE_DIRS "%s")' % (prefix, ';'.join([module_locations[m] for m in filtered_modules]).replace("\\", "/")))
+
     return result
 
 
@@ -155,6 +171,7 @@ def _create_mock_setup_function(package_name, outfile):
 
         pkgs = kwargs.get('packages', [])
         scripts = kwargs.get('scripts', [])
+        modules = kwargs.get('py_modules', [])
 
         unsupported_args = [
             'entry_points',
@@ -163,7 +180,6 @@ def _create_mock_setup_function(package_name, outfile):
             'ext_package',
             'include_package_data',
             'namespace_packages',
-            'py_modules',
             'setup_requires',
             'use_2to3',
             'zip_safe']
@@ -175,7 +191,8 @@ def _create_mock_setup_function(package_name, outfile):
                                      version=version,
                                      scripts=scripts,
                                      package_dir=package_dir,
-                                     pkgs=pkgs)
+                                     pkgs=pkgs,
+                                     modules=modules)
         with open(outfile, 'w') as out:
             out.write('\n'.join(result))
 

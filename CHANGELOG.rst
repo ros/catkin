@@ -2,6 +2,78 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.86 (2014-03-03)
+-------------------
+* rewrite exported include dirs when pointing to absolute source / build / devel space (`#600 <https://github.com/ros/catkin/issues/600>`_)
+* improve error messages for wrong include dirs
+
+0.5.85 (2014-02-28)
+-------------------
+* fix bug in string length calculation (regression from 0.5.84, `#601 <https://github.com/ros/catkin/issues/601>`_)
+
+0.5.84 (2014-02-27)
+-------------------
+* fix handling include directories for generated header in devel space (regression from 0.5.83, `#600 <https://github.com/ros/catkin/issues/600>`_)
+
+0.5.83 (2014-02-27)
+-------------------
+* allow passing absolute INCLUDE_DIRS via catkin_package() into CMake config file in install space (`#600 <https://github.com/ros/catkin/issues/600>`_)
+
+0.5.82 (2014-02-25)
+-------------------
+* fix detection of Python version for CMake 2.8.6 and older (regression from 0.5.78, `#570 <https://github.com/ros/catkin/issues/570>`_)
+
+0.5.81 (2014-01-30)
+-------------------
+* fix generated find_package() logic when used from dry packages: remove debug_message usage from generated pkgConfig.cmake files (`#583 <https://github.com/ros/catkin/issues/583>`_)
+* fix EXPORTED_TARGETS argument for catkin_package() (`#581 <https://github.com/ros/catkin/issues/581>`_)
+
+0.5.80 (2014-01-27)
+-------------------
+* fix library deduplication (`#565 <https://github.com/ros/catkin/issues/565>`_)
+
+0.5.79 (2014-01-09)
+-------------------
+* fix handling of not found imported libraries (`#565 <https://github.com/ros/catkin/issues/565>`_)
+
+0.5.78 (2014-01-07)
+-------------------
+* add support for py_modules in setup.py (`#399 <https://github.com/ros/catkin/issues/399>`_)
+* fix order and deduplication of of catkin_LIBRARIES (`#558 <https://github.com/ros/catkin/issues/558>`_)
+* update handling of library deduplication to support build configuration keywords in the whole process (`#565 <https://github.com/ros/catkin/issues/565>`_)
+* Python 3 related:
+
+  * python 3 compatibility (`#544 <https://github.com/ros/catkin/issues/544>`_)
+  * add option to specify Python version (`#570 <https://github.com/ros/catkin/issues/570>`_)
+  * add catkin_install_python function (`#573 <https://github.com/ros/catkin/issues/573>`_)
+
+* catkin_make and catkin_make_isolated:
+
+  * add --only-pkg-with-deps option
+  * fix completion for -DCMAKE_BUILD_TYPE and -DCATKIN_ENABLE_TESTING
+
+* catkin_make_isolated:
+
+  * add empty line between packages for better readability
+  * update command line doc (`#534 <https://github.com/ros/catkin/issues/534>`_)
+  * fix generated setup.sh for plain cmake package when path contains spaces
+  * fix to actually build run_depends before the things that depend on them
+  * fix check if environment exists with DESTDIR
+
+* update setup scripts to use builtin cd command (`#542 <https://github.com/ros/catkin/issues/542>`_)
+* improve docs on system library dependencies (`#552 <https://github.com/ros/catkin/issues/552>`_)
+* install scripts under bin via setup.py (`#555 <https://github.com/ros/catkin/issues/555>`_)
+* update download script to resume downloads when server supports it (`#559 <https://github.com/ros/catkin/issues/559>`_)
+* add error handling when _setup_util.py fails, e.g. due to disk full (`#561 <https://github.com/ros/catkin/issues/561>`_)
+* add atomic_configure_file to work support parallel builds better (`#566 <https://github.com/ros/catkin/issues/566>`_)
+* update catkin_test_results usage message to mention return code (`#576 <https://github.com/ros/catkin/issues/576>`_)
+* prefix invocation of python script with PYTHON_EXECUTABLE (`ros/genpy#23 <https://github.com/ros/genpy/issues/23>`_)
+* update toplevel.cmake to use catkin_find_pkg instead of trying a fixed location to find catkin in the workspace
+* modify gtest message level to only warn if gtest is not available but a package trys to register a gtest
+* update run_tests to work robustly in parallel
+* use sys.exit and not just exit
+* catkin_prepare_release: undo quoting of commit messages
+
 0.5.77 (2013-10-09)
 -------------------
 * catkin_prepare_release: show tag name explicitly when using tag prefix (`#528 <https://github.com/ros/catkin/issues/528>`_)

@@ -55,7 +55,7 @@
 #   file will ensure that the targets exists.
 #   If the global variable ${PROJECT_NAME}_EXPORTED_TARGETS is
 #   set it will be prepended to the explicitly passed argument.
-# :type EXPORTED_TARGETS: string
+# :type EXPORTED_TARGETS: list of strings
 # :param SKIP_CMAKE_CONFIG_GENERATION: the option to skip the generation
 #   of the CMake config files for the package
 # :type SKIP_CMAKE_CONFIG_GENERATION: bool
@@ -99,7 +99,7 @@ macro(catkin_package)
 endmacro()
 
 function(_catkin_package)
-  cmake_parse_arguments(PROJECT "SKIP_CMAKE_CONFIG_GENERATION;SKIP_PKG_CONFIG_GENERATION" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS" ${ARGN})
+  cmake_parse_arguments(PROJECT "SKIP_CMAKE_CONFIG_GENERATION;SKIP_PKG_CONFIG_GENERATION" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS;EXPORTED_TARGETS" ${ARGN})
   if(PROJECT_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_UNPARSED_ARGUMENTS}")
   endif()
@@ -240,68 +240,21 @@ function(_catkin_package)
     list(APPEND _PKG_CONFIG_LIBRARIES ${PROJECT_DEPENDENCIES_LIBRARIES})
   endif()
 
-  # filter out build configuration keywords and non-matching libraries
-  set(PKG_CONFIG_LIBRARIES "")
-  list(LENGTH _PKG_CONFIG_LIBRARIES _count)
-  set(_index 0)
-  while(${_index} LESS ${_count})
-    list(GET _PKG_CONFIG_LIBRARIES ${_index} library)
-    if("${library}" STREQUAL "debug")
-      if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        # skip keyword and debug library for non-debug builds
-        math(EXPR _index "${_index} + 1")
-        if(${_index} EQUAL ${_count})
-          message(FATAL_ERROR "catkin_package() the list of libraries '${_PKG_CONFIG_LIBRARIES}' ends with '${library}' which is a build configuration keyword and must be followed by a library")
-        endif()
-      endif()
-    elseif("${library}" STREQUAL "optimized")
-      if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        # skip keyword and non-debug library for debug builds
-        math(EXPR _index "${_index} + 1")
-        if(${_index} EQUAL ${_count})
-          message(FATAL_ERROR "catkin_package() the list of libraries '${_PKG_CONFIG_LIBRARIES}' ends with '${library}' which is a build configuration keyword and must be followed by a library")
-        endif()
-      endif()
-    elseif("${library}" STREQUAL "general")
-      if(${_index} EQUAL ${_count})
-        message(FATAL_ERROR "catkin_package() the list of libraries '${_PKG_CONFIG_LIBRARIES}' ends with '${library}' which is a build configuration keyword and must be followed by a library")
-      endif()
-    elseif(NOT "${library}" STREQUAL "")
-      if(TARGET ${library})
-        # Sometimes cmake dependencies define imported targets, in which
-        # case the imported library information is not the target name, but
-        # the information embedded in cmake properties inside the imported library.
-        get_target_property(${library}_imported ${library} IMPORTED)
-        if(${${library}_imported})
-          set(imported_libraries)  # empty list
-          get_target_property(${library}_imported_implib ${library} IMPORTED_IMPLIB)
-          if(${library}_imported_implib)
-            list(APPEND imported_libraries ${${library}_imported_implib})
-          else()
-            get_target_property(${library}_imported_configurations ${library} IMPORTED_CONFIGURATIONS)
-            foreach(cfg ${${library}_imported_configurations})
-              get_target_property(${library}_imported_implib_${cfg} ${library} IMPORTED_IMPLIB_${cfg})
-              list(APPEND imported_libraries ${${library}_imported_implib_${cfg}})
-            endforeach()
-          endif()
-          if(imported_libraries)
-            foreach(imp_lib ${imported_libraries})
-              list_append_deduplicate(PKG_CONFIG_LIBRARIES ${imp_lib})
-            endforeach()
-          endif()
-        else()
-          # Not an imported library target
-          list_append_deduplicate(PKG_CONFIG_LIBRARIES ${library})
-        endif()
-      else()
-        list_append_deduplicate(PKG_CONFIG_LIBRARIES ${library})
-      endif()
-    endif()
-    math(EXPR _index "${_index} + 1")
-  endwhile()
+  # resolve imported library targets
+  catkin_replace_imported_library_targets(_PKG_CONFIG_LIBRARIES ${_PKG_CONFIG_LIBRARIES})
 
+  # deduplicate libraries while maintaining build configuration keywords
+  catkin_pack_libraries_with_build_configuration(_PKG_CONFIG_LIBRARIES ${_PKG_CONFIG_LIBRARIES})
+  set(PKG_CONFIG_LIBRARIES "")
+  foreach(library ${_PKG_CONFIG_LIBRARIES})
+    list_append_deduplicate(PKG_CONFIG_LIBRARIES ${library})
+  endforeach()
+  catkin_unpack_libraries_with_build_configuration(PKG_CONFIG_LIBRARIES ${PKG_CONFIG_LIBRARIES})
+
+  # .pc files can not handle build configuration keywords therefore filter them out based on the current build type
   set(PKG_CONFIG_LIBRARIES_WITH_PREFIX "")
-  foreach(library ${PKG_CONFIG_LIBRARIES})
+  catkin_filter_libraries_for_build_configuration(libraries ${PKG_CONFIG_LIBRARIES})
+  foreach(library ${libraries})
     if(IS_ABSOLUTE ${library})
       get_filename_component(suffix ${library} EXT)
       if(NOT "${suffix}" STREQUAL "${CMAKE_STATIC_LIBRARY_SUFFIX}")
@@ -328,19 +281,23 @@ function(_catkin_package)
   set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "")
   set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "")
   foreach(idir ${PROJECT_INCLUDE_DIRS})
-    if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
-      set(include ${idir})
+    if(IS_ABSOLUTE ${idir})
+      if(IS_DIRECTORY ${idir})
+        set(include ${idir})
+      else()
+        message(FATAL_ERROR "catkin_package() absolute include dir '${idir}' does not exist")
+      endif()
     elseif(IS_DIRECTORY ${PKG_INCLUDE_PREFIX}/${idir})
       set(include ${PKG_INCLUDE_PREFIX}/${idir})
     else()
-      message(FATAL_ERROR "catkin_package() include dir '${idir}' is neither an absolute directory nor exists relative to '${CMAKE_CURRENT_SOURCE_DIR}'")
+      message(FATAL_ERROR "catkin_package() include dir '${idir}' does not exist relative to '${PKG_INCLUDE_PREFIX}'")
     endif()
-    list(APPEND PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${include})
-    list(APPEND PROJECT_PKG_CONFIG_INCLUDE_DIRS ${include})
+    list_append_unique(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${include})
+    list_append_unique(PROJECT_PKG_CONFIG_INCLUDE_DIRS ${include})
   endforeach()
   if(PROJECT_DEPENDENCIES_INCLUDE_DIRS)
-    list(APPEND PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
-    list(APPEND PROJECT_PKG_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
+    list_append_unique(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
+    list_append_unique(PROJECT_PKG_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
   endif()
 
   # prepend library path of this workspace
@@ -437,13 +394,31 @@ function(_catkin_package)
   # absolute path to include dir under install prefix if any include dir is set
   set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "")
   set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "")
-  if(NOT "${PROJECT_INCLUDE_DIRS}" STREQUAL "")
-    set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
-    set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "${PKG_INCLUDE_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
-  endif()
+  foreach(idir ${PROJECT_INCLUDE_DIRS})
+    # include dirs in source / build / devel space are handled like relative ones
+    # since these files are supposed to be installed to the include folder in install space
+    string_starts_with("${idir}/" "${CMAKE_CURRENT_SOURCE_DIR}/" _is_source_prefix)
+    string_starts_with("${idir}/" "${CMAKE_CURRENT_BINARY_DIR}/" _is_build_prefix)
+    string_starts_with("${idir}/" "${CATKIN_DEVEL_PREFIX}/" _is_devel_prefix)
+    if(_is_source_prefix OR _is_build_prefix OR _is_devel_prefix)
+      # generated header files should be places in the devel space rather then in the build space
+      if(_is_build_prefix)
+        message(WARNING "catkin_package() include dir '${idir}' should be placed in the devel space instead of the build space")
+      endif()
+      # the value doesn't matter as long as it doesn't match IS_ABSOLUTE
+      set(idir "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
+    endif()
+    if(IS_ABSOLUTE ${idir})
+      list_append_unique(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "${idir}")
+      list_append_unique(PROJECT_PKG_CONFIG_INCLUDE_DIRS "${idir}")
+    else()
+      list_append_unique(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
+      list_append_unique(PROJECT_PKG_CONFIG_INCLUDE_DIRS "${PKG_INCLUDE_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
+    endif()
+  endforeach()
   if(PROJECT_DEPENDENCIES_INCLUDE_DIRS)
-    list(APPEND PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
-    list(APPEND PROJECT_PKG_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
+    list_append_unique(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
+    list_append_unique(PROJECT_PKG_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
   endif()
 
   # prepend library path of this workspace

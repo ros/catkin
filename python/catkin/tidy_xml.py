@@ -42,10 +42,12 @@ try:
     char = unichr
 except NameError:
     char = chr
-RE_XML_ILLEGAL = '([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])' + \
+RE_XML_ILLEGAL = ('([%s-%s%s-%s%s-%s%s-%s])' + \
     '|' + \
-    '([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
-    (char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff),
+    '([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])') % \
+    (char(0x0000), char(0x0008), char(0x000b), char(0x000c),
+     char(0x000e), char(0x001f), char(0xfffe), char(0xffff),
+     char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff),
      char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff),
      char(0xd800), char(0xdbff), char(0xdc00), char(0xdfff))
 _SAFE_XML_REGEX = re.compile(RE_XML_ILLEGAL)
