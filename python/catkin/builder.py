@@ -769,6 +769,10 @@ def build_workspace_isolated(
     msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' + ('~' * len(str(len(ordered_packages)))))
     msg.append('@{pf}~~@|  traversing %d packages in topological order:' % len(ordered_packages))
     for path, package in ordered_packages:
+        if path is None:
+            print(fmt('@{rf}Error: Circular dependency in subset of packages: @!%s@|' % package))
+            sys.exit('Can not build workspace with circular dependency')
+
         export_tags = [e.tagname for e in package.exports]
         if 'build_type' in export_tags:
             build_type_tag = [e.content for e in package.exports if e.tagname == 'build_type'][0]

@@ -39,6 +39,9 @@ def main():
         sys.exit(3)
 
     for (path, package) in ordered_projects:
+        if path is None:
+            sys.exit('The workspace contains packages with a circular dependency: %s' % package)
+
         if args.only_folders:
             print('%s' % path)
         elif args.only_names:
