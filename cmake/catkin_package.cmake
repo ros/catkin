@@ -115,9 +115,12 @@ function(_catkin_package)
     endif()
   endif()
 
-  # prepend INCLUDE_DIRS passed using a variable
+  # prepend INCLUDE_DIRS and LIBRARIES passed using a variable
   if(${PROJECT_NAME}_INCLUDE_DIRS)
     list(INSERT PROJECT_INCLUDE_DIRS 0 ${${PROJECT_NAME}_INCLUDE_DIRS})
+  endif()
+  if(${PROJECT_NAME}_LIBRARIES)
+    list(INSERT PROJECT_LIBRARIES 0 ${${PROJECT_NAME}_LIBRARIES})
   endif()
 
   # unset previously found directory of this package, so that this package overlays the other cleanly
