@@ -14,7 +14,7 @@ except ImportError as e:
 class BuilderTest(unittest.TestCase):
     # TODO: Add tests for catkin_make and catkin_make_isolated
 
-    def test_run_command_unicode(self):
+    def test_run_command_unicode_string(self):
         backup_Popen = catkin.builder.subprocess.Popen
 
         class StdOut(object):
@@ -28,6 +28,36 @@ class BuilderTest(unittest.TestCase):
                     return unichr(2018)
                 except NameError:
                     return chr(2018)
+
+        class MockPopen(object):
+            def __init__(self, *args, **kwargs):
+                self.returncode = None
+                self.stdout = StdOut(self)
+
+            def wait(self):
+                return True
+
+        try:
+            catkin.builder.subprocess.Popen = MockPopen
+            catkin.builder.run_command(['false'], os.getcwd(), True, True)
+        finally:
+            catkin.builder.subprocess.Popen = backup_Popen
+
+    def test_run_command_unicode_bytes(self):
+        backup_Popen = catkin.builder.subprocess.Popen
+
+        class StdOut(object):
+            def __init__(self, popen):
+                self.__popen = popen
+
+            def readline(self):
+                self.__popen.returncode = 0
+                try:
+                    # for Python 2 compatibility only
+                    s = unichr(2018)
+                except NameError:
+                    s = chr(2018)
+                return s.encode('utf8')
 
         class MockPopen(object):
             def __init__(self, *args, **kwargs):
