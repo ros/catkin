@@ -9,4 +9,3 @@ This section of the documentation is provided for advanced users.
    catkin_migration_indigo
    catkin_migration
    builddocs
-   underlay
