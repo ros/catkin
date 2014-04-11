@@ -39,7 +39,7 @@ import platform
 import re
 import stat
 try:
-    from cStringIO import StringIO
+    from StringIO import StringIO
 except ImportError:
     from io import StringIO
 import subprocess
@@ -191,11 +191,24 @@ def run_command(cmd, cwd, quiet=False, colorize=False, add_env=None):
         while True:
             line = proc.stdout.readline()
             try:
-                line = line.decode('utf8')
-            except AttributeError:
-                # do nothing for Python 3
+                # try decoding in case the output is encoded
+                line = line.decode('utf8', 'replace')
+            except (AttributeError, UnicodeEncodeError):
+                # do nothing for Python 3 when line is already a str
+                # or when the string can't be decoded
                 pass
-            line = line.encode('utf8', 'replace')
+
+            # ensure that it is convertable to the target encoding
+            encoding = 'utf8'
+            try:
+                if out.encoding:
+                    encoding = out.encoding
+            except AttributeError:
+                # do nothing for Python 2
+                pass
+            line = line.encode(encoding, 'replace')
+            line = line.decode(encoding, 'replace')
+
             if proc.returncode is not None or not line:
                 break
             try:
