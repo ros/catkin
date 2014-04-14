@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>catkin</name>
   <version>0.6.3</version>
   <description>Low-level build system macros and infrastructure for ROS.</description>
@@ -15,20 +15,19 @@
   <author>Brian Gerkey</author>
   <author>Dirk Thomas</author>
 
-  <build_depend>gtest</build_depend>
-  <build_depend>python-argparse</build_depend>
-  <build_depend version_gte="0.2.0">python-catkin-pkg</build_depend>
-  <build_depend>python-empy</build_depend>
-  <build_depend>python-nose</build_depend>
-
   <buildtool_depend>cmake</buildtool_depend>
+  <buildtool_export_depend>cmake</buildtool_export_depend>
 
-  <run_depend>cmake</run_depend>
-  <run_depend>gtest</run_depend>
-  <run_depend>python-argparse</run_depend>
-  <run_depend version_gte="0.2.0">python-catkin-pkg</run_depend>
-  <run_depend>python-empy</run_depend>
-  <run_depend>python-nose</run_depend>
+  <depend>python-argparse</depend>
+  <depend version_gte="0.2.1">python-catkin-pkg</depend>
+
+  <build_depend>python-empy</build_depend>
+
+  <build_export_depend>gtest</build_export_depend>
+  <build_export_depend>python-empy</build_export_depend>
+  <build_export_depend>python-nose</build_export_depend>
+
+  <test_depend>python-nose</test_depend>
 
   <export>
     <rosdoc config="rosdoc.yaml"/>
