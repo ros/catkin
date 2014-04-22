@@ -131,7 +131,9 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
                         packages = find_packages(source_path)
                         matching_packages = [p for p, pkg in packages.items() if pkg.name == project]
                         if matching_packages:
-                            p = os.path.join(source_path, matching_packages[0])
+                            p = source_path
+                            if matching_packages[0] != os.curdir:
+                                p = os.path.join(p, matching_packages[0])
                             if path is not None:
                                 p = os.path.join(p, path)
                             paths.append(p)
