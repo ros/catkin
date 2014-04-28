@@ -235,6 +235,10 @@ def isolation_print_command(cmd, path=None, add_env=None):
     )
 
 
+def get_multiarch():
+    # this function returns the suffix for lib directories on supported systems or an empty string
+    return run_command('dpkg-architecture -qDEB_HOST_MULTIARCH 2> /dev/null', build_dir, quiet=True)
+
 def get_python_install_dir():
     # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
     python_install_dir = 'lib'
@@ -509,13 +513,15 @@ exec "$@"
     if new_setup_path != last_setup_env:
         subs = {}
         subs['cmake_prefix_path'] = install_target + ":"
-        subs['ld_path'] = os.path.join(install_target, 'lib') + ":" + \
-                          os.path.join(install_target, 'lib', 'x86_64-linux-gnu') + ":"
+        subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
         pythonpath = os.path.join(install_target, get_python_install_dir())
         subs['pythonpath'] = pythonpath + ':'
-        subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig') + ":" + \
-                              os.path.join(install_target, 'lib', 'x86_64-linux-gnu', 'pkgconfig') + ":"
+        subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig') + ":"
         subs['path'] = os.path.join(install_target, 'bin') + ":"
+        arch = get_multiarch()
+        if arch:
+            subs['ld_path'] += ":" + os.path.join(install_target, 'lib', arch) + ":"
+            subs['pkgcfg_path'] += ":" + os.path.join(install_target, 'lib', arch, 'pkgconfig') + ":"
         if not os.path.exists(os.path.dirname(new_setup_path)):
             os.mkdir(os.path.dirname(new_setup_path))
         with open(new_setup_path, 'w') as file_handle:
