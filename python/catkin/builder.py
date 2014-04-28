@@ -235,9 +235,12 @@ def isolation_print_command(cmd, path=None, add_env=None):
     )
 
 
-def get_multiarch():
+def get_multiarch(build_dir):
     # this function returns the suffix for lib directories on supported systems or an empty string
-    return run_command('dpkg-architecture -qDEB_HOST_MULTIARCH 2> /dev/null', build_dir, quiet=True)
+    try:
+        return run_command('dpkg-architecture -qDEB_HOST_MULTIARCH 2> /dev/null', build_dir, quiet=True)
+    except:
+        return ''
 
 def get_python_install_dir():
     # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
@@ -518,7 +521,7 @@ exec "$@"
         subs['pythonpath'] = pythonpath + ':'
         subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig') + ":"
         subs['path'] = os.path.join(install_target, 'bin') + ":"
-        arch = get_multiarch()
+        arch = get_multiarch(build_dir)
         if arch:
             subs['ld_path'] += ":" + os.path.join(install_target, 'lib', arch) + ":"
             subs['pkgcfg_path'] += ":" + os.path.join(install_target, 'lib', arch, 'pkgconfig') + ":"
