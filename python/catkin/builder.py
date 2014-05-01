@@ -58,6 +58,7 @@ except ImportError as e:
 
 from catkin.cmake import get_cmake_path
 from catkin.terminal_color import ansi, disable_ANSI_colors, fmt, sanitize
+from catkin_pkg.workspaces import ensure_workspace_marker
 
 
 def split_arguments(args, splitter_name, default=None):
@@ -818,6 +819,8 @@ def build_workspace_isolated(
     if not force_cmake and cmake_input_changed(packages, buildspace, cmake_args=cmake_args, filename='catkin_make_isolated'):
         print('The packages or cmake arguments have changed, forcing cmake invocation')
         force_cmake = True
+
+    ensure_workspace_marker(workspace)
 
     # Build packages
     pkg_develspace = None
