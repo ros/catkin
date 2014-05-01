@@ -19,6 +19,7 @@ from catkin.builder import handle_make_arguments
 from catkin.builder import print_command_banner
 from catkin.builder import run_command
 from catkin.builder import run_command_colorized
+from catkin_pkg.workspaces import ensure_workspace_marker
 from catkin_pkg.packages import find_packages
 
 
@@ -158,6 +159,8 @@ def main():
                 run_command_colorized(cmd, build_path)
         except subprocess.CalledProcessError:
             return fmt('@{rf}Invoking @{boldon}"make cmake_check_build_system"@{boldoff} failed')
+
+    ensure_workspace_marker(base_path)
 
     # invoke make
     cmd = ['make']
