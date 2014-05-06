@@ -249,6 +249,25 @@ def isolation_print_command(cmd, path=None, add_env=None):
     )
 
 
+def get_multiarch():
+    if not sys.platform.lower().startswith('linux'):
+        return ''
+    # this function returns the suffix for lib directories on supported systems or an empty string
+    # it uses two step approach to look for multiarch: first run gcc -print-multiarch and if
+    # failed try to run dpkg-architecture
+    p = subprocess.Popen(
+        ['gcc', '-print-multiarch'],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    if p.returncode != 0:
+        out, err = subprocess.Popen(
+            ['dpkg-architecture', '-qDEB_HOST_MULTIARCH'],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+
+    # be sure of returning empty string or a valid multiarch tuple format
+    assert(not out.strip() or out.strip().count('-') == 2);
+    return out.strip()
+
 def get_python_install_dir():
     # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
     python_install_dir = 'lib'
@@ -519,9 +538,12 @@ exec "$@"
         subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
         pythonpath = os.path.join(install_target, get_python_install_dir())
         subs['pythonpath'] = pythonpath + ':'
-        subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig')
-        subs['pkgcfg_path'] += ":"
+        subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig') + ":"
         subs['path'] = os.path.join(install_target, 'bin') + ":"
+        arch = get_multiarch()
+        if arch:
+            subs['ld_path'] += os.path.join(install_target, 'lib', arch) + ":"
+            subs['pkgcfg_path'] += os.path.join(install_target, 'lib', arch, 'pkgconfig') + ":"
         if not os.path.exists(os.path.dirname(new_setup_path)):
             os.mkdir(os.path.dirname(new_setup_path))
         with open(new_setup_path, 'w') as file_handle:
