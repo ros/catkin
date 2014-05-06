@@ -52,9 +52,9 @@ IS_WINDOWS = (system == 'Windows')
 ENV_VAR_SUBFOLDERS = {
     'CMAKE_PREFIX_PATH': '',
     'CPATH': 'include',
-    'LD_LIBRARY_PATH' if not IS_DARWIN else 'DYLD_LIBRARY_PATH': '@CATKIN_GLOBAL_LIB_DESTINATION@',
+    'LD_LIBRARY_PATH' if not IS_DARWIN else 'DYLD_LIBRARY_PATH': @CATKIN_LIB_ENVIRONMENT_PATHS@,
     'PATH': '@CATKIN_GLOBAL_BIN_DESTINATION@',
-    'PKG_CONFIG_PATH': 'lib/pkgconfig',
+    'PKG_CONFIG_PATH': @CATKIN_PKGCONFIG_ENVIRONMENT_PATHS@,
     'PYTHONPATH': '@PYTHON_INSTALL_DIR@',
 }
 
@@ -68,11 +68,14 @@ def rollback_env_variables(environ, env_var_subfolders):
     lines = []
     unmodified_environ = copy.copy(environ)
     for key in sorted(env_var_subfolders.keys()):
-        subfolder = env_var_subfolders[key]
-        value = _rollback_env_variable(unmodified_environ, key, subfolder)
-        if value is not None:
-            environ[key] = value
-            lines.append(assignment(key, value))
+        subfolders = env_var_subfolders[key]
+        if not isinstance(subfolders, list):
+            subfolders = [subfolders]
+        for subfolder in subfolders:
+            value = _rollback_env_variable(unmodified_environ, key, subfolder)
+            if value is not None:
+                environ[key] = value
+                lines.append(assignment(key, value))
     if lines:
         lines.insert(0, comment('reset environment variables by unrolling modifications based on all workspaces in CMAKE_PREFIX_PATH'))
     return lines
@@ -143,7 +146,7 @@ def prepend_env_variables(environ, env_var_subfolders, workspaces):
     return lines
 
 
-def _prefix_env_variable(environ, name, paths, subfolder):
+def _prefix_env_variable(environ, name, paths, subfolders):
     '''
     Return the prefix to prepend to the environment variable NAME, adding any path in NEW_PATHS_STR without creating duplicate or empty items.
     '''
@@ -151,11 +154,15 @@ def _prefix_env_variable(environ, name, paths, subfolder):
     environ_paths = [path for path in value.split(os.pathsep) if path]
     checked_paths = []
     for path in paths:
-        if subfolder:
-            path = os.path.join(path, subfolder)
-        # exclude any path already in env and any path we already added
-        if path not in environ_paths and path not in checked_paths:
-            checked_paths.append(path)
+        if not isinstance(subfolders, list):
+            subfolders = [subfolders]
+        for subfolder in subfolders:
+            path_tmp = path
+            if subfolder:
+                path_tmp = os.path.join(path_tmp, subfolder)
+            # exclude any path already in env and any path we already added
+            if path_tmp not in environ_paths and path_tmp not in checked_paths:
+                checked_paths.append(path_tmp)
     prefix_str = os.pathsep.join(checked_paths)
     if prefix_str != '' and environ_paths:
         prefix_str += os.pathsep
