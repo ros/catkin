@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.4 (2014-05-07)
+------------------
 * add architecture independent flag in package.xml (`#625 <https://github.com/ros/catkin/issues/625>`_)
 * add error message for circular dependencies in catkin_make_isolated and catkin_topological_order (`#607 <https://github.com/ros/catkin/issues/607>`_, `#608 <https://github.com/ros/catkin/issues/608>`_)
 * add multiarch support for catkin environment files (`#545 <https://github.com/ros/catkin/issues/545>`_)
