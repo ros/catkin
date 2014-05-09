@@ -205,9 +205,7 @@ Public CMake functions / macros
 
  The signature:
 
-   catkin_install_python(PROGRAMS files... DESTINATION <dir>
-     [OPTIONAL]
-   )
+   catkin_install_python(PROGRAMS files... DESTINATION <dir> [OPTIONAL])
 
  See the documentation for CMake install() function for more information.
 
