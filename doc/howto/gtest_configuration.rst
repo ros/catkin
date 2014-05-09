@@ -30,7 +30,7 @@ This example assumes your tests are defined in the ``tests/``
 subdirectory in your source tree.
 
 If other libraries are needed to compile your test program, see
-:ref:`building_executables` for details.
+:ref:`building_executables_1` for details.
 
 .. _Gtest: http://www.ros.org/wiki/gtest
 .. _roscore: http://www.ros.org/wiki/roscore

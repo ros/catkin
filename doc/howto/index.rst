@@ -1,4 +1,4 @@
-.. _how_to_do_common_tasks:
+.. _how_to_do_common_tasks_1:
 
 How to do common tasks
 ======================
