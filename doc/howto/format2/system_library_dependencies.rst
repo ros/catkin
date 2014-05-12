@@ -19,55 +19,63 @@ and run tests on your own machine, but your package will not work
 correctly when released to the ROS community.  Others depend on this
 information to install the software they need for using your package.
 
-The ``<build_depend>`` declares packages needed for building your
-programs, including development files like headers, libraries and
-configuration files.  For each build dependency, specify the
-corresponding rosdep_ key.  On many Linux distributions these are
-called "development" packages, and their names generally end in
-``-dev`` or ``-devel``, like this::
+``<build_depend>``
+''''''''''''''''''
+
+This tag declares packages needed for building your programs,
+including development files like headers, libraries and configuration
+files.  For each build dependency, specify the corresponding rosdep_
+key.  On many Linux distributions these are called "development"
+packages, and their names generally end in ``-dev`` or ``-devel``,
+like this::
 
   <build_depend>libgstreamer0.10-dev</build_depend>
 
-The ``<run_depend>`` declares two different types of package
-dependencies.  One is for shared libraries, executables, Python
-modules, launch scripts and other files required for running your
-package.  Specify the run-time rosdep key, if possible, 
-like this example::
+Some C++ packages, like Eigen, have no run-time library, and
+everything is defined in the header files::
 
-  <run_depend>libgstreamer0.10-0</run_depend>
+  <build_depend>eigen</build_depend>
 
-The second type of ``<run_depend>`` is for transitive build
-dependencies.  A common example is when one of your dependencies
-provides a header file included in some header exported from your
-package.  Even if your package does not use that header when building
-itself, other packages depending on your header *will* require those
-transitive dependencies when they are built.  Transitive dependencies
-typically name the "development" package, instead of the run-time
-package::
+``<build_export_depend>``
+'''''''''''''''''''''''''
+
+If your package exports a header that includes an Eigen header like
+``<Eigen/Geometry>``, then other packages that ``<build_depend>`` on
+yours will need Eigen, too.  To make that work correctly, declare it
+like this::
+
+  <build_export_depend>eigen</build_export_depend>
+
+This type of dependency mainly applies to headers and CMake
+configuration files, and it typically names the "development" package::
 
   <run_depend>libgstreamer0.10-dev</run_depend>
+
+``<exec_depend>``
+'''''''''''''''''
+
+The ``<exec_depend>`` is for shared libraries, executables, Python
+modules, launch scripts and other files required for running your
+package.  Specify the run-time rosdep key, if possible, like this::
+
+  <exec_depend>libgstreamer0.10-0</exec_depend>
 
 Many existing rosdep entries only name the library's "development"
 package.  If no appropriate run-time package key is defined, consider
 `contributing the missing rules`_ so users need not install
 unnecessary files.  If you cannot provide a run-time rosdep for some
-reason, you may need to use the "development" package for all
-dependency declarations::
+reason, you can use the "development" package for the exec dependency,
+too.
 
-  <build_depend>curl</build_depend>
-  <run_depend>curl</run_depend>
+``<depend>``
+''''''''''''
 
-Some C++ packages, like Eigen, have no run-time library.  Everything
-is defined in the header files.  As long as you do not export any
-headers including them, those files are only needed at compile time.
-So, you need not specify a ``<run_depend>`` in that case::
+This tag combines all the previous types of dependencies into one.  It
+is not recommended for system dependencies, because it forces your
+package's binary installation to depend on the "development" package,
+which is not generally necessary or desirable::
 
-  <build_depend>eigen</build_depend>
-
-If you *do* export headers that include Eigen headers, you also need
-to declare that transitive dependency::
-
-  <run_depend>eigen</run_depend>
+  <depend>curl</depend>
 
 
 CMakeLists.txt
@@ -136,16 +144,19 @@ packages::
 
   catkin_package(DEPENDS Boost GSTREAMER)
 
+Make sure all these packages are also mentioned in your
+``package.xml`` using a ``<build_export_depend>`` or ``<depend>`` tag.
+
 For this to work, you must have found those dependencies earlier,
 using ``find_package()`` or ``pkg_check_modules()``, and they must
 define the CMake variables ``${name}_INCLUDE_DIRS`` and
 ``${name}_LIBRARIES``.  Note that the package name is case sensitive.
-While catkin packages always use a lowercase name other packages might
-use uppercase (as ``GSTREAMER``) or mixed case (as ``Boost``).
+While catkin packages always use a lowercase name, other packages
+might use uppercase (as ``GSTREAMER``) or mixed case (like ``Boost``).
 
-Some packages only provide variables which do not comply with these
-recommendations.  Then you have to pass the absolute paths explicitly as
-`INCLUDE_DIRS`` and ``LIBRARIES``.
+Some packages provide variable names that do not comply with these
+recommendations.  In that case, you must pass the absolute paths
+explicitly as ``INCLUDE_DIRS`` and ``LIBRARIES``.
 
 Next steps
 ::::::::::

@@ -7,7 +7,7 @@ When your C++ programs depend on ROS messages or services, they must
 be defined by catkin packages like std_msgs_ and sensor_msgs_, which
 are used in the examples below.
 
-There are several kinds of dependencies which must be declared in your
+Dependencies on these packages must be declared in your
 ``package.xml`` and ``CMakeLists.txt`` files to resolve message
 references.
 
@@ -15,15 +15,11 @@ references.
 package.xml
 :::::::::::
 
-For each C++ message dependency, ``package.xml`` should provide both
-``<build_depend>`` and ``<run_depend>`` tags with the ROS package
-name::
+For each C++ message dependency, ``package.xml`` should provide a
+``<depend>`` tag with the ROS package name::
 
-  <build_depend>std_msgs</build_depend>
-  <run_depend>std_msgs</run_depend>
-
-  <build_depend>sensor_msgs</build_depend>
-  <run_depend>sensor_msgs</run_depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
 
 
 CMakeLists.txt
