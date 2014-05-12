@@ -20,32 +20,56 @@ tests in your own workspace, but your package will not work correctly
 when released to the ROS community.  Others rely on this information
 to install the software they need for using your package.
 
-The ``<build_depend>`` declares packages needed for building your
-programs, including development files like headers, libraries and
-configuration files.  For each build dependency, specify the ROS
-package name::
+``<depend>``
+''''''''''''
 
-  <build_depend>roscpp</build_depend>
+It is generally sufficient to mention each ROS package dependency
+once, like this::
 
-The ``<run_depend>`` declares two different types of package
-dependencies.  
+  <depend>roscpp</depend>
 
-One is for shared libraries, executables, Python modules, launch
-scripts and other files required for running your package.
+Sometimes, you may need or want more granularity for certain
+dependencies.  The following sections explain how to do that.  If in
+doubt, use the ``<depend>`` tag, it's simpler.
 
-The second is for transitive build dependencies.  A common example is
-when one of your dependencies provides a header file included in some
-header exported from your package.  Even if your package does not use
-that header when building itself, other packages depending on your
-header *will* require those transitive dependencies when they are
-built.
+``<build_depend>``
+''''''''''''''''''
 
-In either case, declare the dependency this way::
+If you only use some particular dependency for building your package,
+and not at execution time, you can use the ``<build_depend>`` tag.
+For example, the ROS angles package only provides C++ headers and
+CMake configuration files::
 
-  <run_depend>roscpp</run_depend>
+  <build_depend>angles</build_depend>
 
-Most existing ROS packages combine their build and run-time files
-within a single package.
+With this type of dependency, an installed binary of your package does
+not require the angles package to be installed.
+
+**But**, that could create a problem if your package exports a header
+that includes the ``<angles/angles.h>`` header.  In that case you also
+need a ``<build_export_depend>``.
+
+``<build_export_depend>``
+'''''''''''''''''''''''''
+
+If you export a header that includes ``<angles/angles.h>``, it will be
+needed by other packages that ``<build_depend>`` on yours::
+
+  <build_export_depend>angles</build_export_depend>
+
+This mainly applies to headers and CMake configuration files.  Library
+packages referenced by libraries you export should normally specify
+``<depend>``, because they are also needed at execution time.
+
+``<exec_depend>``
+'''''''''''''''''
+
+This tag declares dependencies for shared libraries, executables,
+Python modules, launch scripts and other files required when running
+your package.  For example, the ROS openni_launch package provides
+launch scripts, which are only needed at execution time::
+
+  <exec_depend>openni_launch</exec_depend>
 
 
 CMakeLists.txt
@@ -68,7 +92,7 @@ This ``find_package()`` call defines CMake variables that will be
 needed later for the compile and linkedit steps.  List all additional
 catkin dependencies in the same command::
 
-  find_package(catkin REQUIRED COMPONENTS roscpp std_msgs tf)
+  find_package(catkin REQUIRED COMPONENTS angles roscpp std_msgs)
 
 Include directories
 '''''''''''''''''''
@@ -86,7 +110,10 @@ Exporting interfaces
 You must declare the library and header packages needed by all the
 interfaces you export to other ROS packages::
 
-  catkin_package(CATKIN_DEPENDS roscpp std_msgs tf)
+  catkin_package(CATKIN_DEPENDS angles roscpp std_msgs)
+
+Make sure all these packages are also mentioned in your
+``package.xml`` using a ``<depend>`` or ``<build_export_depend>`` tag.
 
 The ``catkin_package()`` command is only called once.  It may need
 additional parameters, depending on what else your package exports.

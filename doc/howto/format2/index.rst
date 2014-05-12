@@ -3,12 +3,17 @@
 Package format 2 (recommended)
 ==============================
 
+When writing a ROS package several tasks often need to be done.  These
+pages give examples of how to handle most of the common ones.
+
 .. note::
 
    These instructions are for ``<package format="2">``.
 
-When writing a ROS package several tasks often need to be done.  These
-pages give examples of how to handle most of the common ones.
+   If you are making small changes to a format 1 package, please use
+   :ref:`how_to_do_common_tasks_1` instead.  If you are ready to
+   upgrade a format 1 package to format 2, see:
+   :ref:`migrating_from_format1_to_format2`.
 
 Overview
 --------
@@ -80,4 +85,7 @@ Migrating from package format 1
 When a format 1 package is revised, it probably makes sense to upgrade
 its ``package.xml`` to format 2.
 
-TBD
+.. toctree::
+   :maxdepth: 1
+
+   migrating_from_format_1
