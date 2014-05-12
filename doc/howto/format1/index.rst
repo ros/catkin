@@ -3,13 +3,16 @@
 Package format 1 (legacy)
 =========================
 
+When writing a ROS package several tasks often need to be done.  These
+pages give examples of how to handle most of the common ones.
+
 .. note::
 
    These instructions are for the original ``<package format="1">``.
 
-When writing a new ROS package or converting an old one to catkin,
-several tasks often need to be solved.  These pages give examples for
-handling some common ones.
+   If you are making small changes to a format 1 package, use these
+   instructions.  If you are ready to upgrade your package to format
+   2, see: :ref:`migrating_from_format1_to_format2`.
 
 Overview
 --------

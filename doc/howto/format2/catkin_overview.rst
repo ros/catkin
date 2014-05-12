@@ -11,9 +11,9 @@ package.xml
 :::::::::::
 
 Your package must contain an XML file named package.xml_, as specified
-by REP-0127_.  These components are all required::
+by REP-0140_.  These components are all required::
 
-  <package>
+  <package format="2">
     <name>your_package</name>
     <version>1.2.4</version>
     <description>
@@ -61,19 +61,20 @@ A good use for metapackages is to group the major components of your
 robot and then provide a comprehensive grouping for your whole system.
 
 In addition to the XML elements mentioned above, a metapackage
-``package.xml`` must contain this::
+``package.xml`` should contain this::
 
   <export>
     <metapackage/>
+    <architecture_independent/>
   </export>
 
 In addition to the required ``<buildtool_depend>`` for catkin,
-metapackages list the packages in the group using ``<run_depend>``
+metapackages list the packages in the group using ``<exec_depend>``
 tags::
 
-  <run_depend>your_custom_msgs</run_depend>
-  <run_depend>your_server_node</run_depend>
-  <run_depend>your_utils</run_depend>
+  <exec_depend>your_custom_msgs</exec_depend>
+  <exec_depend>your_server_node</exec_depend>
+  <exec_depend>your_utils</exec_depend>
 
 Metapackages must not include any other ``package.xml`` elements.
 But, a ``CMakeLists.txt`` is required, as shown below.
@@ -120,6 +121,6 @@ Follow them, observing the usual order of ``CMakeLists.txt`` commands:
 #. ``add_rostest()``, ``add_rostest_gtest()``
 
 .. _package.xml: http://wiki.ros.org/catkin/package.xml
-.. _REP-0127: http://ros.org/reps/rep-0127.html
+.. _REP-0140: http://ros.org/reps/rep-0140.html
 .. _rosbuild: http://wiki.ros.org/rosbuild
 .. _stack: http://wiki.ros.org/Stacks
