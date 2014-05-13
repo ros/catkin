@@ -8,29 +8,26 @@ package.xml
 :::::::::::
 
 Your ``package.xml`` must declare a ``<build_depend>`` on
-``message_generation``, and a ``<run_depend>`` on
+``message_generation``, and a ``<exec_depend>`` on
 ``message_runtime``::
 
   <build_depend>message_generation</build_depend>
-  <run_depend>message_runtime</run_depend>
+  <exec_depend>message_runtime</exec_depend>
 
 Your messages services, or actions will probably include fields
 defined in other ROS messages, like std_msgs_.  Declare them like
 this::
 
-  <build_depend>std_msgs</build_depend>
-  <run_depend>std_msgs</run_depend>
+  <depend>std_msgs</depend>
 
-Both ``<build_depend>`` and ``<run_depend>`` are recommended for
-message dependencies.  That example assumes ``std_msgs`` is the only
-dependency.  Be sure to mention all your message package dependencies
-here, and substitute them all for ``std_msgs`` in the examples that
-follow.
+The ``<depend>`` tag is recommended for message dependencies.  That
+example assumes ``std_msgs`` is the only dependency.  Be sure to
+mention all your message package dependencies here, and substitute
+them all for ``std_msgs`` in the examples that follow.
 
 To generate actions, add ``actionlib_msgs`` as a dependency::
   
-  <build_depend>actionlib_msgs</build_depend>
-  <run_depend>actionlib_msgs</run_depend>
+  <depend>actionlib_msgs</depend>
 
 
 CMakeLists.txt
@@ -90,7 +87,7 @@ before any programs that depend on them.  Every target that directly
 or indirectly uses one of your message headers must declare an
 explicit dependency::
 
-  add_dependencies(your_program ${your_package_EXPORTED_TARGETS})
+  add_dependencies(your_program ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 If your build target also uses message or service headers imported
 from other catkin packages, declare those dependencies similarly::
