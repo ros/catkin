@@ -3,51 +3,53 @@
 Configuring rostest
 -------------------
 
-Rostest_ is needed whenever unit tests require a roscore_ for running
+Use rostest_ whenever your unit tests require a roscore_ for running
 ROS nodes.
 
 
 package.xml
 :::::::::::
 
+Declare ``rostest`` as a test dependency, along with any other
+test-only dependencies::
 
-The ``rostest`` package is needed at build time, because it defines
-the ``add_rostest()`` CMake command::
-
-  <build_depend>rostest</build_depend>
-
-Do not declare a ``<test_depend>``, because it will conflict with the
-required ``<build_depend>``.
+  <test_depend>rostest</test_depend>
 
 
 CMakeLists.txt
 ::::::::::::::
 
-You must also include ``rostest`` in your ``find_package()``
-components.  Since these dependencies are for tests only you should
-find them in a second invocation inside a conditional block::
+You need a ``find_package()`` for ``rostest`` to define the necessary
+CMake commands.  It is better *not* to use a second
+``find_package(catkin ...)`` for test dependencies like rostest,
+because that would reset important catkin CMake variables, making it
+hard to build test programs.
+
+Place both the ``find_package()`` and your test declarations inside
+the conditional testing block::
 
   if (CATKIN_ENABLE_TESTING)
-    find_package(catkin REQUIRED COMPONENTS rostest ...)
-  endif()
-
-Finally, declare your rostest launch scripts::
-
-  if (CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
     add_rostest(tests/your_first_rostest.test)
     add_rostest(tests/your_second_rostest.test)
   endif()
 
-If your rostest should contain a gtest executable you can use the
-following convenient function::
+If your rostest also uses a gtest_ executable, there is a convenience
+function::
 
   if (CATKIN_ENABLE_TESTING)
-    add_rostest_gtest(your_third_rostest_target tests/your_third_rostest.test src/test/your_third_rostest.cpp [more cpp files])
-    target_link_libraries(your_third_rostest_target [libraries to depend on, e.g. ${catkin_LIBRARIES}])
+    add_rostest_gtest(${PROJECT_NAME}_gtest_node
+                      tests/your_third_rostest.test
+                      tests/your_gtest_node.cpp)
+    target_link_libraries(${PROJECT_NAME}_gtest_node ${catkin_LIBRARIES})
   endif()
 
-For more information how to write and run rostests please go to the
-Rostest_ wiki page.
+Any additional library dependencies would be added to the
+``target_link_libraries()``, as usual.
 
+For more details on writing and running rostests, see the rostest_
+documentation.
+
+.. _gtest: http://wiki.ros.org/gtest
 .. _roscore: http://wiki.ros.org/roscore
-.. _Rostest: http://wiki.ros.org/rostest
+.. _rostest: http://wiki.ros.org/rostest
