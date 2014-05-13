@@ -26,11 +26,9 @@ The remainder of your scripts need not change.
 package.xml
 :::::::::::
 
-You need to declare both build and run-time dependencies on
-dynamic_reconfigure_::
+You need to declare your dependency on dynamic_reconfigure_::
 
-  <build_depend>dynamic_reconfigure</build_depend>
-  <run_depend>dynamic_reconfigure</run_depend>
+  <depend>dynamic_reconfigure</depend>
 
 CMakeLists.txt
 ::::::::::::::
@@ -45,16 +43,16 @@ scripts::
 
   generate_dynamic_reconfigure_options(cfg/YourNode.cfg)
 
+Include dynamic_reconfigure_ in the CATKIN_DEPENDS exports list for
+your package::
+
+  catkin_package(CATKIN_DEPENDS dynamic_reconfigure ...)
+
 Since you probably have build targets using the generated header, add
 this to ensure it gets built before any targets needing them::
 
-  add_dependencies(your_program ${your_package_EXPORTED_TARGETS})
-  add_dependencies(your_library ${your_package_EXPORTED_TARGETS})
-
-Finally, include dynamic_reconfigure_ in the CATKIN_DEPENDS exports
-list for your package::
-
-  catkin_package(CATKIN_DEPENDS dynamic_reconfigure ...)
+  add_dependencies(your_program ${${PROJECT_NAME}_EXPORTED_TARGETS})
+  add_dependencies(your_library ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 .. _dynamic_reconfigure: http://wiki.ros.org/dynamic_reconfigure
 .. _roslib: http://wiki.ros.org/roslib
