@@ -131,30 +131,39 @@ def main(argv=sys.argv[1:]):
     parser.add_argument("uri")
     parser.add_argument("dest")
     parser.add_argument("md5sum", nargs='?')
+    parser.add_argument("--ignore-error", action="store_true", help="Ignore download errors")
     args = parser.parse_args(argv)
 
     uri = args.uri
-    dest = args.dest
-    md5sum = args.md5sum
 
     if '://' not in uri:
         uri = 'file://' + uri
 
     fresh = False
-    if not os.path.exists(dest):
-        download_md5(uri, dest)
+    if not os.path.exists(args.dest):
+        try:
+            download_md5(uri, args.dest)
+        except Exception:
+            if args.ignore_error:
+                return 0
+            raise
         fresh = True
 
-    if md5sum:
-        result, hexdigest = checkmd5(dest, md5sum)
+    if args.md5sum:
+        result, hexdigest = checkmd5(args.dest, args.md5sum)
         if result is False and fresh is False:
-            print('WARNING: md5sum mismatch (%s != %s); re-downloading file %s' % (hexdigest, md5sum, dest))
-            os.remove(dest)
-            download_md5(uri, dest)
-            result, hexdigest = checkmd5(dest, md5sum)
+            print('WARNING: md5sum mismatch (%s != %s); re-downloading file %s' % (hexdigest, args.md5sum, args.dest))
+            os.remove(args.dest)
+            try:
+                download_md5(uri, args.dest)
+            except Exception:
+                if args.ignore_error:
+                    return 0
+                raise
+            result, hexdigest = checkmd5(args.dest, args.md5sum)
         if result is False:
-            sys.exit('ERROR: md5sum mismatch (%s != %s) on %s; aborting' % (hexdigest, md5sum, dest))
+            return 'ERROR: md5sum mismatch (%s != %s) on %s; aborting' % (hexdigest, args.md5sum, args.dest)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
