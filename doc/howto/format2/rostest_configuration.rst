@@ -38,10 +38,10 @@ If your rostest also uses a gtest_ executable, there is a convenience
 function::
 
   if (CATKIN_ENABLE_TESTING)
-    add_rostest_gtest(${PROJECT_NAME}_gtest_node
+    add_rostest_gtest(your_gtest_node
                       tests/your_third_rostest.test
                       tests/your_gtest_node.cpp)
-    target_link_libraries(${PROJECT_NAME}_gtest_node ${catkin_LIBRARIES})
+    target_link_libraries(your_gtest_node ${catkin_LIBRARIES})
   endif()
 
 Any additional library dependencies would be added to the

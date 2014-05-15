@@ -94,6 +94,9 @@ catkin dependencies in the same command::
 
   find_package(catkin REQUIRED COMPONENTS angles roscpp std_msgs)
 
+Make sure all these packages are also mentioned in your
+``package.xml`` using a ``<depend>`` or ``<build_depend>`` tag.
+
 Include directories
 '''''''''''''''''''
 

@@ -61,7 +61,7 @@ A good use for metapackages is to group the major components of your
 robot and then provide a comprehensive grouping for your whole system.
 
 In addition to the XML elements mentioned above, a metapackage
-``package.xml`` should contain this::
+``package.xml`` must contain this::
 
   <export>
     <metapackage/>

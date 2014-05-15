@@ -6,14 +6,13 @@ Building and installing C++ libraries and headers
 In catkin, libraries will be installed in a common directory shared by
 all the packages in that entire ROS distribution.  So, make sure your
 library names are sufficiently unique not to clash with other packages
-or system libraries.  Catkin target names must be unique within the
-catkin workspace.  So, it's best to include the package name in the
-library target name.
+or system libraries.  It makes sense to include at least part of your
+package name in each library target name.
 
-For this example, suppose you have a shared library build target named
-``your_package_library``.  On Linux, the actual file name will be
-something like ``libyour_package_library.so``, perhaps with a version
-number suffix.
+For this example, suppose ``your_package`` has a shared library build
+target named ``your_library``.  On Linux, the actual file name will be
+something like ``libyour_library.so``, perhaps with a version number
+suffix.
 
 Headers
 :::::::
@@ -41,7 +40,7 @@ Building
 To build your library add this command to your ``CMakeLists.txt``,
 listing all required C++ source files, but not the headers::
 
-  add_library(${PROJECT_NAME}_library libsrc1.cpp libsrc2.cpp libsrc_etc.cpp)
+  add_library(your_library libsrc1.cpp libsrc2.cpp libsrc_etc.cpp)
 
 If the list of source files is long, a CMake variable can help::
 
@@ -51,23 +50,43 @@ If the list of source files is long, a CMake variable can help::
       libsrc3.cpp
       libsrc4.cpp
       libsrc_etc.cpp)
-  add_library(${PROJECT_NAME}_library ${YOUR_LIB_SOURCES})
+  add_library(your_library ${YOUR_LIB_SOURCES})
 
 If your library depends on libraries provided by other catkin
 packages, add this command::
 
-  target_link_libraries(${PROJECT_NAME}_library ${catkin_LIBRARIES})
+  target_link_libraries(your_library ${catkin_LIBRARIES})
 
 If your library depends on additional non-catkin system libraries,
 include them in the ``target_link_libraries()``::
 
-  target_link_libraries(${PROJECT_NAME}_library
+  target_link_libraries(your_library
                         ${catkin_LIBRARIES}
                         ${Boost_LIBRARIES}
                         ${GSTREAMER_LIBRARIES})
 
 If the list of libraries is lengthy, you can similarly define a CMake
 variable for them.
+
+Exporting
+:::::::::
+
+Your ``catkin_package()`` needs to export all your library build
+targets so other catkin packages can use them.  Suppose
+``your_library`` depends on the ROS ``std_msgs`` package and on the
+system ``Boost`` thread library::
+
+  catkin_package(CATKIN_DEPENDS std_msgs
+                 DEPENDS Boost
+                 INCLUDE_DIRS include
+                 LIBRARIES your_library)
+
+Be sure to list every library on which your libraries depend, and
+don't forget to mention them in your ``package.xml`` using a
+``<depend>`` or ``<build_export_depend>`` tag::
+
+  <depend>std_msgs</depend>
+  <build_export_depend>boost</build_export_depend>
 
 Installing
 ::::::::::
@@ -76,13 +95,10 @@ In catkin, libraries are installed in a ``lib/`` directory shared by
 all the packages in that entire ROS distribution.  So, be careful what
 you name them.
 
-Add these commands to your ``CMakeLists.txt``, substituting all your
-library build target names for ``${PROJECT_NAME}_library``::
+Add this command to your ``CMakeLists.txt``, mentioning all your
+library build targets::
 
-  catkin_package(INCLUDE_DIRS include
-                 LIBRARIES ${PROJECT_NAME}_library)
-
-  install(TARGETS ${PROJECT_NAME}_library
+  install(TARGETS your_library your_other_library
           ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
           LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
           RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

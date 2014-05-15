@@ -4,12 +4,7 @@ Building and installing C++ executables
 ---------------------------------------
 
 For this example, suppose you have an executable build target named
-``your_package_node``.
-
-Although ROS node names are local to the package in which they are
-defined, catkin target names must be unique within the catkin
-workspace.  So, it's best to include the package name in the target
-name.
+``your_node``.
 
 Headers
 :::::::
@@ -33,11 +28,10 @@ resolve header dependencies in more detail.
 Building
 ::::::::
 
-To build ``your_package_node``, add this command to your
-``CMakeLists.txt``, listing all required C++ source files, but not the
-headers::
+To build ``your_node``, add this command to your ``CMakeLists.txt``,
+listing all required C++ source files, but not the headers::
 
-  add_executable(${PROJECT_NAME}_node src1.cpp src2.cpp src_etc.cpp)
+  add_executable(your_node src1.cpp src2.cpp src_etc.cpp)
 
 If the list of files is long, a CMake variable can help::
 
@@ -49,19 +43,19 @@ If the list of files is long, a CMake variable can help::
       src/file5.cpp
       src/file6.cpp
       src/file_etc.cpp)
-  add_executable(${PROJECT_NAME}_node ${${PROJECT_NAME}_SOURCES})
+  add_executable(your_node ${${PROJECT_NAME}_SOURCES})
 
 If your program depends on libraries provided by other catkin
 packages, add this::
 
-  add_executable(${PROJECT_NAME}_node ${${PROJECT_NAME}_SOURCES})
-  target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
+  add_executable(your_node ${${PROJECT_NAME}_SOURCES})
+  target_link_libraries(your_node ${catkin_LIBRARIES})
 
 If your program depends on additional non-catkin system libraries,
 include them in the ``target_link_libraries()``::
 
-  add_executable(${PROJECT_NAME}_node ${${PROJECT_NAME}_SOURCES})
-  target_link_libraries(${PROJECT_NAME}_node
+  add_executable(your_node ${${PROJECT_NAME}_SOURCES})
+  target_link_libraries(your_node
                         ${catkin_LIBRARIES}
                         ${Boost_LIBRARIES}
                         ${GSTREAMER_LIBRARIES})
@@ -81,7 +75,7 @@ There are only a few core ROS commands like ``rosrun`` and
 
 List all your executables as TARGETS on an install command like this::
 
-  install(TARGETS ${PROJECT_NAME}_node
+  install(TARGETS your_node
           RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 .. _roslaunch: http://wiki.ros.org/roslaunch

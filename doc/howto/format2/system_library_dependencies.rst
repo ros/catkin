@@ -49,7 +49,7 @@ like this::
 This type of dependency mainly applies to headers and CMake
 configuration files, and it typically names the "development" package::
 
-  <run_depend>libgstreamer0.10-dev</run_depend>
+  <build_export_depend>libgstreamer0.10-dev</build_export_depend>
 
 ``<exec_depend>``
 '''''''''''''''''
