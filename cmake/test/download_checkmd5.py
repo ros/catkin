@@ -131,18 +131,26 @@ def main(argv=sys.argv[1:]):
     parser.add_argument("uri")
     parser.add_argument("dest")
     parser.add_argument("md5sum", nargs='?')
+    parser.add_argument("--non-essential", action="store_true")
     args = parser.parse_args(argv)
 
     uri = args.uri
     dest = args.dest
     md5sum = args.md5sum
+    essential = not args.non_essential
 
     if '://' not in uri:
         uri = 'file://' + uri
 
     fresh = False
     if not os.path.exists(dest):
-        download_md5(uri, dest)
+        try:
+            download_md5(uri, dest)
+        except Exception:
+            if essential:
+                raise
+            else:
+                sys.exit(0)
         fresh = True
 
     if md5sum:
@@ -150,7 +158,13 @@ def main(argv=sys.argv[1:]):
         if result is False and fresh is False:
             print('WARNING: md5sum mismatch (%s != %s); re-downloading file %s' % (hexdigest, md5sum, dest))
             os.remove(dest)
-            download_md5(uri, dest)
+            try:
+                download_md5(uri, dest)
+            except Exception:
+                if essential:
+                    raise
+                else:
+                    sys.exit(0)
             result, hexdigest = checkmd5(dest, md5sum)
         if result is False:
             sys.exit('ERROR: md5sum mismatch (%s != %s) on %s; aborting' % (hexdigest, md5sum, dest))
