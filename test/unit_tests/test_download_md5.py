@@ -53,7 +53,7 @@ class DowloadCheckMd5Test(unittest.TestCase):
             self.assertTrue(os.path.isfile(check_file))
             os.remove(check_file)
             self.assertFalse(os.path.isfile(check_file))
-            self.assertRaises(SystemExit, main, [os.path.join('file://localhost', src_file), check_file, "hello"])
+            self.assertNotEqual(main([os.path.join('file://localhost', src_file), check_file, "hello"]), 0)
             main([os.path.join('file://localhost', src_file), check_file, realmd5])
 
         finally:
