@@ -61,14 +61,9 @@ Configuring and running unit tests
 ----------------------------------
 
 All configuration steps related to testing should be only done
-conditionally if ``CATKIN_ENABLE_TESTING`` is set (which is true by
-default).  Passing ``-DCATKIN_ENABLE_TESTING=0`` to CMake enables to
-configure and build packages without any testing overhead.
-
-If the CMake configuration of packages fails because they use test
-functions without checking this flag before the option
-``-DCATKIN_SKIP_TESTING=1`` can be passed to CMake to disable testing
-but providing mock functions in order to not break the build.
+conditionally when ``CATKIN_ENABLE_TESTING`` is set, which is true by
+default.  Passing ``-DCATKIN_ENABLE_TESTING=0`` to CMake enables
+configuring and building packages without any testing overhead.
 
 .. toctree::
    :maxdepth: 1
