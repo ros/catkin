@@ -103,7 +103,7 @@ arguments::
 
   find_package(catkin REQUIRED COMPONENTS ...)
   ...
-  catkin_metapackage(...)
+  catkin_package(...)
 
 :ref:`how_to_do_common_tasks_1` pages describe those tasks in detail.
 Follow them, observing the usual order of ``CMakeLists.txt`` commands:
