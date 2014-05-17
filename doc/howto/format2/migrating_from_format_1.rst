@@ -83,11 +83,17 @@ referenced within the conditional test block::
 ``<doc_depend>``
 ::::::::::::::::
 
-*What, if anything, should we say about this?*
+This tag defines dependencies needed for building your documentation::
 
-``<buildtool_export_depend>``
-:::::::::::::::::::::::::::::
+  <doc_depend>doxygen</doc_depend>
+  <doc_depend>epydoc</doc_depend>
+  <doc_depend>python-sphinx</doc_depend>
+  <doc_depend>rosdoc_lite</doc_depend>
 
-*What, if anything, should we say about this?*
+Those examples are automatically provided by the ROS build farm, but
+there is no harm in declaring which you actually use.  They do not
+create binary package dependencies, unless they were also declared
+using some other dependency tag.
+
 
 .. _REP-0140: http://ros.org/reps/rep-0140.html
