@@ -15,6 +15,7 @@ Public CMake functions / macros
  * :cmake:macro:`catkin_add_env_hooks`
  * :cmake:macro:`catkin_add_gtest`
  * :cmake:macro:`catkin_add_nosetests`
+ * :cmake:macro:`catkin_download`
  * :cmake:macro:`catkin_download_test_data`
  * :cmake:macro:`catkin_filter_libraries_for_build_configuration`
  * :cmake:macro:`catkin_install_python`
@@ -148,6 +149,46 @@ Public CMake functions / macros
 
 
 
+.. _`catkin_download_ref`:
+
+`catkin_download`
+-----------------
+
+.. cmake:macro:: catkin_download(target, url)
+
+ *[function defined in catkin_download.cmake]*
+
+
+ Download a file containing data from a URL.
+
+ It is commonly used to download larger data files which should not be
+ stored in the repository.
+
+ .. note:: It is not recommended to rely on downloaded data during
+   a configure / make cycle since this prevents building the package
+   when no network connectivity is available.
+
+ .. note:: The target will be registered as a dependency
+   of the "download_extra_data" target.
+
+ :param target: the target name
+ :type target: string
+ :param url: the url to download
+ :type url: string
+
+ :param DESTINATION: the directory where the file is downloaded to
+   (default: ${PROJECT_BINARY_DIR})
+ :type DESTINATION: string
+ :param FILENAME: the filename of the downloaded file
+   (default: the basename of the url)
+ :type FILENAME: string
+ :param MD5: the expected md5 hash to compare against
+   (default: empty, skipping the check)
+ :type MD5: string
+
+ Additionally, options EXCLUDE_FROM_ALL and REQUIRED can be specified.
+
+
 .. _`catkin_download_test_data_ref`:
 
 `catkin_download_test_data`
@@ -166,6 +207,8 @@ Public CMake functions / macros
  :param MD5: the expected md5 hash to compare against
    (default: empty, skipping the check)
  :type MD5: string
+
+ Additionally, option REQUIRED can be specified.
 
 
 .. _`catkin_filter_libraries_for_build_configuration_ref`:
@@ -205,7 +248,9 @@ Public CMake functions / macros
 
  The signature:
 
-   catkin_install_python(PROGRAMS files... DESTINATION <dir> [OPTIONAL])
+   catkin_install_python(PROGRAMS files... DESTINATION <dir>
+     [OPTIONAL]
+   )
 
  See the documentation for CMake install() function for more information.
 
@@ -561,8 +606,9 @@ Non-public CMake functions / macros
 
 
  Search all subfolders in the workspace for ``package.xml`` files.
- Based on the dependencies specified in the ``build_depends`` and
- ``buildtool_depends`` tags it performs a topological sort and calls
+ Based on the dependencies specified in the ``build_depends``,
+ ``buildtool_depends`` and (as of package format version 2)
+ ``test_depends`` tags it performs a topological sort and calls
  ``add_subdirectory()`` for each directory.
 
  The functions is only called in catkin's ``toplevel.cmake``, which
