@@ -33,6 +33,7 @@
 from __future__ import print_function
 
 import copy
+from distutils.sysconfig import get_python_lib
 import multiprocessing
 import os
 import platform
@@ -287,17 +288,8 @@ def get_multiarch():
 
 def get_python_install_dir():
     # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
-    python_install_dir = 'lib'
-    python_use_debian_layout = os.path.exists('/etc/debian_version')
-    if os.name != 'nt':
-        python_version_xdoty = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
-        if python_use_debian_layout and sys.version_info[0] == 3:
-            python_version_xdoty = str(sys.version_info[0])
-        python_install_dir = os.path.join(python_install_dir, 'python' + python_version_xdoty)
-
-    python_packages_dir = 'dist-packages' if python_use_debian_layout else 'site-packages'
-    python_install_dir = os.path.join(python_install_dir, python_packages_dir)
-    return python_install_dir
+    relevant_subfolders = 2 if os.name == 'nt' else 3
+    return os.sep.join(get_python_lib().split(os.sep)[-relevant_subfolders:])
 
 
 def handle_make_arguments(input_make_args):
