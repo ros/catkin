@@ -44,6 +44,7 @@ except ImportError:
     from io import StringIO
 import subprocess
 import sys
+import site
 
 try:
     from catkin_pkg.cmake import configure_file, get_metapackage_cmake_template_path
@@ -270,16 +271,8 @@ def get_multiarch():
 
 def get_python_install_dir():
     # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
-    python_install_dir = 'lib'
-    python_use_debian_layout = os.path.exists('/etc/debian_version')
-    if os.name != 'nt':
-        python_version_xdoty = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
-        if python_use_debian_layout and sys.version_info[0] == 3:
-            python_version_xdoty = str(sys.version_info[0])
-        python_install_dir = os.path.join(python_install_dir, 'python' + python_version_xdoty)
-
-    python_packages_dir = 'dist-packages' if python_use_debian_layout else 'site-packages'
-    python_install_dir = os.path.join(python_install_dir, python_packages_dir)
+    # one-liner so cmake can use the same code
+    python_install_dir = os.sep.join(site.getsitepackages()[1 if os.name == 'nt' else 0].split(os.sep)[-2 if os.name == 'nt' else -3:])
     return python_install_dir
 
 
