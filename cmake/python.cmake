@@ -18,7 +18,7 @@ file(TO_NATIVE_PATH "${CMAKE_INSTALL_PREFIX}" SETUPTOOLS_INSTALL_PREFIX)
 # install things, so we'll ask Python. Becuase this has to match
 # python/catkin/builder.py exactly, we let Python handle the work.
 execute_process(COMMAND "${PYTHON_EXECUTABLE}"
-  "-c" "import site; import os; python_install_dir=os.sep.join(site.getsitepackages()[1 if os.name == 'nt' else 0].split(os.sep)[-2 if os.name == 'nt' else -3:]); print(python_install_dir)"
+    "-c" "from distutils.sysconfig import get_python_lib; import os; python_install_dir = os.sep.join(get_python_lib().split(os.sep)[-2 if os.name == 'nt' else -3:]); print(python_install_dir)"
   RESULT_VARIABLE _res
   OUTPUT_VARIABLE PYTHON_INSTALL_DIR
   OUTPUT_STRIP_TRAILING_WHITESPACE)

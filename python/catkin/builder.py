@@ -44,7 +44,7 @@ except ImportError:
     from io import StringIO
 import subprocess
 import sys
-import site
+from distutils.sysconfig import get_python_lib
 
 try:
     from catkin_pkg.cmake import configure_file, get_metapackage_cmake_template_path
@@ -272,7 +272,7 @@ def get_multiarch():
 def get_python_install_dir():
     # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
     # one-liner so cmake can use the same code
-    python_install_dir = os.sep.join(site.getsitepackages()[1 if os.name == 'nt' else 0].split(os.sep)[-2 if os.name == 'nt' else -3:])
+    python_install_dir = os.sep.join(get_python_lib().split(os.sep)[-2 if os.name == 'nt' else -3:])
     return python_install_dir
 
 
