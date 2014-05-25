@@ -2,6 +2,11 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix regression in catkin_make_isolated from 0.6.4 (`#624 <https://github.com//ros/catkin/issues/624>`_)
+* fix problem when catkin_make / catkin_make_isolated is invoked in a symlinked folder (`#638 <https://github.com//ros/catkin/issues/638>`_)
+
 0.6.4 (2014-05-07)
 ------------------
 * add architecture independent flag in package.xml (`#625 <https://github.com/ros/catkin/issues/625>`_)
