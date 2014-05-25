@@ -921,7 +921,8 @@ def build_workspace_isolated(
             if 'CMAKE_PREFIX_PATH' in os.environ.keys():
                 variables = {
                     'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
-                    'CATKIN_GLOBAL_LIB_DESTINATION': 'lib',
+                    'CATKIN_LIB_ENVIRONMENT_PATHS': "'lib'",
+                    'CATKIN_PKGCONFIG_ENVIRONMENT_PATHS': "os.path.join('lib', 'pkgconfig')",
                     'CMAKE_PREFIX_PATH_AS_IS': ';'.join(os.environ['CMAKE_PREFIX_PATH'].split(os.pathsep)),
                     'PYTHON_INSTALL_DIR': get_python_install_dir(),
                 }
