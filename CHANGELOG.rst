@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.5 (2014-05-25)
+------------------
 * fix regression in catkin_make_isolated from 0.6.4 (`#624 <https://github.com//ros/catkin/issues/624>`_)
 * fix problem when catkin_make / catkin_make_isolated is invoked in a symlinked folder (`#638 <https://github.com//ros/catkin/issues/638>`_)
 
