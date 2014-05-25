@@ -35,9 +35,10 @@ def main():
         disable_ANSI_colors()
 
     # verify that the base path is known
-    base_path = os.path.abspath('.')
+    # use PWD in order to work when bein invoked in a symlinked location
+    base_path = os.path.abspath(os.getenv('PWD', '.'))
     if args.directory:
-        base_path = os.path.abspath(args.directory)
+        base_path = os.path.abspath(os.path.join(base_path, args.directory))
     if not os.path.exists(base_path):
         return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} does not exist' % base_path)
 

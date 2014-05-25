@@ -110,10 +110,15 @@ def main():
     if not sys.stdout.isatty():
         opts.no_color = True
 
+    # use PWD in order to work when bein invoked in a symlinked location
+    workspace = os.path.abspath(os.getenv('PWD', '.'))
+    if opts.workspace:
+        workspace = os.path.abspath(os.path.join(workspace, opts.workspace))
+
     destdir = os.environ['DESTDIR'] if 'DESTDIR' in os.environ else None
 
     build_workspace_isolated(
-        workspace=opts.workspace or '.',
+        workspace=workspace,
         sourcespace=opts.source,
         buildspace=opts.build,
         develspace=opts.devel,
