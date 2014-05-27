@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -125,4 +126,31 @@ class CatkinMakeIsolatedTests(unittest.TestCase):
             shutil.rmtree(ws_dir)
             sys.argv = argv
             os.environ = environ
+            assert error_msg is None, error_msg
+
+    def test_symlinked_src(self):
+        argv = sys.argv
+        environ = os.environ
+        cwd = os.getcwd()
+        error_msg = None
+        try:
+            base_dir = tempfile.mkdtemp()
+            ws_dir = os.path.join(base_dir, 'ws')
+            os.mkdir(ws_dir)
+            other_dir = os.path.join(base_dir, 'other')
+            os.mkdir(other_dir)
+            src_dir = os.path.join(ws_dir, 'src')
+            os.symlink(other_dir, src_dir)
+
+            cmi = os.path.join(os.path.dirname(__file__), '..', '..', 'bin', 'catkin_make_isolated')
+            environ['CMAKE_PREFIX_PATH'] = os.path.join(ws_dir, 'install')
+            environ['PWD'] = src_dir
+            subprocess.check_output(' '.join([cmi, '-C', '..']), cwd=src_dir, env=environ, shell=True)
+        except Exception as e:
+            error_msg = str(e)
+        finally:
+            shutil.rmtree(ws_dir)
+            sys.argv = argv
+            os.environ = environ
+            os.chdir(cwd)
             assert error_msg is None, error_msg
