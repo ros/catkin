@@ -1,4 +1,9 @@
+from __future__ import print_function
+
 import os
+import shutil
+import sys
+import tempfile
 import unittest
 
 try:
@@ -13,8 +18,9 @@ imp.load_source('catkin_make_isolated',
                 os.path.join(os.path.dirname(__file__),
                              '..', '..', 'bin', 'catkin_make_isolated'))
 
-from catkin_make_isolated import parse_args
 from catkin_make_isolated import handle_cmake_args
+from catkin_make_isolated import main
+from catkin_make_isolated import parse_args
 
 
 class CatkinMakeIsolatedTests(unittest.TestCase):
@@ -101,3 +107,22 @@ class CatkinMakeIsolatedTests(unittest.TestCase):
         cmake_args, opts = handle_cmake_args(cmake_args, opts)
         assert cmake_args == [], cmake_args
         assert opts.devel == 'devel_isolated'
+
+    def test_empty_workspace(self):
+        argv = sys.argv
+        environ = os.environ
+        error_msg = None
+        try:
+            ws_dir = tempfile.mkdtemp()
+            src_dir = os.path.join(ws_dir, 'src')
+            os.mkdir(src_dir)
+            sys.argv = ['catkin_make_isolated', '-C', ws_dir]
+            environ['CMAKE_PREFIX_PATH'] = os.path.join(ws_dir, 'install')
+            main()
+        except Exception as e:
+            error_msg = str(e)
+        finally:
+            shutil.rmtree(ws_dir)
+            sys.argv = argv
+            os.environ = environ
+            assert error_msg is None, error_msg
