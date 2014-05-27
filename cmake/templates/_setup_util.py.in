@@ -93,7 +93,7 @@ def _rollback_env_variable(environ, name, subfolder):
             subfolder = subfolder[1:]
         if subfolder.endswith(os.path.sep) or (os.path.altsep and subfolder.endswith(os.path.altsep)):
             subfolder = subfolder[:-1]
-    for ws_path in _get_workspaces(environ, include_fuerte=True):
+    for ws_path in _get_workspaces(environ, include_fuerte=True, include_non_existing=True):
         path_to_find = os.path.join(ws_path, subfolder) if subfolder else ws_path
         path_to_remove = None
         for env_path in env_paths:
@@ -108,7 +108,7 @@ def _rollback_env_variable(environ, name, subfolder):
     return new_value if value_modified else None
 
 
-def _get_workspaces(environ, include_fuerte=False):
+def _get_workspaces(environ, include_fuerte=False, include_non_existing=False):
     '''
     Based on CMAKE_PREFIX_PATH return all catkin workspaces.
 
@@ -119,7 +119,7 @@ def _get_workspaces(environ, include_fuerte=False):
     value = environ[env_name] if env_name in environ else ''
     paths = [path for path in value.split(os.pathsep) if path]
     # remove non-workspace paths
-    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_MARKER_FILE)) or (include_fuerte and path.startswith('/opt/ros/fuerte'))]
+    workspaces = [path for path in paths if os.path.isfile(os.path.join(path, CATKIN_MARKER_FILE)) or (include_fuerte and path.startswith('/opt/ros/fuerte')) or (include_non_existing and not os.path.exists(path))]
     return workspaces
 
 
