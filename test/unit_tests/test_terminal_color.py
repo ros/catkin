@@ -1,7 +1,7 @@
 import unittest
 
 try:
-    from catkin.terminal_color import fmt, sanitize
+    from catkin.terminal_color import ansi, enable_ANSI_colors, fmt, sanitize
 except ImportError as e:
     raise ImportError(
         'Please adjust your pythonpath before running this test: %s' % str(e)
@@ -16,6 +16,10 @@ except NameError:
 class TerminalColorTest(unittest.TestCase):
 
     def test_terminal_colors(self):
+        # since other test might disable ansi colors
+        # we need to ensure it is enabled
+        enable_ANSI_colors()
+        assert ansi('reset') != ''
         test = '@_This is underlined@|'
         rslt = '\033[4mThis is underlined\033[0m\033[0m'
         assert fmt(test) == rslt
