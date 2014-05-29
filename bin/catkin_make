@@ -36,7 +36,7 @@ def main():
         disable_ANSI_colors()
 
     # use PWD in order to work when being invoked in a symlinked location
-    cwd = os.getenv('PWD', '.')
+    cwd = os.getenv('PWD', os.curdir)
 
     # verify that the base path is known
     base_path = os.path.abspath(os.path.join(cwd, args.directory))
@@ -199,7 +199,7 @@ def _parse_args(args=sys.argv[1:]):
         'If the number of CPU cores cannot be determined then no flags are given to make. '
         'All other arguments (i.e. target names) are passed to the "make" invocation.')
     add = parser.add_argument
-    add('-C', '--directory', default='.', help="The base path of the workspace (default '.')")
+    add('-C', '--directory', default=os.curdir, help="The base path of the workspace (default '%s')" % os.curdir)
     add('--source', help="The path to the source space (default 'workspace_base/src')")
     add('--build', help="The path to the build space (default 'workspace_base/build')")
     add('--force-cmake', action='store_true', help="Invoke 'cmake' even if it has been executed before")

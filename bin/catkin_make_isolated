@@ -33,8 +33,8 @@ def parse_args(args=None):
         'Make job flags (-j/-l) are handled just like catkin_make handles them.'
     )
     add = parser.add_argument
-    add('-C', '--directory', dest='workspace', default='.',
-        help="The base path of the workspace (default '.')")
+    add('-C', '--directory', dest='workspace', default=os.curdir,
+        help="The base path of the workspace (default '%s')" % os.curdir)
     add('--source', '--source-space', default=None,
         help="The path to the source space (default 'workspace_base/src')")
     add('--build', '--build-space', default=None,
@@ -112,7 +112,7 @@ def main():
         opts.no_color = True
 
     # use PWD in order to work when being invoked in a symlinked location
-    cwd = os.getenv('PWD', '.')
+    cwd = os.getenv('PWD', os.curdir)
 
     workspace = os.path.abspath(os.path.join(cwd, opts.workspace))
     sourcespace = determine_path_argument(cwd, workspace, opts.source, 'src')
