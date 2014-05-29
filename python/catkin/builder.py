@@ -60,6 +60,16 @@ from catkin.cmake import get_cmake_path
 from catkin.terminal_color import ansi, disable_ANSI_colors, fmt, sanitize
 
 
+def determine_path_argument(cwd, base_path, argument, default):
+    if argument is None:
+        # if no argument is passed the default is relative to the base_path
+        path = os.path.join(base_path, default)
+    else:
+        # if an argument is passed it is relative to cwd (or absolute)
+        path = os.path.abspath(os.path.join(cwd, argument))
+    return path
+
+
 def split_arguments(args, splitter_name, default=None):
     if splitter_name not in args:
         return args, default
@@ -703,18 +713,15 @@ def build_workspace_isolated(
 
     # Check source space existance
     if sourcespace is None:
-        ws_sourcespace = os.path.join(workspace, 'src')
-        if not os.path.exists(ws_sourcespace):
-            sys.exit("Could not find source space: {0}".format(sourcespace))
-        sourcespace = ws_sourcespace
-    sourcespace = os.path.abspath(sourcespace)
+        sourcespace = os.path.join(workspace, 'src')
+    if not os.path.exists(sourcespace):
+        sys.exit('Could not find source space: {0}'.format(sourcespace))
     print('Base path: ' + str(workspace))
     print('Source space: ' + str(sourcespace))
 
     # Check build space
     if buildspace is None:
         buildspace = os.path.join(workspace, 'build_isolated')
-    buildspace = os.path.abspath(buildspace)
     if not os.path.exists(buildspace):
         os.mkdir(buildspace)
     print('Build space: ' + str(buildspace))
@@ -722,13 +729,11 @@ def build_workspace_isolated(
     # Check devel space
     if develspace is None:
         develspace = os.path.join(workspace, 'devel_isolated')
-    develspace = os.path.abspath(develspace)
     print('Devel space: ' + str(develspace))
 
     # Check install space
     if installspace is None:
         installspace = os.path.join(workspace, 'install_isolated')
-    installspace = os.path.abspath(installspace)
     print('Install space: ' + str(installspace))
 
     if cmake_args:
