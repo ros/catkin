@@ -35,8 +35,8 @@ repository.  For other types of repositories, it can be omitted.
 Other directory names are allowed.  If you mixed the scripts with
 other files, you should install them one by one::
 
-  install(PROGRAMS scripts/your_node1 scripts/your_node2
-          DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+  catkin_install_python(PROGRAMS scripts/your_node1 scripts/your_node2
+                        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 Another good practice is to keep executable scripts very short,
 placing most of the code in a module which the script imports and then
@@ -56,11 +56,13 @@ Standard ROS practice is to place Python modules under the
 the same as your package.  Python requires that directory to have an
 ``__init__.py`` file, too.
 
-  **Note:** with rosbuild, it was possible to place Python modules
-  directly within ``src/``, but catkin does not allow that.  If you
-  need to define a module named ``your_package``, place its code in
-  ``src/your_package/__init__.py`` or else import its public symbols
-  there.
+.. note::
+
+  With rosbuild, it was possible to place Python modules directly
+  within ``src/``.  That violated Python setup conventions, and catkin
+  does not allow it.  If you need to define a module named
+  ``your_package``, place its code in ``src/your_package/__init__.py``
+  or import its public symbols there.
 
 Catkin installs Python packages using a variant of the standard Python
 ``setup.py`` script.  Assuming your modules use the standard ROS
@@ -87,8 +89,9 @@ your ``CMakeLists.txt``::
   catkin_python_setup()
 
 That takes care of installing your Python modules.  Never use it to
-install executable scripts, use the ``install()`` command shown above.
+install executable scripts.  Use the ``catkin_install_python()``
+command shown above.
 
-.. _roslaunch: http://ros.org/wiki/roslaunch
-.. _rosrun: http://ros.org/wiki/rosrun
+.. _roslaunch: http://wiki.ros.org/roslaunch
+.. _rosrun: http://wiki.ros.org/rosrun
 .. _Subversion: http://subversion.apache.org/
