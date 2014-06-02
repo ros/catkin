@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.6 (2014-06-02)
+------------------
 * fix rollback of environment when workspace has been deleted (`#641 <https://github.com/ros/catkin/issues/641>`_)
 * fix argument handling when cm / cmi is invoked in a symlinked folder (`#638 <https://github.com/ros/catkin/issues/638>`_)
 
