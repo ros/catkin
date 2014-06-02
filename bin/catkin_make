@@ -13,6 +13,7 @@ if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catki
 from catkin.init_workspace import init_workspace
 from catkin.terminal_color import disable_ANSI_colors, fmt
 from catkin.builder import cmake_input_changed
+from catkin.builder import determine_path_argument
 from catkin.builder import extract_cmake_and_make_arguments
 from catkin.builder import get_package_names_with_recursive_dependencies
 from catkin.builder import handle_make_arguments
@@ -34,56 +35,59 @@ def main():
     if args.no_color:
         disable_ANSI_colors()
 
-    # verify that the base path is known
-    # use PWD in order to work when bein invoked in a symlinked location
-    base_path = os.path.abspath(os.getenv('PWD', '.'))
-    if args.directory:
-        base_path = os.path.abspath(os.path.join(base_path, args.directory))
-    if not os.path.exists(base_path):
-        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} does not exist' % base_path)
+    # use PWD in order to work when being invoked in a symlinked location
+    cwd = os.getenv('PWD', os.curdir)
 
-    # verify that the base path does not contain a CMakeLists.txt, except if base path equals source path
-    if (args.source is None or os.path.realpath(base_path) != os.path.realpath(args.source)) \
-       and os.path.exists(os.path.join(base_path, 'CMakeLists.txt')):
-        return fmt(('@{rf}The specified base path @{boldon}"%s"@{boldoff} ' % base_path) +
-                   'contains a CMakeLists.txt but "catkin_make" must be invoked in the root of workspace')
+    # verify that the base path is known
+    base_path = os.path.abspath(os.path.join(cwd, args.directory))
+    if not os.path.exists(base_path):
+        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} '
+                   'does not exist' % base_path)
+    print('Base path: %s' % base_path)
 
     # verify that the base path does not contain a package.xml
     if os.path.exists(os.path.join(base_path, 'package.xml')):
-        return fmt(('@{rf}The specified base path @{boldon}"%s"@{boldoff} ' % base_path) +
-                   'contains a package but "catkin_make" must be invoked in the root of workspace')
-
-    print('Base path: %s' % base_path)
+        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} '
+                   'contains a package but "catkin_make" must be invoked '
+                   'in the root of workspace' % base_path)
 
     # determine source space
-    source_path = os.path.join(base_path, 'src')
-    if args.source:
-        source_path = os.path.abspath(args.source)
+    source_path = determine_path_argument(cwd, base_path, args.source, 'src')
     if not os.path.exists(source_path):
-        return fmt('@{rf}The specified source space @{boldon}"%s"@{boldoff} does not exist' % source_path)
+        return fmt('@{rf}The specified source space @{boldon}"%s"@{boldoff} '
+                   'does not exist' % source_path)
     print('Source space: %s' % source_path)
 
-    build_path = os.path.join(base_path, 'build')
-    if args.build:
-        build_path = os.path.abspath(args.build)
+    # verify that the base path does not contain a CMakeLists.txt
+    # except if base path equals source path
+    if (os.path.realpath(base_path) != os.path.realpath(source_path)) \
+       and os.path.exists(os.path.join(base_path, 'CMakeLists.txt')):
+        return fmt('@{rf}The specified base path @{boldon}"%s"@{boldoff} '
+                   'contains a CMakeLists.txt but "catkin_make" must be '
+                   'invoked in the root of workspace' % base_path)
+
+    build_path = determine_path_argument(cwd, base_path, args.build, 'build')
     print('Build space: %s' % build_path)
 
     # determine devel space
-    devel_path = os.path.join(base_path, 'devel')
+    devel_arg = None
     prefix = '-DCATKIN_DEVEL_PREFIX='
     devel_prefix = [a for a in cmake_args if a.startswith(prefix)]
     if devel_prefix:
-        devel_path = os.path.abspath(devel_prefix[-1][len(prefix):])
+        devel_arg = devel_prefix[-1][len(prefix):]
         cmake_args = [a for a in cmake_args if a not in devel_prefix]
+    devel_path = determine_path_argument(cwd, base_path, devel_arg, 'devel')
     print('Devel space: %s' % devel_path)
 
     # determine install space
-    install_path = os.path.join(base_path, 'install')
+    install_arg = None
     prefix = '-DCMAKE_INSTALL_PREFIX='
     install_prefix = [a for a in cmake_args if a.startswith(prefix)]
     if install_prefix:
-        install_path = os.path.abspath(install_prefix[-1][len(prefix):])
+        install_arg = install_prefix[-1][len(prefix):]
         cmake_args = [a for a in cmake_args if a not in install_prefix]
+    install_path = determine_path_argument(
+        cwd, base_path, install_arg, 'install')
     print('Install space: %s' % install_path)
 
     # ensure build folder exists
@@ -195,12 +199,12 @@ def _parse_args(args=sys.argv[1:]):
         'If the number of CPU cores cannot be determined then no flags are given to make. '
         'All other arguments (i.e. target names) are passed to the "make" invocation.')
     add = parser.add_argument
-    add('-C', '--directory', default='.', help='The base path of the workspace (default ".")')
-    add('--source', help='The path to the source space (default "src")')
-    add('--build', help='The path to the build space (default "build")')
-    add('--force-cmake', action='store_true', help='Invoke "cmake" even if it has been executed before')
+    add('-C', '--directory', default=os.curdir, help="The base path of the workspace (default '%s')" % os.curdir)
+    add('--source', help="The path to the source space (default 'workspace_base/src')")
+    add('--build', help="The path to the build space (default 'workspace_base/build')")
+    add('--force-cmake', action='store_true', help="Invoke 'cmake' even if it has been executed before")
     add('--no-color', action='store_true', help='Disables colored output (only for catkin_make and CMake)')
-    add('--pkg', nargs='+', help='Invoke "make" on specific packages only')
+    add('--pkg', nargs='+', help="Invoke 'make' on specific packages only")
     add('--only-pkg-with-deps', nargs='+', help='Only consider the specific packages and their recursive dependencies and ignore all other packages in the workspace')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to CMake. '

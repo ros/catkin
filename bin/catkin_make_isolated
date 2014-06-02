@@ -11,6 +11,7 @@ if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catki
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
 from catkin.builder import build_workspace_isolated
 from catkin.builder import colorize_line
+from catkin.builder import determine_path_argument
 from catkin.builder import extract_cmake_and_make_and_catkin_make_arguments
 from catkin.builder import extract_jobs_flags
 
@@ -32,18 +33,18 @@ def parse_args(args=None):
         'Make job flags (-j/-l) are handled just like catkin_make handles them.'
     )
     add = parser.add_argument
-    add('-C', '--directory', dest='workspace',
-        help='The base path of the workspace (default ".")')
+    add('-C', '--directory', dest='workspace', default=os.curdir,
+        help="The base path of the workspace (default '%s')" % os.curdir)
     add('--source', '--source-space', default=None,
-        help='The path to the source space (default "src")')
+        help="The path to the source space (default 'workspace_base/src')")
     add('--build', '--build-space', default=None,
-        help='The path to the build space (default "build_isolated")')
+        help="The path to the build space (default 'workspace_base/build_isolated')")
     add('--devel', '--devel-space', default=None,
-        help='Sets the target devel space (default "devel_isolated")')
+        help="Sets the target devel space (default 'workspace_base/devel_isolated')")
     add('--merge', action='store_true', default=False,
         help='Build each catkin package into a common devel space.')
-    add('--install-space', dest='install_space', default=None,
-        help='Sets the target install space (default "install_isolated")')
+    add('--install-space', default=None,
+        help="Sets the target install space (default 'workspace_base/install_isolated')")
     add('--install', action='store_true', default=False,
         help='Causes each catkin package to be installed.')
     add('--force-cmake', action='store_true', default=False,
@@ -52,19 +53,19 @@ def parse_args(args=None):
         help='Disables colored output (only for catkin_make and CMake)')
     pkg = parser.add_mutually_exclusive_group(required=False)
     pkg.add_argument('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
-                     help='Invoke "make" on specific packages (only after catkin_make_isolated has been invoked before with the same install flag)')
+                     help="Invoke 'make' on specific packages (only after catkin_make_isolated has been invoked before with the same install flag)")
     pkg.add_argument('--from-pkg', metavar='PKGNAME', dest='from_package',
                      help='Restart catkin_make_isolated at the given package continuing from there (do not change CMake arguments, add/move/remove packages or toggle the install flag when using this option since this may result in an inconsistent workspace state).')
     add('--only-pkg-with-deps', nargs='+', help='Only consider the specific packages and their recursive dependencies and ignore all other packages in the workspace (only works together with --merge or --install)')
     add('-q', '--quiet', action='store_true', default=False,
         help='Suppresses the cmake and make output until an error occurs.')
-    add('--cmake-args', dest='cmake_args', nargs='*', type=str,
+    add('--cmake-args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to CMake. '
              'It must be passed after other arguments since it collects all following options.')
-    add('--make-args', dest='make_args', nargs='*', type=str,
+    add('--make-args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to make.'
              'It must be passed after other arguments since it collects all following options.')
-    add('--catkin-make-args', dest='catkin_make_args', nargs='*', type=str,
+    add('--catkin-make-args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to make but only for catkin packages.'
              'It must be passed after other arguments since it collects all following options.')
     opts = parser.parse_args(args)
@@ -110,19 +111,26 @@ def main():
     if not sys.stdout.isatty():
         opts.no_color = True
 
-    # use PWD in order to work when bein invoked in a symlinked location
-    workspace = os.path.abspath(os.getenv('PWD', '.'))
-    if opts.workspace:
-        workspace = os.path.abspath(os.path.join(workspace, opts.workspace))
+    # use PWD in order to work when being invoked in a symlinked location
+    cwd = os.getenv('PWD', os.curdir)
+
+    workspace = os.path.abspath(os.path.join(cwd, opts.workspace))
+    sourcespace = determine_path_argument(cwd, workspace, opts.source, 'src')
+    buildspace = determine_path_argument(
+        cwd, workspace, opts.build, 'build_isolated')
+    develspace = determine_path_argument(
+        cwd, workspace, opts.devel, 'devel_isolated')
+    installspace = determine_path_argument(
+        cwd, workspace, opts.install_space, 'install_isolated')
 
     destdir = os.environ['DESTDIR'] if 'DESTDIR' in os.environ else None
 
     build_workspace_isolated(
         workspace=workspace,
-        sourcespace=opts.source,
-        buildspace=opts.build,
-        develspace=opts.devel,
-        installspace=opts.install_space,
+        sourcespace=sourcespace,
+        buildspace=buildspace,
+        develspace=develspace,
+        installspace=installspace,
         merge=opts.merge,
         install=opts.install,
         force_cmake=opts.force_cmake,
