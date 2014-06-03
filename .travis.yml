@@ -1,0 +1,11 @@
+language: python
+python:
+  - "2.7_with_system_site_packages"
+# command to install dependencies
+install:
+  - pip install argparse catkin-pkg empy mock nose
+# command to run tests
+script:
+  - nosetests test/unit_tests test/local_tests
+notifications:
+  email: false
