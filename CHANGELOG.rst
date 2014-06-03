@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.87 (2014-06-02)
+-------------------
 * add error message for circular dependencies in catkin_make_isolated and catkin_topological_order (`#607 <https://github.com/ros/catkin/issues/607>`_, `#608 <https://github.com/ros/catkin/issues/608>`_)
 * add workspace marker file for catkin_make / catkin_make_isolated (`#304 <https://github.com/ros/catkin/issues/304>`_)
 * allow better performance for repeated invocations of find_in_workspaces()
