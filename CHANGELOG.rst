@@ -2,6 +2,26 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add error message for circular dependencies in catkin_make_isolated and catkin_topological_order (`#607 <https://github.com/ros/catkin/issues/607>`_, `#608 <https://github.com/ros/catkin/issues/608>`_)
+* add workspace marker file for catkin_make / catkin_make_isolated (`#304 <https://github.com/ros/catkin/issues/304>`_)
+* allow better performance for repeated invocations of find_in_workspaces()
+* consider test_depends for topolocial order (`#612 <https://github.com/ros/catkin/issues/612>`_)
+* support setting ${PROJECT_NAME}_LIBRARIES before invoking catkin_package() (`#609 <https://github.com/ros/catkin/issues/609>`_)
+
+* fixes:
+
+  * fix rollback of environment when workspace has been deleted (`#641 <https://github.com/ros/catkin/issues/641>`_)
+  * fix argument handling when cm / cmi is invoked in a symlinked folder (`#638 <https://github.com/ros/catkin/issues/638>`_)
+  * fix catkin_find to not return path with '/.' suffix (`#621 <https://github.com/ros/catkin/issues/621>`_)
+  * fix python path setting for plain cmake workspaces (`#618 <https://github.com/ros/catkin/issues/618>`_)
+  * replace CMake usage of IMPORTED_IMPLIB with IMPORTED_LOCATION (`#616 <https://github.com/ros/catkin/issues/616>`_)
+  * do not call chpwd hooks in setup.zsh (`#613 <https://github.com/ros/catkin/issues/613>`_)
+  * set catkin_* variables only when find_package(catkin COMPONENTS ...) (`#629 <https://github.com/ros/catkin/issues/629>`_)
+  * remove invalid symbolic links of workspace level CMakeLists.txt file (`#591 <https://github.com/ros/catkin/issues/591>`_)
+  * fix gtest include dir when using gtest inside the workspace (`#585 <https://github.com/ros/catkin/issues/585>`_)
+
 0.5.86 (2014-03-03)
 -------------------
 * rewrite exported include dirs when pointing to absolute source / build / devel space (`#600 <https://github.com/ros/catkin/issues/600>`_)
