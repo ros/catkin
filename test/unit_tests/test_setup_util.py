@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 import tempfile
 import unittest
 
@@ -10,6 +11,7 @@ data = configure_file(os.path.join(os.path.dirname(__file__), '..', '..', 'cmake
                           'CATKIN_LIB_ENVIRONMENT_PATHS': "'lib'",
                           'CATKIN_PKGCONFIG_ENVIRONMENT_PATHS': "os.path.join('lib', 'pkgconfig')",
                           'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
+                          'PYTHON_EXECUTABLE': sys.executable,
                           'PYTHON_INSTALL_DIR': 'pythonX.Y/packages',
                           'CMAKE_PREFIX_PATH_AS_IS': '',
                       })
