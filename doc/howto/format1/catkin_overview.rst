@@ -81,8 +81,8 @@ But, a ``CMakeLists.txt`` is required, as shown below.
 CMakeLists.txt
 ::::::::::::::
 
-All catkin ``CMakeLists.txt`` files should begin with the following
-CMake commands::
+Catkin ``CMakeLists.txt`` files mostly contain ordinary CMake
+commands, plus a few catkin-specific ones.  They begin like this::
 
   cmake_minimum_required(VERSION 2.8.3)
   project(your_package)
@@ -106,20 +106,21 @@ arguments::
   catkin_package(...)
 
 :ref:`how_to_do_common_tasks_1` pages describe those tasks in detail.
-Follow them, observing the usual order of ``CMakeLists.txt`` commands:
+As you follow them, observe the usual command order:
 
 #. ``cmake_minimum_required()``
 #. ``project()``
 #. ``find_package()``
-#. ``add_message_files()``, ``add_service_files()``, ``add_action_files()``
-#. ``generate_messages()``
-#. ``catkin_package()``
+#. ``add_message_files()``, ``add_service_files()``,
+   ``add_action_files()``, all catkin-specific
+#. ``generate_messages()``, catkin-specific
+#. ``catkin_package()``, catkin-specific
 #. ``add_library()``, ``add_executable()``, ``target_link_libraries()``
 #. ``install()``
-#. ``catkin_add_gtest()``, ``catkin_add_nosetests()``
-#. ``add_rostest()``, ``add_rostest_gtest()``
+#. ``catkin_add_gtest()``, ``catkin_add_nosetests()``,
+   ``add_rostest()``, ``add_rostest_gtest()``, all catkin-specific
 
-.. _package.xml: http://www.ros.org/wiki/catkin/package.xml
+.. _package.xml: http://wiki.ros.org/catkin/package.xml
 .. _REP-0127: http://ros.org/reps/rep-0127.html
-.. _rosbuild: http://www.ros.org/wiki/rosbuild
-.. _stack: http://www.ros.org/wiki/Stacks
+.. _rosbuild: http://wiki.ros.org/rosbuild
+.. _stack: http://wiki.ros.org/Stacks
