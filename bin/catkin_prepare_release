@@ -345,6 +345,13 @@ def main():
             push_changes(base_path, vcs_type)
         else:
             print(fmt('@{gf}Not pushing because --no-push was given'))
+            try:
+                commands = push_changes(base_path, vcs_type, dry_run=True)
+                print(fmt('@{gf}You can manually use the following commands to push the changes to the remote repository:'))
+                for cmd in commands:
+                    print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
+            except RuntimeError as e:
+                print(fmt('@{yf}Warning: manual commands could not be displayed. This can happen if no remote is configured for the current branch.'))
 
     print(fmt("@{gf}The source repository has been released successfully. The next step will be '@{boldon}bloom-release@{boldoff}'."))
 
