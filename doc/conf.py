@@ -81,9 +81,9 @@ release = version
 # List of documents that shouldn't be included in the build.
 #unused_docs = []
 
-# List of directories, relative to source directory, that shouldn't be searched
-# for source files.
-exclude_trees = []
+# List of patterns, relative to source directory, that match files and
+# directories to ignore when looking for source files.
+exclude_patterns = []
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -140,7 +140,7 @@ html_logo = 'ros.png'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+##html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -217,11 +217,11 @@ latex_documents = [
 #latex_use_modindex = True
 
 intersphinx_mapping = {
-    'genmsg': ('http://ros.org/doc/api/genmsg/html', None),
-    'vcstools': ('http://ros.org/doc/api/vcstools/html', None),
-    'rosinstall': ('http://ros.org/doc/api/rosinstall/html', None),
-    'rospkg': ('http://ros.org/doc/api/rospkg/html', None),
-    'rosdep2': ('http://ros.org/doc/api/rosdep2/html', None),
+    'genmsg': ('http://docs.ros.org/indigo/api/genmsg/html', None),
+    'vcstools': ('http://docs.ros.org/independent/api/vcstools/html', None),
+    'rosinstall': ('http://docs.ros.org/independent/api/rosinstall/html', None),
+    'rospkg': ('http://docs.ros.org/independent/api/rospkg/html', None),
+    'rosdep': ('http://docs.ros.org/independent/api/rosdep/html', None),
     }
 
 
