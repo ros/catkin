@@ -505,6 +505,9 @@ if [ $# -eq 0 ] ; then
   exit 1
 fi
 
+# ensure to not use different shell type which was set before
+CATKIN_SHELL=sh
+
 # source {SETUP_FILENAME}.sh from same directory as this file
 . "$(cd "`dirname "$0"`" && pwd)/{SETUP_FILENAME}.sh"
 exec "$@"
