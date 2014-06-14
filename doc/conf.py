@@ -217,7 +217,7 @@ latex_documents = [
 #latex_use_modindex = True
 
 intersphinx_mapping = {
-    'genmsg': ('http://docs.ros.org/indigo/api/genmsg/html', None),
+    'genmsg': ('http://docs.ros.org/hydro/api/genmsg/html', None),
     'vcstools': ('http://docs.ros.org/independent/api/vcstools/html', None),
     'rosinstall': ('http://docs.ros.org/independent/api/rosinstall/html', None),
     'rospkg': ('http://docs.ros.org/independent/api/rospkg/html', None),
