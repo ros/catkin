@@ -183,7 +183,8 @@ def main():
         description='Runs the commands to bump the version number, commit the modified %s files and create a tag in the repository.' % PACKAGE_MANIFEST_FILENAME)
     parser.add_argument('--bump', choices=('major', 'minor', 'patch'), default='patch', help='Which part of the version number to bump? (default: %(default)s)')
     parser.add_argument('--no-color', action='store_true', default=False, help='Disables colored output')
-    parser.add_argument('-t', '--tag-prefix', default='', 
+    parser.add_argument('--no-push', action='store_true', default=False, help='Disables pushing to remote repo')
+    parser.add_argument('-t', '--tag-prefix', default='',
                         help='Add this prefix to the created release tag')
     parser.add_argument('-y', '--non-interactive', action='store_true', default=False,
         help="Run without user interaction, confirming all questions with 'yes'")
@@ -289,7 +290,8 @@ def main():
             raise RuntimeError(fmt("@{rf}Aborted release, populate the changelog with '@{boldon}catkin_generate_changelog@{boldoff}' and review / clean up the content."))
 
     # verify that repository is pushable (if the vcs supports dry run of push)
-    try_repo_push(base_path, vcs_type)
+    if not args.no_push:
+        try_repo_push(base_path, vcs_type)
 
     # check for staged changes and modified and untracked files
     print(fmt('@{gf}Checking if working copy is clean (no staged changes, no modified files, no untracked files)...'))
@@ -332,14 +334,24 @@ def main():
         print(fmt("@{gf}Creating tag '@{boldon}%s@{boldoff}'..." % (tag_name)))
         tag_repository(base_path, vcs_type, tag_name, args.tag_prefix != '')
 
-        # confirm commands to push to remote repository
-        commands = push_changes(base_path, vcs_type, dry_run=True)
-        print(fmt('@{gf}The following commands will be executed to push the changes and tag to the remote repository:'))
-        for cmd in commands:
-            print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
-        if not args.non_interactive and not prompt_continue('Push the local commits and tags to the remote repository', default=True):
-            raise RuntimeError(fmt('@{rf}Skipping push, to finish the release execute the commands manually.'))
-        push_changes(base_path, vcs_type)
+        if not args.no_push:
+            # confirm commands to push to remote repository
+            commands = push_changes(base_path, vcs_type, dry_run=True)
+            print(fmt('@{gf}The following commands will be executed to push the changes and tag to the remote repository:'))
+            for cmd in commands:
+                print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
+            if not args.non_interactive and not prompt_continue('Push the local commits and tags to the remote repository', default=True):
+                raise RuntimeError(fmt('@{rf}Skipping push, to finish the release execute the commands manually.'))
+            push_changes(base_path, vcs_type)
+        else:
+            print(fmt('@{gf}Not pushing because --no-push was given'))
+            try:
+                commands = push_changes(base_path, vcs_type, dry_run=True)
+                print(fmt('@{gf}You can manually use the following commands to push the changes to the remote repository:'))
+                for cmd in commands:
+                    print(fmt('  @{bf}@{boldon}%s@{boldoff}' % ' '.join(cmd)))
+            except RuntimeError as e:
+                print(fmt('@{yf}Warning: manual commands could not be displayed. This can happen if no remote is configured for the current branch.'))
 
     print(fmt("@{gf}The source repository has been released successfully. The next step will be '@{boldon}bloom-release@{boldoff}'."))
 
