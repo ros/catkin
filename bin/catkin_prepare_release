@@ -37,6 +37,7 @@ def prompt_continue(msg, default):
         msg += fmt(' @{yf}[y/N]@{reset}?')
 
     while True:
+        _flush_stdin()
         response = raw_input(msg)
         if not response:
             response = 'y' if default else 'n'
@@ -47,6 +48,15 @@ def prompt_continue(msg, default):
             return response == 'y'
 
         print(fmt("@{yf}Response '@{boldon}%s@{boldoff}' was not recognized, please use one of the following options: %s" % (response, ', '.join([('@{boldon}%s@{boldoff}' % x) for x in ['y', 'Y', 'n', 'N']]))), file=sys.stderr)
+
+
+def _flush_stdin():
+    try:
+        from termios import tcflush, TCIFLUSH
+        tcflush(sys.stdin, TCIFLUSH)
+    except ImportError:
+        # fallback if not supported on some platforms
+        pass
 
 
 def get_git_remote_and_branch(base_path):
