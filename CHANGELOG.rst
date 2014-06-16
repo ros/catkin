@@ -2,6 +2,17 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* reset CATKIN_SHELL in devel space generated env.sh files (`#652 <https://github.com/ros/catkin/issues/652>`_, `#655 <https://github.com/ros/catkin/issues/655>`_)
+* ignore cd path echo when using CDPATH (`#654 <https://github.com/ros/catkin/issues/654>`_)
+* use PYTHON_EXECUTABLE for _setup_util.py (`#646 <https://github.com/ros/catkin/issues/646>`_)
+* expose PYTHON_EXECUTABLE to environment hook .em templates (`#645 <https://github.com/ros/catkin/issues/645>`_)
+* catkin_prepare_release:
+
+  * add --no-push to catkin_prepare_release (`#657 <https://github.com/ros/catkin/issues/657>`_)
+  * flush stdin before asking for input (`#658 <https://github.com/ros/catkin/issues/658>`_)
+
 0.6.6 (2014-06-02)
 ------------------
 * fix rollback of environment when workspace has been deleted (`#641 <https://github.com/ros/catkin/issues/641>`_)
