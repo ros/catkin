@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.7 (2014-06-16)
+------------------
 * reset CATKIN_SHELL in devel space generated env.sh files (`#652 <https://github.com/ros/catkin/issues/652>`_, `#655 <https://github.com/ros/catkin/issues/655>`_)
 * ignore cd path echo when using CDPATH (`#654 <https://github.com/ros/catkin/issues/654>`_)
 * use PYTHON_EXECUTABLE for _setup_util.py (`#646 <https://github.com/ros/catkin/issues/646>`_)
