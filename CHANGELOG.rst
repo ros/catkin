@@ -2,6 +2,13 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* reset CATKIN_SHELL in devel space generated env.sh files (`#652 <https://github.com/ros/catkin/issues/652>`_, `#655 <https://github.com/ros/catkin/issues/655>`_)
+* ignore cd path echo when using CDPATH (`#654 <https://github.com/ros/catkin/issues/654>`_)
+* expose PYTHON_EXECUTABLE to environment hook .em templates (`#645 <https://github.com/ros/catkin/issues/645>`_)
+
+
 0.5.87 (2014-06-02)
 -------------------
 * add error message for circular dependencies in catkin_make_isolated and catkin_topological_order (`#607 <https://github.com/ros/catkin/issues/607>`_, `#608 <https://github.com/ros/catkin/issues/608>`_)
