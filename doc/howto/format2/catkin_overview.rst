@@ -1,4 +1,4 @@
-.. _catkin_overview_1:
+.. _catkin_overview_2:
 
 Catkin configuration overview
 -----------------------------
@@ -11,9 +11,9 @@ package.xml
 :::::::::::
 
 Your package must contain an XML file named package.xml_, as specified
-by REP-0127_.  These components are all required::
+by REP-0140_.  These components are all required::
 
-  <package>
+  <package format="2">
     <name>your_package</name>
     <version>1.2.4</version>
     <description>
@@ -65,15 +65,16 @@ In addition to the XML elements mentioned above, a metapackage
 
   <export>
     <metapackage/>
+    <architecture_independent/>
   </export>
 
 In addition to the required ``<buildtool_depend>`` for catkin,
-metapackages list the packages in the group using ``<run_depend>``
+metapackages list the packages in the group using ``<exec_depend>``
 tags::
 
-  <run_depend>your_custom_msgs</run_depend>
-  <run_depend>your_server_node</run_depend>
-  <run_depend>your_utils</run_depend>
+  <exec_depend>your_custom_msgs</exec_depend>
+  <exec_depend>your_server_node</exec_depend>
+  <exec_depend>your_utils</exec_depend>
 
 Metapackages must not include any other ``package.xml`` elements.
 But, a ``CMakeLists.txt`` is required, as shown below.
@@ -81,8 +82,8 @@ But, a ``CMakeLists.txt`` is required, as shown below.
 CMakeLists.txt
 ::::::::::::::
 
-All catkin ``CMakeLists.txt`` files should begin with the following
-CMake commands::
+Catkin ``CMakeLists.txt`` files mostly contain ordinary CMake
+commands, plus a few catkin-specific ones.  They begin like this::
 
   cmake_minimum_required(VERSION 2.8.3)
   project(your_package)
@@ -103,23 +104,24 @@ arguments::
 
   find_package(catkin REQUIRED COMPONENTS ...)
   ...
-  catkin_metapackage(...)
+  catkin_package(...)
 
-:ref:`how_to_do_common_tasks_1` pages describe those tasks in detail.
-Follow them, observing the usual order of ``CMakeLists.txt`` commands:
+:ref:`how_to_do_common_tasks_2` pages describe those tasks in detail.
+As you follow them, observe the usual command order:
 
 #. ``cmake_minimum_required()``
 #. ``project()``
 #. ``find_package()``
-#. ``add_message_files()``, ``add_service_files()``, ``add_action_files()``
-#. ``generate_messages()``
-#. ``catkin_package()``
+#. ``add_message_files()``, ``add_service_files()``,
+   ``add_action_files()``, all catkin-specific
+#. ``generate_messages()``, catkin-specific
+#. ``catkin_package()``, catkin-specific
 #. ``add_library()``, ``add_executable()``, ``target_link_libraries()``
 #. ``install()``
-#. ``catkin_add_gtest()``, ``catkin_add_nosetests()``
-#. ``add_rostest()``, ``add_rostest_gtest()``
+#. ``catkin_add_gtest()``, ``catkin_add_nosetests()``,
+   ``add_rostest()``, ``add_rostest_gtest()``, all catkin-specific
 
-.. _package.xml: http://www.ros.org/wiki/catkin/package.xml
-.. _REP-0127: http://ros.org/reps/rep-0127.html
-.. _rosbuild: http://www.ros.org/wiki/rosbuild
-.. _stack: http://www.ros.org/wiki/Stacks
+.. _package.xml: http://wiki.ros.org/catkin/package.xml
+.. _REP-0140: http://ros.org/reps/rep-0140.html
+.. _rosbuild: http://wiki.ros.org/rosbuild
+.. _stack: http://wiki.ros.org/Stacks

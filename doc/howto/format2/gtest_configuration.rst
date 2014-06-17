@@ -1,4 +1,4 @@
-.. _gtest_configuration:
+.. _gtest_configuration_2:
 
 Configuring gtest for C++
 -------------------------
@@ -30,8 +30,8 @@ This example assumes your tests are defined in the ``tests/``
 subdirectory in your source tree.
 
 If other libraries are needed to compile your test program, see
-:ref:`building_executables` for details.
+:ref:`building_executables_2` for details.
 
-.. _Gtest: http://www.ros.org/wiki/gtest
-.. _roscore: http://www.ros.org/wiki/roscore
-.. _rosunit: http://www.ros.org/wiki/rosunit
+.. _Gtest: http://wiki.ros.org/gtest
+.. _roscore: http://wiki.ros.org/roscore
+.. _rosunit: http://wiki.ros.org/rosunit

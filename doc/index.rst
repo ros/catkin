@@ -1,20 +1,28 @@
 Catkin
 ======
 
-`Catkin <http://en.wikipedia.org/wiki/Catkin>`_ is a collection of
-CMake macros and associated code used to build packages used in
-`ROS <http://www.ros.org>`_.
+`Catkin <http://wiki.ros.org/catkin>`_ is a collection of CMake macros
+and associated code used to build packages used in `ROS
+<http://www.ros.org>`_.
 
-It was initially introduced as part of the
-`Fuerte <http://ros.org/wiki/fuerte>`_ release where it was used for
-a small set of base packages. For
-`Groovy <http://ros.org/wiki/groovy>`_ it was significantly
-modified, and used by many more packages.
+It was initially introduced as part of the ROS Fuerte_ release where
+it was used for a small set of base packages.  For Groovy_ and Hydro_
+it was significantly modified, and used by many more packages.  All
+released Hydro packages are now built using catkin, although existing
+`rosbuild <http://wiki.ros.org/rosbuild>`_ packages can still be built
+from source on top of Hydro.  Indigo_ is very similar, except for some
+deprecated features that were removed.
 
-This version of the documentation covers the `Groovy
-<http://ros.org/wiki/groovy>`_ version and also Hydro, which is coming
-soon.
+.. note::
 
+   This document covers both the Groovy_ and Hydro_ versions.  The
+   Indigo_ version is `documented separately
+   <http://docs.ros.org/indigo/api/catkin/html/>`_.
+
+.. _Fuerte: http://wiki.ros.org/fuerte
+.. _Groovy: http://wiki.ros.org/groovy
+.. _Hydro: http://wiki.ros.org/hydro
+.. _Indigo: http://wiki.ros.org/indigo
 
 Contents
 --------
