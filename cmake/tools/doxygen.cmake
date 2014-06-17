@@ -37,11 +37,8 @@ if (DOXYGEN_EXECUTABLE)
   set(DOXYGEN_FOUND TRUE CACHE BOOL "Doxygen found")
 endif()
 
-GET_TARGET_PROPERTY(doxygen_catkin_property doxygen "catkin")
-if (doxygen_catkin_property)
-else()
-  add_custom_target(doxygen COMMENT "doxygen found")
-  set_target_properties(doxygen PROPERTIES "catkin" "found")
+if(NOT TARGET doxygen)
+  add_custom_target(doxygen)
 endif()
 
 macro(catkin_doxygen TARGET_NAME SEARCH_DIRS)
