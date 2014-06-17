@@ -70,6 +70,8 @@ function(catkin_add_nosetests path)
   string(REPLACE ":" "." output_file_name ${output_file_name})
 
   set(output_path ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME})
+  # make --xunit-file argument an absolute path (https://github.com/nose-devs/nose/issues/779)
+  get_filename_component(output_path "${output_path}" ABSOLUTE)
   set(cmd "${CMAKE_COMMAND} -E make_directory ${output_path}")
   if(IS_DIRECTORY ${_path_name})
     set(tests "--where=${_path_name}")
