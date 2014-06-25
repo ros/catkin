@@ -493,7 +493,7 @@ def build_cmake_package(
             'SETUP_FILENAME': 'setup'
         }
         if not os.path.exists(os.path.dirname(new_env_path)):
-            os.mkdir(os.path.dirname(new_env_path))
+            os.makedirs(os.path.dirname(new_env_path))
         with open(os.path.join(new_env_path), 'w') as f:
             f.write("""\
 #!/usr/bin/env sh
