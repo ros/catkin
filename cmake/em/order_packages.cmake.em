@@ -17,7 +17,7 @@ except ImportError as e:
 try:
     ordered_packages = topological_order(os.path.normpath(source_root_dir), whitelisted=whitelisted_packages, blacklisted=blacklisted_packages, underlay_workspaces=underlay_workspaces)
 except InvalidPackage as e:
-    print('message(FATAL_ERROR "%s")' % e)
+    print('message(FATAL_ERROR "%s")' % ('%s' % e).replace('"', '\\"'))
     ordered_packages = []
 fatal_error = False
 }@
