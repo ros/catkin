@@ -16,19 +16,18 @@ else()
 endif()
 message(STATUS "Using CATKIN_DEVEL_PREFIX: ${CATKIN_DEVEL_PREFIX}")
 
-# create workspace marker
-set(_sourcespaces "${CMAKE_SOURCE_DIR}")
-if(EXISTS "${CATKIN_DEVEL_PREFIX}/.catkin")
-  # prepend to existing list of sourcespaces
-  file(READ "${CATKIN_DEVEL_PREFIX}/.catkin" _existing_sourcespaces)
-  list(FIND _existing_sourcespaces "${CMAKE_SOURCE_DIR}" _index)
-  if(_index EQUAL -1)
-    list(INSERT _existing_sourcespaces 0 ${CMAKE_SOURCE_DIR})
-  endif()
-  set(_sourcespaces ${_existing_sourcespaces})
-endif()
-file(WRITE "${CATKIN_DEVEL_PREFIX}/.catkin" "${_sourcespaces}")
+# create develspace marker file
+set(_catkin_marker_file "${CATKIN_DEVEL_PREFIX}/.catkin")
 
+# append to existing list of sourcespaces if it's not already there
+set(_existing_sourcespace_index -1)
+if(EXISTS ${_catkin_marker_file})
+  file(READ ${_catkin_marker_file} _existing_sourcespaces)
+  list(FIND _existing_sourcespaces "${CMAKE_SOURCE_DIR}" _existing_sourcespace_index)
+endif()
+if(_existing_sourcespace_index EQUAL -1)
+  file(APPEND ${_catkin_marker_file} ";${CMAKE_SOURCE_DIR}")
+endif()
 
 # use either CMAKE_PREFIX_PATH explicitly passed to CMake as a command line argument
 # or CMAKE_PREFIX_PATH from the environment
