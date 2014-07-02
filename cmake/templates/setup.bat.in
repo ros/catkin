@@ -42,17 +42,28 @@ call %_SETUP_TMP%
 del %_SETUP_TMP%
 
 REM source all environment hooks
-for /F "tokens=* delims=;" %%a in ("%_CATKIN_ENVIRONMENT_HOOKS%") do (
-  for %%b in (%%a) do (
-    call "%%b"
-  )
+set /A _upper_loop_index = %_CATKIN_ENVIRONMENT_HOOKS_COUNT% - 1
+
+setlocal enabledelayedexpansion
+for /L %%a in (0, 1, %_upper_loop_index%) do (  
+    set _env_var_ref=_CATKIN_ENVIRONMENT_HOOKS_%%a
+    REM The follow lines can be uncommented to illustrate how the delayed expansion is working
+    REM echo %%a
+    REM echo !_env_var_ref!
+    REM call echo %%!_env_var_ref!%%
+    call call %%!_env_var_ref!%%
 )
+REM endlocal will wipe all the environment variables created by the scripts called above
+REM their capture is hardcoded here. This should be revisited
+endlocal &&  set ROS_PACKAGE_PATH=%ROS_PACKAGE_PATH% && set ROS_ETC_DIR=%ROS_ETC_DIR% && set ROS_MASTER_URI=%ROS_MASTER_URI% && set ROS_ROOT=%ROS_ROOT%
+
 
 REM 3rdparty packages often put dll's into lib (convention is bin) and 
 REM windows finds it's dll's via the PATH variable. Make that happen here!
 set PATH=%LD_LIBRARY_PATH%;%PATH%
 
 REM unset temporary variables
+set _upper_loop_index=
 set _SETUP_UTIL=
 set _PYTHON=
 set _SETUP_TMP=
