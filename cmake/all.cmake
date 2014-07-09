@@ -21,11 +21,16 @@ set(_catkin_marker_file "${CATKIN_DEVEL_PREFIX}/.catkin")
 
 # check if the develspace marker file exists yet
 if(EXISTS ${_catkin_marker_file})
-  # append to existing list of sourcespaces 
   file(READ ${_catkin_marker_file} _existing_sourcespaces)
-  list(FIND _existing_sourcespaces "${CMAKE_SOURCE_DIR}" _existing_sourcespace_index)
-  if(_existing_sourcespace_index EQUAL -1)
-    file(APPEND ${_catkin_marker_file} ";${CMAKE_SOURCE_DIR}")
+  if(_existing_sourcespaces STREQUAL "")
+    # write this sourcespace to the marker file
+    file(WRITE ${_catkin_marker_file} "${CMAKE_SOURCE_DIR}")
+  else()
+    # append to existing list of sourcespaces if it's not in the list
+    list(FIND _existing_sourcespaces "${CMAKE_SOURCE_DIR}" _existing_sourcespace_index)
+    if(_existing_sourcespace_index EQUAL -1)
+      file(APPEND ${_catkin_marker_file} ";${CMAKE_SOURCE_DIR}")
+    endif()
   endif()
 else()
   # create a new develspace marker file
