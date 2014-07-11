@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.9 (2014-07-11)
+------------------
 * fix regression from 0.6.8 (`#676 <https://github.com/ros/catkin/issues/676>`_)
 
 0.6.8 (2014-07-10)
