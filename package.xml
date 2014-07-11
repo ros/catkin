@@ -27,6 +27,7 @@
   <build_export_depend>python-empy</build_export_depend>
   <build_export_depend>python-nose</build_export_depend>
 
+  <test_depend>python-mock</test_depend>
   <test_depend>python-nose</test_depend>
 
   <export>
