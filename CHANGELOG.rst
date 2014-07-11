@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix regression from 0.6.8 (`#676 <https://github.com/ros/catkin/issues/676>`_)
+
 0.6.8 (2014-07-10)
 ------------------
 * make nosetests --xunit-file argument an absolute path to work around nose bug 779 (`#659 <https://github.com/ros/catkin/issues/659>`_)
