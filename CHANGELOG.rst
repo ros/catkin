@@ -2,6 +2,15 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* make nosetests --xunit-file argument an absolute path to work around nose bug 779 (`#659 <https://github.com/ros/catkin/issues/659>`_)
+* fix handling of CMake packages which do not install any files (`#665 <https://github.com/ros/catkin/issues/665>`_)
+* fix gtest on Arch Linux and others (`#663 <https://github.com/ros/catkin/issues/663>`_)
+* improve generation of .catkin marker file (`#671 <https://github.com/ros/catkin/issues/671>`_, `#676 <https://github.com/ros/catkin/issues/676>`_)
+* escape messages to avoid CMake warning (`#667 <https://github.com/ros/catkin/issues/667>`_)
+* avoid using ARGN for efficiency (`#669 <https://github.com/ros/catkin/issues/669>`_)
+
 0.5.88 (2014-06-16)
 -------------------
 * reset CATKIN_SHELL in devel space generated env.sh files (`#652 <https://github.com/ros/catkin/issues/652>`_, `#655 <https://github.com/ros/catkin/issues/655>`_)
