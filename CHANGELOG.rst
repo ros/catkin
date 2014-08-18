@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.89 (2014-08-18)
+-------------------
 * make nosetests --xunit-file argument an absolute path to work around nose bug 779 (`#659 <https://github.com/ros/catkin/issues/659>`_)
 * fix handling of CMake packages which do not install any files (`#665 <https://github.com/ros/catkin/issues/665>`_)
 * fix gtest on Arch Linux and others (`#663 <https://github.com/ros/catkin/issues/663>`_)
