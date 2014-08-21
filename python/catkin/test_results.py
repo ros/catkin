@@ -31,8 +31,68 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+import errno
 import os
-from xml.etree.ElementTree import ElementTree
+import sys
+from xml.etree.ElementTree import ElementTree, ParseError
+
+from catkin.tidy_xml import tidy_xml
+
+
+def remove_junit_result(filename):
+    # if result file exists remove it before test execution
+    if os.path.exists(filename):
+        os.remove(filename)
+    # if placeholder (indicating previous failure) exists remove it before test execution
+    missing_filename = _get_missing_junit_result_filename(filename)
+    if os.path.exists(missing_filename):
+        os.remove(missing_filename)
+
+
+def ensure_junit_result_exist(filename):
+    if os.path.exists(filename):
+        # if result file exists ensure that it contains valid xml
+        tree = None
+        try:
+            tree = ElementTree(None, filename)
+        except ParseError:
+            # print('Invalid XML in result file "%s"' % filename)
+            tidy_xml(filename)
+            try:
+                tree = ElementTree(None, filename)
+            except ParseError as e:
+                print("Invalid XML in result file '%s' (even after trying to tidy it): %s " % (filename, str(e)), file=sys.stderr)
+                return False
+        if tree:
+            _, num_errors, num_failures = read_junit(filename)
+            if num_errors or num_failures:
+                return False
+    else:
+        # if result file does not exist create placeholder which indicates failure
+        missing_filename = _get_missing_junit_result_filename(filename)
+        print("Cannot find results, writing failure results to '%s'" % missing_filename, file=sys.stderr)
+        # create folder if necessary
+        if not os.path.exists(os.path.dirname(filename)):
+            try:
+                os.makedirs(os.path.dirname(filename))
+            except OSError as e:
+                # catch case where folder has been created in the mean time
+                if e.errno != errno.EEXIST:
+                    raise
+        with open(missing_filename, 'w') as f:
+            data = {'test': os.path.basename(filename), 'test_file': filename}
+            f.write('''<?xml version="1.0" encoding="UTF-8"?>
+<testsuite tests="1" failures="1" time="1" errors="0" name="%(test)s">
+  <testcase name="test_ran" status="run" time="1" classname="Results">
+    <failure message="Unable to find test results for %(test)s, test did not run.\nExpected results in %(test_file)s" type=""/>
+  </testcase>
+</testsuite>''' % data)
+        return False
+    return
+
+
+def _get_missing_junit_result_filename(filename):
+    return os.path.join(os.path.dirname(filename), 'MISSING-%s' % os.path.basename(filename))
 
 
 def read_junit(filename):
