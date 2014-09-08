@@ -86,7 +86,7 @@ function(catkin_workspace)
       message(FATAL_ERROR "This workspace contains metapackages with a non-standard CMakeLists.txt.")
     endif()
     if(${CATKIN_NONHOMOGENEOUS_WORKSPACE})
-      message(FATAL_ERROR "This workspace contains non-catkin packages in it, and catkin cannot build a non-homogeneous workspace without isolation.")
+      message(FATAL_ERROR "This workspace contains non-catkin packages in it, and catkin cannot build a non-homogeneous workspace without isolation. Try the 'catkin_make_isolated' command instead.")
     endif()
 
     foreach(index RANGE ${range})
