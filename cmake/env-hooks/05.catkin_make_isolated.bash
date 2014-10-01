@@ -56,6 +56,9 @@ function _catkin_make_isolated()
         if [ -f "$makefile_dir/Makefile" ]; then
             cur=${COMP_WORDS[COMP_CWORD]}
             COMPREPLY=( $( compgen -W "`make -C $makefile_dir -qp 2>/dev/null | awk -F':' '/^[a-zA-Z0-9][a-zA-Z0-9_\.]*:/ { print $1 }'`" -- $cur ))
+        elif [ -f "$makefile_dir/build.ninja" ]; then
+            cur=${COMP_WORDS[COMP_CWORD]}
+            COMPREPLY=( $( compgen -W "`ninja -C $makefile_dir -t targets 2>/dev/null | awk -F':' '/^[a-zA-Z0-9][a-zA-Z0-9_\.]*:/ { print $1 }'`" -- $cur ))
         fi
     fi
 } &&

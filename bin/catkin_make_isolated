@@ -45,6 +45,7 @@ def parse_args(args=None):
         help='Build each catkin package into a common devel space.')
     add('--install-space', default=None,
         help="Sets the target install space (default 'workspace_base/install_isolated')")
+    add('--use-ninja', action='store_true', help="Use 'ninja' instead of 'make'")
     add('--install', action='store_true', default=False,
         help='Causes each catkin package to be installed.')
     add('--force-cmake', action='store_true', default=False,
@@ -142,7 +143,8 @@ def main():
         catkin_make_args=opts.catkin_make_args,
         continue_from_pkg=opts.from_package is not None,
         only_pkg_with_deps=opts.only_pkg_with_deps,
-        destdir=destdir
+        destdir=destdir,
+        use_ninja=opts.use_ninja
     )
 
 if __name__ == '__main__':
