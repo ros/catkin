@@ -197,7 +197,9 @@ def _parse_args(args=sys.argv[1:]):
         'See: http://www.ros.org/wiki/ROS/EnvironmentVariables#ROS_PARALLEL_JOBS '
         'If ROS_PARALLEL_JOBS is not set then the flags "-jn -ln" are used, where n is number of CPU cores. '
         'If the number of CPU cores cannot be determined then no flags are given to make. '
-        'All other arguments (i.e. target names) are passed to the "make" invocation.')
+        'All other arguments (i.e. target names) are passed to the "make" invocation.'
+        'Use CATKIN_BLACKLIST_PACKAGES environment or CATKIN_IGNORE file to set packages to be ignored from build,'
+        'For example, catkin_make -DCATKIN_BLACKLIST_PACKAGES="foo;bar" will not build foo and bar packages ')
     add = parser.add_argument
     add('-C', '--directory', default=os.curdir, help="The base path of the workspace (default '%s')" % os.curdir)
     add('--source', help="The path to the source space (default 'workspace_base/src')")
