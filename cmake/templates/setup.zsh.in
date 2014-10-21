@@ -2,7 +2,7 @@
 # generated from catkin/cmake/templates/setup.zsh.in
 
 CATKIN_SHELL=zsh
+
+# source setup.sh from same directory as this file
 _CATKIN_SETUP_DIR=$(builtin cd -q "`dirname "$0"`" > /dev/null && pwd)
-emulate sh # emulate POSIX
-. "$_CATKIN_SETUP_DIR/setup.sh"
-emulate zsh # back to zsh mode
+source "$_CATKIN_SETUP_DIR/setup.sh"
