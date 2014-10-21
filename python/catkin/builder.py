@@ -613,7 +613,7 @@ def build_package(
     destdir=None,
     number=None, of=None
 ):
-    if platform.system() in ['Linux', 'Darwin']:
+    if platform.system() in ['Linux', 'Darwin'] and sys.stdout.isatty():
         status_msg = '{package_name} [{number} of {total}]'.format(package_name=package.name, number=number, total=of)
         sys.stdout.write("\x1b]2;" + status_msg + "\x07")
     cprint('@!@{gf}==>@| ', end='')
