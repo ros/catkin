@@ -164,6 +164,8 @@ def main(argv=sys.argv[1:]):
         if result is False:
             return 'ERROR: md5sum mismatch (%s != %s) on %s; aborting' % (hexdigest, args.md5sum, args.dest)
 
+    return 0
+
 
 if __name__ == '__main__':
     sys.exit(main())
