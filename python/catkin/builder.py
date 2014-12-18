@@ -818,7 +818,12 @@ def build_workspace_isolated(
         sys.exit('Can not build workspace with packages of unknown build_type')
 
     # Check to see if the workspace has changed
-    if not force_cmake and cmake_input_changed(packages, buildspace, cmake_args=cmake_args, filename='catkin_make_isolated'):
+    cmake_args_with_spaces = list(cmake_args)
+    if develspace:
+        cmake_args_with_spaces.append('-DCATKIN_DEVEL_PREFIX=' + develspace)
+    if installspace:
+        cmake_args_with_spaces.append('-DCMAKE_INSTALL_PREFIX=' + installspace)
+    if not force_cmake and cmake_input_changed(packages, buildspace, cmake_args=cmake_args_with_spaces, filename='catkin_make_isolated'):
         print('The packages or cmake arguments have changed, forcing cmake invocation')
         force_cmake = True
 

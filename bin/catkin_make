@@ -78,6 +78,7 @@ def main():
         cmake_args = [a for a in cmake_args if a not in devel_prefix]
     devel_path = determine_path_argument(cwd, base_path, devel_arg, 'devel')
     print('Devel space: %s' % devel_path)
+    cmake_args.append('-DCATKIN_DEVEL_PREFIX=%s' % devel_path)
 
     # determine install space
     install_arg = None
@@ -89,6 +90,7 @@ def main():
     install_path = determine_path_argument(
         cwd, base_path, install_arg, 'install')
     print('Install space: %s' % install_path)
+    cmake_args.append('-DCMAKE_INSTALL_PREFIX=%s' % install_path)
 
     # ensure build folder exists
     if not os.path.exists(build_path):
@@ -142,8 +144,6 @@ def main():
         cmd = [
             'cmake',
             source_path,
-            '-DCATKIN_DEVEL_PREFIX=%s' % devel_path,
-            '-DCMAKE_INSTALL_PREFIX=%s' % install_path
         ]
         cmd += cmake_args
         try:
