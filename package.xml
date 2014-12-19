@@ -23,6 +23,7 @@
 
   <build_depend>python-empy</build_depend>
 
+  <build_export_depend>google-mock</build_export_depend>
   <build_export_depend>gtest</build_export_depend>
   <build_export_depend>python-empy</build_export_depend>
   <build_export_depend>python-nose</build_export_depend>
