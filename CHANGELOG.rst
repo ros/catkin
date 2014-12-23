@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.10 (2014-12-22)
+-------------------
 * check changes to -D args CATKIN_DEVEL_PREFIX / CMAKE_INSTALL_PREFIX when considering to reinvoke cmake (`#700 <https://github.com/ros/catkin/issues/700>`_)
 * add --use-ninja option to catkin_make(_isolated) to use ninja instead of make (`#693 <https://github.com/ros/catkin/issues/693>`_)
 * remove 'emulate sh' from setup.zsh (`#686 <https://github.com/ros/catkin/issues/686>`_)
