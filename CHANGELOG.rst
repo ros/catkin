@@ -2,6 +2,16 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* check changes to -D args CATKIN_DEVEL_PREFIX / CMAKE_INSTALL_PREFIX when considering to reinvoke cmake (`#700 <https://github.com/ros/catkin/issues/700>`_)
+* add --use-ninja option to catkin_make(_isolated) to use ninja instead of make (`#693 <https://github.com/ros/catkin/issues/693>`_)
+* remove 'emulate sh' from setup.zsh (`#686 <https://github.com/ros/catkin/issues/686>`_)
+* set terminal title only when isatty (`#687 <https://github.com/ros/catkin/issues/687>`_)
+* add description to catkin_make for ignoring packages
+* add suggestion to use catkin_make_isolated for non-homogeneous workspaces
+* refactor code from run_tests.py into Python module (`#678 <https://github.com/ros/catkin/issues/678>`_)
+
 0.6.9 (2014-07-11)
 ------------------
 * fix regression from 0.6.8 (`#676 <https://github.com/ros/catkin/issues/676>`_)
