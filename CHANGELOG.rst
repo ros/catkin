@@ -2,6 +2,12 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* check changes to -D args CATKIN_DEVEL_PREFIX / CMAKE_INSTALL_PREFIX when considering to reinvoke cmake (`#700 <https://github.com/ros/catkin/issues/700>`_)
+* add description to catkin_make for ignoring packages
+* add suggestion to use catkin_make_isolated for non-homogeneous workspaces
+
 0.5.89 (2014-08-18)
 -------------------
 * make nosetests --xunit-file argument an absolute path to work around nose bug 779 (`#659 <https://github.com/ros/catkin/issues/659>`_)
