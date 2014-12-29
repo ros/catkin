@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.11 (2014-12-29)
+-------------------
 * fix return code for tests run by ctest (`#703 <https://github.com/ros/catkin/issues/703>`_)
 
 0.6.10 (2014-12-22)
