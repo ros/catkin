@@ -88,7 +88,7 @@ def ensure_junit_result_exist(filename):
   </testcase>
 </testsuite>''' % data)
         return False
-    return
+    return True
 
 
 def _get_missing_junit_result_filename(filename):
