@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix return code for tests run by ctest (`#703 <https://github.com/ros/catkin/issues/703>`_)
+
 0.6.10 (2014-12-22)
 -------------------
 * check changes to -D args CATKIN_DEVEL_PREFIX / CMAKE_INSTALL_PREFIX when considering to reinvoke cmake (`#700 <https://github.com/ros/catkin/issues/700>`_)
