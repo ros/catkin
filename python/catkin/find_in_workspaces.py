@@ -87,7 +87,8 @@ def _get_valid_search_dirs(search_dirs, project):
 #      except for s == 'share', cand is a list of two paths: ws[0] + s + project (+ path) and ws[1] + project (+ path)
 #      add cand to result list if it exists
 #      is not defined for s in ['bin', 'lib'], bailing out
-def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=get_workspaces(), considered_paths=None, first_matching_workspace_only=False, first_match_only=False, workspace_to_source_spaces=None, source_path_to_packages=None):
+find_packages_cache = dict()
+def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=get_workspaces(), considered_paths=None, first_matching_workspace_only=False, first_match_only=False, workspace_to_source_spaces=None, source_path_to_packages=None, cache_find_packages=False):
     '''
     Find all paths which match the search criteria.
     All workspaces are searched in order.
@@ -104,9 +105,11 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
     :param first_match_only: if True returns first path found (supercedes first_matching_workspace_only)
     :param workspace_to_source_spaces: the dictionary is populated with mappings from workspaces to source paths, pass in the same dictionary to avoid repeated reading of the catkin marker file
     :param source_path_to_packages: the dictionary is populated with mappings from source paths to packages, pass in the same dictionary to avoid repeated crawling
+    :param cache_find_packages: cache result of find_packages to speed up
     :raises ValueError: if search_dirs contains an invalid folder name
     :returns: List of paths
     '''
+    global find_packages_cache
     search_dirs = _get_valid_search_dirs(search_dirs, project)
 
     if workspace_to_source_spaces is None:
@@ -137,7 +140,12 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
                         workspace_to_source_spaces[workspace] = get_source_paths(workspace)
                     for source_path in workspace_to_source_spaces[workspace]:
                         if source_path not in source_path_to_packages:
-                            source_path_to_packages[source_path] = find_packages(source_path)
+                            if cache_find_packages:
+                                if not source_path in find_packages_cache:
+                                    find_packages_cache[source_path] = find_packages(source_path)
+                                source_path_to_packages[source_path] = find_packages_cache[source_path]
+                            else:
+                                source_path_to_packages[source_path] = find_packages(source_path)
                         matching_packages = [p for p, pkg in source_path_to_packages[source_path].items() if pkg.name == project]
                         if matching_packages:
                             p = source_path
