@@ -8,7 +8,7 @@ try:
 except ImportError:
     from urllib2 import addinfourl, BaseHandler, build_opener, Request, URLError
 import hashlib
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 NAME = "download_checkmd5.py"
 
@@ -127,24 +127,30 @@ def main(argv=sys.argv[1:]):
     """
     Dowloads URI to file dest and checks md5 if given.
     """
-    parser = OptionParser(usage="usage: %prog URI dest [md5sum]",
-                          prog=NAME,
-                          description="Dowloads URI to file dest. If md5sum is given, checks md5sum. If file existed and mismatch, downloads and checks again")
-    options, args = parser.parse_args(argv)
-    md5sum = None
-    if len(args) == 2:
-        uri, dest = args
-    elif len(args) == 3:
-        uri, dest, md5sum = args
-    else:
-        parser.error("wrong number of arguments")
+    parser = ArgumentParser(description="Dowloads URI to file dest. If md5sum is given, checks md5sum. If file existed and mismatch, downloads and checks again")
+    parser.add_argument("uri")
+    parser.add_argument("dest")
+    parser.add_argument("md5sum", nargs='?')
+    parser.add_argument("--non-essential", action="store_true")
+    args = parser.parse_args(argv)
+
+    uri = args.uri
+    dest = args.dest
+    md5sum = args.md5sum
+    essential = not args.non_essential
 
     if '://' not in uri:
         uri = 'file://' + uri
 
     fresh = False
     if not os.path.exists(dest):
-        download_md5(uri, dest)
+        try:
+            download_md5(uri, dest)
+        except Exception:
+            if essential:
+                raise
+            else:
+                sys.exit(0)
         fresh = True
 
     if md5sum:
@@ -152,7 +158,13 @@ def main(argv=sys.argv[1:]):
         if result is False and fresh is False:
             print('WARNING: md5sum mismatch (%s != %s); re-downloading file %s' % (hexdigest, md5sum, dest))
             os.remove(dest)
-            download_md5(uri, dest)
+            try:
+                download_md5(uri, dest)
+            except Exception:
+                if essential:
+                    raise
+                else:
+                    sys.exit(0)
             result, hexdigest = checkmd5(dest, md5sum)
         if result is False:
             sys.exit('ERROR: md5sum mismatch (%s != %s) on %s; aborting' % (hexdigest, md5sum, dest))

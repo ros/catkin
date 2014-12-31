@@ -111,6 +111,7 @@ foreach(filename
     atomic_configure_file
     catkin_add_env_hooks
     catkin_destinations
+    catkin_download
     catkin_generate_environment
     catkin_install_python
     catkin_libraries
