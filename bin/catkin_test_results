@@ -18,6 +18,7 @@ def main():
     parser = argparse.ArgumentParser(description='Outputs a summary of the test results. If there are any test errors or failures the scripts return code is 1.')
     parser.add_argument('test_results_dir', nargs='?' if test_results_dir else None, default=test_results_dir, help='The path to the test results (necessary when the environment variable "%s" is not defined)' % env_name)
     parser.add_argument('--all', action='store_true', default=False, help='Show all test results even the ones without errors/failures')
+    parser.add_argument('--verbose', action='store_true', default=False, help='Show all tests which have errors or failed')
     args = parser.parse_args()
 
     # verify that workspace folder exists
@@ -26,7 +27,7 @@ def main():
         sys.exit('Test results directory "%s" does not exist' % test_results_dir)
 
     try:
-        results = test_results(test_results_dir)
+        results = test_results(test_results_dir, args.verbose)
         _, sum_errors, sum_failures = aggregate_results(results)
         print_summary(results, show_stable=args.all)
         if sum_errors or sum_failures:

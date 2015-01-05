@@ -1,3 +1,4 @@
+# coding:utf-8
 import os
 import sys
 import unittest
@@ -43,6 +44,45 @@ class TestResultsTest(unittest.TestCase):
             self.assertEqual({'test1.xml': (5, 1, 3), 'test2.xml': (5, 1, 3)}, results)
         finally:
             shutil.rmtree(rootdir)
+
+    def test_test_results_detail(self):
+        try:
+            oldstdout = sys.stdout
+            sys.stdout = StringIO()
+            rootdir = tempfile.mkdtemp()
+            test_xml = 'test.xml'
+            test_suites = '<testsuites tests="5" failures="3" errors="1" time="35" name="AllTests"></testsuites>'
+            result_file = os.path.join(rootdir, test_xml)
+            with open(result_file, 'w') as fhand:
+                fhand.write(test_suites)
+            results = catkin_test_results.test_results(rootdir, show_verbose=True)
+            self.assertEqual({test_xml: (5, 1, 3)}, results)
+            summary = sys.stdout.getvalue()
+            self.assertTrue(test_xml in summary, summary)
+            self.assertTrue(test_suites in summary, summary)
+        finally:
+            shutil.rmtree(rootdir)
+            sys.stdout = oldstdout
+
+    def test_test_results_detail_with_non_ascii(self):
+        try:
+            oldstdout = sys.stdout
+            sys.stdout = StringIO()
+            rootdir = tempfile.mkdtemp()
+            test_xml = 'test.xml'
+            test_suites = '<testsuites tests="5" failures="3" errors="1" time="35" name="AllTests"><testsuite></testsuite><system-out><![CDATA[robotロボット机器人]]></system-out></testsuites>'
+            result_file = os.path.join(rootdir, test_xml)
+            with open(result_file, 'w') as fhand:
+                fhand.write(test_suites)
+            results = catkin_test_results.test_results(rootdir, show_verbose=True)
+            self.assertEqual({test_xml: (5, 1, 3)}, results)
+            summary = sys.stdout.getvalue()
+            self.assertTrue(test_xml in summary, summary)
+            self.assertTrue(test_suites in summary, summary)
+        finally:
+            shutil.rmtree(rootdir)
+            sys.stdout = oldstdout
+            print(summary)
 
     def test_print_summary(self):
         results = {'test1.xml': (5, 1, 3), 'test2.xml': (7, 2, 4)}
