@@ -224,7 +224,11 @@ def _parse_args(args=sys.argv[1:]):
     add('--force-cmake', action='store_true', help="Invoke 'cmake' even if it has been executed before")
     add('--no-color', action='store_true', help='Disables colored output (only for catkin_make and CMake)')
     add('--pkg', nargs='+', help="Invoke 'make' on specific packages only")
-    add('--only-pkg-with-deps', nargs='+', help='Only consider the specific packages and their recursive dependencies and ignore all other packages in the workspace')
+    add('--only-pkg-with-deps', nargs='+',
+        help='Whitelist only the specified packages and their dependencies by '
+             'setting the CATKIN_WHITELIST_PACKAGES variable. This variable is '
+             'stored in CMakeCache.txt and will persist between CMake calls '
+             'unless explicitly cleared; e.g. catkin_make -DCATKIN_WHITELIST_PACKAGES="".')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to CMake. '
              'It must be passed after other arguments since it collects all following options.')
