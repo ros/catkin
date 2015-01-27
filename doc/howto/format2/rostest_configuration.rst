@@ -34,6 +34,29 @@ the conditional testing block::
     add_rostest(tests/your_second_rostest.test)
   endif()
 
+In case you have a test that accepts arguments, you can pass them like
+this::
+
+  add_rostest(tests/your_rostest.test ARGS arg1:=true arg2:=false)
+
+If your rostest needs extra data in order to run, you can use the
+``catkin_download_test_data()`` to download the data.
+Read more about :ref:`downloading_test_data_2`.
+Then you can add a dependency between the rostest target and the
+target from ``catkin_download_test_data()``, in order to download the
+data before the rostest runs::
+
+  if (CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+
+    catkin_download_test_data(
+      ${PROJECT_NAME}_32e.pcap
+      http://download.ros.org/data/velodyne/32e.pcap
+      MD5 e41d02aac34f0967c03a5597e1d554a9)
+
+    add_rostest(tests/your_rostest.test DEPENDENCIES ${PROJECT_NAME}_32e.pcap)
+  endif()
+
 If your rostest also uses a gtest_ executable, there is a convenience
 function::
 
