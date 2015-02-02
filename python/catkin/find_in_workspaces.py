@@ -118,9 +118,11 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
     existing_paths = []
     try:
         for workspace in (_workspaces or []):
+            if 'libexec' in search_dirs:
+                search_dirs.insert(search_dirs.index('libexec'), 'lib')
             for sub in search_dirs:
                 # search in workspace
-                p = os.path.join(workspace, sub if sub != 'libexec' else 'lib')
+                p = os.path.join(workspace, sub)
                 if project:
                     p = os.path.join(p, project)
                 if path:
