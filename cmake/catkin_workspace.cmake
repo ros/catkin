@@ -24,6 +24,12 @@ function(catkin_workspace)
 
   set(CATKIN_WHITELIST_PACKAGES "" CACHE STRING "List of ';' separated packages to build")
   set(CATKIN_BLACKLIST_PACKAGES "" CACHE STRING "List of ';' separated packages to exclude")
+  if(NOT "${CATKIN_WHITELIST_PACKAGES}" STREQUAL "")
+    message(STATUS "Using CATKIN_WHITELIST_PACKAGES: ${CATKIN_WHITELIST_PACKAGES}")
+  endif()
+  if(NOT "${CATKIN_BLACKLIST_PACKAGES}" STREQUAL "")
+    message(STATUS "Using CATKIN_BLACKLIST_PACKAGES: ${CATKIN_BLACKLIST_PACKAGES}")
+  endif()
 
   assert(catkin_EXTRAS_DIR)
   em_expand(
