@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+import errno
 import os
 import sys
 try:
@@ -87,8 +88,12 @@ def download_md5(uri, dest):
     """
     # Create intermediate directories as necessary, #2970
     dirname = os.path.dirname(dest)
-    if len(dirname) and not os.path.exists(dirname):
-        os.makedirs(dirname)
+    if len(dirname):
+        try:
+            os.makedirs(dirname)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
 
     sys.stdout.write('Downloading %s to %s...' % (uri, dest))
     sys.stdout.flush()
