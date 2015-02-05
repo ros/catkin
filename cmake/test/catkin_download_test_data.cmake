@@ -31,7 +31,7 @@ _generate_function_if_testing_is_disabled("catkin_download_test_data")
 function(catkin_download_test_data target url)
   _warn_if_skip_testing("catkin_download_test_data")
 
-  catkin_download("${target}" "{$url}" ${ARGN})
+  catkin_download("${target}" "${url}" ${ARGN})
 
   if(TARGET tests)
     add_dependencies(tests ${target})
