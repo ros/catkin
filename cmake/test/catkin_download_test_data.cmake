@@ -6,8 +6,12 @@ _generate_function_if_testing_is_disabled("catkin_download_test_data")
 # It is commonly used to download larger data files for unit tests
 # which should not be stored in the repository.
 #
+# .. note:: It is not recommended to rely on downloaded data during
+#   a configure / make cycle since this prevents building the package
+#   when no network connectivity is available.
+#
 # .. note:: The target will be registered as a dependency
-#   of the "tests" target.
+#   of the "tests" and "download_extra_data" targets, but not of "all" target.
 #
 # .. note:: If the tests should be run on the ROS buildfarm the URL
 #   must be publically and reliably accessible.
@@ -27,11 +31,13 @@ _generate_function_if_testing_is_disabled("catkin_download_test_data")
 #   (default: empty, skipping the check)
 # :type MD5: string
 #
+# Additionally, option REQUIRED can be specified.
+#
 # @public
 function(catkin_download_test_data target url)
   _warn_if_skip_testing("catkin_download_test_data")
 
-  catkin_download("${target}" "${url}" ${ARGN})
+  catkin_download("${target}" "${url}" ${ARGN} EXCLUDE_FROM_ALL)
 
   if(TARGET tests)
     add_dependencies(tests ${target})
