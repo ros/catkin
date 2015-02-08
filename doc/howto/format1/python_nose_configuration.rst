@@ -22,11 +22,19 @@ CMakeLists.txt
 Declare each nose test like this::
 
   if (CATKIN_ENABLE_TESTING)
-    catkin_add_nosetests(test_your_node tests/test_your_node.py)
+    catkin_add_nosetests(tests/test_your_node.py)
   endif()
 
 This example assumes your tests are defined in the ``tests/``
 subdirectory in your source tree.
+
+You can also let nosetest find all tests recursively::
+
+  if (CATKIN_ENABLE_TESTING)
+    catkin_add_nosetests(tests)
+  endif()
+
+For more info, please have a look at the :ref:`API <catkin_add_nosetests_ref>`.
 
 .. _Nosetest: http://www.ros.org/wiki/nosetest
 .. _roscore: http://www.ros.org/wiki/roscore
