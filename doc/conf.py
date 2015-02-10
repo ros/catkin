@@ -15,6 +15,7 @@ import catkin_sphinx
 import os
 import sys
 import subprocess
+import time
 from xml.etree.ElementTree import ElementTree
 
 # -- General configuration -----------------------------------------------------
@@ -47,14 +48,6 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'catkin'
-gitcmd = 'git log -n1 --pretty=format:%cD'.split()
-
-lastmod = subprocess.Popen(gitcmd, stdout=subprocess.PIPE).communicate()[0]
-dochash = subprocess.Popen('git log -n1 --pretty=format:%H'.split(),
-                           stdout=subprocess.PIPE).communicate()[0]
-
-print "dochash=", dochash
-copyright = u'2010, Willow Garage -- ' + ' Version ' + dochash + ", " + ' '.join(lastmod.split(' ')[:4])
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -62,8 +55,10 @@ copyright = u'2010, Willow Garage -- ' + ' Version ' + dochash + ", " + ' '.join
 try:
     root = ElementTree(None, os.path.join('..', 'package.xml'))
     version = root.findtext('version')
+    author_names = [a.text for a in root.findall('author')]
+    copyright = u'2010-%s, %s' % (time.strftime('%Y'), ', '.join(author_names))
 except Exception as e:
-    raise RuntimeError('Could not extract version from package.xml:\n%s' % e)
+    raise RuntimeError('Could not extract version and authors from package.xml:\n%s' % e)
 
 # The full version, including alpha/beta/rc tags.
 release = version
