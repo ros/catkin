@@ -7,6 +7,7 @@ This page was auto-generated from cmake source files using generate_cmake_rst.py
 .. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 .. contents::
+   :local:
 
 
 Public CMake functions / macros
@@ -30,7 +31,7 @@ Public CMake functions / macros
 .. _`catkin_add_env_hooks_ref`:
 
 `catkin_add_env_hooks`
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_add_env_hooks(file_prefix)
 
@@ -87,7 +88,7 @@ Public CMake functions / macros
 .. _`catkin_add_gtest_ref`:
 
 `catkin_add_gtest`
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_add_gtest(target)
 
@@ -118,7 +119,7 @@ Public CMake functions / macros
 .. _`catkin_add_nosetests_ref`:
 
 `catkin_add_nosetests`
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_add_nosetests(path)
 
@@ -152,7 +153,7 @@ Public CMake functions / macros
 .. _`catkin_download_ref`:
 
 `catkin_download`
------------------
+~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_download(target, url)
 
@@ -192,7 +193,7 @@ Public CMake functions / macros
 .. _`catkin_download_test_data_ref`:
 
 `catkin_download_test_data`
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_download_test_data(target, url)
 
@@ -214,7 +215,7 @@ Public CMake functions / macros
 .. _`catkin_filter_libraries_for_build_configuration_ref`:
 
 `catkin_filter_libraries_for_build_configuration`
--------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_filter_libraries_for_build_configuration(VAR)
 
@@ -236,7 +237,7 @@ Public CMake functions / macros
 .. _`catkin_install_python_ref`:
 
 `catkin_install_python`
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_install_python(signature)
 
@@ -259,7 +260,7 @@ Public CMake functions / macros
 .. _`catkin_metapackage_ref`:
 
 `catkin_metapackage`
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_metapackage()
 
@@ -282,7 +283,7 @@ Public CMake functions / macros
 .. _`catkin_pack_libraries_with_build_configuration_ref`:
 
 `catkin_pack_libraries_with_build_configuration`
-------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_pack_libraries_with_build_configuration(VAR)
 
@@ -303,7 +304,7 @@ Public CMake functions / macros
 .. _`catkin_package_ref`:
 
 `catkin_package`
-----------------
+~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_package()
 
@@ -390,7 +391,7 @@ Public CMake functions / macros
 .. _`catkin_package_xml_ref`:
 
 `catkin_package_xml`
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_package_xml()
 
@@ -424,7 +425,7 @@ Public CMake functions / macros
 .. _`catkin_python_setup_ref`:
 
 `catkin_python_setup`
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_python_setup()
 
@@ -450,7 +451,7 @@ Public CMake functions / macros
 .. _`catkin_replace_imported_library_targets_ref`:
 
 `catkin_replace_imported_library_targets`
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_replace_imported_library_targets(VAR)
 
@@ -469,7 +470,7 @@ Public CMake functions / macros
 .. _`catkin_unpack_libraries_with_build_configuration_ref`:
 
 `catkin_unpack_libraries_with_build_configuration`
---------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_unpack_libraries_with_build_configuration(VAR)
 
@@ -503,7 +504,7 @@ Non-public CMake functions / macros
 .. _`_generate_function_if_testing_is_disabled_ref`:
 
 `_generate_function_if_testing_is_disabled`
--------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: _generate_function_if_testing_is_disabled(funcname)
 
@@ -515,7 +516,7 @@ Non-public CMake functions / macros
 .. _`_set_cmake_policy_to_new_if_available_ref`:
 
 `_set_cmake_policy_to_new_if_available`
----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: _set_cmake_policy_to_new_if_available(policy)
 
@@ -526,7 +527,7 @@ Non-public CMake functions / macros
 .. _`_warn_if_skip_testing_ref`:
 
 `_warn_if_skip_testing`
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: _warn_if_skip_testing(funcname)
 
@@ -538,7 +539,7 @@ Non-public CMake functions / macros
 .. _`catkin_destinations_ref`:
 
 `catkin_destinations`
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_destinations()
 
@@ -579,7 +580,7 @@ Non-public CMake functions / macros
 .. _`catkin_run_tests_target_ref`:
 
 `catkin_run_tests_target`
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_run_tests_target(type, name, xunit_filename)
 
@@ -598,7 +599,7 @@ Non-public CMake functions / macros
 .. _`catkin_workspace_ref`:
 
 `catkin_workspace`
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_workspace()
 
@@ -619,7 +620,7 @@ Non-public CMake functions / macros
 .. _`list_append_deduplicate_ref`:
 
 `list_append_deduplicate`
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: list_append_deduplicate(listname)
 
@@ -637,7 +638,7 @@ Non-public CMake functions / macros
 .. _`list_append_unique_ref`:
 
 `list_append_unique`
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: list_append_unique(listname)
 
@@ -655,7 +656,7 @@ Non-public CMake functions / macros
 .. _`stamp_ref`:
 
 `stamp`
--------
+~~~~~~~
 
 .. cmake:macro:: stamp(path)
 
@@ -672,7 +673,7 @@ Non-public CMake functions / macros
 .. _`string_starts_with_ref`:
 
 `string_starts_with`
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: string_starts_with(str, prefix, var)
 
@@ -695,7 +696,7 @@ Not documented CMake functions / macros
 .. _`_catkin_package_ref`:
 
 `_catkin_package`
------------------
+~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: _catkin_package()
 
@@ -704,7 +705,7 @@ Not documented CMake functions / macros
 .. _`_catkin_package_xml_ref`:
 
 `_catkin_package_xml`
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: _catkin_package_xml(dest_dir)
 
@@ -713,7 +714,7 @@ Not documented CMake functions / macros
 .. _`_strip_path_prefix_ref`:
 
 `_strip_path_prefix`
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: _strip_path_prefix(var, value, prefix)
 
@@ -722,7 +723,7 @@ Not documented CMake functions / macros
 .. _`assert_ref`:
 
 `assert`
---------
+~~~~~~~~
 
 .. cmake:macro:: assert(VAR)
 
@@ -731,7 +732,7 @@ Not documented CMake functions / macros
 .. _`assert_file_exists_ref`:
 
 `assert_file_exists`
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: assert_file_exists(FILENAME, MESSAGE)
 
@@ -740,7 +741,7 @@ Not documented CMake functions / macros
 .. _`assert_unset_ref`:
 
 `assert_unset`
---------------
+~~~~~~~~~~~~~~
 
 .. cmake:macro:: assert_unset(VAR)
 
@@ -749,7 +750,7 @@ Not documented CMake functions / macros
 .. _`atomic_configure_file_ref`:
 
 `atomic_configure_file`
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: atomic_configure_file(input, output)
 
@@ -758,7 +759,7 @@ Not documented CMake functions / macros
 .. _`catkin_doxygen_ref`:
 
 `catkin_doxygen`
-----------------
+~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_doxygen(TARGET_NAME, SEARCH_DIRS)
 
@@ -767,7 +768,7 @@ Not documented CMake functions / macros
 .. _`catkin_generate_environment_ref`:
 
 `catkin_generate_environment`
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_generate_environment()
 
@@ -776,7 +777,7 @@ Not documented CMake functions / macros
 .. _`catkin_stack_ref`:
 
 `catkin_stack`
---------------
+~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_stack()
 
@@ -785,7 +786,7 @@ Not documented CMake functions / macros
 .. _`configure_shared_library_build_settings_ref`:
 
 `configure_shared_library_build_settings`
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: configure_shared_library_build_settings()
 
@@ -794,7 +795,7 @@ Not documented CMake functions / macros
 .. _`debug_message_ref`:
 
 `debug_message`
----------------
+~~~~~~~~~~~~~~~
 
 .. cmake:macro:: debug_message(level)
 
@@ -803,7 +804,7 @@ Not documented CMake functions / macros
 .. _`em_expand_ref`:
 
 `em_expand`
------------
+~~~~~~~~~~~
 
 .. cmake:macro:: em_expand(context_in, context_out, em_file_in, file_out)
 
@@ -812,7 +813,7 @@ Not documented CMake functions / macros
 .. _`find_program_required_ref`:
 
 `find_program_required`
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: find_program_required(ARG_VAR, ARG_PROGRAM_NAME)
 
@@ -821,7 +822,7 @@ Not documented CMake functions / macros
 .. _`find_python_module_ref`:
 
 `find_python_module`
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: find_python_module(module)
 
@@ -830,7 +831,7 @@ Not documented CMake functions / macros
 .. _`list_insert_in_workspace_order_ref`:
 
 `list_insert_in_workspace_order`
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: list_insert_in_workspace_order(listname)
 
