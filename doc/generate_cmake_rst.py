@@ -34,15 +34,15 @@
 
 from __future__ import print_function
 import argparse
+import json
 import os
 import re
 import sys
-import json
 
 '''Simple superficial API doc generator for .cmake files'''
 
 
-def crawl_for_cmake(path, excluded_files=[]):
+def crawl_for_cmake(path, excluded_files=None):
     '''
     Crawls over path, looking for files named *.cmake,
     returns tuple of full and relative path.
@@ -51,7 +51,7 @@ def crawl_for_cmake(path, excluded_files=[]):
     for (parentdir, _, files) in os.walk(path):
         for filename in files:
             if not filename.endswith('.cmake') or \
-                  filename in excluded_files:
+                    (excluded_files and filename in excluded_files):
                 continue
             fullpath = os.path.join(parentdir, filename)
             relpath = os.path.relpath(fullpath, path)
@@ -161,24 +161,23 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Crawls a path for .cmake files and extract documentation of functions and macros into reStructured text.')
     parser.add_argument('path', nargs='?', default='.', help='The path to be crawled')
     parser.add_argument('-o', '--output', help='The name of the generated rst file')
-    parser.add_argument('--skip_private', action="store_true", help='skip documented items not marked with @public')
-    parser.add_argument('--skip_undocumented', action="store_true", help='skip items without documentation')
+    parser.add_argument('--skip_private', action="store_true", help='Skip documented items not marked with @public')
+    parser.add_argument('--skip_undocumented', action="store_true", help='Skip items without documentation.')
 
     args = parser.parse_args()
 
     exclusions = '{}/.sphinx_exclusions.json'.format(args.path)
     excluded_files = []
-    try:
-        if os.path.exists(exclusions):
-            # print('exclusions={}'.format(exclusions))
-            with open(exclusions) as f:
+    if os.path.exists(exclusions):
+        try:
+            with open(exclusions, 'r') as f:
                 excluded_files = json.load(f)
-    except:
-        print('unable to load exclusions from {}; make sure it is valid json or remove it'.format(exclusions), file=sys.stderr)
-        sys.exit(-1)
+        except (TypeError, ValueError) as err:
+            print('unable to load exclusions\nerr={}\n'
+                  'make sure the file <{}> is valid json or remove it'.
+                  format(err, exclusions), file=sys.stderr)
+            sys.exit(-1)
 
-    print('skip_undocumented={}'.format(args.skip_undocumented))
-    
     cmake_files = crawl_for_cmake(args.path, excluded_files)
     lines = generate_rst(cmake_files, args.skip_private, args.skip_undocumented)
     if args.output:
