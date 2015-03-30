@@ -75,7 +75,7 @@ macro(catkin_pack_libraries_with_build_configuration VAR)
   set(_index 0)
   while(${_index} LESS ${_count})
     list(GET _argn ${_index} lib)
-    if("${lib}" MATCHES "^debug|optimized|general$")
+    if("${lib}" MATCHES "^(debug|optimized|general)$")
       math(EXPR _index "${_index} + 1")
       if(${_index} EQUAL ${_count})
         message(FATAL_ERROR "catkin_pack_libraries_with_build_configuration() the list of libraries '${_argn}' ends with '${lib}' which is a build configuration keyword and must be followed by a library")
@@ -124,7 +124,7 @@ endmacro()
 macro(catkin_replace_imported_library_targets VAR)
   set(${VAR} "")
   foreach(lib ${ARGN})
-    if((NOT "${lib}" MATCHES "^debug|optimized|general$") AND TARGET ${lib})
+    if((NOT "${lib}" MATCHES "^(debug|optimized|general)$") AND TARGET ${lib})
       # sometimes cmake dependencies define imported targets, in which
       # case the imported library information is not the target name, but
       # the information embedded in cmake properties inside the imported library
