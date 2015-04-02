@@ -29,7 +29,7 @@ your project name to avoid conflicts with other packages.
 The second parameter is the URL to read.  If you release your package
 to the ROS build farm, make sure this URL is available reliably.
 Otherwise, tests will fail randomly, annoying everyone.  Contact
-``ros-release@code.ros.org`` if you need to host some data near the
+``ros-release@lists.ros.org`` if you need to host some data near the
 build servers.
 
 The MD5 argument is a good way to avoid testing with corrupted data.
