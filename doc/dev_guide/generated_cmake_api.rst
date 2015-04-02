@@ -13,6 +13,7 @@ Public CMake functions / macros
 -------------------------------
 
  * :cmake:macro:`catkin_add_env_hooks`
+ * :cmake:macro:`catkin_add_executable_with_gtest`
  * :cmake:macro:`catkin_add_gtest`
  * :cmake:macro:`catkin_add_nosetests`
  * :cmake:macro:`catkin_download`
@@ -82,6 +83,32 @@ Public CMake functions / macros
    in the devel space but not installed
  :type SKIP_INSTALL: option
 
+
+
+.. _`catkin_add_executable_with_gtest_ref`:
+
+`catkin_add_executable_with_gtest`
+----------------------------------
+
+.. cmake:macro:: catkin_add_executable_with_gtest(target)
+
+ *[function defined in test/gtest.cmake]*
+
+
+ Add a GTest executable target.
+
+ An executable target is created with the source files, it is linked
+ against GTest.
+ If you also want to register the executable as a test use
+ ``catkin_add_gtest()`` instead.
+
+ :param target: the target name
+ :type target: string
+ :param source_files: a list of source files used to build the test
+   executable
+ :type source_files: list of strings
+
+ Additionally, the option EXCLUDE_FROM_ALL can be specified.
 
 
 .. _`catkin_add_gtest_ref`:
