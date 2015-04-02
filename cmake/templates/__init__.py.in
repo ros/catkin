@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # generated from catkin/cmake/template/__init__.py.in
 # keep symbol table as clean as possible by deleting all unnecessary symbols
 
