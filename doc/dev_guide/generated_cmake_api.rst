@@ -590,7 +590,7 @@ Non-public CMake functions / macros
  Create a test target, integrate it with the run_tests infrastructure
  and post-process the junit result.
 
- All test results go under ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}/..
+ All test results go under ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}
 
  This function is only used internally by the various
  catkin_add_*test() functions.
