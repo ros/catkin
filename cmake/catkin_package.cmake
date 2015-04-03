@@ -261,7 +261,7 @@ function(_catkin_package)
     if(IS_ABSOLUTE ${library})
       get_filename_component(suffix ${library} EXT)
       if(NOT "${suffix}" STREQUAL "${CMAKE_STATIC_LIBRARY_SUFFIX}")
-        # We are passing the absolute library as it, since the l:<absolute_path> syntax was tricky and deprecated
+        # We are passing the absolute library as it, since the -l:<absolute_path> syntax was tricky and deprecated
         # in some version of ld. See https://github.com/ros/catkin/issues/694 for more information.
         set(library "${library}")
       endif()
