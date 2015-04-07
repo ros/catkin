@@ -37,6 +37,10 @@ import multiprocessing
 import os
 import platform
 import re
+try:
+    from shlex import quote
+except ImportError:
+    from pipes import quote
 import stat
 try:
     from StringIO import StringIO
@@ -234,7 +238,7 @@ def run_command(cmd, cwd, quiet=False, colorize=False, add_env=None):
     if proc.returncode:
         if quiet:
             print(out.getvalue())
-        raise subprocess.CalledProcessError(proc.returncode, ' '.join(cmd))
+        raise subprocess.CalledProcessError(proc.returncode, cmd)
     return out.getvalue() if quiet else ''
 
 blue_arrow = '@!@{bf}==>@|@!'
@@ -922,9 +926,13 @@ def build_workspace_isolated(
                 _print_build_error(package, e)
                 # Let users know how to reproduce
                 # First add the cd to the build folder of the package
-                cmd = 'cd ' + os.path.join(buildspace, package.name) + ' && '
+                cmd = 'cd ' + quote(os.path.join(buildspace, package.name)) + ' && '
                 # Then reproduce the command called
-                cmd += ' '.join(e.cmd) if isinstance(e.cmd, list) else e.cmd
+                if isinstance(e.cmd, list):
+                    # quote arguments to allow copy-n-paste of command
+                    cmd += ' '.join([quote(arg) for arg in e.cmd])
+                else:
+                    cmd += e.cmd
                 print(fmt("\n@{rf}Reproduce this error by running:"))
                 print(fmt("@{gf}@!==> @|") + cmd + "\n")
                 sys.exit('Command failed, exiting.')
