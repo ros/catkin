@@ -2,6 +2,23 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* remove CATKIN_TEST_RESULTS_DIR environment variable (`#728 <https://github.com/ros/catkin/issues/728>`_)
+* extract catkin_add_executable_with_gtest() from catkin_add_gtest() (`#726 <https://github.com/ros/catkin/issues/726>`_)
+* separate download function from tests (`#633 <https://github.com/ros/catkin/issues/633>`_)
+* only install environment hooks for catkin_make(_isolated) completion in the catkin package (`#732 <https://github.com/ros/catkin/issues/732>`_)
+* avoid warning with CMake 3.1 and newer (`#731 <https://github.com/ros/catkin/issues/731>`_)
+* quote command in "Reproduce this error" instructions (`#730 <https://github.com/ros/catkin/issues/730>`_)
+* fix Python error when working with non-ascii characters in catkin workspace path (`#724 <https://github.com/ros/catkin/issues/724>`_)
+* use $TMPDIR for temporary _setup_util.py file if set (`#710 <https://github.com/ros/catkin/issues/710>`_)
+* fix regex for library config types (`#723 <https://github.com/ros/catkin/issues/723>`_)
+* fix potential race condition in download_checkmd5.py (`#715 <https://github.com/ros/catkin/issues/715>`_)
+* output package whitelist / blacklist if set (`#714 <https://github.com/ros/catkin/issues/714>`_)
+* add --verbose option to catkin_test_results to show the content of result files (`#705 <https://github.com/ros/catkin/issues/705>`_)
+* source in reset zsh emulation mode  (`#686 <https://github.com/ros/catkin/issues/686>`_)
+* improve help text for --only-pkg-with-deps (`#706 <https://github.com/ros/catkin/issues/706>`_)
+
 0.6.11 (2014-12-29)
 -------------------
 * fix return code for tests run by ctest (`#703 <https://github.com/ros/catkin/issues/703>`_)
