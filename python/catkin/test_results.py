@@ -113,7 +113,7 @@ def read_junit(filename):
     return (num_tests, num_errors, num_failures)
 
 
-def test_results(test_results_dir, show_verbose=False):
+def test_results(test_results_dir, show_verbose=False, show_all=False):
     '''
     Collects test results by parsing all xml files in given path,
     attempting to interpret them as junit results.
@@ -132,7 +132,8 @@ def test_results(test_results_dir, show_verbose=False):
             try:
                 num_tests, num_errors, num_failures = read_junit(filename_abs)
             except Exception as e:
-                print('Skipping "%s": %s' % (name, str(e)))
+                if show_all:
+                    print('Skipping "%s": %s' % (name, str(e)))
                 continue
             results[name] = (num_tests, num_errors, num_failures)
             if show_verbose and (num_errors + num_failures > 0):
