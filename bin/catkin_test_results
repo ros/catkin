@@ -14,7 +14,7 @@ from catkin.test_results import aggregate_results, print_summary, test_results
 def main():
     parser = argparse.ArgumentParser(description='Outputs a summary of the test results. If there are any test errors or failures the scripts return code is 1.')
     parser.add_argument('test_results_dir', nargs='?', default=os.curdir, help='The path to the test results')
-    parser.add_argument('--all', action='store_true', default=False, help='Show all test results even the ones without errors/failures')
+    parser.add_argument('--all', action='store_true', default=False, help='Show all test results even the ones without errors/failures as well as skipped xml files')
     parser.add_argument('--verbose', action='store_true', default=False, help='Show all tests which have errors or failed')
     args = parser.parse_args()
 
@@ -24,7 +24,8 @@ def main():
         sys.exit('Test results directory "%s" does not exist' % test_results_dir)
 
     try:
-        results = test_results(test_results_dir, args.verbose)
+        results = test_results(
+            test_results_dir, show_verbose=args.verbose, show_all=args.all)
         _, sum_errors, sum_failures = aggregate_results(results)
         print_summary(results, show_stable=args.all)
         if sum_errors or sum_failures:
