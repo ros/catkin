@@ -5,6 +5,7 @@ Changelog for package catkin
 Forthcoming
 -----------
 * remove CATKIN_TEST_RESULTS_DIR environment variable (`#728 <https://github.com/ros/catkin/issues/728>`_)
+* catkin_test_results will output skipped xml files only when --all is being passed (`#733 <https://github.com/ros/catkin/pull/733>`_)
 * extract catkin_add_executable_with_gtest() from catkin_add_gtest() (`#726 <https://github.com/ros/catkin/issues/726>`_)
 * separate download function from tests (`#633 <https://github.com/ros/catkin/issues/633>`_)
 * only install environment hooks for catkin_make(_isolated) completion in the catkin package (`#732 <https://github.com/ros/catkin/issues/732>`_)
