@@ -71,6 +71,9 @@ They only contain relative paths and are supposed to be relative to the ``${CMAK
 
    This is set to ``lib``.
    On non-Debian distributions it could be set to ``libexec``.
+   Note that setting this variable to anything but ``lib`` or ``libexec`` will
+   not work as expected since tools like ``catkin_find`` will only consider
+   these two locations.
    This variable should not be used directly, use ``CATKIN_PACKAGE_BIN_DESTINATION`` instead.
 
 .. cmake:data:: CATKIN_GLOBAL_PYTHON_DESTINATION
