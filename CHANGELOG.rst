@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* allow setting CATKIN_GLOBAL_LIBEXEC_DESTINATION to libexec (`#713 <https://github.com/ros/catkin/pull/713>`_)
+
 0.6.12 (2015-04-16)
 -------------------
 * remove CATKIN_TEST_RESULTS_DIR environment variable (`#728 <https://github.com/ros/catkin/issues/728>`_)
