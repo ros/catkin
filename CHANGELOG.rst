@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.13 (2015-04-17)
+-------------------
 * allow setting CATKIN_GLOBAL_LIBEXEC_DESTINATION to libexec (`#713 <https://github.com/ros/catkin/pull/713>`_)
 
 0.6.12 (2015-04-16)
