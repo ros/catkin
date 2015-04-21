@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* support zsh with NOCLOBBER enabled (`#734 <https://github.com/ros/catkin/pull/734>`_())
+
 0.6.13 (2015-04-17)
 -------------------
 * allow setting CATKIN_GLOBAL_LIBEXEC_DESTINATION to libexec (`#713 <https://github.com/ros/catkin/pull/713>`_)
