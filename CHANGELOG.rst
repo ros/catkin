@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.14 (2015-04-20)
+-------------------
 * support zsh with NOCLOBBER enabled (`#734 <https://github.com/ros/catkin/pull/734>`_())
 
 0.6.13 (2015-04-17)
