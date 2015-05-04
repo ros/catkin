@@ -8,14 +8,6 @@ environment is available.  See: :ref:`rostest_configuration` if your
 tests need a running roscore_.
 
 
-package.xml
-:::::::::::
-
-The unittest_ package is needed for testing::
-
-  <test_depend>unittest</test_depend>
-
-
 CMakeLists.txt
 ::::::::::::::
 
