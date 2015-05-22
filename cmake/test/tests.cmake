@@ -77,12 +77,12 @@ endif()
 # create target to clean all test results
 if(NOT TARGET clean_test_results)
   add_custom_target(clean_test_results
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CATKIN_TEST_RESULTS_DIR})
+    COMMAND ${PYTHON_EXECUTABLE} "${catkin_EXTRAS_DIR}/test/remove_test_results.py" "${CATKIN_TEST_RESULTS_DIR}")
 endif()
 # create target to clean project specific test results
 if(NOT TARGET clean_test_results_${PROJECT_NAME})
   add_custom_target(clean_test_results_${PROJECT_NAME}
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME})
+    COMMAND ${PYTHON_EXECUTABLE} "${catkin_EXTRAS_DIR}/test/remove_test_results.py" "${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}")
 endif()
 
 #
