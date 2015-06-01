@@ -20,7 +20,8 @@ _generate_function_if_testing_is_disabled("catkin_add_nosetests")
 #   (default: 60)
 # :type TIMEOUT: integer
 # :param WORKING_DIRECTORY: the working directory when executing the
-#   tests
+#   tests (this option can only be used when the ``path`` argument is a
+#   file  but not when it is a directory)
 # :type WORKING_DIRECTORY: string
 #
 # @public
