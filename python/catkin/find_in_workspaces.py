@@ -108,6 +108,8 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
     :returns: List of paths
     '''
     search_dirs = _get_valid_search_dirs(search_dirs, project)
+    if 'libexec' in search_dirs:
+        search_dirs.insert(search_dirs.index('libexec'), 'lib')
 
     if workspace_to_source_spaces is None:
         workspace_to_source_spaces = {}
@@ -118,8 +120,6 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
     existing_paths = []
     try:
         for workspace in (_workspaces or []):
-            if 'libexec' in search_dirs:
-                search_dirs.insert(search_dirs.index('libexec'), 'lib')
             for sub in search_dirs:
                 # search in workspace
                 p = os.path.join(workspace, sub)
