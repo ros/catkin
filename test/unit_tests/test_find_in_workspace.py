@@ -61,7 +61,6 @@ class FindInWorkspaceTest(unittest.TestCase):
                           'baz/include/foo/foopath',
                           'baz/etc/foo/foopath',
                           'baz/lib/foo/foopath',
-                          'baz/lib/foo/foopath',
                           'baz/libexec/foo/foopath'], checked)
         checked = []
         existing = find_in_workspaces(['share', 'etc', 'lib'], None, 'foopath', _workspaces=['bar', 'baz'], considered_paths=checked)
