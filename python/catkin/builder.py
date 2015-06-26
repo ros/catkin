@@ -279,8 +279,9 @@ def get_multiarch():
             stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 
     # be sure of returning empty string or a valid multiarch tuple format
-    assert(not out.strip() or out.strip().count('-') == 2);
+    assert(not out.strip() or out.strip().count('-') == 2)
     return out.strip()
+
 
 def get_python_install_dir():
     # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
@@ -433,7 +434,9 @@ def build_catkin_package(
                 make_install_cmd = [last_env] + make_install_cmd
             run_command(make_install_cmd, build_dir, quiet)
         else:
-            print(fmt('@{yf}Package has no "@{boldon}install@{boldoff}" target, skipping "%s install" invocation...' % make_executable))
+            print(fmt(
+                '@{yf}Package has no "@{boldon}install@{boldoff}" target, skipping "%s install" invocation...'
+                % make_executable))
 
 
 def has_make_target(path, target, use_ninja=False):
@@ -558,7 +561,8 @@ def build_cmake_package(
 
 if [ $# -eq 0 ] ; then
   /bin/echo "Usage: env.sh COMMANDS"
-  /bin/echo "Calling env.sh without arguments is not supported anymore. Instead spawn a subshell and source a setup file manually."
+  /bin/echo "Calling env.sh without arguments is not supported anymore. \
+Instead spawn a subshell and source a setup file manually."
   exit 1
 fi
 
@@ -732,7 +736,7 @@ def build_workspace_isolated(
     continue_from_pkg=False,
     only_pkg_with_deps=None,
     destdir=None,
-    use_ninja=False
+    use_ninja=False,
 ):
     '''
     Runs ``cmake``, ``make`` and optionally ``make install`` for all
@@ -894,7 +898,10 @@ def build_workspace_isolated(
         cmake_args_with_spaces.append('-DCATKIN_DEVEL_PREFIX=' + develspace)
     if installspace:
         cmake_args_with_spaces.append('-DCMAKE_INSTALL_PREFIX=' + installspace)
-    if not force_cmake and cmake_input_changed(packages, buildspace, cmake_args=cmake_args_with_spaces, filename='catkin_make_isolated'):
+    if (
+        not force_cmake and
+        cmake_input_changed(packages, buildspace, cmake_args=cmake_args_with_spaces, filename='catkin_make_isolated')
+    ):
         print('The packages or cmake arguments have changed, forcing cmake invocation')
         force_cmake = True
 
@@ -988,7 +995,9 @@ def build_workspace_isolated(
                     'PYTHON_INSTALL_DIR': get_python_install_dir(),
                 }
                 with open(generated_setup_util_py, 'w') as f:
-                    f.write(configure_file(os.path.join(get_cmake_path(), 'templates', '_setup_util.py.in'), variables))
+                    f.write(configure_file(
+                        os.path.join(get_cmake_path(), 'templates', '_setup_util.py.in'),
+                        variables))
                 os.chmod(generated_setup_util_py, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
             else:
                 sys.exit("Unable to process CMAKE_PREFIX_PATH from environment. Cannot generate environment files.")
@@ -1001,7 +1010,9 @@ def build_workspace_isolated(
             variables = {'SETUP_DIR': develspace}
             for shell in ['sh', 'bash', 'zsh']:
                 with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
-                    f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'setup.%s.in' % shell), variables))
+                    f.write(configure_file(
+                        os.path.join(get_cmake_path(), 'templates', 'setup.%s.in' % shell),
+                        variables))
 
 
 def cmake_input_changed(packages, build_path, cmake_args=None, filename='catkin_make'):
@@ -1040,7 +1051,13 @@ def get_package_names_with_recursive_dependencies(packages, pkg_names):
         if pkg_name in packages_by_name:
             pkg = packages_by_name[pkg_name]
             dependencies.add(pkg_name)
-            for dep in [dep.name for dep in (pkg.build_depends + pkg.buildtool_depends + pkg.run_depends + (pkg.test_depends if pkg.package_format > 1 else []))]:
+            deps_to_iterate_over = (
+                pkg.build_depends +
+                pkg.buildtool_depends +
+                pkg.run_depends +
+                (pkg.test_depends if pkg.package_format > 1 else [])
+            )
+            for dep in [dep.name for dep in deps_to_iterate_over]:
                 if dep in packages_by_name and dep not in check_pkg_names and dep not in dependencies:
                     check_pkg_names.add(dep)
     return dependencies

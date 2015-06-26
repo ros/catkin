@@ -2,7 +2,6 @@
 
 from __future__ import print_function
 import argparse
-import multiprocessing
 import subprocess
 import sys
 import os
@@ -20,8 +19,8 @@ from catkin.builder import handle_make_arguments
 from catkin.builder import print_command_banner
 from catkin.builder import run_command
 from catkin.builder import run_command_colorized
-from catkin_pkg.workspaces import ensure_workspace_marker
 from catkin_pkg.packages import find_packages
+from catkin_pkg.workspaces import ensure_workspace_marker
 
 
 def main():
@@ -112,10 +111,14 @@ def main():
         unknown_packages = [name for name in args.only_pkg_with_deps if name not in package_names]
         if len(unknown_packages) == len(args.only_pkg_with_deps):
             # all package names are unknown
-            return fmt('@{rf}Packages @{boldon}"%s"@{boldoff} not found in the workspace' % ', '.join(args.only_pkg_with_deps))
+            return fmt(
+                '@{rf}Packages @{boldon}"%s"@{boldoff} not found in the workspace'
+                % ', '.join(args.only_pkg_with_deps))
         if unknown_packages:
             # ignore unknown packages
-            print(fmt('@{yf}Packages @{boldon}"%s"@{boldoff} not found in the workspace - ignoring them' % ', '.join(sorted(unknown_packages))), file=sys.stderr)
+            print(fmt(
+                '@{yf}Packages @{boldon}"%s"@{boldoff} not found in the workspace - ignoring them'
+                % ', '.join(sorted(unknown_packages))), file=sys.stderr)
             args.only_pkg_with_deps = [name for name in args.only_pkg_with_deps if name in package_names]
 
         whitelist_pkg_names = get_package_names_with_recursive_dependencies(packages, args.only_pkg_with_deps)
@@ -132,7 +135,9 @@ def main():
             return fmt('@{rf}Packages @{boldon}"%s"@{boldoff} not found in the workspace' % ', '.join(args.pkg))
         if unknown_packages:
             # ignore unknown packages
-            print(fmt('@{yf}Packages @{boldon}"%s"@{boldoff} not found in the workspace - ignoring them' % ', '.join(sorted(unknown_packages))), file=sys.stderr)
+            print(fmt(
+                '@{yf}Packages @{boldon}"%s"@{boldoff} not found in the workspace - ignoring them'
+                % ', '.join(sorted(unknown_packages))), file=sys.stderr)
             args.pkg = [name for name in args.pkg if name in packages_by_name]
 
     if not [arg for arg in cmake_args if arg.startswith('-G')]:
@@ -202,20 +207,21 @@ def main():
 def _parse_args(args=sys.argv[1:]):
     args, cmake_args, make_args = extract_cmake_and_make_arguments(args)
 
-    parser = argparse.ArgumentParser(
-        description=
+    parser = argparse.ArgumentParser(description=(
         'Creates the catkin workspace layout and invokes cmake and make. '
         'Any argument starting with "-D" will be passed to the "cmake" invocation. '
         'The -j (--jobs) and -l (--load-average) arguments for make are also extracted and passed to make directly. '
         'If no -j/-l arguments are given, then the MAKEFLAGS environment variable is searched for -j/-l flags. '
         'If found then no -j/-l flags are passed to make explicitly (as not to override the MAKEFLAGS). '
-        'If MAKEFLAGS is not set then the jobs flags in the ROS_PARALLEL_JOBS environment variable are passed to make. '
+        'If MAKEFLAGS is not set then the job flags in the ROS_PARALLEL_JOBS environment variable are passed to make. '
         'Note: ROS_PARALLEL_JOBS should contain the exact job flags, not just a number. '
         'See: http://www.ros.org/wiki/ROS/EnvironmentVariables#ROS_PARALLEL_JOBS '
         'If ROS_PARALLEL_JOBS is not set then the flags "-jn -ln" are used, where n is number of CPU cores. '
         'If the number of CPU cores cannot be determined then no flags are given to make. '
         'All other arguments (i.e. target names) are passed to the "make" invocation. '
-        'To ignore certain packages either place a file named CATKIN_IGNORE in the package folder or pass the list of package names to the CMake variable CATKIN_BLACKLIST_PACKAGES, e.g. catkin_make -DCATKIN_BLACKLIST_PACKAGES="foo;bar".')
+        'To ignore certain packages place a file named CATKIN_IGNORE in the package folder. '
+        'Or you can pass the list of package names to the CMake variable CATKIN_BLACKLIST_PACKAGES. '
+        'For example: catkin_make -DCATKIN_BLACKLIST_PACKAGES="foo;bar".'))
     add = parser.add_argument
     add('-C', '--directory', default=os.curdir, help="The base path of the workspace (default '%s')" % os.curdir)
     add('--source', help="The path to the source space (default 'workspace_base/src')")

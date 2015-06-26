@@ -26,12 +26,11 @@ def parse_args(args=None):
         args = re.sub(jobs_flags, '', ' '.join(args)).split()
         jobs_flags = jobs_flags.split()
 
-    parser = argparse.ArgumentParser(
-        description=
+    parser = argparse.ArgumentParser(description=(
         'Builds each catkin (and non-catkin) package from a given workspace in isolation, '
         'but still in topological order. '
         'Make job flags (-j/-l) are handled just like catkin_make handles them.'
-    )
+    ))
     add = parser.add_argument
     add('-C', '--directory', dest='workspace', default=os.curdir,
         help="The base path of the workspace (default '%s')" % os.curdir)
@@ -54,10 +53,15 @@ def parse_args(args=None):
         help='Disables colored output (only for catkin_make and CMake)')
     pkg = parser.add_mutually_exclusive_group(required=False)
     pkg.add_argument('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
-                     help="Invoke 'make' on specific packages (only after catkin_make_isolated has been invoked before with the same install flag)")
+                     help="Invoke 'make' on specific packages "
+                          "(only after catkin_make_isolated has been invoked before with the same install flag)")
     pkg.add_argument('--from-pkg', metavar='PKGNAME', dest='from_package',
-                     help='Restart catkin_make_isolated at the given package continuing from there (do not change CMake arguments, add/move/remove packages or toggle the install flag when using this option since this may result in an inconsistent workspace state).')
-    add('--only-pkg-with-deps', nargs='+', help='Only consider the specific packages and their recursive dependencies and ignore all other packages in the workspace (only works together with --merge or --install)')
+                     help='Restart catkin_make_isolated at the given package continuing from there '
+                          '(do not change CMake arguments, add/move/remove packages or toggle the install flag when '
+                          'using this option since this may result in an inconsistent workspace state).')
+    add('--only-pkg-with-deps', nargs='+',
+        help='Only consider the specific packages and their recursive dependencies and ignore all other packages in '
+             'the workspace (only works together with --merge or --install)')
     add('-q', '--quiet', action='store_true', default=False,
         help='Suppresses the cmake and make output until an error occurs.')
     add('--cmake-args', nargs='*', type=str,
@@ -144,7 +148,7 @@ def main():
         continue_from_pkg=opts.from_package is not None,
         only_pkg_with_deps=opts.only_pkg_with_deps,
         destdir=destdir,
-        use_ninja=opts.use_ninja
+        use_ninja=opts.use_ninja,
     )
 
 if __name__ == '__main__':
