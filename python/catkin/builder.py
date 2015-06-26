@@ -52,6 +52,8 @@ import sys
 try:
     from catkin_pkg.cmake import configure_file, get_metapackage_cmake_template_path
     from catkin_pkg.packages import find_packages
+    from catkin_pkg.tool_detection import get_previous_tool_used_on_the_space
+    from catkin_pkg.tool_detection import mark_space_as_built_by
     from catkin_pkg.topological_order import topological_order_packages
 except ImportError as e:
     sys.exit(
@@ -737,6 +739,7 @@ def build_workspace_isolated(
     only_pkg_with_deps=None,
     destdir=None,
     use_ninja=False,
+    override_build_tool_check=False
 ):
     '''
     Runs ``cmake``, ``make`` and optionally ``make install`` for all
@@ -772,6 +775,8 @@ def build_workspace_isolated(
         ``[str]``
     :param destdir: define DESTDIR for cmake/invocation, ``string``
     :param use_ninja: if True, use ninja instead of make, ``bool``
+    :param override_build_tool_check: if True, build even if a space was built
+        by another tool previously.
     '''
     if not colorize:
         disable_ANSI_colors()
@@ -796,10 +801,40 @@ def build_workspace_isolated(
         os.mkdir(buildspace)
     print('Build space: ' + str(buildspace))
 
+    # ensure the build space was previously built by catkin_make_isolated
+    previous_tool = get_previous_tool_used_on_the_space(buildspace)
+    if previous_tool is not None and previous_tool != 'catkin_make_isolated':
+        if override_build_tool_check:
+            print(fmt(
+                "@{yf}Warning: build space at '%s' was previously built by '%s', "
+                "but --override-build-tool-check was passed so continuing anyways."
+                % (buildspace, previous_tool)))
+        else:
+            sys.exit(fmt(
+                "@{rf}The build space at '%s' was previously built by '%s'. "
+                "Please remove the build space or pick a different build space."
+                % (buildspace, previous_tool)))
+    mark_space_as_built_by(buildspace, 'catkin_make_isolated')
+
     # Check devel space
     if develspace is None:
         develspace = os.path.join(workspace, 'devel_isolated')
     print('Devel space: ' + str(develspace))
+
+    # ensure the devel space was previously built by catkin_make_isolated
+    previous_tool = get_previous_tool_used_on_the_space(develspace)
+    if previous_tool is not None and previous_tool != 'catkin_make_isolated':
+        if override_build_tool_check:
+            print(fmt(
+                "@{yf}Warning: devel space at '%s' was previously built by '%s', "
+                "but --override-build-tool-check was passed so continuing anyways."
+                % (develspace, previous_tool)))
+        else:
+            sys.exit(fmt(
+                "@{rf}The devel space at '%s' was previously built by '%s'. "
+                "Please remove the devel space or pick a different devel space."
+                % (develspace, previous_tool)))
+    mark_space_as_built_by(develspace, 'catkin_make_isolated')
 
     # Check install space
     if installspace is None:

@@ -73,6 +73,8 @@ def parse_args(args=None):
     add('--catkin-make-args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to make but only for catkin packages.'
              'It must be passed after other arguments since it collects all following options.')
+    add('--override-build-tool-check', action='store_true', default=False,
+        help='use to override failure due to using differnt build tools on the same workspace.')
     opts = parser.parse_args(args)
     if opts.only_pkg_with_deps and not opts.merge and not opts.install:
         parser.error("The '--only-pkg-with-deps' option can only be used together with '--merge' or '--install'")
@@ -149,6 +151,7 @@ def main():
         only_pkg_with_deps=opts.only_pkg_with_deps,
         destdir=destdir,
         use_ninja=opts.use_ninja,
+        override_build_tool_check=opts.override_build_tool_check,
     )
 
 if __name__ == '__main__':

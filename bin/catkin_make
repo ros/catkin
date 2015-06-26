@@ -20,6 +20,8 @@ from catkin.builder import print_command_banner
 from catkin.builder import run_command
 from catkin.builder import run_command_colorized
 from catkin_pkg.packages import find_packages
+from catkin_pkg.tool_detection import get_previous_tool_used_on_the_space
+from catkin_pkg.tool_detection import mark_space_as_built_by
 from catkin_pkg.workspaces import ensure_workspace_marker
 
 
@@ -68,6 +70,21 @@ def main():
     build_path = determine_path_argument(cwd, base_path, args.build, 'build')
     print('Build space: %s' % build_path)
 
+    # ensure the build space was previously built by catkin_make
+    previous_tool = get_previous_tool_used_on_the_space(build_path)
+    if previous_tool is not None and previous_tool != 'catkin_make':
+        if args.override_build_tool_check:
+            print(fmt(
+                "@{yf}Warning: build space at '%s' was previously built by '%s', "
+                "but --override-build-tool-check was passed so continuing anyways."
+                % (build_path, previous_tool)))
+        else:
+            return fmt(
+                "@{rf}The build space at '%s' was previously built by '%s'. "
+                "Please remove the build space or pick a different build space."
+                % (build_path, previous_tool))
+    mark_space_as_built_by(build_path, 'catkin_make')
+
     # determine devel space
     devel_arg = None
     prefix = '-DCATKIN_DEVEL_PREFIX='
@@ -78,6 +95,21 @@ def main():
     devel_path = determine_path_argument(cwd, base_path, devel_arg, 'devel')
     print('Devel space: %s' % devel_path)
     cmake_args.append('-DCATKIN_DEVEL_PREFIX=%s' % devel_path)
+
+    # ensure the devel space was previously built by catkin_make
+    previous_tool = get_previous_tool_used_on_the_space(devel_path)
+    if previous_tool is not None and previous_tool != 'catkin_make':
+        if args.override_build_tool_check:
+            print(fmt(
+                "@{yf}Warning: devel space at '%s' was previously built by '%s', "
+                "but --override-build-tool-check was passed so continuing anyways."
+                % (devel_path, previous_tool)))
+        else:
+            return fmt(
+                "@{rf}The devel space at '%s' was previously built by '%s'. "
+                "Please remove the devel space or pick a different devel space."
+                % (devel_path, previous_tool))
+    mark_space_as_built_by(devel_path, 'catkin_make')
 
     # determine install space
     install_arg = None
@@ -243,6 +275,8 @@ def _parse_args(args=sys.argv[1:]):
              'It must be passed after other arguments since it collects all following options. '
              'This is only necessary in combination with --cmake-args since else all unknown '
              'arguments are passed to make anyway.')
+    add('--override-build-tool-check', action='store_true', default=False,
+        help='use to override failure due to using differnt build tools on the same workspace.')
 
     namespace, unknown_args = parser.parse_known_args(args)
     namespace.cmake_args = cmake_args
