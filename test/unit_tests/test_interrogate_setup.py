@@ -55,15 +55,15 @@ class InterrogateSetupTest(unittest.TestCase):
                          cmake_lines)
 
     def test_get_locations(self):
-        self.assertEqual({'foo': ''}, _get_locations(['foo'], {}))
-        self.assertEqual({'foo': 'src'}, _get_locations(['foo'],
-                                                        {'': 'src'}))
-        self.assertEqual({'foo': 'src', 'foo.bar': 'src'}, _get_locations(['foo.bar'],
-                                                                          {'': 'src'}))
+        self.assertEqual({'foo': 'foo'}, _get_locations(['foo'], {}))
+        self.assertEqual({'foo': 'src/foo'},
+                         _get_locations(['foo'], {'': 'src'}))
+        self.assertEqual({'foo': 'src/foo', 'foo.bar': 'src/foo/bar'},
+                         _get_locations(['foo.bar'], {'': 'src'}))
         self.assertEqual({'foo': 'src'}, _get_locations(['foo'],
                                                         {'foo': 'src'}))
-        self.assertEqual({'foo': 'src', 'foo.bar': 'src'}, _get_locations(['foo.bar'],
-                                                                          {'foo': 'src'}))
+        self.assertEqual({'foo': 'src', 'foo.bar': 'src/bar'},
+                         _get_locations(['foo.bar'], {'foo': 'src'}))
 
     def test_generate_cmake_file_noallprefix(self):
         cmake_lines = (generate_cmake_file(package_name='pack1',
@@ -76,7 +76,7 @@ class InterrogateSetupTest(unittest.TestCase):
         self.assertEqual(['set(pack1_SETUP_PY_VERSION "0.0.1")',
                           'set(pack1_SETUP_PY_SCRIPTS "")',
                           'set(pack1_SETUP_PY_PACKAGES "foo;bar")',
-                          'set(pack1_SETUP_PY_PACKAGE_DIRS "src/foo;lib/bar")',
+                          'set(pack1_SETUP_PY_PACKAGE_DIRS "src;lib")',
                           'set(pack1_SETUP_PY_MODULES "")',
                           'set(pack1_SETUP_PY_MODULE_DIRS "")'],
                          cmake_lines)
@@ -148,7 +148,7 @@ set(foo_SETUP_PY_MODULE_DIRS "")""", contents)
             self.assertEqual("""set(foo_SETUP_PY_VERSION "0.1.1")
 set(foo_SETUP_PY_SCRIPTS "")
 set(foo_SETUP_PY_PACKAGES "foo;bar")
-set(foo_SETUP_PY_PACKAGE_DIRS "src/foo;lib/bar")
+set(foo_SETUP_PY_PACKAGE_DIRS "src;lib")
 set(foo_SETUP_PY_MODULES "")
 set(foo_SETUP_PY_MODULE_DIRS "")""", contents)
             os.remove(outfile)
