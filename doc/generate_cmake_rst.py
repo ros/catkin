@@ -82,7 +82,7 @@ def generate_rst(files, skip_private=False, skip_undocumented=False):
                 else:
                     last_block.append(line.rstrip('\n'))
             else:
-                declaration = re.match('[a-zA-Z]+\([a-zA-Z_ ]+\)', line)
+                declaration = re.match('[a-zA-Z]+ *\([a-zA-Z0-9_ ]+\)', line)
                 if declaration is None:
                     last_block = []
                     last_block_public = False
