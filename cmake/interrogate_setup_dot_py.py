@@ -76,9 +76,9 @@ def _get_locations(pkgs, package_dir):
                 if key in package_dir:
                     locations[key] = package_dir[key]
                 elif parent_location is not None:
-                    locations[key] = parent_location
+                    locations[key] = os.path.join(parent_location,splits[key_len])
                 else:
-                    locations[key] = allprefix
+                    locations[key] = os.path.join(allprefix,key)
             parent_location = locations[key]
     return locations
 
@@ -117,7 +117,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
             continue
         # check every child has the same root folder as its parent
         parent_name = '.'.join(splits[:1])
-        if location != locations[parent_name]:
+        if not locations[parent_name] in location:
             raise RuntimeError(
                 "catkin_export_python does not support setup.py files that combine across multiple directories: %s in %s, %s in %s" % (pkgname, location, parent_name, locations[parent_name]))
 
@@ -126,7 +126,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
 
     resolved_pkgs = []
     for pkg in pkgs:
-        resolved_pkgs += [os.path.join(locations[pkg], pkg)]
+        resolved_pkgs += [locations[pkg]]
 
     result.append(r'set(%s_PACKAGES "%s")' % (prefix, ';'.join(pkgs)))
     result.append(r'set(%s_PACKAGE_DIRS "%s")' % (prefix, ';'.join(resolved_pkgs).replace("\\", "/")))
