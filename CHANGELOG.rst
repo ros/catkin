@@ -2,6 +2,13 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* adding check to prevent tool cross talk (`#743 <https://github.com/ros/catkin/issues/743>`_)
+* only clean the test result ending with .xml of the current project (`#737 <https://github.com/ros/catkin/issues/737>`_)
+* fix regression in find_in_workspaces (`#739 <https://github.com/ros/catkin/issues/739>`_)
+* fix setup.py package_dir location logic (`#751 <https://github.com/ros/catkin/issues/751>`_)
+
 0.6.14 (2015-04-20)
 -------------------
 * support zsh with NOCLOBBER enabled (`#734 <https://github.com/ros/catkin/pull/734>`_)
