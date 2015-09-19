@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.15 (2015-09-19)
+-------------------
 * adding check to prevent tool cross talk (`#743 <https://github.com/ros/catkin/issues/743>`_)
 * only clean the test result ending with .xml of the current project (`#737 <https://github.com/ros/catkin/issues/737>`_)
 * fix regression in find_in_workspaces (`#739 <https://github.com/ros/catkin/issues/739>`_)
