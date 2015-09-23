@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 if [ -n "$DESTDIR" ] ; then
     case $DESTDIR in
@@ -12,12 +12,14 @@ if [ -n "$DESTDIR" ] ; then
     DESTDIR_ARG="--root=$DESTDIR"
 fi
 
-cd "@INSTALL_CMD_WORKING_DIRECTORY@"
+echo_and_run() { echo "+ $@" ; "$@" ; }
+
+echo_and_run cd "@INSTALL_CMD_WORKING_DIRECTORY@"
 
 # Note that PYTHONPATH is pulled from the environment to support installing
 # into one location when some dependencies were installed in another
 # location, #123.
-/usr/bin/env \
+echo_and_run /usr/bin/env \
     PYTHONPATH="@CMAKE_INSTALL_PREFIX@/@PYTHON_INSTALL_DIR@:@CMAKE_BINARY_DIR@/@PYTHON_INSTALL_DIR@:$PYTHONPATH" \
     CATKIN_BINARY_DIR="@CMAKE_BINARY_DIR@" \
     "@PYTHON_EXECUTABLE@" \
