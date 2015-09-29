@@ -75,6 +75,27 @@ def _get_valid_search_dirs(search_dirs, project):
     return search_dirs
 
 
+def collect_path_data_in_workspaces(workspaces=None,
+                                 workspace_to_source_spaces=None,
+                                 source_path_to_packages=None):
+    """Collect path data (workspaces, source_paths and package_paths)
+    in specified workspaces."""
+    if workspaces is None:
+        workspaces = get_workspaces()
+    if workspace_to_source_spaces is None:
+        workspace_to_source_spaces = {}
+    if source_path_to_packages is None:
+        source_path_to_packages = {}
+
+    for ws in workspaces:
+        if ws not in workspace_to_source_spaces:
+            workspace_to_source_spaces[ws] = get_source_paths(ws)
+        for src_path in workspace_to_source_spaces[ws]:
+            if src_path not in source_path_to_packages:
+                source_path_to_packages[src_path] = find_packages(src_path)
+    return workspaces, workspace_to_source_spaces, source_path_to_packages
+
+
 # OUT is always a list of folders
 #
 # IN: project=None
