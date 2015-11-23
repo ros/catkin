@@ -79,11 +79,6 @@ if(NOT TARGET clean_test_results)
   add_custom_target(clean_test_results
     COMMAND ${PYTHON_EXECUTABLE} "${catkin_EXTRAS_DIR}/test/remove_test_results.py" "${CATKIN_TEST_RESULTS_DIR}")
 endif()
-# create target to clean project specific test results
-if(NOT TARGET clean_test_results_${PROJECT_NAME})
-  add_custom_target(clean_test_results_${PROJECT_NAME}
-    COMMAND ${PYTHON_EXECUTABLE} "${catkin_EXTRAS_DIR}/test/remove_test_results.py" "${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}")
-endif()
 
 #
 # Create a test target, integrate it with the run_tests infrastructure
@@ -145,5 +140,11 @@ function(catkin_run_tests_target type name xunit_filename)
   add_custom_target(_run_tests_${PROJECT_NAME}_${type}_${name}
     COMMAND ${cmd})
   add_dependencies(_run_tests_${PROJECT_NAME}_${type} _run_tests_${PROJECT_NAME}_${type}_${name})
+
+  # create target to clean project specific test results
+  if(NOT TARGET clean_test_results_${PROJECT_NAME})
+    add_custom_target(clean_test_results_${PROJECT_NAME}
+      COMMAND ${PYTHON_EXECUTABLE} "${catkin_EXTRAS_DIR}/test/remove_test_results.py" "${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}")
+  endif()
   add_dependencies(_run_tests_${PROJECT_NAME}_${type}_${name} clean_test_results_${PROJECT_NAME} tests ${_testing_DEPENDENCIES})
 endfunction()
