@@ -240,8 +240,7 @@ def main():
         except NameError:
             pass
 
-        with open(args.setupfile_path, 'r') as fh:
-            exec(fh.read())
+        execfile(args.setupfile_path,{})
     finally:
         distutils.core.setup = distutils_backup
         try:
