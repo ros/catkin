@@ -241,7 +241,7 @@ def main():
             pass
 
         with open(args.setupfile_path, 'r') as fh:
-            exec(fh.read())
+            exec(fh.read(), {})
     finally:
         distutils.core.setup = distutils_backup
         try:
