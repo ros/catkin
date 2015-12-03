@@ -33,14 +33,14 @@ class FindInWorkspaceTest(unittest.TestCase):
         self.assertRaises(ValueError, _get_valid_search_dirs, ['libexec'], None)
 
     def test_find_in_workspaces(self):
-        existing = find_in_workspaces([], _workspaces=None)
+        existing = find_in_workspaces([], _workspaces=[])
         self.assertEqual([], existing)
-        existing = find_in_workspaces([], 'foo', _workspaces=None)
+        existing = find_in_workspaces([], 'foo', _workspaces=[])
         self.assertEqual([], existing)
-        existing = find_in_workspaces([], 'foo', 'foopath', _workspaces=None)
+        existing = find_in_workspaces([], 'foo', 'foopath', _workspaces=[])
         self.assertEqual([], existing)
 
-        existing = find_in_workspaces(['include'], 'foo', 'foopath', _workspaces=None)
+        existing = find_in_workspaces(['include'], 'foo', 'foopath', _workspaces=[])
         self.assertEqual([], existing)
 
         checked = []

@@ -87,7 +87,7 @@ def _get_valid_search_dirs(search_dirs, project):
 #      except for s == 'share', cand is a list of two paths: ws[0] + s + project (+ path) and ws[1] + project (+ path)
 #      add cand to result list if it exists
 #      is not defined for s in ['bin', 'lib'], bailing out
-def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=get_workspaces(), considered_paths=None, first_matching_workspace_only=False, first_match_only=False, workspace_to_source_spaces=None, source_path_to_packages=None):
+def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=None, considered_paths=None, first_matching_workspace_only=False, first_match_only=False, workspace_to_source_spaces=None, source_path_to_packages=None):
     '''
     Find all paths which match the search criteria.
     All workspaces are searched in order.
@@ -110,7 +110,8 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=ge
     search_dirs = _get_valid_search_dirs(search_dirs, project)
     if 'libexec' in search_dirs:
         search_dirs.insert(search_dirs.index('libexec'), 'lib')
-
+    if _workspaces is None:
+        _workspaces = get_workspaces()
     if workspace_to_source_spaces is None:
         workspace_to_source_spaces = {}
     if source_path_to_packages is None:
