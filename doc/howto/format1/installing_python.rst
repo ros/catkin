@@ -18,15 +18,17 @@ and their names only need to be unique within each package.  There are
 only a few core ROS commands like ``rosrun`` and ``roslaunch`` that
 install in the global ``bin/`` directory.
 
-Standard ROS practice is to place all your executable Python programs
-in a ``scripts/`` subdirectory.  To keep the user API clean,
+Standard ROS practice is to place all executable Python programs in a
+package subdirectory named ``nodes/`` or ``scripts/``.  Their usage is
+the same, the two names distinguish ROS nodes from other executable
+Python scripts.  To keep the user API clean,
 executable script names generally do not include a ``.py`` suffix.
 Your ``CMakeLists.txt`` should install all the scripts explictly
 using the special install function ``catkin_install_python``.
 This will make sure that shebang lines are updated to use the
 specific Python version used at configure time::
 
-  catkin_install_python(PROGRAMS scripts/your_node1 scripts/your_node2
+  catkin_install_python(PROGRAMS nodes/your_node scripts/another_script
                         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 Another good practice is to keep executable scripts very short,
