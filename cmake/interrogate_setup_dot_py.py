@@ -241,7 +241,13 @@ def main():
             pass
 
         with open(args.setupfile_path, 'r') as fh:
-            exec(fh.read(), {})
+            local_vars = {
+                '__doc__': None,
+                '__file__': os.path.abspath(args.setupfile_path),
+                '__name__': '__main__',
+                '__package__': None,
+            }
+            exec(fh.read(), {}, local_vars)
     finally:
         distutils.core.setup = distutils_backup
         try:
