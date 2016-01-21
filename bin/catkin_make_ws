@@ -16,7 +16,7 @@
 
 if [[ $CATKIN_WS ]]; then
     echo CATKIN_WS=$CATKIN_WS
-    cd $CATKIN_WS; catkin_make $@; cd -;
+    catkin_make -C $CATKIN_WS $@
 else
     echo -e '\033[0;31m'
     echo CATKIN_WS needs to be set to your catkin workspace
