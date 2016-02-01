@@ -89,7 +89,7 @@ Public CMake functions / macros
 .. _`catkin_add_executable_with_gtest_ref`:
 
 `catkin_add_executable_with_gtest`
-----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cmake:macro:: catkin_add_executable_with_gtest(target)
 
@@ -172,7 +172,8 @@ Public CMake functions / macros
    (default: 60)
  :type TIMEOUT: integer
  :param WORKING_DIRECTORY: the working directory when executing the
-   tests
+   tests (this option can only be used when the ``path`` argument is a
+   file  but not when it is a directory)
  :type WORKING_DIRECTORY: string
 
 
@@ -276,9 +277,7 @@ Public CMake functions / macros
 
  The signature:
 
-   catkin_install_python(PROGRAMS files... DESTINATION <dir>
-     [OPTIONAL]
-   )
+   catkin_install_python(PROGRAMS files... DESTINATION <dir> [OPTIONAL])
 
  See the documentation for CMake install() function for more information.
 
@@ -863,3 +862,21 @@ Not documented CMake functions / macros
 .. cmake:macro:: list_insert_in_workspace_order(listname)
 
  *[macro defined in list_insert_in_workspace_order.cmake]*
+
+.. _`safe_execute_process_ref`:
+
+`safe_execute_process`
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: safe_execute_process(cmd_keyword, arg1)
+
+ *[macro defined in safe_execute_process.cmake]*
+
+.. _`shell_ref`:
+
+`shell`
+~~~~~~~
+
+.. cmake:macro:: shell(arg1)
+
+ *[function defined in shell.cmake]*
