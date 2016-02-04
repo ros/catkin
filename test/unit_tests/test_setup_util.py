@@ -52,18 +52,31 @@ class SetupUtilTest(unittest.TestCase):
             shutil.rmtree(rootdir)
 
     def test_prefix_env(self):
-        mock_env = {}
-        self.assertEqual('',
-                         _prefix_env_variable(mock_env, 'varname', [], ''))
-        self.assertEqual(os.pathsep.join(['foo', 'bar']),
-                         _prefix_env_variable(mock_env, 'varname', ['foo', 'bar'], ''))
-        mock_env = {'varname': os.pathsep.join(['baz', 'bar', 'bam'])}
-        self.assertEqual('',
-                         _prefix_env_variable(mock_env, 'varname', [], ''))
-        self.assertEqual('foo' + os.pathsep,
-                         _prefix_env_variable(mock_env, 'varname', ['foo', 'bar'], ''))
-        self.assertEqual(os.pathsep.join(['foo', 'lim']) + os.pathsep,
-                         _prefix_env_variable(mock_env, 'varname', ['foo', 'lim', 'foo', 'lim'], ''))
+        try:
+            rootdir = tempfile.mkdtemp()
+            foo_path = os.path.join(rootdir, 'foo')
+            os.makedirs(foo_path)
+            bar_path = os.path.join(rootdir, 'bar')
+            os.makedirs(bar_path)
+            baz_path = os.path.join(rootdir, 'baz')
+            bam_path = os.path.join(rootdir, 'bam')
+            lim_path = os.path.join(rootdir, 'lim')
+            os.makedirs(lim_path)
+
+            mock_env = {}
+            self.assertEqual('',
+                             _prefix_env_variable(mock_env, 'varname', [], ''))
+            self.assertEqual(os.pathsep.join([foo_path, bar_path]),
+                             _prefix_env_variable(mock_env, 'varname', [foo_path, bar_path, baz_path], ''))
+            mock_env = {'varname': os.pathsep.join([baz_path, bar_path, bam_path])}
+            self.assertEqual('',
+                             _prefix_env_variable(mock_env, 'varname', [], ''))
+            self.assertEqual(foo_path + os.pathsep,
+                             _prefix_env_variable(mock_env, 'varname', [foo_path, bar_path], ''))
+            self.assertEqual(os.pathsep.join([foo_path, lim_path]) + os.pathsep,
+                             _prefix_env_variable(mock_env, 'varname', [foo_path, lim_path, foo_path, lim_path], ''))
+        finally:
+            shutil.rmtree(rootdir)
 
     def test_remove_from_env(self):
         altsep = os.path.altsep
