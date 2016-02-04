@@ -161,6 +161,9 @@ def _prefix_env_variable(environ, name, paths, subfolders):
             path_tmp = path
             if subfolder:
                 path_tmp = os.path.join(path_tmp, subfolder)
+            # skip nonexistent paths
+            if not os.path.exists(path_tmp):
+                continue
             # exclude any path already in env and any path we already added
             if path_tmp not in environ_paths and path_tmp not in checked_paths:
                 checked_paths.append(path_tmp)
