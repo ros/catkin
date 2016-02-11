@@ -3,7 +3,7 @@
 
 # Software License Agreement (BSD License)
 #
-# Copyright (c) 2012, Willow Garage, Inc.
+# Copyright (c) 2012, 2013, 2014, 2015, 2016 Willow Garage, Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -278,7 +278,7 @@ if __name__ == '__main__':
         # need to explicitly flush the output
         sys.stdout.flush()
     except IOError as e:
-        # and catch potantial "broken pipe" if stdout is not writable
+        # and catch potential "broken pipe" if stdout is not writable
         # which can happen when piping the output to a file but the disk is full
         if e.errno == errno.EPIPE:
             print(e, file=sys.stderr)
