@@ -281,7 +281,7 @@ if __name__ == '__main__':
         # need to explicitly flush the output
         sys.stdout.flush()
     except IOError as e:
-        # and catch potantial "broken pipe" if stdout is not writable
+        # and catch potential "broken pipe" if stdout is not writable
         # which can happen when piping the output to a file but the disk is full
         if e.errno == errno.EPIPE:
             print(e, file=sys.stderr)
