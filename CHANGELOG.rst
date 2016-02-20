@@ -2,6 +2,18 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* avoid adding nonexistent paths to environment variables (`#777 <https://github.com/ros/catkin/issues/777>`_)
+* ensure that Python install destination exists (`#775 <https://github.com/ros/catkin/issues/775>`_, https://github.com/ros/catkin/issues/776)
+* set commonly predefines attributes when interrogating setup.py files (`#770 <https://github.com/ros/catkin/issues/770>`_)
+* align Python script directory recommendations with REP-0008 (`#769 <https://github.com/ros/catkin/issues/769>`_)
+* fix default value for _workspaces in find_in_workspaces (`#768 <https://github.com/ros/catkin/issues/768>`_)
+* improve robustness of exec call interogating setup.py files (`#766 <https://github.com/ros/catkin/issues/766>`)
+* fix reinstalling Python files installed by catkin_install_python after modifying them (`#764 <https://github.com/ros/catkin/issues/764>`_)
+* fix project specific clean_test_results targets (`#762 <https://github.com/ros/catkin/issues/762>`_)
+* update generated CMake API
+
 0.6.16 (2015-11-09)
 -------------------
 * remove -x in Python distutils shell script (`#755 <https://github.com/ros/catkin/issues/755>`_)
