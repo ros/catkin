@@ -8,7 +8,7 @@ _generate_function_if_testing_is_disabled("catkin_add_nosetests")
 # .. note:: The test can be executed by calling ``nosetests``
 #   directly or using:
 #   `` make run_tests_${PROJECT_NAME}_nosetests_${dir}``
-#   (where slashes in the ``dir`` are replaced with underscores)
+#   (where slashes in the ``dir`` are replaced with periods)
 #
 # :param path: a relative or absolute directory to search for
 #   nosetests in or a relative or absolute file containing tests
