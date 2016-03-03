@@ -4,6 +4,9 @@ Changelog for package catkin
 
 Forthcoming
 -----------
+* fix docs: nosetest target names use periods (`#781 <https://github.com/ros/catkin/issues/781>`_)
+* add custom message explaining CMake find_package error messages (`#780 <https://github.com/ros/catkin/issues/780>`_)
+* fix regression with DESTDIR introduced in 0.6.16 (`#755 <https://github.com/ros/catkin/issues/755>`_)
 * avoid adding nonexistent paths to environment variables (`#777 <https://github.com/ros/catkin/issues/777>`_)
 * ensure that Python install destination exists (`#775 <https://github.com/ros/catkin/issues/775>`_, https://github.com/ros/catkin/issues/776)
 * set commonly predefines attributes when interrogating setup.py files (`#770 <https://github.com/ros/catkin/issues/770>`_)
