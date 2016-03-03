@@ -27,7 +27,6 @@ unset _UNAME
 
 # make sure to export all environment variables
 export CMAKE_PREFIX_PATH
-export CPATH
 if [ $_IS_DARWIN -eq 0 ]; then
   export LD_LIBRARY_PATH
 else
