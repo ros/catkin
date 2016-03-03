@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.17 (2016-03-03)
+-------------------
 * fix docs: nosetest target names use periods (`#781 <https://github.com/ros/catkin/issues/781>`_)
 * add custom message explaining CMake find_package error messages (`#780 <https://github.com/ros/catkin/issues/780>`_)
 * fix regression with DESTDIR introduced in 0.6.16 (`#755 <https://github.com/ros/catkin/issues/755>`_)
