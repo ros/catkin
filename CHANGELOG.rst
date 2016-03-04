@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.0 (2016-03-04)
+------------------
 * remove CPATH from setup files (`#783 <https://github.com/ros/catkin/issues/783>`_)
 * use NO_MODULE to find exported catkin dependencies (`#760 <https://github.com/ros/catkin/issues/760>`_)
 
