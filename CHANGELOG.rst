@@ -2,6 +2,11 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* remove CPATH from setup files (`#783 <https://github.com/ros/catkin/issues/783>`_)
+* use NO_MODULE to find exported catkin dependencies (`#760 <https://github.com/ros/catkin/issues/760>`_)
+
 0.6.17 (2016-03-03)
 -------------------
 * fix docs: nosetest target names use periods (`#781 <https://github.com/ros/catkin/issues/781>`_)
