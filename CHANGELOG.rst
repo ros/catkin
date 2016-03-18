@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* expose format 2 style dependencies as CMake variables (`#787 <https://github.com/ros/catkin/issues/787>`_)
+
 0.6.17 (2016-03-03)
 -------------------
 * fix docs: nosetest target names use periods (`#781 <https://github.com/ros/catkin/issues/781>`_)
