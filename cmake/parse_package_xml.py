@@ -55,8 +55,13 @@ def _get_output(package):
     values['MAINTAINER'] = '"%s"' % (', '.join([str(m) for m in package.maintainers]))
 
     values.update(_get_dependency_values('BUILD_DEPENDS', package.build_depends))
+    values.update(_get_dependency_values('BUILD_EXPORT_DEPENDS', package.build_export_depends))
     values.update(_get_dependency_values('BUILDTOOL_DEPENDS', package.buildtool_depends))
-    values.update(_get_dependency_values('RUN_DEPENDS', package.run_depends))
+    values.update(_get_dependency_values('BUILDTOOL_EXPORT_DEPENDS', package.buildtool_export_depends))
+    values.update(_get_dependency_values('EXEC_DEPENDS', package.exec_depends))
+    values.update(_get_dependency_values('DOC_DEPENDS', package.doc_depends))
+    values.update(_get_dependency_values('TEST_DEPENDS', package.test_depends))
+    values.update(_get_dependency_values('RUN_DEPENDS', package.run_depends)) # Legacy value form package.xml format 1
 
     deprecated = [e.content for e in package.exports if e.tagname == 'deprecated']
     values['DEPRECATED'] = '"%s"' % ((deprecated[0] if deprecated[0] else 'TRUE') if deprecated else '')
