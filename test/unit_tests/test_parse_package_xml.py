@@ -16,21 +16,37 @@ class ParsePackageXmlTest(unittest.TestCase):
 
     def test_get_output(self):
         pack = Mock()
+        pack.package_format = 2
         pack.name = 'foopack'
         pack.version = '0.1.2'
         pack.maintainers = ['m1', 'm2']
         pack.build_depends = ['bd1', 'bd2']
         pack.buildtool_depends = ['catkin']
+        pack.build_export_depends = ['bed1', 'bed2']
+        pack.buildtool_export_depends = ['bted1', 'bted2']
+        pack.exec_depends = ['ed1', 'ed2']
         pack.run_depends = ['rd1', 'rd2']
+        pack.test_depends = ['td1', 'td2']
+        pack.doc_depends = ['dd1', 'dd2']
         pack.exports = []
         result = _get_output(pack)
-        self.assertEqual(set(['set(_CATKIN_CURRENT_PACKAGE "foopack")',
-                              'set(foopack_MAINTAINER "m1, m2")',
-                              'set(foopack_DEPRECATED "")',
-                              'set(foopack_VERSION "0.1.2")',
-                              'set(foopack_BUILD_DEPENDS "bd1" "bd2")',
-                              'set(foopack_RUN_DEPENDS "rd1" "rd2")',
-                              'set(foopack_BUILDTOOL_DEPENDS "catkin")']), set(result))
+        self.assertEqual(
+            set([
+                'set(_CATKIN_CURRENT_PACKAGE "foopack")',
+                'set(foopack_MAINTAINER "m1, m2")',
+                'set(foopack_PACKAGE_FORMAT "2")',
+                'set(foopack_DEPRECATED "")',
+                'set(foopack_VERSION "0.1.2")',
+                'set(foopack_BUILD_DEPENDS "bd1" "bd2")',
+                'set(foopack_BUILDTOOL_DEPENDS "catkin")',
+                'set(foopack_BUILD_EXPORT_DEPENDS "bed1" "bed2")',
+                'set(foopack_BUILDTOOL_EXPORT_DEPENDS "bted1" "bted2")',
+                'set(foopack_EXEC_DEPENDS "ed1" "ed2")',
+                'set(foopack_RUN_DEPENDS "rd1" "rd2")',
+                'set(foopack_TEST_DEPENDS "td1" "td2")',
+                'set(foopack_DOC_DEPENDS "dd1" "dd2")',
+            ]),
+            set(result))
 
     def test_main(self):
         try:
@@ -53,12 +69,22 @@ class ParsePackageXmlTest(unittest.TestCase):
             self.assertTrue(os.path.isfile(check_file))
             with open(check_file, 'r') as fhand:
                 contents = fhand.read()
-            self.assertEqual(set(['set(_CATKIN_CURRENT_PACKAGE "foopack")',
-                                  'set(foopack_MAINTAINER "foo <foo@bar.com>")',
-                                  'set(foopack_DEPRECATED "")',
-                                  'set(foopack_VERSION "0.1.2")',
-                                  'set(foopack_BUILD_DEPENDS "bd1" "bd2")',
-                                  'set(foopack_RUN_DEPENDS "rd1" "rd2")',
-                                  'set(foopack_BUILDTOOL_DEPENDS )']), set(contents.splitlines()))
+            self.assertEqual(
+                set([
+                    'set(_CATKIN_CURRENT_PACKAGE "foopack")',
+                    'set(foopack_MAINTAINER "foo <foo@bar.com>")',
+                    'set(foopack_PACKAGE_FORMAT "1")',
+                    'set(foopack_DEPRECATED "")',
+                    'set(foopack_VERSION "0.1.2")',
+                    'set(foopack_BUILD_DEPENDS "bd1" "bd2")',
+                    'set(foopack_BUILDTOOL_DEPENDS )',
+                    'set(foopack_BUILD_EXPORT_DEPENDS "rd1" "rd2")',
+                    'set(foopack_BUILDTOOL_EXPORT_DEPENDS )',
+                    'set(foopack_EXEC_DEPENDS "rd1" "rd2")',
+                    'set(foopack_RUN_DEPENDS "rd1" "rd2")',
+                    'set(foopack_TEST_DEPENDS )',
+                    'set(foopack_DOC_DEPENDS )',
+                ]),
+                set(contents.splitlines()))
         finally:
             shutil.rmtree(rootdir)
