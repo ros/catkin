@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.18 (2016-03-18)
+-------------------
 * expose format 2 style dependencies as CMake variables (`#787 <https://github.com/ros/catkin/issues/787>`_)
 
 0.6.17 (2016-03-03)

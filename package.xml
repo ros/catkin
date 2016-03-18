@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>catkin</name>
-  <version>0.6.17</version>
+  <version>0.6.18</version>
   <description>Low-level build system macros and infrastructure for ROS.</description>
   <maintainer email="dthomas@osrfoundation.org">Dirk Thomas</maintainer>
   <license>BSD</license>
