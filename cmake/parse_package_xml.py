@@ -33,6 +33,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+from collections import OrderedDict
 import sys
 import argparse
 
@@ -49,14 +50,22 @@ def _get_output(package):
     :param package: Package object
     :returns: list of str, lines to output
     """
-    values = {}
+    values = OrderedDict()
     values['VERSION'] = '"%s"' % package.version
 
     values['MAINTAINER'] = '"%s"' % (', '.join([str(m) for m in package.maintainers]))
 
+    values['PACKAGE_FORMAT'] = '"%d"' % package.package_format
     values.update(_get_dependency_values('BUILD_DEPENDS', package.build_depends))
+    values.update(_get_dependency_values('BUILD_EXPORT_DEPENDS', package.build_export_depends))
     values.update(_get_dependency_values('BUILDTOOL_DEPENDS', package.buildtool_depends))
+    values.update(_get_dependency_values('BUILDTOOL_EXPORT_DEPENDS', package.buildtool_export_depends))
+    values.update(_get_dependency_values('EXEC_DEPENDS', package.exec_depends))
+    # the run dependencies are a convenience property to mimick format one like dependencies
+    # it contains the build export and exec_dependendcies
     values.update(_get_dependency_values('RUN_DEPENDS', package.run_depends))
+    values.update(_get_dependency_values('TEST_DEPENDS', package.test_depends))
+    values.update(_get_dependency_values('DOC_DEPENDS', package.doc_depends))
 
     deprecated = [e.content for e in package.exports if e.tagname == 'deprecated']
     values['DEPRECATED'] = '"%s"' % ((deprecated[0] if deprecated[0] else 'TRUE') if deprecated else '')
@@ -68,7 +77,7 @@ def _get_output(package):
     return output
 
 def _get_dependency_values(key, depends):
-    values = {}
+    values = OrderedDict()
     values[key] = ' '.join(['"%s"' % str(d) for d in depends])
     for d in depends:
         comparisons = ['version_lt', 'version_lte', 'version_eq', 'version_gte', 'version_gt']
