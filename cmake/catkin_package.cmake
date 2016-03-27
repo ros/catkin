@@ -166,6 +166,8 @@ function(_catkin_package)
   endforeach()
 
   # for catkin packages it can be guaranteed that they are find_package()-able and have pkg-config files
+  set(_${PROJECT_NAME}_BUILD_OR_BUILDTOOL_EXPORT_DEPENDS ${${PROJECT_NAME}_BUILD_EXPORT_DEPENDS}
+                                                         ${${PROJECT_NAME}_BUILDTOOL_EXPORT_DEPENDS})
   set(PROJECT_DEPENDENCIES "")
   foreach(depend_name ${_PROJECT_CATKIN_DEPENDS})
     # verify that all catkin packages which have been find_package()-ed are listed as build dependencies
@@ -211,10 +213,10 @@ function(_catkin_package)
         endif()
       endif()
     endif()
-    # verify that all catkin packages are listed as run dependencies
-    list(FIND ${PROJECT_NAME}_RUN_DEPENDS ${depend_name} _index)
+    # verify that all exported catkin packages are listed as build(tool)-export dependencies
+    list(FIND _${PROJECT_NAME}_BUILD_OR_BUILDTOOL_EXPORT_DEPENDS ${depend_name} _index)
     if(_index EQUAL -1)
-      message(FATAL_ERROR "catkin_package() DEPENDS on the catkin package '${depend_name}' which must therefore be listed as a run dependency in the package.xml")
+      message(FATAL_ERROR "catkin_package() DEPENDS on the catkin package '${depend_name}' which must therefore be listed as a build-export or buildtool-export dependency in the package.xml")
     endif()
     list(APPEND PROJECT_DEPENDENCIES ${depend_name})
   endforeach()
