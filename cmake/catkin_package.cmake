@@ -216,7 +216,7 @@ function(_catkin_package)
     # verify that all exported catkin packages are listed as build(tool)-export dependencies
     list(FIND _${PROJECT_NAME}_BUILD_OR_BUILDTOOL_EXPORT_DEPENDS ${depend_name} _index)
     if(_index EQUAL -1)
-      message(FATAL_ERROR "catkin_package() DEPENDS on the catkin package '${depend_name}' which must therefore be listed as a build-export or buildtool-export dependency in the package.xml")
+      message(FATAL_ERROR "catkin_package() DEPENDS on the catkin package '${depend_name}' which must therefore be listed as a build-export, buildtool-export, or run dependency in the package.xml")
     endif()
     list(APPEND PROJECT_DEPENDENCIES ${depend_name})
   endforeach()
