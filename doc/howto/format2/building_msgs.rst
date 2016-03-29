@@ -8,10 +8,11 @@ package.xml
 :::::::::::
 
 Your ``package.xml`` must declare a ``<build_depend>`` on
-``message_generation``, and a ``<exec_depend>`` on
-``message_runtime``::
+``message_generation``, and a ``<build_export_depend>`` as well as
+``<exec_depend>`` on ``message_runtime``::
 
   <build_depend>message_generation</build_depend>
+  <build_export_depend>message_runtime</build_export_depend>
   <exec_depend>message_runtime</exec_depend>
 
 Your messages services, or actions will probably include fields
