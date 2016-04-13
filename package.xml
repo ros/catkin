@@ -33,5 +33,6 @@
   <export>
     <rosdoc config="rosdoc.yaml"/>
     <architecture_independent/>
+    <build_type>cmake</build_type>
   </export>
 </package>
