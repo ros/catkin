@@ -15,7 +15,7 @@ set(_PYTHON_PATH_VERSION_SUFFIX "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}
 
 set(enable_setuptools_deb_layout OFF)
 if(EXISTS "/etc/debian_version")
-  set(enable_setuptools_deb_layout ON)
+  #set(enable_setuptools_deb_layout ON)
 endif()
 option(SETUPTOOLS_DEB_LAYOUT "Enable debian style python package layout" ${enable_setuptools_deb_layout})
 
