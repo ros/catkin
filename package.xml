@@ -22,6 +22,7 @@
   <depend version_gt="0.2.9">python-catkin-pkg</depend>
 
   <build_depend>python-empy</build_depend>
+  <build_depend>ament_cmake</build_depend>
 
   <build_export_depend>gtest</build_export_depend>
   <build_export_depend>python-empy</build_export_depend>
