@@ -69,6 +69,10 @@ function(catkin_python_setup)
   safe_execute_process(COMMAND ${cmd})
   include(${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/setup_py_interrogation.cmake)
 
+  # generate egg-info
+  file(MAKE_DIRECTORY "${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_PYTHON_DESTINATION}/${PROJECT_NAME}-${${PROJECT_NAME}_VERSION}.egg-info")
+  file(WRITE "${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_PYTHON_DESTINATION}/${PROJECT_NAME}-${${PROJECT_NAME}_VERSION}.egg-info/entry_points.txt" "${${PROJECT_NAME}_SETUP_PY_ENTRY_POINTS_CONTENTS}")
+
   # call catkin_package_xml() if it has not been called before
   if(NOT _CATKIN_CURRENT_PACKAGE)
     catkin_package_xml()

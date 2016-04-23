@@ -83,7 +83,7 @@ def _get_locations(pkgs, package_dir):
     return locations
 
 
-def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modules):
+def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modules, entry_points):
     """
     Generates lines to add to a cmake file which will set variables
 
@@ -92,6 +92,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     :param package_dir: {modulename: path}
     :pkgs: [list of str] python_packages declared in catkin package
     :modules: [list of str] python modules
+    :entry_points: {dict of str and list of str} entry points
     """
     prefix = '%s_SETUP_PY' % package_name
     result = []
@@ -148,6 +149,12 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     result.append(r'set(%s_MODULES "%s")' % (prefix, ';'.join(['%s.py' % m.replace('.', '/') for m in filtered_modules])))
     result.append(r'set(%s_MODULE_DIRS "%s")' % (prefix, ';'.join([module_locations[m] for m in filtered_modules]).replace("\\", "/")))
 
+    entry_points_contents = []
+    for name, entries in entry_points.items():
+        entry_points_contents.append('[%s]\n%s\n\n' % (name, '\n'.join(entries)))
+    entry_points_contents = '\n'.join(entry_points_contents)
+    result.append(r'set(%s_ENTRY_POINTS_CONTENTS "%s")' % (prefix, entry_points_contents))
+
     return result
 
 
@@ -175,9 +182,9 @@ def _create_mock_setup_function(package_name, outfile):
         pkgs = kwargs.get('packages', [])
         scripts = kwargs.get('scripts', [])
         modules = kwargs.get('py_modules', [])
+        entry_points = kwargs.get('entry_points', {})
 
         unsupported_args = [
-            'entry_points',
             'exclude_package_data',
             'ext_modules ',
             'ext_package',
@@ -195,7 +202,8 @@ def _create_mock_setup_function(package_name, outfile):
                                      scripts=scripts,
                                      package_dir=package_dir,
                                      pkgs=pkgs,
-                                     modules=modules)
+                                     modules=modules,
+                                     entry_points=entry_points)
         with open(outfile, 'w') as out:
             out.write('\n'.join(result))
 
