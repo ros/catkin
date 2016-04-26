@@ -92,7 +92,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     :param package_dir: {modulename: path}
     :pkgs: [list of str] python_packages declared in catkin package
     :modules: [list of str] python modules
-    :entry_points: {dict of str and list of str} entry points
+    :entry_points: {dict of key=str, value=[list of str]} entry points
     """
     prefix = '%s_SETUP_PY' % package_name
     result = []
