@@ -152,7 +152,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     return result
 
 
-def _create_mock_setup_function(package_name, outfile, install_dir):
+def _create_mock_setup_function(package_name, outfile, install_dir, script_dir):
     """
     Creates a function to call instead of distutils.core.setup or
     setuptools.setup, which just captures some args and writes them
@@ -227,9 +227,23 @@ def _create_mock_setup_function(package_name, outfile, install_dir):
                 self.egg_base = install_dir
                 self.egg_info = os.path.join(
                     self.egg_base, '%s-%s.egg-info' % (package_name, version))
-        cmd = mock_egg_info(dist)
-        cmd.finalize_options()
-        cmd.run()
+        cmd_egg_info = mock_egg_info(dist)
+        cmd_egg_info.finalize_options()
+        cmd_egg_info.run()
+
+        # easy_install command
+        import pkg_resources
+        from setuptools.command.easy_install import easy_install
+        class mock_easy_install(easy_install):
+            def finalize_options(self):
+                self.script_dir = script_dir
+                self.outputs = []
+        metadata = pkg_resources.PathMetadata(cmd_egg_info.egg_base, cmd_egg_info.egg_info)
+        dist_pkg_resources = pkg_resources.Distribution(install_dir, project_name=package_name, metadata=metadata)
+        cmd_easy_install = mock_easy_install(dist)
+        cmd_easy_install.finalize_options()
+        # TODO: support cmd.run()
+        cmd_easy_install.install_wrapper_scripts(dist_pkg_resources)
 
     return setup
 
@@ -243,6 +257,7 @@ def main():
     parser.add_argument('setupfile_path', help='Full path to setup.py')
     parser.add_argument('outfile', help='Where to write result to')
     parser.add_argument('install_dir', help='Python install directory')
+    parser.add_argument('script_dir', help='Python scripts directory')
 
     args = parser.parse_args()
 
@@ -264,7 +279,8 @@ def main():
     try:
         fake_setup = _create_mock_setup_function(package_name=args.package_name,
                                                  outfile=args.outfile,
-                                                 install_dir=args.install_dir)
+                                                 install_dir=args.install_dir,
+                                                 script_dir=args.script_dir)
 
         distutils_backup = distutils.core.setup
         distutils.core.setup = fake_setup
