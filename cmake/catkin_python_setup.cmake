@@ -65,6 +65,7 @@ function(catkin_python_setup)
     ${${PROJECT_NAME}_SOURCE_DIR}/setup.py
     ${${PROJECT_NAME}_BINARY_DIR}/catkin_generated/setup_py_interrogation.cmake
     ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}
+    ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}
     )
   debug_message(10 "catkin_python_setup() in project '{PROJECT_NAME}' executes:  ${cmd}")
   safe_execute_process(COMMAND ${cmd})
