@@ -39,8 +39,9 @@ import sys
 import distutils.core
 try:
     import setuptools
+    SETUPTOOLS = True
 except ImportError:
-    pass
+    SETUPTOOLS = False
 
 from argparse import ArgumentParser
 
@@ -83,7 +84,7 @@ def _get_locations(pkgs, package_dir):
     return locations
 
 
-def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modules, entry_points):
+def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modules):
     """
     Generates lines to add to a cmake file which will set variables
 
@@ -92,7 +93,6 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     :param package_dir: {modulename: path}
     :pkgs: [list of str] python_packages declared in catkin package
     :modules: [list of str] python modules
-    :entry_points: {dict of key=str, value=[list of str]} entry points
     """
     prefix = '%s_SETUP_PY' % package_name
     result = []
@@ -149,16 +149,10 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     result.append(r'set(%s_MODULES "%s")' % (prefix, ';'.join(['%s.py' % m.replace('.', '/') for m in filtered_modules])))
     result.append(r'set(%s_MODULE_DIRS "%s")' % (prefix, ';'.join([module_locations[m] for m in filtered_modules]).replace("\\", "/")))
 
-    entry_points_contents = []
-    for name, entries in entry_points.items():
-        entry_points_contents.append('[%s]\n%s\n\n' % (name, '\n'.join(entries)))
-    entry_points_contents = '\n'.join(entry_points_contents)
-    result.append(r'set(%s_ENTRY_POINTS_CONTENTS "%s")' % (prefix, entry_points_contents))
-
     return result
 
 
-def _create_mock_setup_function(package_name, outfile):
+def _create_mock_setup_function(package_name, outfile, install_dir):
     """
     Creates a function to call instead of distutils.core.setup or
     setuptools.setup, which just captures some args and writes them
@@ -202,10 +196,40 @@ def _create_mock_setup_function(package_name, outfile):
                                      scripts=scripts,
                                      package_dir=package_dir,
                                      pkgs=pkgs,
-                                     modules=modules,
-                                     entry_points=entry_points)
+                                     modules=modules)
         with open(outfile, 'w') as out:
             out.write('\n'.join(result))
+
+        # setuptools is required below
+        if not SETUPTOOLS:
+            return
+
+        attrs = dict(
+            name=package_name,
+            version=version,
+            package_dir=package_dir,
+            packages=pkgs,
+            scripts=scripts,
+            py_modules=modules,
+            entry_points=entry_points,
+        )
+
+        from distutils.dist import Distribution
+        dist = Distribution(attrs)
+        dist.script_name = 'setup.py'
+
+        # egg_info command
+        from setuptools.command.egg_info import egg_info
+        class mock_egg_info(egg_info):
+            def finalize_options(self):
+                self.egg_name = package_name
+                self.egg_version = version
+                self.egg_base = install_dir
+                self.egg_info = os.path.join(
+                    self.egg_base, '%s-%s.egg-info' % (package_name, version))
+        cmd = mock_egg_info(dist)
+        cmd.finalize_options()
+        cmd.run()
 
     return setup
 
@@ -218,6 +242,7 @@ def main():
     parser.add_argument('package_name', help='Name of catkin package')
     parser.add_argument('setupfile_path', help='Full path to setup.py')
     parser.add_argument('outfile', help='Where to write result to')
+    parser.add_argument('install_dir', help='Python install directory')
 
     args = parser.parse_args()
 
@@ -238,7 +263,8 @@ def main():
     # context of evaluating setup.py
     try:
         fake_setup = _create_mock_setup_function(package_name=args.package_name,
-                                                outfile=args.outfile)
+                                                 outfile=args.outfile,
+                                                 install_dir=args.install_dir)
 
         distutils_backup = distutils.core.setup
         distutils.core.setup = fake_setup
