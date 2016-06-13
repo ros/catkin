@@ -6,7 +6,7 @@ REM It tries it's best to undo changes from a previously sourced setup file befo
 REM Supported command line options:
 REM --extend: skips the undoing of changes from a previously sourced setup file
 
-set _SETUP_UTIL="@SETUP_DIR@/_setup_util.py"
+set _SETUP_UTIL=@SETUP_DIR@/_setup_util.py
 
 if NOT EXIST "%_SETUP_UTIL%" (
   echo "Missing Python script: %_SETUP_UTIL%"
@@ -33,7 +33,7 @@ if NOT EXIST %_SETUP_TMP% (
 )
 
 REM invoke Python script to generate necessary exports of environment variables
-%_PYTHON% %_SETUP_UTIL% %* > %_SETUP_TMP%
+%_PYTHON% "%_SETUP_UTIL%" %* > %_SETUP_TMP%
 if NOT EXIST %_SETUP_TMP% (
   echo "Could not create temporary file: %_SETUP_TMP%"
   return 1
