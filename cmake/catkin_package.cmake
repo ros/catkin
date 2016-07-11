@@ -31,7 +31,9 @@
 # :param DEPENDS: a list of CMake projects which this project depends
 #   on.  Since they might not be *find_packagable* or lack a pkg-config
 #   file their ``INCLUDE_DIRS`` and ``LIBRARIES`` are passed directly.
-#   This requires that it has been ``find_package``\ -ed before.
+#   This requires that it has been ``find_package``\ -ed before and all
+#   variables (``<name>_FOUND``, ``<name>_INCLUDE_DIRS``, etc.) have the
+#   same case as this argument.
 # :type DEPENDS: list of strings
 # :param CFG_EXTRAS: a CMake file containing extra stuff that should
 #   be accessible to users of this package after
