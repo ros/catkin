@@ -643,6 +643,36 @@ CATKIN_SHELL={1}
 . "{0}/setup.sh"
 """.format(os.path.dirname(setup_path), shell))
 
+def build_ament_package(
+    path, package,
+    workspace, buildspace, develspace, installspace,
+    install, force_cmake, quiet, last_env, cmake_args, make_args,
+    destdir=None, use_ninja=False
+):
+    # Notify the user that we are processing a plain cmake package
+    cprint(
+        "Processing @{cf}ament@| package: '@!@{bf}" + package.name +
+        "@|'"
+    )
+
+    ament_cmd = [
+        'ament', 'build',
+        '--build-space', buildspace,
+        '--install-space', installspace,
+        '--only', package.name,
+        os.path.dirname(package.filename),
+    ]
+    if cmake_args:
+        ament_cmd.append('--cmake-args')
+        ament_cmd.extend(cmake_args)
+        ament_cmd.append('--')
+    if make_args:
+        ament_cmd.append('--make-flags')
+        ament_cmd.extend(make_args)
+    isolation_print_command(' '.join(ament_cmd), buildspace)
+    if last_env is not None:
+        ament_cmd = [last_env] + ament_cmd
+    run_command_colorized(ament_cmd, buildspace, quiet)
 
 def build_package(
     path, package,
@@ -673,6 +703,13 @@ def build_package(
             )
     elif build_type == 'cmake':
         build_cmake_package(
+            path, package,
+            workspace, buildspace, develspace, installspace,
+            install, force_cmake, quiet, last_env, cmake_args, make_args,
+            destdir=destdir, use_ninja=use_ninja
+        )
+    elif build_type.startswith('ament_'):
+        build_ament_package(
             path, package,
             workspace, buildspace, develspace, installspace,
             install, force_cmake, quiet, last_env, cmake_args, make_args,
@@ -906,6 +943,11 @@ def build_workspace_isolated(
             build_type_tag = 'catkin'
         if build_type_tag == 'catkin':
             msg.append('@{pf}~~@|  - @!@{bf}' + package.name + '@|')
+        elif build_type_tag.startswith('ament_'):
+            msg.append(
+                '@{pf}~~@|  - @!@{bf}' + package.name + '@|' +
+                ' (@!@{cf}ament@|)'
+            )
         elif build_type_tag == 'cmake':
             msg.append(
                 '@{pf}~~@|  - @!@{bf}' + package.name + '@|' +
