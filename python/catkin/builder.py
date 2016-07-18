@@ -655,13 +655,17 @@ def build_ament_package(
         "@|'"
     )
 
-    ament_cmd = [
+    ament_cmd = []
+    env_sh_path = os.path.join(installspace, 'env.sh')
+    if os.path.exists(env_sh_path):
+        ament_cmd.extend([env_sh_path])
+    ament_cmd.extend([
         'ament', 'build',
         '--build-space', buildspace,
         '--install-space', installspace,
         '--only', package.name,
         os.path.dirname(package.filename),
-    ]
+    ])
     if cmake_args:
         ament_cmd.append('--cmake-args')
         ament_cmd.extend(cmake_args)
