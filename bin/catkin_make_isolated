@@ -45,6 +45,7 @@ def parse_args(args=None):
     add('--install-space', default=None,
         help="Sets the target install space (default 'workspace_base/install_isolated')")
     add('--use-ninja', action='store_true', help="Use 'ninja' instead of 'make'")
+    add('--use-nmake', action='store_true', help="Use 'nmake' instead of 'make'")
     add('--install', action='store_true', default=False,
         help='Causes each catkin package to be installed.')
     add('--force-cmake', action='store_true', default=False,
@@ -151,6 +152,7 @@ def main():
         only_pkg_with_deps=opts.only_pkg_with_deps,
         destdir=destdir,
         use_ninja=opts.use_ninja,
+        use_nmake=opts.use_nmake,
         override_build_tool_check=opts.override_build_tool_check,
     )
 
