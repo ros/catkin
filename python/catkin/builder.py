@@ -405,7 +405,7 @@ def build_catkin_package(
         # Check to see if cmake needs to be run via make
         if use_ninja:
             make_check_cmake_cmd = ['ninja', 'build.ninja']
-        elif use_namke:
+        elif use_nmake:
             make_check_cmake_cmd = ['nmake', 'cmake_check_build_system']
         else:
             make_check_cmake_cmd = ['make', 'cmake_check_build_system']
