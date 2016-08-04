@@ -101,20 +101,20 @@ class SetupUtilTest(unittest.TestCase):
             mock_env = {varname: os.pathsep.join([foolib, barlib]),
                         'CMAKE_PREFIX_PATH': barws}
             # since workspace foo is not in CMAKE_PREFIX_PATH, it remains in varname
-            self.assertEqual(foolib, _rollback_env_variable(mock_env, varname, '/lib'))
+            self.assertEqual(foolib, _rollback_env_variable(mock_env, varname, ['/lib']))
 
             # mock_env with both ws in CPP
             mock_env = {varname: os.pathsep.join([foolib, barlib]),
                         wsvarname: os.pathsep.join([foows, barws]),
                         'CMAKE_PREFIX_PATH': os.pathsep.join([foows, barws])}
 
-            self.assertEqual(None, _rollback_env_variable(mock_env, varname, ''))
-            self.assertEqual(None, _rollback_env_variable(mock_env, varname, 'nolib'))
-            self.assertEqual(None, _rollback_env_variable(mock_env, varname, '/nolib'))
-            self.assertEqual('', _rollback_env_variable(mock_env, varname, 'lib'))
-            self.assertEqual('', _rollback_env_variable(mock_env, varname, '/lib'))
-            self.assertEqual(None, _rollback_env_variable(mock_env, varname, ''))
-            self.assertEqual('', _rollback_env_variable(mock_env, wsvarname, ''))
+            self.assertEqual(None, _rollback_env_variable(mock_env, varname, ['']))
+            self.assertEqual(None, _rollback_env_variable(mock_env, varname, ['nolib']))
+            self.assertEqual(None, _rollback_env_variable(mock_env, varname, ['/nolib']))
+            self.assertEqual('', _rollback_env_variable(mock_env, varname, ['lib']))
+            self.assertEqual('', _rollback_env_variable(mock_env, varname, ['/lib']))
+            self.assertEqual(None, _rollback_env_variable(mock_env, varname, ['']))
+            self.assertEqual('', _rollback_env_variable(mock_env, wsvarname, ['']))
 
             # nows: not a workspace
             nows = os.path.join(rootdir, 'nows')
@@ -125,12 +125,12 @@ class SetupUtilTest(unittest.TestCase):
             mock_env = {'varname': os.pathsep.join([foolib, nowslib, barlib, foolib]),
                         'CMAKE_PREFIX_PATH': os.pathsep.join([foows, barws])}
             # checks nows/lib remains, and second mention of foolib
-            self.assertEqual(os.pathsep.join([nowslib, foolib]), _rollback_env_variable(mock_env, 'varname', '/lib'))
-            self.assertEqual(os.pathsep.join([nowslib, foolib]), _rollback_env_variable(mock_env, 'varname', 'lib'))
+            self.assertEqual(os.pathsep.join([nowslib, foolib]), _rollback_env_variable(mock_env, 'varname', ['/lib']))
+            self.assertEqual(os.pathsep.join([nowslib, foolib]), _rollback_env_variable(mock_env, 'varname', ['lib']))
 
             # windows pathsep
             os.path.altsep = '\\'
-            self.assertEqual(os.pathsep.join([nowslib, foolib]), _rollback_env_variable(mock_env, 'varname', '\\lib'))
+            self.assertEqual(os.pathsep.join([nowslib, foolib]), _rollback_env_variable(mock_env, 'varname', ['\\lib']))
         finally:
             os.path.altsep = altsep
             shutil.rmtree(rootdir)
