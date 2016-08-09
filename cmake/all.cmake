@@ -118,6 +118,7 @@ foreach(filename
     catkin_metapackage
     catkin_package
     catkin_package_xml
+    catkin_strip_root_path
     catkin_workspace
     debug_message
     em_expand
