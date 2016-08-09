@@ -78,6 +78,15 @@ else()
   set(@PROJECT_NAME@_PREFIX ${@PROJECT_NAME@_INSTALL_PREFIX})
 endif()
 
+if(CMAKE_CROSSCOMPILING)
+  if("@DEVELSPACE@" STREQUAL "TRUE")
+    # can not disable host filesystem altogether; otherwise files in src/devel are no longer found
+    set(FIND_XXX_LOCATION_OPTION CMAKE_FIND_ROOT_PATH_BOTH)
+  else()
+    set(FIND_XXX_LOCATION_OPTION)
+  endif()
+endif()
+
 # warn when using a deprecated package
 if(NOT "@PROJECT_DEPRECATED@" STREQUAL "")
   set(_msg "WARNING: package '@PROJECT_NAME@' is deprecated")
@@ -102,11 +111,11 @@ if(NOT "@PROJECT_CMAKE_CONFIG_INCLUDE_DIRS@ " STREQUAL " ")
       # use find_path to locate absolute path nested under potential root path
       find_path(include_dir_path ${idir_name}
         PATHS ${idir_path}
-        NO_DEFAULT_PATH)
+        NO_DEFAULT_PATH ${FIND_XXX_LOCATION_OPTION})
       if(NOT include_dir_path)
         message(FATAL_ERROR "Project '@PROJECT_NAME@' specifies '${idir}' as an include dir, which is not found.  It does not exist in any of the root filesystems.  Ask the maintainer '@PROJECT_MAINTAINER@' to fix it.")
       endif()
-      set(include "${include_dir_path}/${idir}")
+      set(include "${include_dir_path}/${idir_name}")
     elseif(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
       set(include ${idir})
     elseif("${idir} " STREQUAL "@CATKIN_GLOBAL_INCLUDE_DESTINATION@ ")
@@ -135,7 +144,7 @@ foreach(library ${libraries})
     # use find_library to locate library given by absolute path nested under potential root path
     find_library(lib ${lib_name}
       PATHS ${lib_path}
-      NO_DEFAULT_PATH)
+      NO_DEFAULT_PATH ${FIND_XXX_LOCATION_OPTION})
     if(NOT lib)
       message(FATAL_ERROR "Project '${PROJECT_NAME}' tried to find library '${library}'.  The library is neither a target nor built/installed properly.  Did you compile project '@PROJECT_NAME@'?  Did you find_package() it before the subdirectory containing its code is included?")
     endif()
