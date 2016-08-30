@@ -111,10 +111,34 @@ class InterrogateSetupTest(unittest.TestCase):
                           modules=[])
 
     def test_interrogate_setup_py(self):
+        # setup python packages
+        curdir = os.getcwd()
+        workdir = tempfile.mkdtemp()
+        # src/foo/__init__.py package
+        os.makedirs(os.path.join(workdir, 'src/foo'))
+        open(os.path.join(workdir, 'src/foo/__init__.py'), 'w')
+        # foo/__init__.py, foo/bin/foo
+        # bar/__init__.py, bar/nodes/bar
+        os.mkdir(os.path.join(workdir, 'foo'))
+        open(os.path.join(workdir, 'foo/__init__.py'), 'w')
+        os.makedirs(os.path.join(workdir, 'foo/bin'))
+        open(os.path.join(workdir, 'foo/bin/foo'), 'w')
+        os.makedirs(os.path.join(workdir, 'bar'))
+        open(os.path.join(workdir, 'bar/__init__.py'), 'w')
+        os.makedirs(os.path.join(workdir, 'bar/nodes'))
+        open(os.path.join(workdir, 'bar/nodes/bar'), 'w')
+        # src/__init__.py, lib/__init__.py
+        open(os.path.join(workdir, 'src/__init__.py'), 'w')
+        os.makedirs(os.path.join(workdir, 'lib'))
+        open(os.path.join(workdir, 'lib/__init__.py'), 'w')
+        # change directory for testing
+        os.chdir(workdir)
         try:
             rootdir = tempfile.mkdtemp()
             outfile = os.path.join(rootdir, 'out.cmake')
-            fake_setup = _create_mock_setup_function('foo', outfile)
+            install_dir = os.path.join(rootdir, 'lib/python/dist-packages')
+            script_dir = os.path.join(rootdir, 'bin')
+            fake_setup = _create_mock_setup_function('foo', outfile, install_dir, script_dir)
             self.assertRaises(RuntimeError, fake_setup, package_dir={'': 'src'})
             # simple setup
             fake_setup(version='0.1.1', package_dir={'': 'src'})
@@ -154,3 +178,4 @@ set(foo_SETUP_PY_MODULE_DIRS "")""", contents)
             os.remove(outfile)
         finally:
             shutil.rmtree(rootdir)
+            os.chdir(curdir)
