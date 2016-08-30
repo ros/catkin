@@ -160,6 +160,8 @@ def _create_mock_setup_function(package_name, outfile, install_dir, script_dir):
 
     :param package_name: name of the package
     :param outfile: filename that cmake will use afterwards
+    :param install_dir: install directory for python package
+    :param script_dir: install directory for python scripts
     :returns: a function to replace disutils.core.setup and setuptools.setup
     """
 
