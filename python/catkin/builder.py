@@ -890,6 +890,10 @@ def build_workspace_isolated(
 
     # Report topological ordering
     ordered_packages = topological_order_packages(packages)
+    # Always test for a cycle because topological_order_packages() is stupid
+    if ordered_packages and ordered_packages[-1][0] is None:
+        print('Cycle detected: %s' % ordered_packages[-1][1])
+        print('Shitty error in 3, 2, 1...')  # Better not break any APIs by changing behavior
     unknown_build_types = []
     msg = []
     msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' + ('~' * len(str(len(ordered_packages)))))
