@@ -38,6 +38,11 @@ def main():
                          'catkin workspace?' % workspace)
         sys.exit(3)
 
+    # Always test for a cycle because topological_order_packages() is stupid
+    if ordered_packages[-1][0] is None:
+        print('Cycle detected: %s' % ordered_packages[-1][1])
+        print('Shitty error in 3, 2, 1...')  # Better not break any APIs by changing behavior
+
     for (path, package) in ordered_projects:
         if path is None:
             sys.exit('The workspace contains packages with a circular dependency: %s' % package)
