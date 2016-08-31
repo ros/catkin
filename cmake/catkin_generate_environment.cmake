@@ -10,6 +10,20 @@ function(catkin_generate_environment)
     file(WRITE "${CMAKE_BINARY_DIR}/CATKIN_IGNORE" "")
   endif()
 
+  # get multiarch name
+  set(CATKIN_MULTIARCH_LIB_DESTINATION "'lib'")
+  set(CATKIN_MULTIARCH_PKGCONFIG_DESTINATION "'lib/pkgconfig'")
+  if (UNIX)
+    execute_process(COMMAND dpkg-architecture -qDEB_HOST_MULTIARCH
+                    OUTPUT_VARIABLE CATKIN_MULTIARCH
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (NOT "${CATKIN_MULTIARCH}" STREQUAL "")
+      set(CATKIN_MULTIARCH_LIB_DESTINATION "['lib', 'lib/${CATKIN_MULTIARCH}']")
+      set(CATKIN_MULTIARCH_PKGCONFIG_DESTINATION "['lib/pkgconfig', 'lib/${CATKIN_MULTIARCH}/pkgconfig']")
+    endif()
+  endif()
+
   # generate Python setup util
   atomic_configure_file(${catkin_EXTRAS_DIR}/templates/_setup_util.py.in
     ${CATKIN_DEVEL_PREFIX}/_setup_util.py
