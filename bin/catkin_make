@@ -169,7 +169,7 @@ def main():
 
     # invoke make
     cmd = ['make']
-    cmd.extend(handle_make_arguments(args.make_args, force_single_threaded_when_running_tests=True))
+    cmd.extend(handle_make_arguments(args.make_args))
     try:
         if not args.pkg:
             make_paths = [build_path]
