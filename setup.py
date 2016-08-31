@@ -15,6 +15,7 @@ d = generate_distutils_setup(
         'bin/catkin_prepare_release',
         'bin/catkin_test_results',
         'bin/catkin_topological_order',
+        'bin/pcmi',
     ],
 )
 
