@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.2 (2016-09-02)
+------------------
 * change warning to status when nosetests was not found (`#823 <https://github.com/ros/catkin/issues/823>`_)
 * maintain file context when invoking Python scripts through relay (`#820 <https://github.com/ros/catkin/issues/820>`_)
 * fix rollback logic for more than one value per environment variable and workspace (`#819 <https://github.com/ros/catkin/issues/819>`_)
