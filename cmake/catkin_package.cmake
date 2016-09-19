@@ -159,9 +159,9 @@ function(_catkin_package)
           #message(WARNING "catkin_package() DEPENDS on catkin package '${depend_name}' which is deprecated. Use CATKIN_DEPENDS for catkin packages instead.")
           list(APPEND _PROJECT_CATKIN_DEPENDS ${depend_name})
         else()
-          if(NOT ${depend_name}_FOUND)
-            message(FATAL_ERROR "catkin_package() DEPENDS on '${depend_name}' which must be find_package()-ed before. If it is a catkin package it can be declared as CATKIN_DEPENDS instead without find_package()-ing it.")
-          endif()
+          # the dependency might not come from a CMake config / module file
+          # but from e.g. PkgConfig / pkg_search_module
+          # therefore this can't expect ${depend_name}_FOUND to be defined
           if(NOT DEFINED ${depend_name}_INCLUDE_DIRS AND NOT DEFINED ${depend_name}_LIBRARIES)
             message(WARNING "catkin_package() DEPENDS on '${depend_name}' but neither '${depend_name}_INCLUDE_DIRS' nor '${depend_name}_LIBRARIES' is defined.")
           endif()
