@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* relax fixed DEPENDS check from last release (`#825 <https://github.com/ros/catkin/issues/825>`_)
+
 0.7.2 (2016-09-02)
 ------------------
 * change warning to status when nosetests was not found (`#823 <https://github.com/ros/catkin/issues/823>`_)
