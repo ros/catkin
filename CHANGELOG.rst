@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.3 (2016-09-19)
+------------------
 * relax fixed DEPENDS check from last release (`#825 <https://github.com/ros/catkin/issues/825>`_)
 
 0.7.2 (2016-09-02)
