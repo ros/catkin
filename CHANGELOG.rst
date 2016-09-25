@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.4 (2016-09-25)
+------------------
 * fix regression in logic to select make / ninja for CMake packages from 0.7.2 (`#826 <https://github.com/ros/catkin/issues/826>`_)
 
 0.7.3 (2016-09-19)
