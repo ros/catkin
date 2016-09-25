@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix regression in logic to select make / ninja for CMake packages from 0.7.2 (`#826 <https://github.com/ros/catkin/issues/826>`_)
+
 0.7.3 (2016-09-19)
 ------------------
 * relax fixed DEPENDS check from last release (`#825 <https://github.com/ros/catkin/issues/825>`_)
@@ -251,7 +255,7 @@ Changelog for package catkin
 -------------------
 * support multiple package names for catkin_make --pkg (`#504 <https://github.com/ros/catkin/issues/504>`_)
 * improve help message on catkin_make_isolated --from-pkg
-* fix include path in generated .pc files to be absolute (fix `#506 <https://github.com/ros/catkin/issues/506>`_, regression of 0.5.72)
+* fix include path in generated .pc files to be absolute (`#506 <https://github.com/ros/catkin/issues/506>`_, regression of 0.5.72)
 * fix handling DESTDIR in catkin_make_isolated for plain cmake packages (`#499 <https://github.com/ros/catkin/issues/499>`_)
 * fix catkin_python_setup to consider actual package names inside setup.py when signaling that an __init__.py file is installed to genmsg/dynamic_reconfigure (`ros/genmsg#34 <https://github.com/ros/genmsg/issues/34>`_)
 * fix unsetting temporary variables - especially CATKIN_SETUP_DIR - to not influence next environment (`#505 <https://github.com/ros/catkin/issues/505>`_)
@@ -330,7 +334,7 @@ Changelog for package catkin
 * fixes:
 
   * update check in generated pkgConfig.cmake files to work independent of cmake policy CMD0012 (`#452 <https://github.com/ros/catkin/issues/452>`_)
-  * fix generating pkg-config files with empty -I directives (fix `#445 <https://github.com/ros/catkin/issues/445>`_)
+  * fix generating pkg-config files with empty -I directives (`#445 <https://github.com/ros/catkin/issues/445>`_)
 
 * update documentation, especially about testing
 * for a complete list of changes see the `commit log for 0.5.68 <https://github.com/ros/catkin/compare/0.5.67...0.5.68>`_
