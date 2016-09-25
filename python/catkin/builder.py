@@ -529,7 +529,7 @@ def build_cmake_package(
         )
 
     # Run make
-    if not use_ninja:
+    if use_ninja:
         make_executable = 'ninja'
     elif use_nmake:
         make_executable = 'nmake'
