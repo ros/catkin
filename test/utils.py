@@ -179,12 +179,12 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
         for k, v in kwargs.items():
             print("~v^v~", k, v)
             args += ["-D%s=%s" % (k, v)]
-        if not 'CMAKE_INSTALL_PREFIX' in kwargs:
+        if 'CMAKE_INSTALL_PREFIX' not in kwargs:
             if installdir is None:
                 installdir = self.installdir
             args += ["-DCMAKE_INSTALL_PREFIX=%s" % (installdir)]
 
-        if not 'CMAKE_PREFIX_PATH' in kwargs:
+        if 'CMAKE_PREFIX_PATH' not in kwargs:
             if prefix_path is None:
                 prefix_path = self.installdir
             args += ["-DCMAKE_PREFIX_PATH=%s" % (prefix_path)]
