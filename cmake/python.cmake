@@ -15,6 +15,28 @@ if(WIN32)
   file(TO_NATIVE_PATH "${CMAKE_INSTALL_PREFIX}" SETUPTOOLS_INSTALL_PREFIX)
 endif()
 
+# a precomputed PYTHON_INSTALL_DIR can be passed along with the matching PYTHON_EXECUTABLE here
+# in order to avoid needing to call PYTHON_EXECUTABLE in the next block in each package
+# the precomputed value is only taken if the PYTHON_EXECUTABLE matches what was found above
+if(DEFINED PYTHON_INSTALL_DIR_TUPLE)
+  string(REPLACE ":" ";" _tuple ${PYTHON_INSTALL_DIR_TUPLE})
+  list(LENGTH _tuple _tuple_len)
+  if(_tuple_len EQUAL 2)
+    list(GET _tuple 0 _tuple_PYTHON_EXECUTABLE)
+    list(GET _tuple 1 _tuple_PYTHON_INSTALL_DIR)
+    if("${_tuple_PYTHON_EXECUTABLE}" STREQUAL "${PYTHON_EXECUTABLE}")
+      set(PYTHON_INSTALL_DIR "${_tuple_PYTHON_INSTALL_DIR}")
+    else()
+      message(WARNING
+        "PYTHON_INSTALL_DIR_TUPLE is set, "
+        "but the given PYTHON_EXECUTABLE '${_tuple_PYTHON_EXECUTABLE}' does not "
+        "match the PYTHON_EXECUTABLE found by CMake '${PYTHON_EXECUTABLE}'.\n"
+        "The precomputed value in the tuple will be ignored and Python will be "
+        "invoked to get the correct PYTHON_INSTALL_DIR.")
+    endif()
+  endif()
+endif()
+
 # this block determines the same value as the Python function get_python_install_dir() from python/catkin/builder.py
 if(NOT DEFINED PYTHON_INSTALL_DIR)
   execute_process(COMMAND "${PYTHON_EXECUTABLE}"
