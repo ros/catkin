@@ -34,6 +34,12 @@ if(DEFINED PYTHON_INSTALL_DIR_TUPLE)
         "The precomputed value in the tuple will be ignored and Python will be "
         "invoked to get the correct PYTHON_INSTALL_DIR.")
     endif()
+  else()
+    message(WARNING
+      "PYTHON_INSTALL_DIR_TUPLE is set, "
+      "but the contents '${PYTHON_INSTALL_DIR_TUPLE}' are invalid.\n"
+      "It should take the form of '<PYTHON_EXECUTABLE>:<PYTHON_INSTALL_DIR>' "
+      "with the executable and install dir separated with a colon.")
   endif()
 endif()
 
