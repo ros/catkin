@@ -24,7 +24,7 @@ if(DEFINED PYTHON_INSTALL_DIR_TUPLE)
   if(_tuple_len EQUAL 2)
     list(GET _tuple 0 _tuple_PYTHON_EXECUTABLE)
     list(GET _tuple 1 _tuple_PYTHON_INSTALL_DIR)
-    if("${_tuple_PYTHON_EXECUTABLE}" STREQUAL "${PYTHON_EXECUTABLE}")
+    if("${_tuple_PYTHON_EXECUTABLE} " STREQUAL "${PYTHON_EXECUTABLE} ")
       set(PYTHON_INSTALL_DIR "${_tuple_PYTHON_INSTALL_DIR}")
     else()
       message(WARNING
