@@ -295,7 +295,7 @@ def get_python_install_dir_tuple(cmake_args=None):
     cmd = ' '.join(['cmake', '-P', python_cmake_path] + (cmake_args or []))
     working_dir = tempfile.mkdtemp()
     try:
-        out = subprocess.check_output(cmd, shell=True)
+        out = subprocess.check_output(cmd, shell=True).decode()
         m = re.search('.*PYTHON_EXECUTABLE: (.+)$', out, re.MULTILINE)
         if not m:
             raise RuntimeError("Failed to get the PYTHON_EXECUTABLE from python.cmake")
