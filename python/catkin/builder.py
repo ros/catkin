@@ -33,7 +33,6 @@
 from __future__ import print_function
 
 import copy
-from distutils.sysconfig import get_python_lib
 import multiprocessing
 import os
 import platform
@@ -42,6 +41,7 @@ try:
     from shlex import quote
 except ImportError:
     from pipes import quote
+import shutil
 import stat
 try:
     from StringIO import StringIO
@@ -49,6 +49,7 @@ except ImportError:
     from io import StringIO
 import subprocess
 import sys
+import tempfile
 
 try:
     from catkin_pkg.cmake import configure_file, get_metapackage_cmake_template_path
@@ -286,10 +287,42 @@ def get_multiarch():
     return out.strip()
 
 
-def get_python_install_dir():
-    # this function returns the same value as the CMake variable PYTHON_INSTALL_DIR from catkin/cmake/python.cmake
-    relevant_subfolders = 2 if os.name == 'nt' else 3
-    return os.sep.join(get_python_lib().split(os.sep)[-relevant_subfolders:])
+def get_python_install_dir_tuple(cmake_args=None):
+    # this function invokes the CMake file catkin/cmake/python.cmake to get
+    # the same PYTHON_INSTALL_DIR that a package would
+    cmake_path = get_cmake_path()
+    python_cmake_path = os.path.abspath(os.path.join(cmake_path, 'python.cmake'))
+    cmd = ' '.join(['cmake', '-P', python_cmake_path] + (cmake_args or []))
+    working_dir = tempfile.mkdtemp()
+    try:
+        out = subprocess.check_output(cmd, shell=True)
+        m = re.search('.*PYTHON_EXECUTABLE: (.+)$', out, re.MULTILINE)
+        if not m:
+            raise RuntimeError("Failed to get the PYTHON_EXECUTABLE from python.cmake")
+        python_executable = m.group(1)
+        m = re.search('.*PYTHON_INSTALL_DIR: (.+)$', out, re.MULTILINE)
+        if not m:
+            raise RuntimeError("Failed to get the PYTHON_INSTALL_DIR from python.cmake")
+        return (python_executable, m.group(1))
+    finally:
+        shutil.rmtree(working_dir)
+
+__cached_python_install_dir_tuple = {}
+
+
+def get_python_install_dir_tuple_cached(cmake_args=None):
+    global __cached_python_install_dir_tuple
+    if cmake_args not in __cached_python_install_dir_tuple:
+        __cached_python_install_dir_tuple[cmake_args] = get_python_install_dir_tuple(cmake_args)
+    return __cached_python_install_dir_tuple[cmake_args]
+
+
+def get_python_install_dir(cmake_args=None):
+    return get_python_install_dir_tuple(cmake_args)[1]
+
+
+def get_python_install_dir_cached(cmake_args=None):
+    return get_python_install_dir_tuple_cached(cmake_args)[1]
 
 
 def handle_make_arguments(input_make_args):
@@ -591,7 +624,7 @@ exec "$@"
         subs = {}
         subs['cmake_prefix_path'] = install_target + ":"
         subs['ld_path'] = os.path.join(install_target, 'lib') + ":"
-        pythonpath = os.path.join(install_target, get_python_install_dir())
+        pythonpath = os.path.join(install_target, get_python_install_dir_cached())
         subs['pythonpath'] = pythonpath + ':'
         subs['pkgcfg_path'] = os.path.join(install_target, 'lib', 'pkgconfig') + ":"
         subs['path'] = os.path.join(install_target, 'bin') + ":"
@@ -1035,7 +1068,7 @@ def build_workspace_isolated(
                     'CATKIN_PKGCONFIG_ENVIRONMENT_PATHS': "os.path.join('lib', 'pkgconfig')",
                     'CMAKE_PREFIX_PATH_AS_IS': ';'.join(os.environ['CMAKE_PREFIX_PATH'].split(os.pathsep)),
                     'PYTHON_EXECUTABLE': sys.executable,
-                    'PYTHON_INSTALL_DIR': get_python_install_dir(),
+                    'PYTHON_INSTALL_DIR': get_python_install_dir_cached(),
                 }
                 with open(generated_setup_util_py, 'w') as f:
                     f.write(configure_file(
