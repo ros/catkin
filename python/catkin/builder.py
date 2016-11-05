@@ -427,16 +427,16 @@ def build_catkin_package(
         make_executable = 'make'
 
     make_cmd = [make_executable]
-    make_cmd.extend(handle_make_arguments(make_args))
+    if not use_nmake:
+        make_cmd.extend(handle_make_arguments(make_args))
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
     run_command(make_cmd, build_dir, quiet)
 
     # Make install
-    # NMake doesn't have an option to list target so try it anyway
     if install or use_nmake:
-        if has_make_target(build_dir, 'install', use_ninja=use_ninja):
+        if has_make_target(build_dir, 'install', use_ninja=use_ninja, use_nmake=use_nmake):
             make_install_cmd = [make_executable, 'install']
             isolation_print_command(' '.join(make_install_cmd), build_dir)
             if last_env is not None:
@@ -448,13 +448,16 @@ def build_catkin_package(
                 % make_executable))
 
 
-def has_make_target(path, target, use_ninja=False):
-    if not use_ninja:
-        output = run_command(['make', '-pn'], path, quiet=True)
-    else:
+def has_make_target(path, target, use_ninja=False, use_nmake=False):
+    if use_ninja:
         output = run_command(['ninja', '-t', 'targets'], path, quiet=True)
+    elif use_nmake:	
+        output = run_command(['nmake', '/PNC'], path, quiet=True)
+    else:
+        output = run_command(['make', '-pn'], path, quiet=True)
+	
     lines = output.splitlines()
-    # strip nanja warnings since they look similar to targets
+    # strip ninja warnings since they look similar to targets
     if use_ninja:
         lines = [l for l in lines if not l.startswith('ninja: warning:')]
     targets = [m.group(1) for m in [re.match('^([a-zA-Z0-9][a-zA-Z0-9_\.]*):', l) for l in lines] if m]
@@ -536,7 +539,8 @@ def build_cmake_package(
     else:
         make_executable = 'make'
     make_cmd = [make_executable]
-    make_cmd.extend(handle_make_arguments(make_args))
+    if not use_nmake:
+        make_cmd.extend(handle_make_arguments(make_args))
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
@@ -660,7 +664,7 @@ def build_package(
     path, package,
     workspace, buildspace, develspace, installspace,
     install, force_cmake, quiet, last_env, cmake_args, make_args, catkin_make_args,
-    destdir=None, use_ninja=False,
+    destdir=None, use_ninja=False, use_nmake=False,
     number=None, of=None
 ):
     if platform.system() in ['Linux', 'Darwin'] and sys.stdout.isatty():
@@ -674,7 +678,7 @@ def build_package(
             path, package,
             workspace, buildspace, develspace, installspace,
             install, force_cmake, quiet, last_env, cmake_args, make_args + catkin_make_args,
-            destdir=destdir, use_ninja=use_ninja
+            destdir=destdir, use_ninja=use_ninja, use_nmake=use_nmake
         )
         if not os.path.exists(new_last_env):
             raise RuntimeError(
@@ -688,7 +692,7 @@ def build_package(
             path, package,
             workspace, buildspace, develspace, installspace,
             install, force_cmake, quiet, last_env, cmake_args, make_args,
-            destdir=destdir, use_ninja=use_ninja
+            destdir=destdir, use_ninja=use_ninja, use_nmake=use_nmake
         )
     else:
         sys.exit('Can not build package with unknown build_type')
@@ -702,12 +706,15 @@ def build_package(
 
 
 def get_new_env(package, develspace, installspace, install, last_env, destdir=None):
+    envCommand = 'env.sh'
+    if platform.system() is 'Windows':
+        envCommand = 'env.bat';
     new_env = None
     build_type = _get_build_type(package)
     if build_type in ['catkin', 'cmake']:
         new_env = os.path.join(
             installspace if install else develspace,
-            'env.sh'
+            envCommand
         )
         if install:
             new_env = prefix_destdir(new_env, destdir)
@@ -977,7 +984,7 @@ def build_workspace_isolated(
                     workspace, buildspace, pkg_develspace, installspace,
                     install, force_cmake,
                     quiet, last_env, cmake_args, make_args, catkin_make_args,
-                    destdir=destdir, use_ninja=use_ninja,
+                    destdir=destdir, use_ninja=use_ninja, use_nmake=use_nmake,
                     number=index + 1, of=len(ordered_packages)
                 )
             except subprocess.CalledProcessError as e:
