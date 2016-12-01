@@ -706,15 +706,13 @@ def build_package(
 
 
 def get_new_env(package, develspace, installspace, install, last_env, destdir=None):
-    envCommand = 'env.sh'
-    if platform.system() is 'Windows':
-        envCommand = 'env.bat';
+    env_script = 'env.%s' % ('bat' if os.name == 'nt' else 'sh')
     new_env = None
     build_type = _get_build_type(package)
     if build_type in ['catkin', 'cmake']:
         new_env = os.path.join(
             installspace if install else develspace,
-            envCommand
+            env_script
         )
         if install:
             new_env = prefix_destdir(new_env, destdir)

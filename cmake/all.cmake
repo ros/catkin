@@ -46,8 +46,8 @@ if(NOT DEFINED CMAKE_PREFIX_PATH)
     if(NOT WIN32)
       string(REPLACE ":" ";" CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
     else()
-	  set(CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
-	endif()
+      set(CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+    endif()
   endif()
 endif()
 message(STATUS "Using CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
@@ -166,7 +166,8 @@ set(CATKIN_GLOBAL_LIBEXEC_DESTINATION lib)
 set(CATKIN_GLOBAL_PYTHON_DESTINATION ${PYTHON_INSTALL_DIR})
 set(CATKIN_GLOBAL_SHARE_DESTINATION share)
 
-# This was removed, but is required for Windows
+# There is an issue with bootstrapping catkin_make_isolated on Windows.  Without a toplevel
+# workspace to call this function, several shared libraries are built incorrectly.
 if (MSVC)
   configure_shared_library_build_settings()
 endif()
