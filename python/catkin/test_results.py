@@ -64,7 +64,7 @@ def ensure_junit_result_exist(filename):
                 print("Invalid XML in result file '%s' (even after trying to tidy it): %s " % (filename, str(e)), file=sys.stderr)
                 return False
         if tree:
-            _, num_errors, num_failures = read_junit(filename)
+            _, num_errors, num_failures, _ = read_junit(filename)
             if num_errors or num_failures:
                 return False
     else:
@@ -110,7 +110,8 @@ def read_junit(filename):
     num_tests = int(root.attrib['tests'])
     num_errors = int(root.attrib['errors'])
     num_failures = int(root.attrib['failures'])
-    return (num_tests, num_errors, num_failures)
+    num_skipped = int(root.get('skip', '0')) + int(root.get('disabled', '0'))
+    return (num_tests, num_errors, num_failures, num_skipped)
 
 
 def test_results(test_results_dir, show_verbose=False, show_all=False):
@@ -120,7 +121,7 @@ def test_results(test_results_dir, show_verbose=False, show_all=False):
 
     :param test_results_dir: str foldername
     :param show_verbose: bool show output for tests which had errors or failed
-    :returns: dict {rel_path, (num_tests, num_errors, num_failures)}
+    :returns: dict {rel_path, (num_tests, num_errors, num_failures, num_skipped)}
     '''
     results = {}
     for dirpath, dirnames, filenames in os.walk(test_results_dir):
@@ -130,12 +131,12 @@ def test_results(test_results_dir, show_verbose=False, show_all=False):
             filename_abs = os.path.join(dirpath, filename)
             name = filename_abs[len(test_results_dir) + 1:]
             try:
-                num_tests, num_errors, num_failures = read_junit(filename_abs)
+                num_tests, num_errors, num_failures, num_skipped = read_junit(filename_abs)
             except Exception as e:
                 if show_all:
                     print('Skipping "%s": %s' % (name, str(e)))
                 continue
-            results[name] = (num_tests, num_errors, num_failures)
+            results[name] = (num_tests, num_errors, num_failures, num_skipped)
             if show_verbose and (num_errors + num_failures > 0):
                 print("Full test results for '%s'" % (name))
                 print('-------------------------------------------------')
@@ -150,17 +151,19 @@ def aggregate_results(results, callback_per_result=None):
     Aggregate results
 
     :param results: dict as from test_results()
-    :returns: tuple (num_tests, num_errors, num_failures)
+    :returns: tuple (num_tests, num_errors, num_failures, num_skipped)
     """
-    sum_tests = sum_errors = sum_failures = 0
+    sum_tests = sum_errors = sum_failures = sum_skipped = 0
     for name in sorted(results.keys()):
-        (num_tests, num_errors, num_failures) = results[name]
+        (num_tests, num_errors, num_failures, num_skipped) = results[name]
         sum_tests += num_tests
         sum_errors += num_errors
         sum_failures += num_failures
+        sum_skipped += num_skipped
         if callback_per_result:
-            callback_per_result(name, num_tests, num_errors, num_failures)
-    return sum_tests, sum_errors, sum_failures
+            callback_per_result(name, num_tests, num_errors, num_failures,
+                                num_skipped)
+    return sum_tests, sum_errors, sum_failures, sum_skipped
 
 
 def print_summary(results, show_stable=False, show_unstable=True):
@@ -171,10 +174,11 @@ def print_summary(results, show_stable=False, show_unstable=True):
     :param show_stable: print tests without failures extra
     :param show_stable: print tests with failures extra
     """
-    def callback(name, num_tests, num_errors, num_failures):
-        if show_stable and not num_errors and not num_failures:
+    def callback(name, num_tests, num_errors, num_failures, num_skipped):
+        if show_stable and not num_errors and not num_failures and not num_skipped:
             print('%s: %d tests' % (name, num_tests))
-        if show_unstable and (num_errors or num_failures):
-            print('%s: %d tests, %d errors, %d failures' % (name, num_tests, num_errors, num_failures))
-    sum_tests, sum_errors, sum_failures = aggregate_results(results, callback)
-    print('Summary: %d tests, %d errors, %d failures' % (sum_tests, sum_errors, sum_failures))
+        if show_unstable and (num_errors or num_failures or num_skipped):
+            print('%s: %d tests, %d errors, %d failures, %d skipped'
+                  % (name, num_tests, num_errors, num_failures, num_skipped))
+    sum_tests, sum_errors, sum_failures, sum_skipped = aggregate_results(results, callback)
+    print('Summary: %d tests, %d errors, %d failures, %d skipped' % (sum_tests, sum_errors, sum_failures, sum_skipped))
