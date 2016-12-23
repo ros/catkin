@@ -26,8 +26,9 @@ def main():
     try:
         results = test_results(
             test_results_dir, show_verbose=args.verbose, show_all=args.all)
-        _, sum_errors, sum_failures = aggregate_results(results)
+        _, sum_errors, sum_failures, _ = aggregate_results(results)
         print_summary(results, show_stable=args.all)
+        # Skipped tests alone should not count as a failure
         if sum_errors or sum_failures:
             sys.exit(1)
     except Exception as e:
