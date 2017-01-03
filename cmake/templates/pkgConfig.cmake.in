@@ -182,6 +182,8 @@ foreach(depend ${depends})
   list(APPEND @PROJECT_NAME@_EXPORTED_TARGETS ${${@PROJECT_NAME@_dep}_EXPORTED_TARGETS})
 endforeach()
 
+set(@PROJECT_NAME@_DEFINITIONS "")
+
 set(pkg_cfg_extras "@PKG_CFG_EXTRAS@")
 foreach(extra ${pkg_cfg_extras})
   if(NOT IS_ABSOLUTE ${extra})

@@ -7,8 +7,8 @@
 #    For use with CMake ``link_directories(${catkin_INCLUDE_DIRS})``.
 # :outvar catkin_LIBRARIES: contains the libraries of all searched components.
 #    For use with CMake ``target_link_libraries(<target> ${catkin_LIBRARIES})``.
-# :outvar <comp>_INCLUDE_DIRS/_LIBRARY_DIRS/_LIBRARIES:
-#    contains the include dirs / library dirs / libraries of the searched component <comp>.
+# :outvar <comp>_INCLUDE_DIRS/_LIBRARY_DIRS/_LIBRARIES/_DEFINITIONS:
+#    contains the include dirs / library dirs / libraries / definitions of the searched component <comp>.
 
 if(CATKIN_TOPLEVEL_FIND_PACKAGE OR NOT CATKIN_TOPLEVEL)
   set(catkin_EXTRAS_DIR "@PKG_CMAKE_DIR@")
