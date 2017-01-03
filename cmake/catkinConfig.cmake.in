@@ -7,6 +7,8 @@
 #    For use with CMake ``link_directories(${catkin_INCLUDE_DIRS})``.
 # :outvar catkin_LIBRARIES: contains the libraries of all searched components.
 #    For use with CMake ``target_link_libraries(<target> ${catkin_LIBRARIES})``.
+# :outvar catkin_DEFINITIONS: contains the definitions of all searched components.
+#    For use with CMake ``add_definitions(${catkin_DEFINITIONS})``.
 # :outvar <comp>_INCLUDE_DIRS/_LIBRARY_DIRS/_LIBRARIES/_DEFINITIONS:
 #    contains the include dirs / library dirs / libraries / definitions of the searched component <comp>.
 
@@ -49,6 +51,7 @@ if(NOT _CATKIN_FIND_ OR _CATKIN_FIND_ EQUAL 0)
     set(catkin_LIBRARIES "")
     set(catkin_LIBRARY_DIRS "")
     set(catkin_EXPORTED_TARGETS "")
+    set(catkin_DEFINITIONS "")
   endif()
 endif()
 
@@ -103,6 +106,7 @@ if(catkin_FIND_COMPONENTS)
 
       list_append_unique(catkin_LIBRARY_DIRS ${${component}_LIBRARY_DIRS})
       list(APPEND catkin_EXPORTED_TARGETS ${${component}_EXPORTED_TARGETS})
+      list_append_unique(catkin_DEFINITIONS ${${component}_DEFINITIONS})
     endif()
   endforeach()
   list_insert_in_workspace_order(catkin_INCLUDE_DIRS ${catkin_INCLUDE_DIRS})
