@@ -16,11 +16,11 @@ simultaneously, use
   include_directories(${catkin_INCLUDE_DIRS})
 
   add_executable(myexec ...)
-  target_link_libraries(${catkin_LIBRARIES})
+  target_link_libraries(myexec ${catkin_LIBRARIES})
 
 You can also reference the variables of each component individually::
 
-  target_link_libraries(${rostime_LIBRARIES})
+  target_link_libraries(myexec ${rostime_LIBRARIES})
 
 See the CMake documentation for ``find_package()`` for more details.
 Your ``CMAKE_PREFIX_PATH`` will need to point to a catkin installation.
