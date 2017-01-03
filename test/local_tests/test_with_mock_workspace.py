@@ -39,6 +39,13 @@ class MockTest(AbstractCatkinWorkspaceTest):
                       "setup.sh",
                       "setup.zsh")
 
+    def test_definitions(self):
+        dstdir = os.path.join(self.workspacedir, 'definitions')
+        shutil.copytree(os.path.join(MOCK_DIR, 'src', 'definitions'), dstdir)
+
+        self.cmake()
+        succeed(MAKE_CMD, cwd=self.builddir)
+
     def test_nolang(self):
         dstdir = os.path.join(self.workspacedir, 'nolangs')
         shutil.copytree(os.path.join(MOCK_DIR, 'src', 'nolangs'), dstdir)
