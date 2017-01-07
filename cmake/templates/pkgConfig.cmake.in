@@ -24,6 +24,29 @@ macro(_list_append_unique listname)
   endforeach()
 endmacro()
 
+# Append key[=value] elements from one list to another list if they are not already in the target list.
+# copied from catkin/cmake/list_append_keys_from.cmake to keep pkgConfig self contained
+macro(_list_append_keys_from listname source)
+  foreach(_item ${${source}})
+      set(_found "")
+      string(REGEX REPLACE "^([^=]+)(=.*)$?" "^\\1(=.*)?$" _expr ${_item})
+      foreach(_elem ${${listname}})
+        if(_elem STREQUAL _item)
+          set(_found TRUE)
+          break()
+        elseif(_elem MATCHES ${_expr})
+          set(_found TRUE)
+          message(WARNING "could not add '${_item}' (from '${source}'), already contained: '${_elem}'")
+          break()
+        endif()
+      endforeach()
+      if(NOT _found)
+        list(APPEND ${listname} ${_item})
+      endif()
+  endforeach()
+endmacro()
+
+
 # pack a list of libraries with optional build configuration keywords
 # copied from catkin/cmake/catkin_libraries.cmake to keep pkgConfig
 # self contained
@@ -180,6 +203,7 @@ foreach(depend ${depends})
 
   _list_append_unique(@PROJECT_NAME@_LIBRARY_DIRS ${${@PROJECT_NAME@_dep}_LIBRARY_DIRS})
   list(APPEND @PROJECT_NAME@_EXPORTED_TARGETS ${${@PROJECT_NAME@_dep}_EXPORTED_TARGETS})
+  _list_append_keys_from(@PROJECT_NAME@_COMPILE_OPTIONS ${@PROJECT_NAME@_dep}_COMPILE_OPTIONS)
 endforeach()
 
 set(@PROJECT_NAME@_COMPILE_OPTIONS "")
