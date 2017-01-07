@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.12)
 project(set_compile_options)
 find_package(catkin REQUIRED)
 
-catkin_package(
-  CFG_EXTRAS set_compile_options-extra.cmake
-  )
+list(APPEND ${PROJECT_NAME}_COMPILE_OPTIONS -DTHIS_IS_MY_EXPORTED_DEFINITION)
+
+add_compile_options(${catkin_COMPILE_OPTIONS} ${${PROJECT_NAME}_COMPILE_OPTIONS})
+
+catkin_package()

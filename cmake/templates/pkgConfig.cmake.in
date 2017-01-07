@@ -176,6 +176,8 @@ foreach(t ${@PROJECT_NAME@_EXPORTED_TARGETS})
   endif()
 endforeach()
 
+set(@PROJECT_NAME@_COMPILE_OPTIONS "@PKG_COMPILE_OPTIONS@")
+
 set(depends "@PROJECT_DEPENDENCIES@")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
@@ -205,8 +207,6 @@ foreach(depend ${depends})
   list(APPEND @PROJECT_NAME@_EXPORTED_TARGETS ${${@PROJECT_NAME@_dep}_EXPORTED_TARGETS})
   _list_append_keys_from(@PROJECT_NAME@_COMPILE_OPTIONS ${@PROJECT_NAME@_dep}_COMPILE_OPTIONS)
 endforeach()
-
-set(@PROJECT_NAME@_COMPILE_OPTIONS "")
 
 set(pkg_cfg_extras "@PKG_CFG_EXTRAS@")
 foreach(extra ${pkg_cfg_extras})

@@ -374,6 +374,9 @@ function(_catkin_package)
       endif()
     endforeach()
 
+    set(PKG_COMPILE_OPTIONS ${${PROJECT_NAME}_COMPILE_OPTIONS})
+    separate_arguments(PKG_COMPILE_OPTIONS)
+
     # generate devel space config for project
     set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
     if(NOT EXISTS ${infile})
