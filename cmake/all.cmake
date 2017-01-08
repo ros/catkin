@@ -126,6 +126,7 @@ foreach(filename
     find_program_required
     legacy
     list_append_deduplicate
+    list_append_keys_from
     list_append_unique
     list_insert_in_workspace_order
     safe_execute_process
