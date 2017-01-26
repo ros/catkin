@@ -67,6 +67,30 @@ sourcespace using the python exec() function.
 The version will be compared to that declared in package.xml, and
 raise an error on mismatch.
 
+.. note::
+
+  If you have written non-ROS Python packages before, you have 
+  probably used the ``requires`` field in the distuils setup function.
+  This field, however, *has no meaning* in ROS. 
+  
+  All your Python
+  dependencies should be specified in ``package.xml`` as e.g.
+  ``<run_depend>python-numpy</run_depend>`` (for older version 1
+  of package.xml) or ``<exec_depend>python-numpy</exec_depend>``
+  (if you use format 2 of package.xml).
+  
+  Not all Python or pip packages are mapped to ROS dependencies.
+  For a quick check, try running ``rosdep resolve python-mypackage``
+  or ``rosdep resolve python-mypackage-pip`` if you want to 
+  add a dependency on ``mypackage`` Python package. If these calls
+  return error, you may want to search through the 
+  `python.yaml file in rosdep`_ for similar names. If you don't 
+  find the requested package, you may consider 
+  `creating a Pull request to add it`_.
+  
+  .. _python.yaml file in rosdep: https://github.com/ros/rosdistro/blob/master/rosdep/python.yaml
+  .. _creating a Pull request to add it: http://docs.ros.org/independent/api/rosdep/html/contributing_rules.html
+
 Using package.xml in setup.py
 =============================
 
@@ -99,6 +123,12 @@ one distributes to pypi.
 
     catkin_install_python(PROGRAMS scripts/myscript
       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+.. note::
+
+  See the note in previous section about the otherwise useful
+  field ``requires`` that's usually a part of distutils setup.
+  *Do not use it* in ROS.
 
 
 Develspace limitations
