@@ -1,4 +1,4 @@
-macro(em_expand context_in context_out em_file_in file_out)
+function(em_expand context_in context_out em_file_in file_out)
   assert_file_exists("${context_in}" "input file for context missing")
   assert_file_exists("${em_file_in}" "template file missing")
   debug_message(2 "configure_file(${context_in}, ${context_out})")
@@ -28,4 +28,4 @@ macro(em_expand context_in context_out em_file_in file_out)
     -F ${context_out}
     -o ${file_out}
     ${em_file_in})
-endmacro()
+endfunction()
