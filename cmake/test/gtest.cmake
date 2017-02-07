@@ -117,7 +117,9 @@ if(NOT GTEST_FOUND)
       get_filename_component(_CATKIN_GTEST_BASE_DIR ${_CATKIN_GTEST_SOURCE_DIR} PATH)
       # add CMakeLists.txt from gtest dir
       set(_CATKIN_GTEST_BINARY_DIR ${CMAKE_BINARY_DIR}/gtest)
-      add_subdirectory(${_CATKIN_GTEST_BASE_DIR} ${_CATKIN_GTEST_BINARY_DIR})
+      add_library(gtest SHARED ${_CATKIN_GTEST_SOURCE_DIR}/gtest-all.cc)
+      target_include_directories(gtest PRIVATE ${_CATKIN_GTEST_BASE_DIR})
+      add_library(gtest_main SHARED ${_CATKIN_GTEST_SOURCE_DIR}/gtest_main.cc)
       # mark gtest targets with EXCLUDE_FROM_ALL to only build when tests are built which depend on them
       set_target_properties(gtest gtest_main PROPERTIES EXCLUDE_FROM_ALL 1)
       get_filename_component(_CATKIN_GTEST_INCLUDE_DIR ${_CATKIN_GTEST_INCLUDE} PATH)
