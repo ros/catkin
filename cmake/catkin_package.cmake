@@ -384,7 +384,7 @@ function(_catkin_package)
     foreach(def ${PROJECT_DEFINES})
       list(APPEND definitions "-D${def}")
     endforeach()
-    list_append_keys_from(PKG_COMPILE_OPTIONS definitions)
+    list_insert_options(PKG_COMPILE_OPTIONS ${definitions} CONTEXT PROJECT_DEFINES)
 
     # generate devel space config for project
     set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)
