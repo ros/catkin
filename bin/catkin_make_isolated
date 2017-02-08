@@ -53,7 +53,7 @@ def parse_args(args=None):
         help='Disables colored output (only for catkin_make and CMake)')
     pkg = parser.add_mutually_exclusive_group(required=False)
     pkg.add_argument('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
-                     help="Invoke 'make' on specific packages "
+                     help="Process only specific packages "
                           "(only after catkin_make_isolated has been invoked before with the same install flag)")
     pkg.add_argument('--from-pkg', metavar='PKGNAME', dest='from_package',
                      help='Restart catkin_make_isolated at the given package continuing from there '
