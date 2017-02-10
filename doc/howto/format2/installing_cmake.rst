@@ -10,6 +10,9 @@ want to export::
 
   catkin_package(CFG_EXTRAS your_macros.cmake your_modules.cmake)
 
+When another package uses ``find_package()`` on this package, the listed
+CMake files are automatically included.
+
 Since these data are platform-independent, they should be installed in
 your package's **share/** subtree.  This example assumes your CMake
 sources are in the customary **cmake/** subdirectory::
