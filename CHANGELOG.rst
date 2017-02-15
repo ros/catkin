@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.5 (2017-02-14)
+------------------
 * update --pkg help for catkin_make_isolated (`#853 <https://github.com/ros/catkin/issues/853>`_)
 * add skipped / disabled tests to catkin_test_results summary (`#848 <https://github.com/ros/catkin/issues/848>`_)
 * use functions instead of macros where possible to avoid leaking variables (`#835 <https://github.com/ros/catkin/issues/835>`_)
