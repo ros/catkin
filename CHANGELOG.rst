@@ -2,6 +2,14 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* update --pkg help for catkin_make_isolated (`#853 <https://github.com/ros/catkin/issues/853>`_)
+* add skipped / disabled tests to catkin_test_results summary (`#848 <https://github.com/ros/catkin/issues/848>`_)
+* use functions instead of macros where possible to avoid leaking variables (`#835 <https://github.com/ros/catkin/issues/835>`_)
+* write output of parsing package xml as UTF-8 for Python 3 (`#828 <https://github.com/ros/catkin/issues/828>`_)
+* update documentation
+
 0.7.4 (2016-09-25)
 ------------------
 * fix regression in logic to select make / ninja for CMake packages from 0.7.2 (`#826 <https://github.com/ros/catkin/issues/826>`_)
