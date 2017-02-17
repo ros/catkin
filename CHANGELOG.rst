@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.6 (2017-02-17)
+------------------
 * skip gtest install rules for newer gtest versions (`#857 <https://github.com/ros/catkin/issues/857>`_)
 
 0.7.5 (2017-02-14)
