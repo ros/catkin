@@ -117,7 +117,19 @@ if(NOT GTEST_FOUND)
       get_filename_component(_CATKIN_GTEST_BASE_DIR ${_CATKIN_GTEST_SOURCE_DIR} PATH)
       # add CMakeLists.txt from gtest dir
       set(_CATKIN_GTEST_BINARY_DIR ${CMAKE_BINARY_DIR}/gtest)
+
+      # overwrite CMake install command to skip install rules for gtest targets
+      # which have been added in version 1.8.0
+      set(_CATKIN_SKIP_INSTALL_RULES TRUE)
+      function(install)
+        if(_CATKIN_SKIP_INSTALL_RULES)
+          return()
+        endif()
+        _install(${ARGN})
+      endfunction()
       add_subdirectory(${_CATKIN_GTEST_BASE_DIR} ${_CATKIN_GTEST_BINARY_DIR})
+      set(_CATKIN_SKIP_INSTALL_RULES FALSE)
+
       # mark gtest targets with EXCLUDE_FROM_ALL to only build when tests are built which depend on them
       set_target_properties(gtest gtest_main PROPERTIES EXCLUDE_FROM_ALL 1)
       get_filename_component(_CATKIN_GTEST_INCLUDE_DIR ${_CATKIN_GTEST_INCLUDE} PATH)
