@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* skip gtest install rules for newer gtest versions (`#857 <https://github.com/ros/catkin/issues/857>`_)
+
 0.7.5 (2017-02-14)
 ------------------
 * update --pkg help for catkin_make_isolated (`#853 <https://github.com/ros/catkin/issues/853>`_)
