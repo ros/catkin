@@ -160,7 +160,7 @@ Public CMake functions / macros
  .. note:: The test can be executed by calling ``nosetests``
    directly or using:
    `` make run_tests_${PROJECT_NAME}_nosetests_${dir}``
-   (where slashes in the ``dir`` are replaced with underscores)
+   (where slashes in the ``dir`` are replaced with periods)
 
  :param path: a relative or absolute directory to search for
    nosetests in or a relative or absolute file containing tests
@@ -374,8 +374,10 @@ Public CMake functions / macros
  :param CFG_EXTRAS: a CMake file containing extra stuff that should
    be accessible to users of this package after
    ``find_package``\ -ing it.  This file must live in the
-   subdirectory ``cmake`` or be an absolute path.  Various additional
-   file extension are possible:
+   subdirectory ``cmake`` or be an absolute path.
+   All passed extra files must have unique basenames since they are
+   being installed into a single folder.
+   Various additional file extension are possible:
    for a plain cmake file just ``.cmake``, for files expanded using
    CMake's ``configure_file()`` use ``.cmake.in`` or for files expanded
    by empy use ``.cmake.em``.  The templates can distinguish between
