@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.19 (2017-03-06)
+-------------------
 * update --pkg help for catkin_make_isolated (`#853 <https://github.com/ros/catkin/issues/853>`_)
 * add skipped / disabled tests to catkin_test_results summary (`#848 <https://github.com/ros/catkin/issues/848>`_)
 * fix rollback logic for more than one value per environment variable and workspace (`#819 <https://github.com/ros/catkin/issues/819>`_)
