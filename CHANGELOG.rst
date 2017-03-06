@@ -2,6 +2,16 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* update --pkg help for catkin_make_isolated (`#853 <https://github.com/ros/catkin/issues/853>`_)
+* add skipped / disabled tests to catkin_test_results summary (`#848 <https://github.com/ros/catkin/issues/848>`_)
+* fix rollback logic for more than one value per environment variable and workspace (`#819 <https://github.com/ros/catkin/issues/819>`_)
+* fix quoting of paths to handle spaces (`#808 <https://github.com/ros/catkin/issues/808>`_)
+* improve doc about catkin_package(CFG_EXTRAS) (`#805 <https://github.com/ros/catkin/issues/805>`_)
+* doc: fix format 2 howto to suggest to declare a build export dependency on "message_runtime"
+* update documentation (`#847 <https://github.com/ros/catkin/pull/847>`_ `#849 <https://github.com/ros/catkin/pull/849>`_ `#854 <https://github.com/ros/catkin/pull/854>`_)
+
 0.6.18 (2016-03-18)
 -------------------
 * expose format 2 style dependencies as CMake variables (`#787 <https://github.com/ros/catkin/issues/787>`_)
