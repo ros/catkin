@@ -96,12 +96,18 @@ def _get_missing_junit_result_filename(filename):
 
 
 def read_junit(filename):
+    """Same as `read_junit2` except it doesn't return num_skipped."""
+    num_tests, num_errors, num_failures, _ = read_junit2(filename)
+    return (num_tests, num_errors, num_failures)
+
+
+def read_junit2(filename):
     """
     parses xml file expected to follow junit/gtest conventions
     see http://code.google.com/p/googletest/wiki/AdvancedGuide#Generating_an_XML_Report
 
     :param filename: str junit xml file name
-    :returns: num_tests, num_errors, num_failures
+    :returns: num_tests, num_errors, num_failures, num_skipped
     :raises ParseError: if xml is not well-formed
     :raises IOError: if filename does not exist
     """
@@ -110,17 +116,29 @@ def read_junit(filename):
     num_tests = int(root.attrib['tests'])
     num_errors = int(root.attrib['errors'])
     num_failures = int(root.attrib['failures'])
-    return (num_tests, num_errors, num_failures)
+    num_skipped = int(root.get('skip', '0')) + int(root.get('disabled', '0'))
+    return (num_tests, num_errors, num_failures, num_skipped)
 
 
 def test_results(test_results_dir, show_verbose=False, show_all=False):
+    """Same as `test_results2` except the returned values don't include num_skipped."""
+    results = {}
+    results2 = test_results2(
+        test_results_dir, show_verbose=show_verbose, show_all=show_all)
+    for name, values in results2.items():
+        num_tests, num_errors, num_failures, _ = values
+        results[name] = (num_tests, num_errors, num_failures)
+    return results
+
+
+def test_results2(test_results_dir, show_verbose=False, show_all=False):
     '''
     Collects test results by parsing all xml files in given path,
     attempting to interpret them as junit results.
 
     :param test_results_dir: str foldername
     :param show_verbose: bool show output for tests which had errors or failed
-    :returns: dict {rel_path, (num_tests, num_errors, num_failures)}
+    :returns: dict {rel_path, (num_tests, num_errors, num_failures, num_skipped)}
     '''
     results = {}
     for dirpath, dirnames, filenames in os.walk(test_results_dir):
@@ -130,12 +148,12 @@ def test_results(test_results_dir, show_verbose=False, show_all=False):
             filename_abs = os.path.join(dirpath, filename)
             name = filename_abs[len(test_results_dir) + 1:]
             try:
-                num_tests, num_errors, num_failures = read_junit(filename_abs)
+                num_tests, num_errors, num_failures, num_skipped = read_junit2(filename_abs)
             except Exception as e:
                 if show_all:
                     print('Skipping "%s": %s' % (name, str(e)))
                 continue
-            results[name] = (num_tests, num_errors, num_failures)
+            results[name] = (num_tests, num_errors, num_failures, num_skipped)
             if show_verbose and (num_errors + num_failures > 0):
                 print("Full test results for '%s'" % (name))
                 print('-------------------------------------------------')
@@ -146,35 +164,68 @@ def test_results(test_results_dir, show_verbose=False, show_all=False):
 
 
 def aggregate_results(results, callback_per_result=None):
+    """Same as `aggregate_results2` except it doesn't return num_skipped."""
+    callback = None
+    if callback_per_result is not None:
+        def callback(name, num_tests, num_errors, num_failures, num_skipped):
+            callback_per_result(name, num_tests, num_errors, num_failures)
+    sum_tests, sum_errors, sum_failures, _ = aggregate_results2(
+        results, callback_per_result=callback)
+    return (sum_tests, sum_errors, sum_failures)
+
+
+def aggregate_results2(results, callback_per_result=None):
     """
     Aggregate results
 
     :param results: dict as from test_results()
-    :returns: tuple (num_tests, num_errors, num_failures)
+    :returns: tuple (num_tests, num_errors, num_failures, num_skipped)
     """
-    sum_tests = sum_errors = sum_failures = 0
+    sum_tests = sum_errors = sum_failures = sum_skipped = 0
     for name in sorted(results.keys()):
-        (num_tests, num_errors, num_failures) = results[name]
+        (num_tests, num_errors, num_failures, num_skipped) = results[name]
         sum_tests += num_tests
         sum_errors += num_errors
         sum_failures += num_failures
+        sum_skipped += num_skipped
         if callback_per_result:
-            callback_per_result(name, num_tests, num_errors, num_failures)
-    return sum_tests, sum_errors, sum_failures
+            callback_per_result(
+                name, num_tests, num_errors, num_failures, num_skipped)
+    return sum_tests, sum_errors, sum_failures, sum_skipped
 
 
 def print_summary(results, show_stable=False, show_unstable=True):
+    """Same as `print_summary2` except it doesn't print skipped tests."""
+    print_summary2(
+        results, show_stable=show_stable, show_unstable=show_unstable,
+        print_skipped=False)
+
+
+def print_summary2(results, show_stable=False, show_unstable=True, print_skipped=True):
     """
     print summary to stdout
 
     :param results: dict as from test_results()
     :param show_stable: print tests without failures extra
     :param show_stable: print tests with failures extra
+    :param print_skipped: include skipped tests in output
     """
-    def callback(name, num_tests, num_errors, num_failures):
-        if show_stable and not num_errors and not num_failures:
+    def callback(name, num_tests, num_errors, num_failures, num_skipped):
+        if show_stable and not num_errors and not num_failures and not num_skipped:
             print('%s: %d tests' % (name, num_tests))
-        if show_unstable and (num_errors or num_failures):
-            print('%s: %d tests, %d errors, %d failures' % (name, num_tests, num_errors, num_failures))
-    sum_tests, sum_errors, sum_failures = aggregate_results(results, callback)
-    print('Summary: %d tests, %d errors, %d failures' % (sum_tests, sum_errors, sum_failures))
+        if show_unstable and (num_errors or num_failures or num_skipped):
+            msg = '{}: {} tests, {} errors, {} failures'
+            msg_args = [name, num_tests, num_errors, num_failures]
+            if print_skipped:
+                msg += ', {} skipped'
+                msg_args.append(num_skipped)
+            print(msg.format(*msg_args))
+    sum_tests, sum_errors, sum_failures, sum_skipped = aggregate_results2(results, callback)
+
+    msg = 'Summary: {} tests, {} errors, {} failures'
+    msg_args = [sum_tests, sum_errors, sum_failures]
+    if print_skipped:
+        msg += ', {} skipped'
+        msg_args.append(sum_skipped)
+
+    print(msg.format(*msg_args))
