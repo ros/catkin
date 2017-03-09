@@ -15,6 +15,17 @@
 # :outvar <packagename>_VERSION: the version number
 # :outvar <packagename>_MAINTAINER: the name and email of the
 #   maintainer(s)
+# :outvar <packagename>_PACKAGE_FORMAT: the format version of the manifest
+# :outvar <packagename>_<dep_type>_DEPENDS: the dependencies of a specific
+#   type, the following types are available: BUILD, BUILD_EXPORT, BUILDTOOL,
+#   BUILDTOOL_EXPORT, EXEC, RUN, TEST, DOC
+# :outvar <packagename>_<dep_type>_DEPENDS_<dep_name>_VERSION_<ver_type>: for
+#   each dependency which has a version range specified the version number is
+#   provided, the following version types are available: LT, LTE, EQ, GTE, GT
+# :outvar <packagename>_URL_WEBSITE: the url(s) of type `website`
+# :outvar <packagename>_URL_BUGTRACKER: the url(s) of type `bugtracker`
+# :outvar <packagename>_URL_REPOSITORY: the url(s) of type `repository`
+# :outvar <packagename>_DEPRECATED: `TRUE` if the package is deprecated
 # :outvar _CATKIN_CURRENT_PACKAGE: the name of the package from the
 #   manifest
 #

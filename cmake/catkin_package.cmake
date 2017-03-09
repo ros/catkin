@@ -235,6 +235,10 @@ function(_catkin_package)
   # package maintainer provided by package.cmake/xml
   set(PROJECT_MAINTAINER ${${PROJECT_NAME}_MAINTAINER})
 
+  # urls provided by package.cmake/xml
+  set(PROJECT_URL_WEBSITE ${${PROJECT_NAME}_URL_WEBSITE})
+  set(PROJECT_URL_BUGTRACKER ${${PROJECT_NAME}_URL_BUGTRACKER})
+
   # get library paths from all workspaces
   set(lib_paths "")
   foreach(workspace ${CATKIN_WORKSPACES})
