@@ -28,6 +28,7 @@ class ParsePackageXmlTest(unittest.TestCase):
         pack.run_depends = ['rd1', 'rd2']
         pack.test_depends = ['td1', 'td2']
         pack.doc_depends = ['dd1', 'dd2']
+        pack.urls = []
         pack.exports = []
         result = _get_output(pack)
         self.assertEqual(
@@ -45,6 +46,9 @@ class ParsePackageXmlTest(unittest.TestCase):
                 'set(foopack_RUN_DEPENDS "rd1" "rd2")',
                 'set(foopack_TEST_DEPENDS "td1" "td2")',
                 'set(foopack_DOC_DEPENDS "dd1" "dd2")',
+                'set(foopack_URL_BUGTRACKER "")',
+                'set(foopack_URL_REPOSITORY "")',
+                'set(foopack_URL_WEBSITE "")',
             ]),
             set(result))
 
@@ -60,6 +64,9 @@ class ParsePackageXmlTest(unittest.TestCase):
 <description>foo</description>
 <maintainer email='foo@bar.com'>foo</maintainer>
 <license>foo</license>
+<url type="bugtracker">http://www.example.com/issues</url>
+<url type="repository">http://www.example.com/repo</url>
+<url type="website">http://www.example.com</url>
 <run_depend>rd1</run_depend>
 <run_depend>rd2</run_depend>
 <build_depend>bd1</build_depend>
@@ -84,6 +91,9 @@ class ParsePackageXmlTest(unittest.TestCase):
                     'set(foopack_RUN_DEPENDS "rd1" "rd2")',
                     'set(foopack_TEST_DEPENDS )',
                     'set(foopack_DOC_DEPENDS )',
+                    'set(foopack_URL_BUGTRACKER "http://www.example.com/issues")',
+                    'set(foopack_URL_REPOSITORY "http://www.example.com/repo")',
+                    'set(foopack_URL_WEBSITE "http://www.example.com")',
                 ]),
                 set(contents.splitlines()))
         finally:
