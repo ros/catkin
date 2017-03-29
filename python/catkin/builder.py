@@ -341,7 +341,7 @@ def build_catkin_package(
     path, package,
     workspace, buildspace, develspace, installspace,
     install, force_cmake, quiet, last_env, cmake_args, make_args,
-    destdir=None, use_ninja=False
+    destdir=None, use_ninja=False, use_nmake=False
 ):
     cprint(
         "Processing @{cf}catkin@| package: '@!@{bf}" +
@@ -403,10 +403,13 @@ def build_catkin_package(
     else:
         print('%s exists, skipping explicit cmake invocation...' % makefile_name)
         # Check to see if cmake needs to be run via make
-        if not use_ninja:
-            make_check_cmake_cmd = ['make', 'cmake_check_build_system']
-        else:
+        if use_ninja:
             make_check_cmake_cmd = ['ninja', 'build.ninja']
+        elif use_nmake:
+            make_check_cmake_cmd = ['nmake', 'cmake_check_build_system']
+        else:
+            make_check_cmake_cmd = ['make', 'cmake_check_build_system']
+
         add_env = get_additional_environment(install, destdir, installspace)
         isolation_print_command(' '.join(make_check_cmake_cmd), build_dir, add_env=add_env)
         if last_env is not None:
@@ -416,10 +419,13 @@ def build_catkin_package(
         )
 
     # Run make
-    if not use_ninja:
-        make_executable = 'make'
-    else:
+    if use_ninja:
         make_executable = 'ninja'
+    elif use_nmake:
+        make_executable = 'nmake'
+    else:
+        make_executable = 'make'
+
     make_cmd = [make_executable]
     make_cmd.extend(handle_make_arguments(make_args))
     isolation_print_command(' '.join(make_cmd), build_dir)
@@ -428,7 +434,8 @@ def build_catkin_package(
     run_command(make_cmd, build_dir, quiet)
 
     # Make install
-    if install:
+    # NMake doesn't have an option to list target so try it anyway
+    if install or use_nmake:
         if has_make_target(build_dir, 'install', use_ninja=use_ninja):
             make_install_cmd = [make_executable, 'install']
             isolation_print_command(' '.join(make_install_cmd), build_dir)
@@ -465,7 +472,7 @@ def build_cmake_package(
     path, package,
     workspace, buildspace, develspace, installspace,
     install, force_cmake, quiet, last_env, cmake_args, make_args,
-    destdir=None, use_ninja=False
+    destdir=None, use_ninja=False, use_nmake=False
 ):
     # Notify the user that we are processing a plain cmake package
     cprint(
@@ -507,10 +514,13 @@ def build_cmake_package(
     else:
         print('%s exists, skipping explicit cmake invocation...' % makefile_name)
         # Check to see if cmake needs to be run via make
-        if not use_ninja:
-            make_check_cmake_cmd = ['make', 'cmake_check_build_system']
-        else:
+        if use_ninja:
             make_check_cmake_cmd = ['ninja', 'build.ninja']
+        elif use_nmake:
+            make_check_cmake_cmd = ['nmake', 'cmake_check_build_system']
+        else:
+            make_check_cmake_cmd = ['make', 'cmake_check_build_system']
+
         isolation_print_command(' '.join(make_check_cmake_cmd), build_dir)
         if last_env is not None:
             make_check_cmake_cmd = [last_env] + make_check_cmake_cmd
@@ -520,9 +530,11 @@ def build_cmake_package(
 
     # Run make
     if not use_ninja:
-        make_executable = 'make'
-    else:
         make_executable = 'ninja'
+    elif use_nmake:
+        make_executable = 'nmake'
+    else:
+        make_executable = 'make'
     make_cmd = [make_executable]
     make_cmd.extend(handle_make_arguments(make_args))
     isolation_print_command(' '.join(make_cmd), build_dir)
@@ -739,6 +751,7 @@ def build_workspace_isolated(
     only_pkg_with_deps=None,
     destdir=None,
     use_ninja=False,
+    use_nmake=False,
     override_build_tool_check=False
 ):
     '''
@@ -775,6 +788,7 @@ def build_workspace_isolated(
         ``[str]``
     :param destdir: define DESTDIR for cmake/invocation, ``string``
     :param use_ninja: if True, use ninja instead of make, ``bool``
+    :param use_nmake: if True, use nmake instead of make, ``bool``
     :param override_build_tool_check: if True, build even if a space was built
         by another tool previously.
     '''
@@ -847,12 +861,14 @@ def build_workspace_isolated(
         cmake_args = []
 
     if not [arg for arg in cmake_args if arg.startswith('-G')]:
-        if not use_ninja:
-            cmake_args += ['-G', 'Unix Makefiles']
-        else:
+        if use_ninja:
             cmake_args += ['-G', 'Ninja']
-    elif use_ninja:
-        print(colorize_line("Error: either specify a generator using '-G...' or '--use-ninja' but not both"))
+        elif use_nmake:
+            cmake_args += ['-G', 'NMake Makefiles']
+        else:
+            cmake_args += ['-G', 'Unix Makefiles']
+    elif use_ninja or use_nmake:
+        print(colorize_line("Error: either specify a generator using '-G...' or '--use-[ninja|nmake]' but not both"))
         sys.exit(1)
 
     if make_args:

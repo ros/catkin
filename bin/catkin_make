@@ -173,12 +173,14 @@ def main():
             args.pkg = [name for name in args.pkg if name in packages_by_name]
 
     if not [arg for arg in cmake_args if arg.startswith('-G')]:
-        if not args.use_ninja:
-            cmake_args += ['-G', 'Unix Makefiles']
-        else:
+        if args.use_ninja:
             cmake_args += ['-G', 'Ninja']
-    elif args.use_ninja:
-        return fmt("@{rf}Error: either specify a generator using '-G...' or '--use-ninja' but not both")
+        elif args.use_nmake:
+            cmake_args += ['-G', 'NMake Makefiles']
+        else:
+            cmake_args += ['-G', 'Unix Makefiles']
+    elif args.use_ninja or args.use_nmake:
+        return fmt("@{rf}Error: either specify a generator using '-G...' or '--use-[ninja|nmake]' but not both")
 
     # check if cmake must be run (either for a changed list of package paths or changed cmake arguments)
     force_cmake = cmake_input_changed(packages, build_path, cmake_args=cmake_args)
@@ -203,10 +205,12 @@ def main():
         except subprocess.CalledProcessError:
             return fmt('@{rf}Invoking @{boldon}"cmake"@{boldoff} failed')
     else:
-        if not args.use_ninja:
-            cmd = ['make', 'cmake_check_build_system']
-        else:
+        if args.use_ninja:
             cmd = ['ninja', 'build.ninja']
+        elif args.use_nmake:
+            cmd = ['nmake', 'cmake_check_build_system']
+        else:
+            cmd = ['make', 'cmake_check_build_system']
         try:
             print_command_banner(cmd, build_path, color=not args.no_color)
             if args.no_color:
@@ -219,10 +223,12 @@ def main():
     ensure_workspace_marker(base_path)
 
     # invoke make
-    if not args.use_ninja:
-        cmd = ['make']
-    else:
+    if args.use_ninja:
         cmd = ['ninja']
+    elif args.use_nmake:
+        cmd = ['nmake']
+    else:
+        cmd = ['make']
     cmd.extend(handle_make_arguments(args.make_args))
     try:
         if not args.pkg:
@@ -259,6 +265,7 @@ def _parse_args(args=sys.argv[1:]):
     add('--source', help="The path to the source space (default 'workspace_base/src')")
     add('--build', help="The path to the build space (default 'workspace_base/build')")
     add('--use-ninja', action='store_true', help="Use 'ninja' instead of 'make'")
+    add('--use-nmake', action='store_true', help="Use 'nmake' instead of 'make'")
     add('--force-cmake', action='store_true', help="Invoke 'cmake' even if it has been executed before")
     add('--no-color', action='store_true', help='Disables colored output (only for catkin_make and CMake)')
     add('--pkg', nargs='+', help="Invoke 'make' on specific packages only")
