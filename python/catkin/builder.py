@@ -42,6 +42,7 @@ try:
 except ImportError:
     from pipes import quote
 import stat
+from datetime import datetime, timedelta
 try:
     from StringIO import StringIO
 except ImportError:
@@ -183,6 +184,7 @@ def print_command_banner(cmd, cwd, color):
         print('####')
 
 
+start_time = datetime.utcnow()
 def run_command_colorized(cmd, cwd, quiet=False, add_env=None):
     run_command(cmd, cwd, quiet=quiet, colorize=True, add_env=add_env)
 
@@ -235,7 +237,8 @@ def run_command(cmd, cwd, quiet=False, colorize=False, add_env=None):
                 traceback.print_exc()
                 print('<caktin_make> color formatting problem: ' + str(e),
                       file=sys.stderr)
-            out.write(line)
+            elapsed_time = datetime.utcnow() - start_time
+            out.write(str(timedelta(days=elapsed_time.days, seconds=elapsed_time.seconds)) + " " + line)
     proc.wait()
     if proc.returncode:
         if quiet:
