@@ -36,8 +36,8 @@ def main():
     if args.no_color:
         disable_ANSI_colors()
 
-    # use PWD in order to work when being invoked in a symlinked location
-    cwd = os.getenv('PWD', os.curdir)
+    # remove possible symlinks from the working directory
+    cwd = os.path.realpath(os.curdir)
 
     # verify that the base path is known
     base_path = os.path.abspath(os.path.join(cwd, args.directory))
