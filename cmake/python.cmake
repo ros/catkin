@@ -10,32 +10,20 @@ message(STATUS "Using PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
 
 set(_PYTHON_PATH_VERSION_SUFFIX "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
 
-set(enable_setuptools_deb_layout OFF)
-if(EXISTS "/etc/debian_version")
-  set(enable_setuptools_deb_layout ON)
-endif()
-option(SETUPTOOLS_DEB_LAYOUT "Enable debian style python package layout" ${enable_setuptools_deb_layout})
+# setuptools is fussy about windows paths, make sure the install prefix is in native format
+file(TO_NATIVE_PATH "${CMAKE_INSTALL_PREFIX}" SETUPTOOLS_INSTALL_PREFIX)
 
-if(SETUPTOOLS_DEB_LAYOUT)
-  message(STATUS "Using Debian Python package layout")
-  set(PYTHON_PACKAGES_DIR dist-packages)
-  set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb")
-  # use major version only when installing 3.x with debian layout
-  if("${PYTHON_VERSION_MAJOR}" STREQUAL "3")
-    set(_PYTHON_PATH_VERSION_SUFFIX "${PYTHON_VERSION_MAJOR}")
-  endif()
-else()
-  message(STATUS "Using default Python package layout")
-  set(PYTHON_PACKAGES_DIR site-packages)
-  # setuptools is fussy about windows paths, make sure the install prefix is in native format
-  file(TO_NATIVE_PATH "${CMAKE_INSTALL_PREFIX}" SETUPTOOLS_INSTALL_PREFIX)
+# PYTHON_INSTALL_DIR needs to be in PYTHONPATH when 'setup.py install'
+# is called, and it needs to match. setuptools won't tell us where it will
+# install things, so we'll ask Python. Becuase this has to match
+# python/catkin/builder.py exactly, we let Python handle the work.
+execute_process(COMMAND "${PYTHON_EXECUTABLE}"
+    "-c" "from distutils.sysconfig import get_python_lib; import os; python_install_dir = os.sep.join(get_python_lib().split(os.sep)[-2 if os.name == 'nt' else -3:]); print(python_install_dir)"
+  RESULT_VARIABLE _res
+  OUTPUT_VARIABLE PYTHON_INSTALL_DIR
+  OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(NOT _res EQUAL 0)
+  message(FATAL_ERROR "Determine PYTHON_INSTALL_DIR failed")
 endif()
+message(STATUS "Using PYTHON_INSTALL_DIR: " ${PYTHON_INSTALL_DIR})
 
-if(NOT WIN32)
-  set(PYTHON_INSTALL_DIR lib/python${_PYTHON_PATH_VERSION_SUFFIX}/${PYTHON_PACKAGES_DIR}
-    CACHE INTERNAL "This needs to be in PYTHONPATH when 'setup.py install' is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
-else()
-  # Windows setuptools installs to lib/site-packages not lib/python2.7/site-packages
-  set(PYTHON_INSTALL_DIR lib/${PYTHON_PACKAGES_DIR}
-    CACHE INTERNAL "This needs to be in PYTHONPATH when 'setup.py install' is called.  And it needs to match.  But setuptools won't tell us where it will install things.")
-endif()
