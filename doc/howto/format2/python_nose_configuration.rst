@@ -17,8 +17,7 @@ Declare each nose test like this::
     catkin_add_nosetests(tests/test_your_node.py)
   endif()
 
-This example assumes your tests are defined in the ``tests/``
-subdirectory in your source tree.
+For more info, please have a look at the :ref:`API <catkin_add_nosetests_ref>`.
 
 You can also let nosetest find all tests recursively::
 
