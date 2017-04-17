@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# catkin_make_ws
+#
+# Author: Alex Wallar <alex@wallar.me>
+#
+# Runs catkin_make in your catkin workspace from any directory meaning you
+# no longer have to cd back to ~/catkin_ws/
+#
+# NOTE: Environment variable $CATKIN_WS to be defined
+# $ export CATKIN_WS=<root directory of your catkin workspace>
+#
+# Example usage:
+#   $ cd ~/catkin_ws/src/my_awesome_package
+#   $ catkin_make_ws
+
+if [[ $CATKIN_WS ]]; then
+    echo CATKIN_WS=$CATKIN_WS
+    catkin_make -C $CATKIN_WS $@
+else
+    echo -e '\033[0;31m'
+    echo CATKIN_WS needs to be set to your catkin workspace
+    echo Try running export CATKIN_WS=\<root directory of your catkin workspace\>
+    echo To make this persistent, you can put this export in your bashrc file
+    echo -e '\033[0m'
+fi
