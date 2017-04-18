@@ -39,8 +39,9 @@ import sys
 import distutils.core
 try:
     import setuptools
+    SETUPTOOLS = True
 except ImportError:
-    pass
+    SETUPTOOLS = False
 
 from argparse import ArgumentParser
 
@@ -151,7 +152,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     return result
 
 
-def _create_mock_setup_function(package_name, outfile):
+def _create_mock_setup_function(package_name, outfile, install_dir, script_dir):
     """
     Creates a function to call instead of distutils.core.setup or
     setuptools.setup, which just captures some args and writes them
@@ -175,9 +176,9 @@ def _create_mock_setup_function(package_name, outfile):
         pkgs = kwargs.get('packages', [])
         scripts = kwargs.get('scripts', [])
         modules = kwargs.get('py_modules', [])
+        entry_points = kwargs.get('entry_points', {})
 
         unsupported_args = [
-            'entry_points',
             'exclude_package_data',
             'ext_modules ',
             'ext_package',
@@ -199,6 +200,51 @@ def _create_mock_setup_function(package_name, outfile):
         with open(outfile, 'w') as out:
             out.write('\n'.join(result))
 
+        # setuptools is required below
+        if not SETUPTOOLS:
+            return
+
+        attrs = dict(
+            name=package_name,
+            version=version,
+            package_dir=package_dir,
+            packages=pkgs,
+            scripts=scripts,
+            py_modules=modules,
+            entry_points=entry_points,
+        )
+
+        from distutils.dist import Distribution
+        dist = Distribution(attrs)
+        dist.script_name = 'setup.py'
+
+        # egg_info command
+        from setuptools.command.egg_info import egg_info
+        class mock_egg_info(egg_info):
+            def finalize_options(self):
+                self.egg_name = package_name
+                self.egg_version = version
+                self.egg_base = install_dir
+                self.egg_info = os.path.join(
+                    self.egg_base, '%s-%s.egg-info' % (package_name, version))
+        cmd_egg_info = mock_egg_info(dist)
+        cmd_egg_info.finalize_options()
+        cmd_egg_info.run()
+
+        # easy_install command
+        import pkg_resources
+        from setuptools.command.easy_install import easy_install
+        class mock_easy_install(easy_install):
+            def finalize_options(self):
+                self.script_dir = script_dir
+                self.outputs = []
+        metadata = pkg_resources.PathMetadata(cmd_egg_info.egg_base, cmd_egg_info.egg_info)
+        dist_pkg_resources = pkg_resources.Distribution(install_dir, project_name=package_name, metadata=metadata)
+        cmd_easy_install = mock_easy_install(dist)
+        cmd_easy_install.finalize_options()
+        # TODO: support cmd.run()
+        cmd_easy_install.install_wrapper_scripts(dist_pkg_resources)
+
     return setup
 
 
@@ -210,6 +256,8 @@ def main():
     parser.add_argument('package_name', help='Name of catkin package')
     parser.add_argument('setupfile_path', help='Full path to setup.py')
     parser.add_argument('outfile', help='Where to write result to')
+    parser.add_argument('install_dir', help='Python install directory')
+    parser.add_argument('script_dir', help='Python scripts directory')
 
     args = parser.parse_args()
 
@@ -230,7 +278,9 @@ def main():
     # context of evaluating setup.py
     try:
         fake_setup = _create_mock_setup_function(package_name=args.package_name,
-                                                outfile=args.outfile)
+                                                 outfile=args.outfile,
+                                                 install_dir=args.install_dir,
+                                                 script_dir=args.script_dir)
 
         distutils_backup = distutils.core.setup
         distutils.core.setup = fake_setup
