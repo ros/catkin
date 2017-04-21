@@ -14,6 +14,7 @@ simultaneously, use
                cpp_common rostime roscpp_traits
                roscpp_serialization sensor_msgs)
   include_directories(${catkin_INCLUDE_DIRS})
+  add_definitions(${catkin_DEFINITIONS})
 
   add_executable(myexec ...)
   target_link_libraries(myexec ${catkin_LIBRARIES})
