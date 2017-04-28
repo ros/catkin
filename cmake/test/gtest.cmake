@@ -100,7 +100,7 @@ if(NOT GTEST_FOUND)
     endif()
     find_file(_CATKIN_GTEST_SRC "gtest.cc"
       PATHS ${_paths}
-      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+      NO_DEFAULT_PATH)
 
     # fall back to system installed path (i.e. on Ubuntu)
     set(_paths "/usr/include/gtest")
@@ -110,7 +110,7 @@ if(NOT GTEST_FOUND)
     endif()
     find_file(_CATKIN_GTEST_INCLUDE "gtest.h"
       PATHS ${_paths}
-      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+      NO_DEFAULT_PATH)
 
     if(_CATKIN_GTEST_SRC)
       get_filename_component(_CATKIN_GTEST_SOURCE_DIR ${_CATKIN_GTEST_SRC} PATH)
