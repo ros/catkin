@@ -37,11 +37,7 @@ import os
 import sys
 
 import distutils.core
-try:
-    import setuptools
-    SETUPTOOLS = True
-except ImportError:
-    SETUPTOOLS = False
+import setuptools
 
 from argparse import ArgumentParser
 
@@ -201,10 +197,6 @@ def _create_mock_setup_function(package_name, outfile, install_dir, script_dir):
                                      modules=modules)
         with open(outfile, 'w') as out:
             out.write('\n'.join(result))
-
-        # setuptools is required below
-        if not SETUPTOOLS:
-            return
 
         attrs = dict(
             name=package_name,
