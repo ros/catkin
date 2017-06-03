@@ -81,9 +81,9 @@ endif()
 if(CMAKE_CROSSCOMPILING)
   if("@DEVELSPACE@" STREQUAL "TRUE")
     # can not disable host filesystem altogether; otherwise files in src/devel are no longer found
-    set(FIND_XXX_LOCATION_OPTION CMAKE_FIND_ROOT_PATH_BOTH)
+    set(_find_root_path_both CMAKE_FIND_ROOT_PATH_BOTH)
   else()
-    set(FIND_XXX_LOCATION_OPTION)
+    set(_find_root_path_both)
   endif()
 endif()
 
@@ -111,7 +111,7 @@ if(NOT "@PROJECT_CMAKE_CONFIG_INCLUDE_DIRS@ " STREQUAL " ")
       # use find_path to locate absolute path nested under potential root path
       find_path(include_dir_path ${idir_name}
         PATHS ${idir_path}
-        NO_DEFAULT_PATH ${FIND_XXX_LOCATION_OPTION})
+        NO_DEFAULT_PATH ${_find_root_path_both})
       if(NOT include_dir_path)
         message(FATAL_ERROR "Project '@PROJECT_NAME@' specifies '${idir}' as an include dir, which is not found.  It does not exist in any of the root filesystems.  Ask the maintainer '@PROJECT_MAINTAINER@' to fix it.")
       endif()
@@ -144,7 +144,7 @@ foreach(library ${libraries})
     # use find_library to locate library given by absolute path nested under potential root path
     find_library(lib ${lib_name}
       PATHS ${lib_path}
-      NO_DEFAULT_PATH ${FIND_XXX_LOCATION_OPTION})
+      NO_DEFAULT_PATH ${_find_root_path_both})
     if(NOT lib)
       message(FATAL_ERROR "Project '${PROJECT_NAME}' tried to find library '${library}'.  The library is neither a target nor built/installed properly.  Did you compile project '@PROJECT_NAME@'?  Did you find_package() it before the subdirectory containing its code is included?")
     endif()
