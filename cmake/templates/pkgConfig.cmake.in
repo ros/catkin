@@ -159,9 +159,9 @@ foreach(library ${libraries})
     foreach(path @PKG_CONFIG_LIB_PATHS@)
       find_library(lib ${library}
         PATHS ${path}
-        NO_DEFAULT_PATH)
+        NO_DEFAULT_PATH ${_find_root_path_both})
       if(lib)
-        set(lib_path ${path})
+        get_filename_component(lib_path ${lib} DIRECTORY)
         break()
       endif()
     endforeach()
