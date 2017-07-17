@@ -7,8 +7,10 @@
 #    For use with CMake ``link_directories(${catkin_INCLUDE_DIRS})``.
 # :outvar catkin_LIBRARIES: contains the libraries of all searched components.
 #    For use with CMake ``target_link_libraries(<target> ${catkin_LIBRARIES})``.
-# :outvar <comp>_INCLUDE_DIRS/_LIBRARY_DIRS/_LIBRARIES:
-#    contains the include dirs / library dirs / libraries of the searched component <comp>.
+# :outvar catkin_COMPILE_OPTIONS: contains the definitions of all searched components.
+#    For use with CMake ``add_compile_options(${catkin_COMPILE_OPTIONS})``.
+# :outvar <comp>_INCLUDE_DIRS/_LIBRARY_DIRS/_LIBRARIES/_COMPILE_OPTIONS:
+#    contains the include dirs / library dirs / libraries / compile options of the searched component <comp>.
 
 if(CATKIN_TOPLEVEL_FIND_PACKAGE OR NOT CATKIN_TOPLEVEL)
   set(catkin_EXTRAS_DIR "@PKG_CMAKE_DIR@")
@@ -49,6 +51,7 @@ if(NOT _CATKIN_FIND_ OR _CATKIN_FIND_ EQUAL 0)
     set(catkin_LIBRARIES "")
     set(catkin_LIBRARY_DIRS "")
     set(catkin_EXPORTED_TARGETS "")
+    set(catkin_COMPILE_OPTIONS "")
   endif()
 endif()
 
@@ -103,6 +106,7 @@ if(catkin_FIND_COMPONENTS)
 
       list_append_unique(catkin_LIBRARY_DIRS ${${component}_LIBRARY_DIRS})
       list(APPEND catkin_EXPORTED_TARGETS ${${component}_EXPORTED_TARGETS})
+      list_insert_options(catkin_COMPILE_OPTIONS ${${component}_COMPILE_OPTIONS} CONTEXT ${component}_COMPILE_OPTIONS)
     endif()
   endforeach()
   list_insert_in_workspace_order(catkin_INCLUDE_DIRS ${catkin_INCLUDE_DIRS})

@@ -35,6 +35,8 @@
 #   variables (``<name>_FOUND``, ``<name>_INCLUDE_DIRS``, etc.) have the
 #   same case as this argument.
 # :type DEPENDS: list of strings
+# :param COMPILE_OPTIONS: a list of exported compiler option, format: -option[=value] 
+# :type COMPILE_OPTIONS: list of strings
 # :param CFG_EXTRAS: a CMake file containing extra stuff that should
 #   be accessible to users of this package after
 #   ``find_package``\ -ing it.  This file must live in the
@@ -75,6 +77,7 @@
 #     LIBRARIES projlib1 projlib2
 #     CATKIN_DEPENDS roscpp
 #     DEPENDS Eigen
+#     COMPILE_OPTIONS -DMYDEFINE=1
 #     CFG_EXTRAS proj-extras[.cmake|.cmake.in|.cmake(.develspace|.installspace)?.em]
 #   )
 #
@@ -103,7 +106,7 @@ macro(catkin_package)
 endmacro()
 
 function(_catkin_package)
-  cmake_parse_arguments(PROJECT "SKIP_CMAKE_CONFIG_GENERATION;SKIP_PKG_CONFIG_GENERATION" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;CFG_EXTRAS;EXPORTED_TARGETS" ${ARGN})
+  cmake_parse_arguments(PROJECT "SKIP_CMAKE_CONFIG_GENERATION;SKIP_PKG_CONFIG_GENERATION" "" "INCLUDE_DIRS;LIBRARIES;CATKIN_DEPENDS;DEPENDS;COMPILE_OPTIONS;CFG_EXTRAS;EXPORTED_TARGETS" ${ARGN})
   if(PROJECT_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_package() called with unused arguments: ${PROJECT_UNPARSED_ARGUMENTS}")
   endif()
@@ -377,6 +380,11 @@ function(_catkin_package)
         message(FATAL_ERROR "catkin_package() could not find target '${t}' for code generation.")
       endif()
     endforeach()
+
+    set(PKG_COMPILE_OPTIONS ${${PROJECT_NAME}_COMPILE_OPTIONS})
+    separate_arguments(PKG_COMPILE_OPTIONS)
+    separate_arguments(PROJECT_COMPILE_OPTIONS)
+    list_insert_options(PKG_COMPILE_OPTIONS ${PROJECT_COMPILE_OPTIONS} CONTEXT PROJECT_COMPILE_OPTIONS)
 
     # generate devel space config for project
     set(infile ${${PROJECT_NAME}_EXTRAS_DIR}/${PROJECT_NAME}Config.cmake.in)

@@ -128,6 +128,7 @@ foreach(filename
     list_append_deduplicate
     list_append_unique
     list_insert_in_workspace_order
+    list_insert_options
     safe_execute_process
     stamp
     string_starts_with
