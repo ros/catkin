@@ -7,7 +7,7 @@
 # :param ARGN: options to be inserted
 # :type ARGN: list key[=value] strings
 #
-# :param CONTEXT: context to be printen in case of erros
+# :param CONTEXT: context to be printen in case of errors
 # :type CONTEXT: string
 #
 # :param LEVEL: level of the error message
