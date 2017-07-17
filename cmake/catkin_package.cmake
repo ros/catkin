@@ -34,7 +34,7 @@
 #   This requires that it has been ``find_package``\ -ed before and all
 #   variables (``<name>_FOUND``, ``<name>_INCLUDE_DIRS``, etc.) have the
 #   same case as this argument.
-# :type COMPILE_OPTIONS: list of strings
+# :type DEPENDS: list of strings
 # :param COMPILE_OPTIONS: a list of exported compiler option, format: -option[=value] 
 # :type COMPILE_OPTIONS: list of strings
 # :param CFG_EXTRAS: a CMake file containing extra stuff that should
