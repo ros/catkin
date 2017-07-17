@@ -34,6 +34,7 @@
 
 from __future__ import print_function
 import os
+import runpy
 import sys
 
 import distutils.core
@@ -240,14 +241,7 @@ def main():
         except NameError:
             pass
 
-        with open(args.setupfile_path, 'r') as fh:
-            local_vars = {
-                '__doc__': None,
-                '__file__': os.path.abspath(args.setupfile_path),
-                '__name__': '__main__',
-                '__package__': None,
-            }
-            exec(fh.read(), {}, local_vars)
+        runpy.run_path(args.setupfile_path)
     finally:
         distutils.core.setup = distutils_backup
         try:
