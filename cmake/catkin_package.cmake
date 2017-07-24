@@ -411,7 +411,7 @@ function(_catkin_package)
     string_starts_with("${idir}/" "${CATKIN_DEVEL_PREFIX}/" _is_devel_prefix)
     if(_is_source_prefix OR _is_build_prefix OR _is_devel_prefix)
       # generated header files should be places in the devel space rather then in the build space
-      if(_is_build_prefix)
+      if(_is_build_prefix AND NOT _is_devel_prefix)
         message(WARNING "catkin_package() include dir '${idir}' should be placed in the devel space instead of the build space")
       endif()
       # the value doesn't matter as long as it doesn't match IS_ABSOLUTE
