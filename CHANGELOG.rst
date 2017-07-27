@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.7 (2017-07-27)
+------------------
 * fix warning in case devel space is nested in the build space (`#880 <https://github.com/ros/catkin/pull/880>`_)
 * remove workaround using -l:<libpath> necessary for older pkg-config versions (`#879 <https://github.com/ros/catkin/issues/879>`_)
 * replace exec call with runpy.run_path (`#873 <https://github.com/ros/catkin/issues/873>`_)
