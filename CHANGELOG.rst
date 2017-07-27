@@ -2,6 +2,14 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix warning in case devel space is nested in the build space (`#880 <https://github.com/ros/catkin/pull/880>`_)
+* remove workaround using -l:<libpath> necessary for older pkg-config versions (`#879 <https://github.com/ros/catkin/issues/879>`_)
+* replace exec call with runpy.run_path (`#873 <https://github.com/ros/catkin/issues/873>`_)
+* use environment variable to extend environment in plain shell (`#862 <https://github.com/ros/catkin/issues/862>`_)
+* prefer reporting problems to bugtracker / website before maintainer (`#861 <https://github.com/ros/catkin/issues/861>`_)
+
 0.7.6 (2017-02-17)
 ------------------
 * skip gtest install rules for newer gtest versions (`#857 <https://github.com/ros/catkin/issues/857>`_)
