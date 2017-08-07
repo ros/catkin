@@ -20,8 +20,8 @@
 
   <depend>python-argparse</depend>
   <depend version_gt="0.2.9">python-catkin-pkg</depend>
-  <depend>python-setuptools</depend>
   <depend>python-pkg-resources</depend>
+  <depend>python-setuptools</depend>
 
   <build_depend>python-empy</build_depend>
 
