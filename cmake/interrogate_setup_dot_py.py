@@ -214,29 +214,26 @@ def _create_mock_setup_function(package_name, outfile, install_dir, script_dir):
 
         # egg_info command
         from setuptools.command.egg_info import egg_info
-        class mock_egg_info(egg_info):
-            def finalize_options(self):
-                self.egg_name = package_name
-                self.egg_version = version
-                self.egg_base = install_dir
-                self.egg_info = os.path.join(
-                    self.egg_base, '%s-%s.egg-info' % (package_name, version))
-        cmd_egg_info = mock_egg_info(dist)
+        cmd_egg_info = egg_info(dist)
+        # overwrite egg_base from package_dir to install_dir
+        # in order to create *.egg-info directory in the install_dir
+        cmd_egg_info.egg_base = install_dir
+        # make sure install directory exists
+        # because egg_info command assumes that
+        if not os.path.exists(install_dir):
+            os.makedirs(install_dir)
         cmd_egg_info.finalize_options()
         cmd_egg_info.run()
 
         # easy_install command
         import pkg_resources
         from setuptools.command.easy_install import easy_install
-        class mock_easy_install(easy_install):
-            def finalize_options(self):
-                self.script_dir = script_dir
-                self.outputs = []
+        cmd_easy_install = easy_install(dist)
+        # overwrite script_dir and not call finalize_options method
+        # to avoid many assertions of easy_install command like check_site_dir
+        cmd_easy_install.script_dir = script_dir
         metadata = pkg_resources.PathMetadata(cmd_egg_info.egg_base, cmd_egg_info.egg_info)
         dist_pkg_resources = pkg_resources.Distribution(install_dir, project_name=package_name, metadata=metadata)
-        cmd_easy_install = mock_easy_install(dist)
-        cmd_easy_install.finalize_options()
-        # TODO: support cmd.run()
         cmd_easy_install.install_wrapper_scripts(dist_pkg_resources)
 
     return setup
