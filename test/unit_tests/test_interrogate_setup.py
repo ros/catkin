@@ -111,36 +111,24 @@ class InterrogateSetupTest(unittest.TestCase):
                           modules=[])
 
     def test_interrogate_setup_py(self):
-        # setup python packages
         curdir = os.getcwd()
-        workdir = tempfile.mkdtemp()
-        # src/foo/__init__.py package
-        os.makedirs(os.path.join(workdir, 'src/foo'))
-        open(os.path.join(workdir, 'src/foo/__init__.py'), 'w')
-        # foo/__init__.py, foo/bin/foo
-        # bar/__init__.py, bar/nodes/bar
-        os.mkdir(os.path.join(workdir, 'foo'))
-        open(os.path.join(workdir, 'foo/__init__.py'), 'w')
-        os.makedirs(os.path.join(workdir, 'foo/bin'))
-        open(os.path.join(workdir, 'foo/bin/foo'), 'w')
-        os.makedirs(os.path.join(workdir, 'bar'))
-        open(os.path.join(workdir, 'bar/__init__.py'), 'w')
-        os.makedirs(os.path.join(workdir, 'bar/nodes'))
-        open(os.path.join(workdir, 'bar/nodes/bar'), 'w')
-        # src/__init__.py, lib/__init__.py
-        open(os.path.join(workdir, 'src/__init__.py'), 'w')
-        os.makedirs(os.path.join(workdir, 'lib'))
-        open(os.path.join(workdir, 'lib/__init__.py'), 'w')
-        # change directory for testing
-        os.chdir(workdir)
         try:
-            rootdir = tempfile.mkdtemp()
-            outfile = os.path.join(rootdir, 'out.cmake')
-            install_dir = os.path.join(rootdir, 'lib/python/dist-packages')
-            script_dir = os.path.join(rootdir, 'bin')
+            # srcdir: where package source is installed
+            srcdir = tempfile.mkdtemp()
+            os.chdir(srcdir)
+
+            # develdir: where built outputs are installed
+            develdir = tempfile.mkdtemp()
+            outfile = os.path.join(develdir, 'out.cmake')
+            install_dir = os.path.join(develdir, 'lib/python/dist-packages')
+            script_dir = os.path.join(develdir, 'bin')
+
+            # check raises about the undefined version
             fake_setup = _create_mock_setup_function('foo', outfile, install_dir, script_dir)
             self.assertRaises(RuntimeError, fake_setup, package_dir={'': 'src'})
+
             # simple setup
+            _create_empty_files(['src/foo/__init__.py'])
             fake_setup(version='0.1.1', package_dir={'': 'src'})
             self.assertTrue(os.path.isfile(outfile))
             with open(outfile, 'r') as fhand:
@@ -152,7 +140,9 @@ set(foo_SETUP_PY_PACKAGE_DIRS "")
 set(foo_SETUP_PY_MODULES "")
 set(foo_SETUP_PY_MODULE_DIRS "")""", contents)
             os.remove(outfile)
+
             # packages and scripts
+            _create_empty_files(['foo/__init__.py', 'foo/bin/foo', 'bar/__init__.py', 'bar/nodes/bar'])
             fake_setup(version='0.1.1', package_dir={}, packages=['foo', 'bar'], scripts=['bin/foo', 'nodes/bar'])
             self.assertTrue(os.path.isfile(outfile))
             with open(outfile, 'r') as fhand:
@@ -164,7 +154,9 @@ set(foo_SETUP_PY_PACKAGE_DIRS "foo;bar")
 set(foo_SETUP_PY_MODULES "")
 set(foo_SETUP_PY_MODULE_DIRS "")""", contents)
             os.remove(outfile)
+
             # packages and package_dir
+            _create_empty_files(['src/__init__.py', 'lib/bin/foo'])
             fake_setup(version='0.1.1', package_dir={'foo': 'src', 'bar': 'lib'}, packages=['foo', 'bar'],)
             self.assertTrue(os.path.isfile(outfile))
             with open(outfile, 'r') as fhand:
@@ -177,5 +169,14 @@ set(foo_SETUP_PY_MODULES "")
 set(foo_SETUP_PY_MODULE_DIRS "")""", contents)
             os.remove(outfile)
         finally:
-            shutil.rmtree(rootdir)
+            shutil.rmtree(develdir)
+            shutil.rmtree(srcdir)
             os.chdir(curdir)
+
+
+def _create_empty_files(filenames):
+    for fname in filenames:
+        directory = os.path.dirname(fname)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        open(fname, 'w')
