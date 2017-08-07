@@ -208,7 +208,7 @@ def _create_mock_setup_function(package_name, outfile, install_dir, script_dir):
             entry_points=entry_points,
         )
 
-        from distutils.dist import Distribution
+        from setuptools.dist import Distribution
         dist = Distribution(attrs)
         dist.script_name = 'setup.py'
 
