@@ -38,7 +38,10 @@ def prompt_continue(msg, default):
 
     while True:
         _flush_stdin()
-        response = raw_input(msg)
+        try:
+            response = raw_input(msg)
+        except EOFError:
+            response = ''
         if not response:
             response = 'y' if default else 'n'
         else:
