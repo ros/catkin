@@ -42,10 +42,22 @@ call %_SETUP_TMP%
 del %_SETUP_TMP%
 
 REM source all environment hooks
-for /F "tokens=* delims=;" %%a in ("%_CATKIN_ENVIRONMENT_HOOKS%") do (
-  for %%b in (%%a) do (
-    call "%%b"
-  )
+set _HOOK_COUNT=0
+:hook_loop
+IF %_HOOK_COUNT% LSS %_CATKIN_ENVIRONMENT_HOOKS_COUNT% (
+  REM set workspace for environment hook
+  call set _CATKIN_ENV_HOOK_WORKSPACE=%%_CATKIN_ENVIRONMENT_HOOKS_%_HOOK_COUNT%_WORKSPACE%%
+  call set _CATKIN_ENVIRONMENT_HOOKS_%_HOOK_COUNT%_WORKSPACE=
+
+  REM call environment hook
+  call %%_CATKIN_ENVIRONMENT_HOOKS_%_HOOK_COUNT%%%
+  call set _CATKIN_ENVIRONMENT_HOOKS_%_HOOK_COUNT%%=
+  
+  REM Cleanup local variables
+  set _CATKIN_ENV_HOOK_WORKSPACE=
+  
+  set /a _HOOK_COUNT=%_HOOK_COUNT%+1
+  goto :hook_loop
 )
 
 REM 3rdparty packages often put dll's into lib (convention is bin) and 
@@ -56,4 +68,5 @@ REM unset temporary variables
 set _SETUP_UTIL=
 set _PYTHON=
 set _SETUP_TMP=
-set _CATKIN_ENVIRONMENT_HOOKS=
+set _CATKIN_ENVIRONMENT_HOOKS_COUNT=
+set _HOOK_COUNT=
