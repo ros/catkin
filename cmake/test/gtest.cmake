@@ -115,8 +115,8 @@ function(catkin_find_gtest_source include_paths src_paths found base_dir
 
   # Find the gtest sources
   find_file(_GTEST_SOURCES "gtest.cc"
-           PATHS ${src_paths}
-           NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
+            PATHS ${src_paths}
+            NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
   )
 
   # If we found gtest, set the variables accordingly
@@ -163,8 +163,8 @@ function(catkin_find_gmock_source include_paths src_paths found base_dir
 
   # Find the gmock sources
   find_file(_GMOCK_SOURCES "gmock.cc"
-           PATHS ${src_paths}
-           NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
+            PATHS ${src_paths}
+            NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
   )
 
   # If we found gmock, ensure gtest is contained within it
