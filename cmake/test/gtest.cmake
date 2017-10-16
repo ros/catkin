@@ -172,25 +172,15 @@ function(catkin_find_gmock_source include_paths src_paths found base_dir
     get_filename_component(SOURCE_DIR ${_GMOCK_SOURCES} PATH)
     get_filename_component(BASE_DIR ${SOURCE_DIR} PATH)
 
-    catkin_find_gtest_source("${BASE_DIR}/gtest/include/gtest"
-                             "${BASE_DIR}/gtest/src" gtest_found
-                             gtest_base_dir gtest_include_dir gtest_lib_dir
-                             gtest_libs gtest_main_libs)
+    get_filename_component(INCLUDE_DIR ${_GMOCK_INCLUDES} PATH)
+    get_filename_component(INCLUDE_DIR ${INCLUDE_DIR} PATH)
 
-    # If we found gtest, finding gmock succeeded
-    if(gtest_found)
-      get_filename_component(INCLUDE_DIR ${_GMOCK_INCLUDES} PATH)
-      get_filename_component(INCLUDE_DIR ${INCLUDE_DIR} PATH)
-
-      set(${found} TRUE PARENT_SCOPE)
-      set(${base_dir} ${BASE_DIR} PARENT_SCOPE)
-      set(${include_dir} ${gtest_include_dir} ${INCLUDE_DIR} PARENT_SCOPE)
-      set(${lib_dir} ${CMAKE_BINARY_DIR}/gmock PARENT_SCOPE)
-      set(${libs} "gmock" PARENT_SCOPE)
-      set(${main_libs} "gmock_main" PARENT_SCOPE)
-    else()
-      message(WARNING "Found gmock, but it did not contain gtest! Please ensure gmock is installed correctly.")
-    endif()
+    set(${found} TRUE PARENT_SCOPE)
+    set(${base_dir} ${BASE_DIR} PARENT_SCOPE)
+    set(${include_dir} ${gtest_include_dir} ${INCLUDE_DIR} PARENT_SCOPE)
+    set(${lib_dir} ${CMAKE_BINARY_DIR}/gmock PARENT_SCOPE)
+    set(${libs} "gmock" PARENT_SCOPE)
+    set(${main_libs} "gmock_main" PARENT_SCOPE)
   endif()
 endfunction()
 
