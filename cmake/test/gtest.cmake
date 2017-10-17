@@ -172,15 +172,37 @@ function(catkin_find_gmock_source include_paths src_paths found base_dir
     get_filename_component(SOURCE_DIR ${_GMOCK_SOURCES} PATH)
     get_filename_component(BASE_DIR ${SOURCE_DIR} PATH)
 
-    get_filename_component(INCLUDE_DIR ${_GMOCK_INCLUDES} PATH)
-    get_filename_component(INCLUDE_DIR ${INCLUDE_DIR} PATH)
+    set(_gtest_include_paths "/usr/include/gtest")
+    if(CATKIN_TOPLEVEL)
+      # Ensure current workspace is searched before system path
+      list(INSERT _gtest_include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/include/gtest")
+    endif()
 
-    set(${found} TRUE PARENT_SCOPE)
-    set(${base_dir} ${BASE_DIR} PARENT_SCOPE)
-    set(${include_dir} ${gtest_include_dir} ${INCLUDE_DIR} PARENT_SCOPE)
-    set(${lib_dir} ${CMAKE_BINARY_DIR}/gmock PARENT_SCOPE)
-    set(${libs} "gmock" PARENT_SCOPE)
-    set(${main_libs} "gmock_main" PARENT_SCOPE)
+    set(_gtest_source_paths "/usr/src/gtest/src")
+    if(CATKIN_TOPLEVEL)
+      # Ensure current workspace is searched before system path
+      list(INSERT _gtest_source_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/src")
+    endif()
+
+    catkin_find_gtest_source("${_gtest_include_paths}"
+                             "${_gtest_source_paths}" gtest_found
+                             gtest_base_dir gtest_include_dir gtest_lib_dir
+                             gtest_libs gtest_main_libs)
+
+    # If we found gtest, finding gmock succeeded
+    if(gtest_found)
+      get_filename_component(INCLUDE_DIR ${_GMOCK_INCLUDES} PATH)
+      get_filename_component(INCLUDE_DIR ${INCLUDE_DIR} PATH)
+
+      set(${found} TRUE PARENT_SCOPE)
+      set(${base_dir} ${BASE_DIR} PARENT_SCOPE)
+      set(${include_dir} ${gtest_include_dir} ${INCLUDE_DIR} PARENT_SCOPE)
+      set(${lib_dir} ${CMAKE_BINARY_DIR}/gmock PARENT_SCOPE)
+      set(${libs} "gmock" PARENT_SCOPE)
+      set(${main_libs} "gmock_main" PARENT_SCOPE)
+    else()
+      message(WARNING "Found gmock, but it did not contain gtest! Please ensure gmock is installed correctly.")
+    endif()
   endif()
 endfunction()
 
@@ -194,13 +216,13 @@ if(NOT GMOCK_FOUND)
       set(_include_paths "/usr/include/gmock")
       if(CATKIN_TOPLEVEL)
         # Ensure current workspace is searched before system path
-        list(INSERT _include_paths 0 "${CMAKE_SOURCE_DIR}/gmock/include/gmock")
+        list(INSERT _include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googlemock/include/gmock")
       endif()
 
       set(_source_paths "/usr/src/gmock/src")
       if(CATKIN_TOPLEVEL)
         # Ensure current workspace is searched before system path
-        list(INSERT _source_paths 0 "${CMAKE_SOURCE_DIR}/gmock/src")
+        list(INSERT _source_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googlemock/src")
       endif()
 
       catkin_find_gmock_source("${_include_paths}" "${_source_paths}" gmock_found
@@ -236,13 +258,13 @@ if(NOT GMOCK_FOUND)
         set(_include_paths "/usr/include/gtest")
         if(CATKIN_TOPLEVEL)
           # search in the current workspace before
-          list(INSERT _include_paths 0 "${CMAKE_SOURCE_DIR}/gtest/include/gtest")
+          list(INSERT _include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/include/gtest")
         endif()
 
         set(_source_paths "/usr/src/gtest/src")
         if(CATKIN_TOPLEVEL)
           # search in the current workspace before
-          list(INSERT _source_paths 0 "${CMAKE_SOURCE_DIR}/gtest/src")
+          list(INSERT _source_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/src")
         endif()
 
         catkin_find_gtest_source("${_include_paths}" "${_source_paths}" gtest_found
@@ -274,7 +296,7 @@ if(NOT GMOCK_FOUND)
           message(STATUS "Found gtest sources under '${gtest_base_dir}': gtests will be built")
         else()
           if(CATKIN_TOPLEVEL)
-            message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system or checkout gtest (by running 'svn checkout http://googletest.googlecode.com/svn/tags/release-1.6.0 gtest' in the source space '${CMAKE_SOURCE_DIR}' of your workspace) to enable gtests")
+            message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system or checkout gtest (by running 'git clone  https://github.com/google/googletest.git -b release-1.8.0' in the source space '${CMAKE_SOURCE_DIR}' of your workspace) to enable gtests")
           else()
             message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system to enable gtests")
           endif()
