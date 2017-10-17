@@ -167,7 +167,7 @@ function(catkin_find_gmock_source include_paths src_paths found base_dir
             NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
   )
 
-  # If we found gmock, ensure gtest is contained within it
+  # If we found gmock, set the variables accordingly
   if(_GMOCK_INCLUDES AND _GMOCK_SOURCES)
     get_filename_component(SOURCE_DIR ${_GMOCK_SOURCES} PATH)
     get_filename_component(BASE_DIR ${SOURCE_DIR} PATH)
@@ -208,7 +208,7 @@ if(NOT GMOCK_FOUND)
                                gmock_libs gmock_main_libs)
 
       # If we found gmock, set it up to be built (which will also build gtest,
-      # since it's bundled)
+      # since it's included by gmock's CMakeLists.txt)
       if(gmock_found)
         set(GMOCK_FROM_SOURCE_FOUND ${gmock_found} CACHE INTERNAL "")
         set(GMOCK_FROM_SOURCE_INCLUDE_DIRS ${gmock_include_dir} CACHE INTERNAL "")
