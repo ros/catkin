@@ -253,7 +253,7 @@ if(NOT GMOCK_FOUND)
         set_target_properties(${gmock_libs} ${gmock_main_libs}
                               PROPERTIES EXCLUDE_FROM_ALL 1)
 
-        message(STATUS "Found gmock sources under '${gmock_base_dir}': gtests will be built")
+        message(STATUS "Found gmock sources under '${gmock_base_dir}': gmock and gtests will be built")
       else() # gmock not found-- look for system-installed gtest by itself
         set(_include_paths "/usr/include/gtest")
         if(CATKIN_TOPLEVEL)
@@ -345,7 +345,7 @@ if(NOT GMOCK_FOUND)
     set(GTEST_BOTH_LIBRARIES ${GTEST_BOTH_LIBRARIES} CACHE INTERNAL "")
   endif()
 else()
-  message(STATUS "Found gmock: gtests will be built")
+  message(STATUS "Found gmock: gmock and gtests will be built")
   add_library(gmock UNKNOWN IMPORTED)
   set_target_properties(gmock PROPERTIES IMPORTED_LOCATION "${GMOCK_LIBRARIES}")
   add_library(gmock_main UNKNOWN IMPORTED)
