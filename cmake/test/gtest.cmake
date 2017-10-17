@@ -216,6 +216,8 @@ if(NOT GMOCK_FOUND)
         set(GMOCK_FROM_SOURCE_LIBRARIES ${gmock_libs} CACHE INTERNAL "")
         set(GMOCK_FROM_SOURCE_MAIN_LIBRARIES ${gmock_main_libs} CACHE INTERNAL "")
 
+        # overwrite CMake install command to skip install rules for gtest targets
+        # which have been added in version 1.8.0
         set(_CATKIN_SKIP_INSTALL_RULES TRUE)
         function(install)
           if(_CATKIN_SKIP_INSTALL_RULES)
@@ -254,6 +256,9 @@ if(NOT GMOCK_FOUND)
           set(GTEST_FROM_SOURCE_LIBRARIES ${gtest_libs} CACHE INTERNAL "")
           set(GTEST_FROM_SOURCE_MAIN_LIBRARIES ${gtest_main_libs} CACHE INTERNAL "")
 
+
+          # overwrite CMake install command to skip install rules for gtest targets
+          # which have been added in version 1.8.0
           set(_CATKIN_SKIP_INSTALL_RULES TRUE)
           function(install)
             if(_CATKIN_SKIP_INSTALL_RULES)
