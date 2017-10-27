@@ -2,16 +2,14 @@ _generate_function_if_testing_is_disabled("catkin_add_gtest")
 _generate_function_if_testing_is_disabled("catkin_add_gmock")
 
 #
-# Add a GTest or GMock based test target. This is an internal function, 
-# use catkin_add_gtest or catkin_add_gmock
+# Add a GTest based test target.
 #
 # An executable target is created with the source files, it is linked
-# against GTest or GMock and added to the set of unit tests.
+# against GTest and added to the set of unit tests.
 #
 # .. note:: The test can be executed by calling the binary directly
 #   or using: ``make run_tests_${PROJECT_NAME}_gtest_${target}``
 #
-# :param type: "gmock" or "gtest" 
 # :param target: the target name
 # :type target: string
 # :param source_files: a list of source files used to build the test
@@ -24,6 +22,44 @@ _generate_function_if_testing_is_disabled("catkin_add_gmock")
 # :type WORKING_DIRECTORY: string
 #
 # @public
+#
+function(catkin_add_gtest target)
+  _catkin_add_google_test("gtest" ${target} ${ARGN})
+endfunction()
+
+#
+# Add a GMock based test target.
+#
+# An executable target is created with the source files, it is linked
+# against GTest and GMock and added to the set of unit tests.
+#
+# .. note:: The test can be executed by calling the binary directly
+#   or using: ``make run_tests_${PROJECT_NAME}_gtest_${target}``
+#
+# :param target: the target name
+# :type target: string
+# :param source_files: a list of source files used to build the test
+#   executable
+# :type source_files: list of strings
+# :param TIMEOUT: currently not supported
+# :type TIMEOUT: integer
+# :param WORKING_DIRECTORY: the working directory when executing the
+#   executable
+# :type WORKING_DIRECTORY: string
+#
+# @public
+#
+function(catkin_add_gmock target)
+  _catkin_add_google_test("gmock" ${target} ${ARGN})
+endfunction()
+
+#
+# This is an internal function, use catkin_add_gtest or catkin_add_gmock
+# instead.
+#
+# :param type: "gmock" or "gtest" 
+# The remaining arguments are the same as for catkin_add_gtest and
+# catkin_add_gmock.
 #
 function(_catkin_add_google_test type target)
   if (NOT "${type}" STREQUAL "gmock" AND NOT "${type}" STREQUAL "gtest")
@@ -50,24 +86,14 @@ function(_catkin_add_google_test type target)
   endif()
 endfunction()
 
-function(catkin_add_gtest target)
-  _catkin_add_google_test("gtest" ${target} ${ARGN})
-endfunction()
-
-function(catkin_add_gmock target)
-  _catkin_add_google_test("gmock" ${target} ${ARGN})
-endfunction()
-
 #
-# Add a GTest or GMock executable target. This is an internal function, 
-# use catkin_add_gtest or catkin_add_gmock
+# Add a GTest executable target.
 #
 # An executable target is created with the source files, it is linked
-# against GTest or GMock.
+# against GTest.
 # If you also want to register the executable as a test use
 # ``catkin_add_gtest()`` instead.
 #
-# :param type: "gmock" or "gtest" 
 # :param target: the target name
 # :type target: string
 # :param source_files: a list of source files used to build the test
@@ -76,6 +102,40 @@ endfunction()
 #
 # Additionally, the option EXCLUDE_FROM_ALL can be specified.
 # @public
+#
+function(catkin_add_executable_with_gtest target)
+  _catkin_add_executable_with_google_test("gtest" ${target} ${ARGN})
+endfunction()
+
+#
+# Add a GMock executable target.
+#
+# An executable target is created with the source files, it is linked
+# against GTest and GMock.
+# If you also want to register the executable as a test use
+# ``catkin_add_gtest()`` instead.
+#
+# :param target: the target name
+# :type target: string
+# :param source_files: a list of source files used to build the test
+#   executable
+# :type source_files: list of strings
+#
+# Additionally, the option EXCLUDE_FROM_ALL can be specified.
+# @public
+#
+function(catkin_add_executable_with_gmock target)
+  _catkin_add_executable_with_google_test("gmock" ${target} ${ARGN})
+endfunction()
+
+#
+# This is an internal function, use catkin_add_executable_with_gtest
+# or catkin_add_executable_with_gmock instead.
+#
+# :param type: "gmock" or "gtest" 
+# The remaining arguments are the same as for
+# catkin_add_executable_with_gtest and
+# catkin_add_executable_with_gmock.
 #
 function(_catkin_add_executable_with_google_test type target)
   if (NOT "${type}" STREQUAL "gmock" AND NOT "${type}" STREQUAL "gtest")
@@ -113,14 +173,6 @@ function(_catkin_add_executable_with_google_test type target)
 
   # make sure gtest is built before the target
   add_dependencies(${target} ${${type_upper}_LIBRARIES})
-endfunction()
-
-function(catkin_add_executable_with_gtest target)
-  _catkin_add_executable_with_google_test("gtest" ${target} ${ARGN})
-endfunction()
-
-function(catkin_add_executable_with_gmock target)
-  _catkin_add_executable_with_google_test("gmock" ${target} ${ARGN})
 endfunction()
 
 #
