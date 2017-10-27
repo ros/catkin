@@ -1,14 +1,17 @@
 _generate_function_if_testing_is_disabled("catkin_add_gtest")
+_generate_function_if_testing_is_disabled("catkin_add_gmock")
 
 #
-# Add a GTest based test target.
+# Add a GTest or GMock based test target. This is an internal function, 
+# use catkin_add_gtest or catkin_add_gmock
 #
 # An executable target is created with the source files, it is linked
-# against GTest and added to the set of unit tests.
+# against GTest or GMock and added to the set of unit tests.
 #
 # .. note:: The test can be executed by calling the binary directly
 #   or using: ``make run_tests_${PROJECT_NAME}_gtest_${target}``
 #
+# :param type: "gmock" or "gtest" 
 # :param target: the target name
 # :type target: string
 # :param source_files: a list of source files used to build the test
@@ -22,16 +25,19 @@ _generate_function_if_testing_is_disabled("catkin_add_gtest")
 #
 # @public
 #
-function(catkin_add_gtest target)
-  _warn_if_skip_testing("catkin_add_gtest")
+function(_catkin_add_google_test type target)
+  if (NOT "${type}" STREQUAL "gmock" AND NOT "${type}" STREQUAL "gtest")
+    message(FATAL_ERROR "Invalid use of _catkin_add_google_test function, first argument must be gtest or gmock")
+  endif()
+  _warn_if_skip_testing("catkin_add_${type}")
 
   # XXX look for optional TIMEOUT argument, #2645
   cmake_parse_arguments(ARG "" "TIMEOUT;WORKING_DIRECTORY" "" ${ARGN})
   if(ARG_TIMEOUT)
-    message(WARNING "TIMEOUT argument to catkin_add_gtest() is ignored")
+    message(WARNING "TIMEOUT argument to catkin_add_${type}() is ignored")
   endif()
 
-  catkin_add_executable_with_gtest(${target} ${ARG_UNPARSED_ARGUMENTS} EXCLUDE_FROM_ALL)
+  _catkin_add_executable_with_google_test(${type} ${target} ${ARG_UNPARSED_ARGUMENTS} EXCLUDE_FROM_ALL)
 
   if(TARGET ${target})
     # make sure the target is built before running tests
@@ -44,14 +50,24 @@ function(catkin_add_gtest target)
   endif()
 endfunction()
 
+function(catkin_add_gtest target)
+  _catkin_add_google_test("gtest" ${target} ${ARGN})
+endfunction()
+
+function(catkin_add_gmock target)
+  _catkin_add_google_test("gmock" ${target} ${ARGN})
+endfunction()
+
 #
-# Add a GTest executable target.
+# Add a GTest or GMock executable target. This is an internal function, 
+# use catkin_add_gtest or catkin_add_gmock
 #
 # An executable target is created with the source files, it is linked
-# against GTest.
+# against GTest or GMock.
 # If you also want to register the executable as a test use
 # ``catkin_add_gtest()`` instead.
 #
+# :param type: "gmock" or "gtest" 
 # :param target: the target name
 # :type target: string
 # :param source_files: a list of source files used to build the test
@@ -61,31 +77,50 @@ endfunction()
 # Additionally, the option EXCLUDE_FROM_ALL can be specified.
 # @public
 #
-function(catkin_add_executable_with_gtest target)
-  if(NOT GTEST_FOUND AND NOT GTEST_FROM_SOURCE_FOUND)
-    message(WARNING "skipping gtest '${target}' in project '${PROJECT_NAME}'")
+function(_catkin_add_executable_with_google_test type target)
+  if (NOT "${type}" STREQUAL "gmock" AND NOT "${type}" STREQUAL "gtest")
+    message(FATAL_ERROR "Invalid use of _catkin_add_executable_google_test function, first argument must be gtest or gmock")
+  endif()
+  string(TOUPPER ${type} type_upper)
+  if(NOT ${type_upper}_FOUND AND NOT ${type_upper}_FROM_SOURCE_FOUND)
+    message(WARNING "skipping ${type} '${target}' in project '${PROJECT_NAME}' because ${type} was not found")
     return()
   endif()
 
   if(NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    message(FATAL_ERROR "catkin_add_executable_with_gtest() must be called after catkin_package() so that default output directories for the executables are defined")
+    message(FATAL_ERROR "catkin_add_executable_with_${type}() must be called after catkin_package() so that default output directories for the executables are defined")
   endif()
 
   cmake_parse_arguments(ARG "EXCLUDE_FROM_ALL" "" "" ${ARGN})
 
+  if (${type} STREQUAL "gmock")
+    #GMock requires gtest headers and libraries
+    set(GMOCK_INCLUDE_DIRS ${GMOCK_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
+    set(GMOCK_LIBRARY_DIRS ${GMOCK_LIBRARY_DIRS} ${GTEST_LIBRARY_DIRS})
+    set(GMOCK_LIBRARIES ${GMOCK_LIBRARIES} ${GTEST_LIBRARIES})
+  endif()
+
   # create the executable, with basic + gtest build flags
-  include_directories(${GTEST_INCLUDE_DIRS})
-  link_directories(${GTEST_LIBRARY_DIRS})
+  include_directories(${${type_upper}_INCLUDE_DIRS})
+  link_directories(${${type_upper}_LIBRARY_DIRS})
   add_executable(${target} ${ARG_UNPARSED_ARGUMENTS})
   if(ARG_EXCLUDE_FROM_ALL)
     set_target_properties(${target} PROPERTIES EXCLUDE_FROM_ALL TRUE)
   endif()
 
-  assert(GTEST_LIBRARIES)
-  target_link_libraries(${target} ${GTEST_LIBRARIES} ${THREADS_LIBRARY})
+  assert(${type_upper}_LIBRARIES)
+  target_link_libraries(${target} ${${type_upper}_LIBRARIES} ${THREADS_LIBRARY})
 
   # make sure gtest is built before the target
-  add_dependencies(${target} ${GTEST_LIBRARIES})
+  add_dependencies(${target} ${${type_upper}_LIBRARIES})
+endfunction()
+
+function(catkin_add_executable_with_gtest target)
+  _catkin_add_executable_with_google_test("gtest" ${target} ${ARGN})
+endfunction()
+
+function(catkin_add_executable_with_gmock target)
+  _catkin_add_executable_with_google_test("gmock" ${target} ${ARGN})
 endfunction()
 
 #
@@ -153,8 +188,10 @@ endfunction()
 #
 # @public
 #
-function(catkin_find_gmock_source include_paths src_paths found base_dir
-         include_dir lib_dir libs main_libs)
+function(catkin_find_gmock_source include_paths src_paths 
+	 found base_dir include_dir lib_dir libs main_libs 
+  	 gtest_found gtest_base_dir gtest_include_dir gtest_lib_dir
+	 gtest_libs gtest_main_libs)
   # Find the gmock headers
   find_file(_GMOCK_INCLUDES "gmock.h"
             PATHS ${include_paths}
@@ -185,9 +222,9 @@ function(catkin_find_gmock_source include_paths src_paths found base_dir
     endif()
 
     catkin_find_gtest_source("${_gtest_include_paths}"
-                             "${_gtest_source_paths}" gtest_found
-                             gtest_base_dir gtest_include_dir gtest_lib_dir
-                             gtest_libs gtest_main_libs)
+                             "${_gtest_source_paths}" _gtest_found
+                             _gtest_base_dir _gtest_include_dir _gtest_lib_dir
+                             _gtest_libs _gtest_main_libs)
 
     # If we found gtest, finding gmock succeeded
     if(gtest_found)
@@ -196,10 +233,17 @@ function(catkin_find_gmock_source include_paths src_paths found base_dir
 
       set(${found} TRUE PARENT_SCOPE)
       set(${base_dir} ${BASE_DIR} PARENT_SCOPE)
-      set(${include_dir} ${gtest_include_dir} ${INCLUDE_DIR} PARENT_SCOPE)
+      set(${include_dir} ${INCLUDE_DIR} PARENT_SCOPE)
       set(${lib_dir} ${CMAKE_BINARY_DIR}/gmock PARENT_SCOPE)
       set(${libs} "gmock" PARENT_SCOPE)
       set(${main_libs} "gmock_main" PARENT_SCOPE)
+
+      set(${gtest_found} ${_gtest_found} PARENT_SCOPE)
+      set(${gtest_base_dir} ${_gtest_base_dir} PARENT_SCOPE)
+      set(${gtest_include_dir} ${_gtest_include_dir} PARENT_SCOPE)
+      set(${gtest_lib_dir} ${_gtest_lib_dir} PARENT_SCOPE)
+      set(${gtest_libs} ${_gtest_libs} PARENT_SCOPE)
+      set(${gtest_main_libs} ${_gtest_main_libs} PARENT_SCOPE)
     else()
       message(WARNING "Found gmock, but it did not contain gtest! Please ensure gmock is installed correctly.")
     endif()
@@ -227,7 +271,9 @@ if(NOT GMOCK_FOUND)
 
       catkin_find_gmock_source("${_include_paths}" "${_source_paths}" gmock_found
                                gmock_base_dir gmock_include_dir gmock_lib_dir
-                               gmock_libs gmock_main_libs)
+                               gmock_libs gmock_main_libs gtest_found
+                               gtest_base_dir gtest_include_dir gtest_lib_dir
+                               gtest_libs gtest_main_libs)
 
       # If we found gmock, set it up to be built (which will also build gtest,
       # since it's included by gmock's CMakeLists.txt)
@@ -253,7 +299,7 @@ if(NOT GMOCK_FOUND)
         set_target_properties(${gmock_libs} ${gmock_main_libs}
                               PROPERTIES EXCLUDE_FROM_ALL 1)
 
-        message(STATUS "Found gmock sources under '${gmock_base_dir}': gmock and gtests will be built")
+        message(STATUS "Found gmock sources under '${gmock_base_dir}': gmock will be built")
       else() # gmock not found-- look for system-installed gtest by itself
         set(_include_paths "/usr/include/gtest")
         if(CATKIN_TOPLEVEL)
@@ -270,15 +316,18 @@ if(NOT GMOCK_FOUND)
         catkin_find_gtest_source("${_include_paths}" "${_source_paths}" gtest_found
                                gtest_base_dir gtest_include_dir gtest_lib_dir
                                gtest_libs gtest_main_libs)
+      endif()
 
-        if(gtest_found)
-          set(GTEST_FROM_SOURCE_FOUND ${gtest_found} CACHE INTERNAL "")
-          set(GTEST_FROM_SOURCE_INCLUDE_DIRS ${gtest_include_dir} CACHE INTERNAL "")
-          set(GTEST_FROM_SOURCE_LIBRARY_DIRS ${gtest_lib_dir} CACHE INTERNAL "")
-          set(GTEST_FROM_SOURCE_LIBRARIES ${gtest_libs} CACHE INTERNAL "")
-          set(GTEST_FROM_SOURCE_MAIN_LIBRARIES ${gtest_main_libs} CACHE INTERNAL "")
+      if(gtest_found)
+        set(GTEST_FROM_SOURCE_FOUND ${gtest_found} CACHE INTERNAL "")
+        set(GTEST_FROM_SOURCE_INCLUDE_DIRS ${gtest_include_dir} CACHE INTERNAL "")
+        set(GTEST_FROM_SOURCE_LIBRARY_DIRS ${gtest_lib_dir} CACHE INTERNAL "")
+        set(GTEST_FROM_SOURCE_LIBRARIES ${gtest_libs} CACHE INTERNAL "")
+        set(GTEST_FROM_SOURCE_MAIN_LIBRARIES ${gtest_main_libs} CACHE INTERNAL "")
 
 
+        #If gmock has been found, the gtest libraries have already been added
+	if(NOT gmock_found)
           # overwrite CMake install command to skip install rules for gtest targets
           # which have been added in version 1.8.0
           set(_CATKIN_SKIP_INSTALL_RULES TRUE)
@@ -292,14 +341,14 @@ if(NOT GMOCK_FOUND)
           set(_CATKIN_SKIP_INSTALL_RULES FALSE)
           set_target_properties(${gtest_libs} ${gtest_main_libs}
                                 PROPERTIES EXCLUDE_FROM_ALL 1)
+        endif()
 
-          message(STATUS "Found gtest sources under '${gtest_base_dir}': gtests will be built")
+        message(STATUS "Found gtest sources under '${gtest_base_dir}': gtests will be built")
+      else()
+        if(CATKIN_TOPLEVEL)
+          message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system or checkout gtest (by running 'git clone  https://github.com/google/googletest.git -b release-1.8.0' in the source space '${CMAKE_SOURCE_DIR}' of your workspace) to enable gtests")
         else()
-          if(CATKIN_TOPLEVEL)
-            message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system or checkout gtest (by running 'git clone  https://github.com/google/googletest.git -b release-1.8.0' in the source space '${CMAKE_SOURCE_DIR}' of your workspace) to enable gtests")
-          else()
-            message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system to enable gtests")
-          endif()
+          message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system to enable gtests")
         endif()
       endif()
     endif()
@@ -314,14 +363,9 @@ if(NOT GMOCK_FOUND)
       set(GMOCK_LIBRARIES ${GMOCK_FROM_SOURCE_LIBRARIES})
       set(GMOCK_MAIN_LIBRARIES ${GMOCK_FROM_SOURCE_MAIN_LIBRARIES})
       set(GMOCK_BOTH_LIBRARIES ${GMOCK_LIBRARIES} ${GMOCK_MAIN_LIBRARIES})
+    endif()
 
-      set(GTEST_FOUND ${GMOCK_FOUND})
-      set(GTEST_INCLUDE_DIRS ${GMOCK_INCLUDE_DIRS})
-      set(GTEST_LIBRARY_DIRS ${GMOCK_LIBRARY_DIRS})
-      set(GTEST_LIBRARIES ${GMOCK_LIBRARIES})
-      set(GTEST_MAIN_LIBRARIES ${GMOCK_MAIN_LIBRARIES})
-      set(GTEST_BOTH_LIBRARIES ${GMOCK_BOTH_LIBRARIES})
-    elseif(GTEST_FROM_SOURCE_FOUND)
+    if(GTEST_FROM_SOURCE_FOUND)
       # set the same variables as find_package()
       # do NOT set in the cache since when using gtest from source
       # we must always add the subdirectory to have their targets defined
