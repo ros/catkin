@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.8 (2017-10-27)
+------------------
 * handle EOF on raw_input (`#888 <https://github.com/ros/catkin/issues/888>`_)
 * dynamically check gtest library type (`#885 <https://github.com/ros/catkin/issues/885>`_)
 * remove executable flag since file is not a script (`#882 <https://github.com/ros/catkin/issues/882>`_)
