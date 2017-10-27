@@ -1,5 +1,6 @@
-_generate_function_if_testing_is_disabled("catkin_add_gtest")
-_generate_function_if_testing_is_disabled("catkin_add_gmock")
+_generate_function_if_testing_is_disabled(
+  "catkin_add_gtest"
+  "catkin_add_gmock")
 
 #
 # Add a GTest based test target.
