@@ -2,6 +2,12 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* handle EOF on raw_input (`#888 <https://github.com/ros/catkin/issues/888>`_)
+* dynamically check gtest library type (`#885 <https://github.com/ros/catkin/issues/885>`_)
+* remove executable flag since file is not a script (`#882 <https://github.com/ros/catkin/issues/882>`_)
+
 0.7.7 (2017-07-27)
 ------------------
 * fix warning in case devel space is nested in the build space (`#880 <https://github.com/ros/catkin/pull/880>`_)
