@@ -58,13 +58,15 @@ endfunction()
 # This is an internal function, use catkin_add_gtest or catkin_add_gmock
 # instead.
 #
-# :param type: "gmock" or "gtest" 
+# :param type: "gtest" or "gmock"
 # The remaining arguments are the same as for catkin_add_gtest and
 # catkin_add_gmock.
 #
 function(_catkin_add_google_test type target)
-  if (NOT "${type}" STREQUAL "gmock" AND NOT "${type}" STREQUAL "gtest")
-    message(FATAL_ERROR "Invalid use of _catkin_add_google_test function, first argument must be gtest or gmock")
+  if (NOT "${type}" STREQUAL "gtest" AND NOT "${type}" STREQUAL "gmock")
+    message(FATAL_ERROR
+      "Invalid use of _catkin_add_google_test function, "
+      "first argument must be 'gtest' or 'gmock'")
   endif()
   _warn_if_skip_testing("catkin_add_${type}")
 
@@ -133,16 +135,16 @@ endfunction()
 # This is an internal function, use catkin_add_executable_with_gtest
 # or catkin_add_executable_with_gmock instead.
 #
-# :param type: "gmock" or "gtest" 
+# :param type: "gtest" or "gmock"
 # The remaining arguments are the same as for
 # catkin_add_executable_with_gtest and
 # catkin_add_executable_with_gmock.
 #
 function(_catkin_add_executable_with_google_test type target)
-  if (NOT "${type}" STREQUAL "gmock" AND NOT "${type}" STREQUAL "gtest")
-    message(FATAL_ERROR "Invalid use of _catkin_add_executable_google_test function, first argument must be gtest or gmock")
+  if (NOT "${type}" STREQUAL "gtest" AND NOT "${type}" STREQUAL "gmock")
+    message(FATAL_ERROR "Invalid use of _catkin_add_executable_google_test function, first argument must be 'gtest' or 'gmock'")
   endif()
-  string(TOUPPER ${type} type_upper)
+  string(TOUPPER "${type}" type_upper)
   if(NOT ${type_upper}_FOUND AND NOT ${type_upper}_FROM_SOURCE_FOUND)
     message(WARNING "skipping ${type} '${target}' in project '${PROJECT_NAME}' because ${type} was not found")
     return()
@@ -154,14 +156,14 @@ function(_catkin_add_executable_with_google_test type target)
 
   cmake_parse_arguments(ARG "EXCLUDE_FROM_ALL" "" "" ${ARGN})
 
-  if (${type} STREQUAL "gmock")
-    #GMock requires gtest headers and libraries
-    set(GMOCK_INCLUDE_DIRS ${GMOCK_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
-    set(GMOCK_LIBRARY_DIRS ${GMOCK_LIBRARY_DIRS} ${GTEST_LIBRARY_DIRS})
-    set(GMOCK_LIBRARIES ${GMOCK_LIBRARIES} ${GTEST_LIBRARIES})
+  if ("${type}" STREQUAL "gmock")
+    # gmock requires gtest headers and libraries
+    list(APPEND GMOCK_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS})
+    list(APPEND GMOCK_LIBRARY_DIRS ${GTEST_LIBRARY_DIRS})
+    list(APPEND GMOCK_LIBRARIES ${GTEST_LIBRARIES})
   endif()
 
-  # create the executable, with basic + gtest build flags
+  # create the executable, with basic + gtest/gmock build flags
   include_directories(${${type_upper}_INCLUDE_DIRS})
   link_directories(${${type_upper}_LIBRARY_DIRS})
   add_executable(${target} ${ARG_UNPARSED_ARGUMENTS})
@@ -172,12 +174,12 @@ function(_catkin_add_executable_with_google_test type target)
   assert(${type_upper}_LIBRARIES)
   target_link_libraries(${target} ${${type_upper}_LIBRARIES} ${THREADS_LIBRARY})
 
-  # make sure gtest is built before the target
+  # make sure gtest/gmock is built before the target
   add_dependencies(${target} ${${type_upper}_LIBRARIES})
 endfunction()
 
 #
-# Find GTest source-only install
+# Find GTest source-only install.
 #
 # Google recommends distributing GTest as source only, to be built with the same
 # flags as that which is being tested.
@@ -191,10 +193,9 @@ endfunction()
 # :param[out] libs: GTest's libraries
 # :param[out] main_libs: GTest's main libraries
 #
-# @public
-#
-function(catkin_find_gtest_source include_paths src_paths found base_dir
-         include_dir lib_dir libs main_libs)
+function(catkin_find_gtest_source include_paths
+  src_paths found base_dir include_dir lib_dir libs main_libs
+)
   # Find the gtest headers
   find_file(_GTEST_INCLUDES "gtest.h"
             PATHS ${include_paths}
@@ -225,7 +226,7 @@ function(catkin_find_gtest_source include_paths src_paths found base_dir
 endfunction()
 
 #
-# Find GMock source-only install
+# Find GMock source-only install.
 #
 # Google recommends distributing GMock as source only, to be built with the same
 # flags as that which is being tested.
@@ -239,12 +240,10 @@ endfunction()
 # :param[out] libs: GMock's libraries
 # :param[out] main_libs: GMock's main libraries
 #
-# @public
-#
-function(catkin_find_gmock_source include_paths src_paths 
-	 found base_dir include_dir lib_dir libs main_libs 
-  	 gtest_found gtest_base_dir gtest_include_dir gtest_lib_dir
-	 gtest_libs gtest_main_libs)
+function(catkin_find_gmock_source
+  include_paths src_paths found base_dir include_dir lib_dir libs main_libs
+  gtest_found gtest_base_dir gtest_include_dir gtest_lib_dir gtest_libs gtest_main_libs
+)
   # Find the gmock headers
   find_file(_GMOCK_INCLUDES "gmock.h"
             PATHS ${include_paths}
@@ -380,7 +379,7 @@ if(NOT GMOCK_FOUND)
 
 
         #If gmock has been found, the gtest libraries have already been added
-	if(NOT gmock_found)
+        if(NOT gmock_found)
           # overwrite CMake install command to skip install rules for gtest targets
           # which have been added in version 1.8.0
           set(_CATKIN_SKIP_INSTALL_RULES TRUE)
