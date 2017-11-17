@@ -9,17 +9,19 @@ else()
   message(STATUS "Using CATKIN_ENABLE_TESTING: ${CATKIN_ENABLE_TESTING}")
 endif()
 
-# creates a dummy function in case testing has been explicitly disabled (and not only skipping)
+# creates dummy functions in case testing has been explicitly disabled (and not only skipping)
 # which outputs an error message when being invoked
-macro(_generate_function_if_testing_is_disabled funcname)
+macro(_generate_function_if_testing_is_disabled)
   if(DEFINED CATKIN_ENABLE_TESTING AND NOT CATKIN_ENABLE_TESTING AND NOT CATKIN_SKIP_TESTING)
-    function(${funcname})
-      message(FATAL_ERROR
-        "${funcname}() is not available when tests are not enabled. The CMake code should only use it inside a conditional block which checks that testing is enabled:\n"
-        "if(CATKIN_ENABLE_TESTING)\n"
-        "  ${funcname}(...)\n"
-        "endif()\n")
-    endfunction()
+    foreach(_arg ${ARGN})
+      function(${_arg})
+        message(FATAL_ERROR
+          "${_arg}() is not available when tests are not enabled. The CMake code should only use it inside a conditional block which checks that testing is enabled:\n"
+          "if(CATKIN_ENABLE_TESTING)\n"
+          "  ${_arg}(...)\n"
+          "endif()\n")
+      endfunction()
+    endforeach()
     return()
   endif()
 endmacro()
