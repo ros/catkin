@@ -127,8 +127,8 @@ def update_changelog_sections(changelogs, new_version):
         new_changelog_data[changelog_path] = data
 
     for changelog_path, data in new_changelog_data.items():
-        with open(changelog_path, 'w') as f:
-            f.write(data)
+        with open(changelog_path, 'wb') as f:
+            f.write(data.encode('utf-8'))
 
 
 def rename_section(data, old_label, new_label):
