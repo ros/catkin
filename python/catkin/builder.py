@@ -274,11 +274,11 @@ def get_multiarch():
     p = subprocess.Popen(
         ['gcc', '-print-multiarch'],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = p.communicate()
+    out = p.communicate()[0].decode('utf-8')
     if p.returncode != 0:
-        out, err = subprocess.Popen(
+        out = subprocess.Popen(
             ['dpkg-architecture', '-qDEB_HOST_MULTIARCH'],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0].decode('utf-8')
 
     # be sure of returning empty string or a valid multiarch tuple format
     assert(not out.strip() or out.strip().count('-') == 2)
