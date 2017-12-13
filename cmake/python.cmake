@@ -2,10 +2,11 @@
 
 set(PYTHON_VERSION "" CACHE STRING "Specify specific Python version to use ('major.minor' or 'major')")
 if(PYTHON_VERSION)
-  set(PythonInterp_FIND_VERSION "${PYTHON_VERSION}")
+  find_package(PythonInterp "${PYTHON_VERSION}" REQUIRED)
+else()
+  find_package(PythonInterp REQUIRED)
 endif()
 
-find_package(PythonInterp REQUIRED)
 message(STATUS "Using PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
 
 set(_PYTHON_PATH_VERSION_SUFFIX "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
