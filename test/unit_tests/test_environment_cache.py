@@ -58,6 +58,7 @@ class PlatformTest(unittest.TestCase):
         self.assertEqual(['set foo=bar'], code)
 
     def test_generate_environment_script(self):
+        old_environ = os.environ
         try:
             fake_environ = os.environ.copy()
             fake_environ['FOO'] = '/bar'
@@ -80,5 +81,6 @@ exec "$@"''')
             self.assertTrue('export BAR="/bar"' in result, result)
             self.assertEqual('#!/usr/bin/env sh', result[0])
         finally:
+            os.environ = old_environ
             catkin.environment_cache.os.environ = os.environ
             shutil.rmtree(rootdir)

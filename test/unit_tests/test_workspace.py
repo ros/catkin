@@ -16,6 +16,7 @@ except ImportError as impe:
 class WorkspaceTest(unittest.TestCase):
 
     def test_get_workspaces(self):
+        old_environ = os.environ
         try:
             root_dir = tempfile.mkdtemp()
             ws1 = os.path.join(root_dir, 'ws1')
@@ -38,6 +39,7 @@ class WorkspaceTest(unittest.TestCase):
             self.assertEqual([ws2, ws1], get_workspaces())
         finally:
             shutil.rmtree(root_dir)
+            os.environ = old_environ
             catkin.workspace.os.environ = os.environ
 
     def test_get_source_paths(self):
