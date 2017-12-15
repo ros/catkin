@@ -46,7 +46,7 @@ fi
 
 # invoke Python script to generate necessary exports of environment variables
 # use TMPDIR if it exists, otherwise fall back to /tmp
-if [ -d "${TMPDIR}" ]; then
+if [ -d "${TMPDIR:-}" ]; then
   _TMPDIR="${TMPDIR}"
 else
   _TMPDIR=/tmp
@@ -57,7 +57,7 @@ if [ $? -ne 0 -o ! -f "$_SETUP_TMP" ]; then
   echo "Could not create temporary file: $_SETUP_TMP"
   return 1
 fi
-CATKIN_SHELL=$CATKIN_SHELL "$_SETUP_UTIL" $@ $CATKIN_SETUP_UTIL_ARGS >> "$_SETUP_TMP"
+CATKIN_SHELL=$CATKIN_SHELL "$_SETUP_UTIL" $@ ${CATKIN_SETUP_UTIL_ARGS:-} >> "$_SETUP_TMP"
 _RC=$?
 if [ $_RC -ne 0 ]; then
   if [ $_RC -eq 2 ]; then
