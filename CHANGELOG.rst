@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.9 (2018-01-22)
+------------------
 * add support for GMock (`#897 <https://github.com/ros/catkin/pull/897>`_)
 * provide default values to unbound variables in setup.sh.in (`#907 <https://github.com/ros/catkin/pull/907>`_)
 * cleanup environment changes reliably (`#906 <https://github.com/ros/catkin/pull/906>`_)
