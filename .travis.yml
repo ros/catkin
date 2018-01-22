@@ -1,7 +1,7 @@
 language: python
 python:
   - "2.7_with_system_site_packages"
-  - "3.3"
+  - "3.4_with_system_site_packages"
 # command to install dependencies
 install:
   # fetch "normal" debian python for 3.3
