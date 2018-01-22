@@ -2,6 +2,15 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add support for GMock (`#897 <https://github.com/ros/catkin/pull/897>`_)
+* provide default values to unbound variables in setup.sh.in (`#907 <https://github.com/ros/catkin/pull/907>`_)
+* cleanup environment changes reliably (`#906 <https://github.com/ros/catkin/pull/906>`_)
+* call the find PythonInterp with version in the arguments (`#898 <https://github.com/ros/catkin/issues/898>`_)
+* fix python3 support for builder.py (`#903 <https://github.com/ros/catkin/pull/903>`_)
+* fix Unicode write error (`#902 <https://github.com/ros/catkin/pull/902>`_)
+
 0.7.8 (2017-10-27)
 ------------------
 * handle EOF on raw_input (`#888 <https://github.com/ros/catkin/issues/888>`_)
