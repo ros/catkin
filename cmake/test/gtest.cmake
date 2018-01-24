@@ -178,127 +178,112 @@ function(_catkin_add_executable_with_google_test type target)
   add_dependencies(${target} ${${type_upper}_LIBRARIES})
 endfunction()
 
-#
-# Find GTest source-only install.
-#
-# Google recommends distributing GTest as source only, to be built with the same
-# flags as that which is being tested.
-#
-# :param[in] include_paths: Paths to search for GTest includes
-# :param[in] src_paths: Paths to search for GTest sources
-# :param[out] found: Whether or not GTest was found in the paths provided
-# :param[out] base_dir: The base directory containing GTest's CMakeLists.txt
-# :param[out] include_dir: The include path to access GTest's headers
-# :param[out] lib_dir: The library path to access GTest's libraries
-# :param[out] libs: GTest's libraries
-# :param[out] main_libs: GTest's main libraries
-#
-function(catkin_find_gtest_source include_paths
-  src_paths found base_dir include_dir lib_dir libs main_libs
-)
+# Internal function for finding gtest or gmock sources
+function(_catkin_find_google_source type include_paths
+  src_paths found base_dir include_dir lib_dir libs main_libs)
   # Find the gtest headers
-  find_file(_GTEST_INCLUDES "gtest.h"
+  find_file(_${type}_INCLUDES "${type}.h"
             PATHS ${include_paths}
-            NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
-  )
+            NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 
   # Find the gtest sources
-  find_file(_GTEST_SOURCES "gtest.cc"
+  find_file(_${type}_SOURCES "${type}.cc"
             PATHS ${src_paths}
-            NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
-  )
+            NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
 
   # If we found gtest, set the variables accordingly
-  if(_GTEST_INCLUDES AND _GTEST_SOURCES)
-    get_filename_component(SOURCE_DIR ${_GTEST_SOURCES} PATH)
+  if(_${type}_INCLUDES AND _${type}_SOURCES)
+    get_filename_component(SOURCE_DIR ${_${type}_SOURCES} PATH)
     get_filename_component(BASE_DIR ${SOURCE_DIR} PATH)
 
-    get_filename_component(INCLUDE_DIR ${_GTEST_INCLUDES} PATH)
+    get_filename_component(INCLUDE_DIR ${_${type}_INCLUDES} PATH)
     get_filename_component(INCLUDE_DIR ${INCLUDE_DIR} PATH)
 
     set(${found} TRUE PARENT_SCOPE)
     set(${base_dir} ${BASE_DIR} PARENT_SCOPE)
     set(${include_dir} ${INCLUDE_DIR} PARENT_SCOPE)
-    set(${lib_dir} ${CMAKE_BINARY_DIR}/gtest PARENT_SCOPE)
-    set(${libs} "gtest" PARENT_SCOPE)
-    set(${main_libs} "gtest_main" PARENT_SCOPE)
+    set(${lib_dir} ${CMAKE_BINARY_DIR}/${type} PARENT_SCOPE)
+    set(${libs} "${type}" PARENT_SCOPE)
+    set(${main_libs} "${type}_main" PARENT_SCOPE)
   endif()
 endfunction()
 
+# Find Google Test (GTest and optionally GMock) source-only install.
 #
-# Find GMock source-only install.
-#
-# Google recommends distributing GMock as source only, to be built with the same
+# Google recommends distributing GTest and GMock as source only, to be built with the same
 # flags as that which is being tested.
 #
-# :param[in] include_paths: Paths to search for GMock includes
-# :param[in] src_paths: Paths to search for GMock sources
-# :param[out] found: Whether or not GMock was found in the paths provided
-# :param[out] base_dir: The base directory containing GMock's CMakeLists.txt
-# :param[out] include_dir: The include path to access GMock's headers
-# :param[out] lib_dir: The library path to access GMock's libraries
-# :param[out] libs: GMock's libraries
-# :param[out] main_libs: GMock's main libraries
+# :param[in] include_path: Path to search for Google Test includes
+# :param[in] src_path: Path to search for Google Test sources
+# :param[out] gtest_found: Whether or not GTest was found in the paths provided
+# :param[out] gtest_include_dir: The include path to access GTest's headers
+# :param[out] gtest_lib_dir: The library path to access GTest's libraries
+# :param[out] gtest_libs: GTest's libraries
+# :param[out] gtest_main_libs: GTest's main libraries
+# :param[out] gmock_found: Whether or not GMock was found in the paths provided
+# :param[out] gmock_include_dir: The include path to access GMock's headers
+# :param[out] gmock_lib_dir: The library path to access GMock's libraries
+# :param[out] gmock_libs: GMock's libraries
+# :param[out] gmock_main_libs: GMock's main libraries
+# :param[out] base_dir: The base directory containing Google Test and/or GMock CMakeLists.txt
 #
-function(catkin_find_gmock_source
-  include_paths src_paths found base_dir include_dir lib_dir libs main_libs
-  gtest_found gtest_base_dir gtest_include_dir gtest_lib_dir gtest_libs gtest_main_libs
+function(catkin_find_google_test_source include_path src_path
+  gtest_found gtest_include_dir gtest_lib_dir gtest_libs gtest_main_libs
+  gmock_found gmock_include_dir gmock_lib_dir gmock_libs gmock_main_libs
+  base_dir
 )
-  # Find the gmock headers
-  find_file(_GMOCK_INCLUDES "gmock.h"
-            PATHS ${include_paths}
-            NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
-  )
+  #Find GTest
+  set(_gtest_include_paths "${include_path}/gtest")
+  set(_gtest_source_paths "${src_path}/gtest/src")
+  if(CATKIN_TOPLEVEL)
+    # Ensure current workspace is searched before system path
+    list(INSERT _gtest_include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/include/gtest")
+    list(INSERT _gtest_source_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/src")
+  endif()
 
-  # Find the gmock sources
-  find_file(_GMOCK_SOURCES "gmock.cc"
-            PATHS ${src_paths}
-            NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
-  )
-
-  # If we found gmock, set the variables accordingly
-  if(_GMOCK_INCLUDES AND _GMOCK_SOURCES)
-    get_filename_component(SOURCE_DIR ${_GMOCK_SOURCES} PATH)
-    get_filename_component(BASE_DIR ${SOURCE_DIR} PATH)
-
-    set(_gtest_include_paths "/usr/include/gtest")
-    if(CATKIN_TOPLEVEL)
-      # Ensure current workspace is searched before system path
-      list(INSERT _gtest_include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/include/gtest")
-    endif()
-
-    set(_gtest_source_paths "/usr/src/gtest/src")
-    if(CATKIN_TOPLEVEL)
-      # Ensure current workspace is searched before system path
-      list(INSERT _gtest_source_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/src")
-    endif()
-
-    catkin_find_gtest_source("${_gtest_include_paths}"
+  _catkin_find_google_source("gtest" "${_gtest_include_paths}"
                              "${_gtest_source_paths}" _gtest_found
                              _gtest_base_dir _gtest_include_dir _gtest_lib_dir
                              _gtest_libs _gtest_main_libs)
+  set(${gtest_found} ${_gtest_found} PARENT_SCOPE)
+  set(${gtest_base_dir} ${_gtest_base_dir} PARENT_SCOPE)
+  set(${gtest_include_dir} ${_gtest_include_dir} PARENT_SCOPE)
+  set(${gtest_lib_dir} ${_gtest_lib_dir} PARENT_SCOPE)
+  set(${gtest_libs} ${_gtest_libs} PARENT_SCOPE)
+  set(${gtest_main_libs} ${_gtest_main_libs} PARENT_SCOPE)
+  set(${base_dir} ${_gtest_base_dir} PARENT_SCOPE)
 
-    # If we found gtest, finding gmock succeeded
-    if(gtest_found)
-      get_filename_component(INCLUDE_DIR ${_GMOCK_INCLUDES} PATH)
-      get_filename_component(INCLUDE_DIR ${INCLUDE_DIR} PATH)
+  #Find GMock
+  set(_gmock_include_paths "${include_path}/gmock")
+  set(_gmock_source_paths "${src_path}/gmock/src")
+  if(CATKIN_TOPLEVEL)
+    # Ensure current workspace is searched before system path
+    list(INSERT _gmock_include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googlemock/include/gmock")
+    list(INSERT _gmock_source_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googlemock/src")
+  endif()
 
-      set(${found} TRUE PARENT_SCOPE)
-      set(${base_dir} ${BASE_DIR} PARENT_SCOPE)
-      set(${include_dir} ${INCLUDE_DIR} PARENT_SCOPE)
-      set(${lib_dir} ${CMAKE_BINARY_DIR}/gmock PARENT_SCOPE)
-      set(${libs} "gmock" PARENT_SCOPE)
-      set(${main_libs} "gmock_main" PARENT_SCOPE)
+  _catkin_find_google_source("gmock" "${_gmock_include_paths}"
+                             "${_gmock_source_paths}" _gmock_found
+                             _gmock_base_dir _gmock_include_dir _gmock_lib_dir
+                             _gmock_libs _gmock_main_libs)
+  if(gmock_found)
+    set(${gmock_found} ${_gmock_found} PARENT_SCOPE)
+    set(${gmock_base_dir} ${_gmock_base_dir} PARENT_SCOPE)
+    set(${gmock_include_dir} ${_gmock_include_dir} PARENT_SCOPE)
+    set(${gmock_lib_dir} ${_gmock_lib_dir} PARENT_SCOPE)
+    set(${gmock_libs} ${_gmock_libs} PARENT_SCOPE)
+    set(${gmock_main_libs} ${_gmock_main_libs} PARENT_SCOPE)
 
-      set(${gtest_found} ${_gtest_found} PARENT_SCOPE)
-      set(${gtest_base_dir} ${_gtest_base_dir} PARENT_SCOPE)
-      set(${gtest_include_dir} ${_gtest_include_dir} PARENT_SCOPE)
-      set(${gtest_lib_dir} ${_gtest_lib_dir} PARENT_SCOPE)
-      set(${gtest_libs} ${_gtest_libs} PARENT_SCOPE)
-      set(${gtest_main_libs} ${_gtest_main_libs} PARENT_SCOPE)
-    else()
-      message(WARNING "Found gmock, but it did not contain gtest! Please ensure gmock is installed correctly.")
-    endif()
+    #Overwrite gtest base_dir with gmock's
+    set(${base_dir} ${_gmock_base_dir} PARENT_SCOPE)
+  endif()
+
+  #In googletest 1.8, gmock and gtest where merged inside googletest
+  #In this case, including gmock builds gmock twice, so instead we need to include googletest
+  #which will include gtest and gmock once
+  set(_global_base_dir "${src_path}/googletest")
+  if(EXISTS "${_global_base_dir}/CMakeLists.txt")
+    set(${base_dir} ${_global_base_dir} PARENT_SCOPE)
   endif()
 endfunction()
 
@@ -309,77 +294,28 @@ if(NOT GMOCK_FOUND)
     # only add gmock/gtest directory once per workspace
     if(NOT TARGET gtest AND NOT TARGET gmock)
       # Fall back to system-installed gmock source (e.g. Ubuntu)
-      set(_include_paths "/usr/include/gmock")
-      if(CATKIN_TOPLEVEL)
-        # Ensure current workspace is searched before system path
-        list(INSERT _include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googlemock/include/gmock")
-      endif()
+      set(_include_paths "/usr/include")
+      set(_source_paths "/usr/src")
 
-      set(_source_paths "/usr/src/gmock/src")
-      if(CATKIN_TOPLEVEL)
-        # Ensure current workspace is searched before system path
-        list(INSERT _source_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googlemock/src")
-      endif()
-
-      catkin_find_gmock_source("${_include_paths}" "${_source_paths}" gmock_found
-                               gmock_base_dir gmock_include_dir gmock_lib_dir
-                               gmock_libs gmock_main_libs gtest_found
-                               gtest_base_dir gtest_include_dir gtest_lib_dir
-                               gtest_libs gtest_main_libs)
-
-      # If we found gmock, set it up to be built (which will also build gtest,
-      # since it's included by gmock's CMakeLists.txt)
-      if(gmock_found)
-        set(GMOCK_FROM_SOURCE_FOUND ${gmock_found} CACHE INTERNAL "")
-        set(GMOCK_FROM_SOURCE_INCLUDE_DIRS ${gmock_include_dir} CACHE INTERNAL "")
-        set(GMOCK_FROM_SOURCE_LIBRARY_DIRS ${gmock_lib_dir} CACHE INTERNAL "")
-        set(GMOCK_FROM_SOURCE_LIBRARIES ${gmock_libs} CACHE INTERNAL "")
-        set(GMOCK_FROM_SOURCE_MAIN_LIBRARIES ${gmock_main_libs} CACHE INTERNAL "")
-
-        # overwrite CMake install command to skip install rules for gtest targets
-        # which have been added in version 1.8.0
-        set(_CATKIN_SKIP_INSTALL_RULES TRUE)
-        function(install)
-          if(_CATKIN_SKIP_INSTALL_RULES)
-            return()
-          endif()
-          _install(${ARGN})
-        endfunction()
-        add_subdirectory(${gmock_base_dir} ${gmock_lib_dir})
-        set(_CATKIN_SKIP_INSTALL_RULES FALSE)
-
-        set_target_properties(${gmock_libs} ${gmock_main_libs}
-                              PROPERTIES EXCLUDE_FROM_ALL 1)
-
-        message(STATUS "Found gmock sources under '${gmock_base_dir}': gmock will be built")
-      else() # gmock not found-- look for system-installed gtest by itself
-        set(_include_paths "/usr/include/gtest")
-        if(CATKIN_TOPLEVEL)
-          # search in the current workspace before
-          list(INSERT _include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/include/gtest")
-        endif()
-
-        set(_source_paths "/usr/src/gtest/src")
-        if(CATKIN_TOPLEVEL)
-          # search in the current workspace before
-          list(INSERT _source_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/src")
-        endif()
-
-        catkin_find_gtest_source("${_include_paths}" "${_source_paths}" gtest_found
-                               gtest_base_dir gtest_include_dir gtest_lib_dir
-                               gtest_libs gtest_main_libs)
-      endif()
-
+      catkin_find_google_test_source("${_include_paths}" "${_source_paths}" gtest_found
+                                     gtest_include_dir gtest_lib_dir gtest_libs gtest_main_libs
+                                     gmock_found gmock_include_dir gmock_lib_dir gmock_libs
+                                     gmock_main_libs base_dir)
       if(gtest_found)
         set(GTEST_FROM_SOURCE_FOUND ${gtest_found} CACHE INTERNAL "")
         set(GTEST_FROM_SOURCE_INCLUDE_DIRS ${gtest_include_dir} CACHE INTERNAL "")
         set(GTEST_FROM_SOURCE_LIBRARY_DIRS ${gtest_lib_dir} CACHE INTERNAL "")
         set(GTEST_FROM_SOURCE_LIBRARIES ${gtest_libs} CACHE INTERNAL "")
         set(GTEST_FROM_SOURCE_MAIN_LIBRARIES ${gtest_main_libs} CACHE INTERNAL "")
-
-
-        #If gmock has been found, the gtest libraries have already been added
-        if(NOT gmock_found)
+        if(gmock_found)
+          set(GMOCK_FROM_SOURCE_FOUND ${gmock_found} CACHE INTERNAL "")
+          set(GMOCK_FROM_SOURCE_INCLUDE_DIRS ${gmock_include_dir} CACHE INTERNAL "")
+          set(GMOCK_FROM_SOURCE_LIBRARY_DIRS ${gmock_lib_dir} CACHE INTERNAL "")
+          set(GMOCK_FROM_SOURCE_LIBRARIES ${gmock_libs} CACHE INTERNAL "")
+          set(GMOCK_FROM_SOURCE_MAIN_LIBRARIES ${gmock_main_libs} CACHE INTERNAL "")
+          message(STATUS "Found gmock sources under '${base_dir}': gmock will be built")
+        endif()
+        if(base_dir)
           # overwrite CMake install command to skip install rules for gtest targets
           # which have been added in version 1.8.0
           set(_CATKIN_SKIP_INSTALL_RULES TRUE)
@@ -389,13 +325,16 @@ if(NOT GMOCK_FOUND)
             endif()
             _install(${ARGN})
           endfunction()
-          add_subdirectory(${gtest_base_dir} ${gtest_lib_dir})
+          add_subdirectory(${base_dir} ${gtest_lib_dir})
           set(_CATKIN_SKIP_INSTALL_RULES FALSE)
           set_target_properties(${gtest_libs} ${gtest_main_libs}
                                 PROPERTIES EXCLUDE_FROM_ALL 1)
+          if(gmock_found)
+            set_target_properties(${gmock_libs} ${gmock_main_libs}
+                                  PROPERTIES EXCLUDE_FROM_ALL 1)
+          endif()
         endif()
-
-        message(STATUS "Found gtest sources under '${gtest_base_dir}': gtests will be built")
+        message(STATUS "Found gtest sources under '${base_dir}': gtests will be built")
       else()
         if(CATKIN_TOPLEVEL)
           message(STATUS "gtest not found, C++ tests can not be built. Please install the gtest headers globally in your system or checkout gtest (by running 'git clone  https://github.com/google/googletest.git -b release-1.8.0' in the source space '${CMAKE_SOURCE_DIR}' of your workspace) to enable gtests")
