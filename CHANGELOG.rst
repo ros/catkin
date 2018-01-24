@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* support for googletest 1.8 and deduplicated code (`#914 <https://github.com/ros/catkin/pull/914>`_)
+
 0.7.9 (2018-01-22)
 ------------------
 * add support for GMock (`#897 <https://github.com/ros/catkin/pull/897>`_)
