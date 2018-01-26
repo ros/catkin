@@ -3,6 +3,7 @@
 from __future__ import print_function
 import argparse
 import os
+import re
 import subprocess
 import sys
 
@@ -195,6 +196,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Runs the commands to bump the version number, commit the modified %s files and create a tag in the repository.' % PACKAGE_MANIFEST_FILENAME)
     parser.add_argument('--bump', choices=('major', 'minor', 'patch'), default='patch', help='Which part of the version number to bump? (default: %(default)s)')
+    parser.add_argument('--version', help='Specify a specific version to use')
     parser.add_argument('--no-color', action='store_true', default=False, help='Disables colored output')
     parser.add_argument('--no-push', action='store_true', default=False, help='Disables pushing to remote repository')
     parser.add_argument('-t', '--tag-prefix', default='', 
@@ -202,6 +204,9 @@ def main():
     parser.add_argument('-y', '--non-interactive', action='store_true', default=False,
         help="Run without user interaction, confirming all questions with 'yes'")
     args = parser.parse_args()
+
+    if args.version and not re.match('^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$', args.version):
+        parser.error('The passed version must follow the conventions (positive integers x.y.z with no leading zeros)')
 
     if args.tag_prefix and ' ' in args.tag_prefix:
         parser.error('The tag prefix must not contain spaces')
@@ -266,7 +271,10 @@ def main():
 
     # fetch current version and verify that all packages have same version number
     old_version = verify_equal_package_versions(packages.values())
-    new_version = bump_version(old_version, args.bump)
+    if args.version:
+        new_version = args.version
+    else:
+        new_version = bump_version(old_version, args.bump)
     tag_name = args.tag_prefix + new_version
 
     if not args.non_interactive and not prompt_continue(fmt("Prepare release of version '@{bf}@{boldon}%s@{boldoff}@{reset}'%s" % (new_version, " (tagged as '@{bf}@{boldon}%s@{boldoff}@{reset}')" % tag_name if args.tag_prefix else '')), default=True):
