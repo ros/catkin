@@ -131,8 +131,15 @@ function(catkin_replace_imported_library_targets VAR)
       # sometimes cmake dependencies define imported targets, in which
       # case the imported library information is not the target name, but
       # the information embedded in cmake properties inside the imported library
+      # For interface libraries, this is the INTERFACE_LINK_LIBRARIES property.
+      # For regular imported libraries, this is IMPORTED_LOCATION(_$CONFIG).
+      get_target_property(${lib}_type ${lib} TYPE)
       get_target_property(${lib}_imported ${lib} IMPORTED)
-      if(${${lib}_imported})
+      if(${${lib}_type} STREQUAL "INTERFACE_LIBRARY")
+        get_target_property(${lib}_interface_link_libraries ${lib} INTERFACE_LINK_LIBRARIES)
+        catkin_replace_imported_library_targets(${lib}_resolved_libs ${${lib}_interface_link_libraries})
+        list(APPEND result ${${lib}_resolved_libs})
+      elseif(${${lib}_imported})
         set(imported_libraries)  # empty list
         get_target_property(${lib}_imported_location ${lib} IMPORTED_LOCATION)
         if(${lib}_imported_location)
