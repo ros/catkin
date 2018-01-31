@@ -266,7 +266,7 @@ function(catkin_find_google_test_source include_path src_path
                              "${_gmock_source_paths}" _gmock_found
                              _gmock_base_dir _gmock_include_dir _gmock_lib_dir
                              _gmock_libs _gmock_main_libs)
-  if(gmock_found)
+  if(_gmock_found)
     set(${gmock_found} ${_gmock_found} PARENT_SCOPE)
     set(${gmock_base_dir} ${_gmock_base_dir} PARENT_SCOPE)
     set(${gmock_include_dir} ${_gmock_include_dir} PARENT_SCOPE)
