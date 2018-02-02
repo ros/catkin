@@ -2,6 +2,13 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* catkin_add_gtest: drop explicit add_dependencies(), rely on CMake. (`#917 <https://github.com/ros/catkin/issues/917>`_)
+* prevent reading non-whitelisted properties of interface targets (`#916 <https://github.com/ros/catkin/issues/916>`_)
+* fix logic when only gtest is present (`#919 <https://github.com/ros/catkin/issues/919>`_)
+* add option to pass specific version to catkin_prepare_release (`#918 <https://github.com/ros/catkin/issues/918>`_)
+
 0.7.10 (2018-01-24)
 -------------------
 * support for googletest 1.8 and deduplicated code (`#914 <https://github.com/ros/catkin/pull/914>`_)
