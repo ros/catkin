@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.11 (2018-02-02)
+-------------------
 * catkin_add_gtest: drop explicit add_dependencies(), rely on CMake. (`#917 <https://github.com/ros/catkin/issues/917>`_)
 * prevent reading non-whitelisted properties of interface targets (`#916 <https://github.com/ros/catkin/issues/916>`_)
 * fix logic when only gtest is present (`#919 <https://github.com/ros/catkin/issues/919>`_)
