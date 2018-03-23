@@ -74,7 +74,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
 
         out = self.cmake(CMAKE_PREFIX_PATH=self.installdir,
                          expect=fail)
-        print("failed as expected, out=", out)
+        print("failed as expected, out={}".format(out))
 
         self.assertTrue(b"catkin_package() PROJECT_NAME is set to 'Project'" in out, out)
         # assert 'You must call project() with the same name before.' in out
