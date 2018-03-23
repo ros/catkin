@@ -5,6 +5,4 @@ s = std_msgs.msg.String()
 a = a.msg.AMsg()
 b = b.msg.BMsg()
 
-print "<<< b >>>"
-
-
+print("<<< b >>>")

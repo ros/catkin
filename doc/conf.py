@@ -190,8 +190,8 @@ htmlhelp_basename = 'catkin-cmakedoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'catkin.tex', ur'Catkin',
-   ur'troy d. straszheim', 'manual'),
+  ('index', 'catkin.tex', r'Catkin',
+   r'troy d. straszheim', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
