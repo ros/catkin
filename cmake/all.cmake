@@ -118,8 +118,9 @@ foreach(filename
     catkin_metapackage
     catkin_package
     catkin_package_xml
+    custom_install # required by catkin_symlink_install and test/gtest
+    catkin_symlink_install
     catkin_workspace
-    custom_install # required by test/gtest
     debug_message
     em_expand
     python # defines PYTHON_EXECUTABLE, required by empy
