@@ -119,6 +119,7 @@ foreach(filename
     catkin_package
     catkin_package_xml
     catkin_workspace
+    custom_install # required by test/gtest
     debug_message
     em_expand
     python # defines PYTHON_EXECUTABLE, required by empy

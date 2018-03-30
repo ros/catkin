@@ -315,13 +315,8 @@ if(NOT GMOCK_FOUND)
         if(base_dir)
           # overwrite CMake install command to skip install rules for gtest targets
           # which have been added in version 1.8.0
+          _use_custom_install()
           set(_CATKIN_SKIP_INSTALL_RULES TRUE)
-          function(install)
-            if(_CATKIN_SKIP_INSTALL_RULES)
-              return()
-            endif()
-            _install(${ARGN})
-          endfunction()
           add_subdirectory(${base_dir} ${gtest_lib_dir})
           set(_CATKIN_SKIP_INSTALL_RULES FALSE)
           set_target_properties(${gtest_libs} ${gtest_main_libs}
