@@ -275,7 +275,7 @@ def _parse_args(args=sys.argv[1:]):
              'stored in CMakeCache.txt and will persist between CMake calls '
              'unless explicitly cleared; e.g. catkin_make -DCATKIN_WHITELIST_PACKAGES="".')
     add('--cmake-args', dest='cmake_args', nargs='*', type=str,
-        help='Arbitrary arguments which are passes to CMake. '
+        help='Arbitrary arguments which are passed to CMake. '
              'It must be passed after other arguments since it collects all following options.')
     add('--make-args', dest='make_args', nargs='*', type=str,
         help='Arbitrary arguments which are passes to make. '
@@ -283,7 +283,7 @@ def _parse_args(args=sys.argv[1:]):
              'This is only necessary in combination with --cmake-args since else all unknown '
              'arguments are passed to make anyway.')
     add('--override-build-tool-check', action='store_true', default=False,
-        help='use to override failure due to using differnt build tools on the same workspace.')
+        help='use to override failure due to using different build tools on the same workspace.')
 
     namespace, unknown_args = parser.parse_known_args(args)
     namespace.cmake_args = cmake_args
