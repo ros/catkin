@@ -142,7 +142,9 @@ function(catkin_run_tests_target type name xunit_filename)
   endif()
   # hidden test target which depends on building all tests and cleaning test results
   add_custom_target(_run_tests_${PROJECT_NAME}_${type}_${name}
-    COMMAND ${cmd})
+    COMMAND ${cmd}
+    VERBATIM
+  )
   add_dependencies(_run_tests_${PROJECT_NAME}_${type} _run_tests_${PROJECT_NAME}_${type}_${name})
 
   # create target to clean project specific test results
