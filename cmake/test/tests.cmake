@@ -128,7 +128,9 @@ function(catkin_run_tests_target type name xunit_filename)
     # for the run_tests target the command needs to return zero so that testing is not aborted
     set(cmd ${cmd_wrapper} ${_testing_COMMAND})
     add_custom_target(run_tests_${PROJECT_NAME}_${type}_${name}
-      COMMAND ${cmd})
+      COMMAND ${cmd}
+      VERBATIM
+    )
   else()
     # create empty dummy target
     set(cmd "${CMAKE_COMMAND}" "-E" "echo" "Skipping test target \\'run_tests_${PROJECT_NAME}_${type}_${name}\\'. Enable testing via -DCATKIN_ENABLE_TESTING.")
@@ -140,13 +142,17 @@ function(catkin_run_tests_target type name xunit_filename)
   endif()
   # hidden test target which depends on building all tests and cleaning test results
   add_custom_target(_run_tests_${PROJECT_NAME}_${type}_${name}
-    COMMAND ${cmd})
+    COMMAND ${cmd}
+    VERBATIM
+  )
   add_dependencies(_run_tests_${PROJECT_NAME}_${type} _run_tests_${PROJECT_NAME}_${type}_${name})
 
   # create target to clean project specific test results
   if(NOT TARGET clean_test_results_${PROJECT_NAME})
     add_custom_target(clean_test_results_${PROJECT_NAME}
-      COMMAND ${PYTHON_EXECUTABLE} "${catkin_EXTRAS_DIR}/test/remove_test_results.py" "${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}")
+      COMMAND ${PYTHON_EXECUTABLE} "${catkin_EXTRAS_DIR}/test/remove_test_results.py" "${CATKIN_TEST_RESULTS_DIR}/${PROJECT_NAME}"
+      VERBATIM
+    )
   endif()
   add_dependencies(_run_tests_${PROJECT_NAME}_${type}_${name} clean_test_results_${PROJECT_NAME} tests ${_testing_DEPENDENCIES})
 endfunction()
