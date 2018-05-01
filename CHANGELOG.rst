@@ -2,6 +2,16 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add CMake option for symlink install (`#929 <https://github.com/ros/catkin/issues/929>`_)
+* use verbatim on test target to fix testing with Ninja (`#935 <https://github.com/ros/catkin/issues/935>`_)
+* do not add_library() gmock and gtest if targets already exist (`#927 <https://github.com/ros/catkin/issues/927>`_)
+* modernize Python 2 code to get ready for Python 3 (`#928 <https://github.com/ros/catkin/issues/928>`_)
+* remove Python 3.3 specific code because it is end of life (`#924 <https://github.com/ros/catkin/issues/924>`_)
+* fix an error in the comment. (`#930 <https://github.com/ros/catkin/issues/930>`_)
+* fix typos (`#934 <https://github.com/ros/catkin/issues/934>`_)
+
 0.7.11 (2018-02-02)
 -------------------
 * catkin_add_gtest: drop explicit add_dependencies(), rely on CMake. (`#917 <https://github.com/ros/catkin/issues/917>`_)
