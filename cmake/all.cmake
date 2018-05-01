@@ -118,6 +118,8 @@ foreach(filename
     catkin_metapackage
     catkin_package
     catkin_package_xml
+    custom_install # required by catkin_symlink_install and test/gtest
+    catkin_symlink_install
     catkin_workspace
     debug_message
     em_expand

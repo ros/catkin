@@ -1,0 +1,17 @@
+function(_use_custom_install)
+  # only redefine install function once
+  if(NOT _CATKIN_USE_CUSTOM_INSTALL)
+    set(_CATKIN_USE_CUSTOM_INSTALL TRUE PARENT_SCOPE)
+
+    function(install)
+      if(_CATKIN_SKIP_INSTALL_RULES)
+        return()
+      endif()
+      if(_CATKIN_CUSTOM_INSTALL_RULES)
+        include("${_CATKIN_CUSTOM_INSTALL_RULES}")
+      else()
+        _install(${ARGN})
+      endif()
+    endfunction()
+  endif()
+endfunction()
