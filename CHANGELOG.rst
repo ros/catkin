@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.12 (2018-05-01)
+-------------------
 * add CMake option for symlink install (`#929 <https://github.com/ros/catkin/issues/929>`_)
 * use verbatim on test target to fix testing with Ninja (`#935 <https://github.com/ros/catkin/issues/935>`_)
 * do not add_library() gmock and gtest if targets already exist (`#927 <https://github.com/ros/catkin/issues/927>`_)
