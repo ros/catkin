@@ -4,7 +4,12 @@ set(PYTHON_VERSION "" CACHE STRING "Specify specific Python version to use ('maj
 if(PYTHON_VERSION)
   find_package(PythonInterp "${PYTHON_VERSION}" REQUIRED)
 else()
-  find_package(PythonInterp REQUIRED)
+  set(ROS_PY_VER "$ENV{ROS_PYTHON_VERSION}")
+  if(ROS_PY_VER)
+    find_package(PythonInterp "${ROS_PY_VER}" REQUIRED)
+  else()
+    find_package(PythonInterp REQUIRED)
+  endif()
 endif()
 
 message(STATUS "Using PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
