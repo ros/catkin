@@ -11,8 +11,6 @@ d = generate_distutils_setup(
         'bin/catkin_init_workspace',
         'bin/catkin_make',
         'bin/catkin_make_isolated',
-        'bin/catkin_package_version',
-        'bin/catkin_prepare_release',
         'bin/catkin_test_results',
         'bin/catkin_topological_order',
     ],
