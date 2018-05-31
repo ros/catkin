@@ -74,7 +74,7 @@ function(catkin_generate_environment)
   # installspace
   set(SETUP_DIR ${CMAKE_INSTALL_PREFIX})
 
-  if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+  if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
     # install empty workspace marker if it doesn't already exist
     install(CODE "
       if (NOT EXISTS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}\")
@@ -99,7 +99,7 @@ function(catkin_generate_environment)
     configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.sh
       @ONLY)
-    if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+    if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
       install(PROGRAMS
         ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.sh
         DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -109,7 +109,7 @@ function(catkin_generate_environment)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
         ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
         @ONLY)
-      if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+      if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
         install(FILES
           ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
           DESTINATION ${CMAKE_INSTALL_PREFIX})
@@ -138,7 +138,7 @@ function(catkin_generate_environment)
   configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
     ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
     @ONLY)
-  if(NOT CATKIN_BUILD_BINARY_PACKAGE)
+  if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
     install(FILES
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/.rosinstall
       DESTINATION ${CMAKE_INSTALL_PREFIX})
