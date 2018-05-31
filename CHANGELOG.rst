@@ -2,6 +2,12 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add separate option CATKIN_INSTALL_INTO_PREFIX_ROOT (`#940 <https://github.com/ros/catkin/issues/940>`_)
+* find the Python version specified in ROS_PYTHON_VERSION (`#939 <https://github.com/ros/catkin/issues/939>`_)
+* move catkin_prepare_release script as well as dependencies to catkin_pkg (`#941 <https://github.com/ros/catkin/issues/941>`_)
+
 0.7.12 (2018-05-01)
 -------------------
 * add CMake option for symlink install (`#929 <https://github.com/ros/catkin/issues/929>`_)
