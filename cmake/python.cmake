@@ -1,11 +1,7 @@
 # the CMake variable PYTHON_INSTALL_DIR has the same value as the Python function catkin.builder.get_python_install_dir()
 
-set(PYTHON_VERSION "" CACHE STRING "Specify specific Python version to use ('major.minor' or 'major')")
-if(PYTHON_VERSION)
-  find_package(PythonInterp "${PYTHON_VERSION}" REQUIRED)
-else()
-  find_package(PythonInterp REQUIRED)
-endif()
+set(PYTHON_VERSION "$ENV{ROS_PYTHON_VERSION}" CACHE STRING "Specify specific Python version to use ('major.minor' or 'major')")
+find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
 
 message(STATUS "Using PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
 
