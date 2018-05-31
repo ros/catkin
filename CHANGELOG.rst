@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.13 (2018-05-31)
+-------------------
 * add separate option CATKIN_INSTALL_INTO_PREFIX_ROOT (`#940 <https://github.com/ros/catkin/issues/940>`_)
 * find the Python version specified in ROS_PYTHON_VERSION (`#939 <https://github.com/ros/catkin/issues/939>`_)
 * move catkin_prepare_release script as well as dependencies to catkin_pkg (`#941 <https://github.com/ros/catkin/issues/941>`_)
