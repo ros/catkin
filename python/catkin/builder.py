@@ -63,7 +63,7 @@ except ImportError as e:
     )
 
 from catkin.cmake import get_cmake_path
-from catkin.terminal_color import ansi, disable_ANSI_colors, fmt, sanitize
+from catkin_pkg.terminal_color import ansi, disable_ANSI_colors, fmt, sanitize
 from catkin_pkg.workspaces import ensure_workspace_marker
 
 
