@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.14 (2018-06-06)
+-------------------
 * terminal_color is now in catkin_pkg, regression from 0.7.13 (`#943 <https://github.com/ros/catkin/issues/943>`_)
 * fix permission of CMake file (`#942 <https://github.com/ros/catkin/issues/942>`_)
 
