@@ -427,7 +427,7 @@ def build_catkin_package(
         make_executable = 'make'
 
     make_cmd = [make_executable]
-    make_cmd.extend(handle_make_arguments(make_args, not use_nmake))
+    make_cmd.extend(handle_make_arguments(make_args, append_default_jobs_flags=not use_nmake))
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
@@ -538,7 +538,7 @@ def build_cmake_package(
     else:
         make_executable = 'make'
     make_cmd = [make_executable]
-    make_cmd.extend(handle_make_arguments(make_args, not use_nmake))
+    make_cmd.extend(handle_make_arguments(make_args, append_default_jobs_flags=not use_nmake))
     isolation_print_command(' '.join(make_cmd), build_dir)
     if last_env is not None:
         make_cmd = [last_env] + make_cmd
@@ -704,7 +704,7 @@ def build_package(
 
 
 def get_new_env(package, develspace, installspace, install, last_env, destdir=None):
-    env_script = 'env.bat' if platform.system() is 'Windows' else 'env.sh'
+    env_script = 'env.bat' if sys.platform == 'win32' else 'env.sh'
     new_env = None
     build_type = _get_build_type(package)
     if build_type in ['catkin', 'cmake']:
