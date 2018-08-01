@@ -169,6 +169,9 @@ message(STATUS "catkin ${catkin_VERSION}")
 # ensure that no current package name is set
 unset(_CATKIN_CURRENT_PACKAGE)
 
+# tools/libraries.cmake
+configure_shared_library_build_settings()
+
 # set global install destinations
 set(CATKIN_GLOBAL_BIN_DESTINATION bin)
 set(CATKIN_GLOBAL_ETC_DESTINATION etc)
