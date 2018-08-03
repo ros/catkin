@@ -134,7 +134,6 @@ Do not set
 
 * CMAKE_CXX_FLAGS
 * CMAKE_FIND_ROOT_PATH
-* CMAKE_MODULE_PATH
 
 **Conditions and Variables**
 
