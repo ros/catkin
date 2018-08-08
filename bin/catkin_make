@@ -229,7 +229,7 @@ def main():
         cmd = ['nmake']
     else:
         cmd = ['make']
-    cmd.extend(handle_make_arguments(args.make_args))
+    cmd.extend(handle_make_arguments(args.make_args, append_default_jobs_flags=not args.use_nmake))
     try:
         if not args.pkg:
             make_paths = [build_path]

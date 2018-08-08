@@ -43,7 +43,11 @@ endif()
 # or CMAKE_PREFIX_PATH from the environment
 if(NOT DEFINED CMAKE_PREFIX_PATH)
   if(NOT "$ENV{CMAKE_PREFIX_PATH}" STREQUAL "")
-    string(REPLACE ":" ";" CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+    if(NOT WIN32)
+      string(REPLACE ":" ";" CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+    else()
+      set(CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH})
+    endif()
   endif()
 endif()
 message(STATUS "Using CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
@@ -164,6 +168,9 @@ _catkin_package_xml(${CMAKE_BINARY_DIR}/catkin/catkin_generated/version DIRECTOR
 message(STATUS "catkin ${catkin_VERSION}")
 # ensure that no current package name is set
 unset(_CATKIN_CURRENT_PACKAGE)
+
+# tools/libraries.cmake
+configure_shared_library_build_settings()
 
 # set global install destinations
 set(CATKIN_GLOBAL_BIN_DESTINATION bin)
