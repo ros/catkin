@@ -22,6 +22,14 @@ install(DIRECTORY cmake
 
 catkin_python_setup()
 
+if (WIN32)
+  set(BATCH_NAMES catkin_find catkin_init_workspace catkin_make catkin_make_isolated
+                  catkin_test_results catkin_topological_order)
+  foreach(name ${BATCH_NAMES})
+    add_windows_python_batch_helper(${name})
+  endforeach()
+endif()
+
 if(CATKIN_ENABLE_TESTING)
   catkin_add_nosetests(test/local_tests)
   catkin_add_nosetests(test/unit_tests)
