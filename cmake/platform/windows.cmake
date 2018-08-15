@@ -54,3 +54,28 @@ if(BUILD_SHARED_LIBS)
     endfunction()
   endif()
 endif()
+
+#
+# Helper macros added to the catkin system to replace Windows lack of shebang support.
+#
+# Code courtesy of Yujin Robot.  Derived from https://github.com/ros-windows/win_ros
+#
+
+# distutils does not have support for 'entry_points'
+macro(add_windows_python_batch_helper name)
+  set(PYTHON_TARGET ${name})
+  configure_file(${catkin_EXTRAS_DIR}/templates/python_wrapper.bat.in
+                 ${CATKIN_DEVEL_PREFIX}/bin/${name}.bat)
+  install(PROGRAMS ${CATKIN_DEVEL_PREFIX}/bin/${PYTHON_TARGET}.bat 
+          DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+endmacro()
+
+# some python scripts need an executable, not a batch file
+macro(add_windows_python_exe_helper name)
+  # make the target name unique so we don't clash (e.g. rosbag target)
+  add_executable(${name}_exe ${catkin_EXTRAS_DIR}/templates/ros_bin.cpp)
+  # ensure the output name isn't mucked up by the unique target name.
+  set_target_properties(${name}_exe PROPERTIES OUTPUT_NAME ${name})
+  set_target_properties(${name}_exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
+  install(TARGETS ${name}_exe RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+endmacro()
