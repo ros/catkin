@@ -53,6 +53,7 @@ def run(args, **kwargs):
     p = subprocess.Popen(args,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT,
+                         shell=True,
                          cwd=kwargs.get('cwd', None))
     print("P==", p.__dict__)
     (stdout, stderr) = p.communicate()
@@ -84,8 +85,10 @@ def create_catkin_workspace(pth):
     workspace_cmake = os.path.join(pth, "CMakeLists.txt")
     if os.path.isfile(workspace_cmake):
         os.remove(workspace_cmake)
-    succeed(["/bin/ln", "-s", "catkin/cmake/toplevel.cmake",
-             "CMakeLists.txt"],
+#    succeed(["/bin/ln", "-s", "catkin/cmake/toplevel.cmake",
+#             "CMakeLists.txt"],
+#            cwd=pth)
+    succeed(["mklink", "CMakeLists.txt", "catkin\\cmake\\toplevel.cmake"],
             cwd=pth)
 
 
@@ -146,7 +149,7 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
     # manually
     def tearDown(self):
         for d in self.directories:
-            shutil.rmtree(self.directories[d])
+            shutil.rmtree(self.directories[d], ignoreError=True)
         self.directories = {}
 
     def cmake(self,
