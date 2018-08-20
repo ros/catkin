@@ -96,6 +96,7 @@ function(catkin_add_env_hooks file_prefix)
     # generate and install environment hook for installspace
     set(DEVELSPACE False)
     set(INSTALLSPACE True)
+    set(manifest ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/catkin_profile.${shell}.manifest)
     if(EXISTS ${base}.em OR EXISTS ${base}.installspace.em)
       # evaluate em template and install
       if(EXISTS ${base}.installspace.em)
@@ -124,6 +125,7 @@ function(catkin_add_env_hooks file_prefix)
       if(NOT ${ARG_SKIP_INSTALL})
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
           DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
+        file(APPEND ${manifest} "${ENV_HOOK}\n")
       endif()
     elseif (EXISTS ${base})
       # install plain file
@@ -132,6 +134,12 @@ function(catkin_add_env_hooks file_prefix)
           DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
       endif()
     endif()
+
+    if(NOT ${ARG_SKIP_INSTALL} AND EXISTS ${manifest})
+      install(FILES ${manifest}
+        DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/${PROJECT_NAME})
+    endif()
+
   endforeach()
 
   # refresh environment cache
