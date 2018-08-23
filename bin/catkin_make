@@ -29,6 +29,10 @@ def main():
     args = _parse_args()
     cmake_args = args.cmake_args
 
+    # force to use nmake if on Windows
+    if sys.platform == 'win32':
+        args.use_nmake = True
+
     # force --no-color if stdout is non-interactive
     if not sys.stdout.isatty():
         args.no_color = True
