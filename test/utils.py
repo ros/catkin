@@ -50,10 +50,11 @@ def run(args, **kwargs):
     Call to Popen, returns (errcode, stdout, stderr)
     """
     print("run:", args)
+    use_shell = kwargs.get('shell', False)
     p = subprocess.Popen(args,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT,
-                         shell=True,
+                         shell=use_shell,
                          cwd=kwargs.get('cwd', None))
     print("P==", p.__dict__)
     (stdout, stderr) = p.communicate()
@@ -89,7 +90,7 @@ def create_catkin_workspace(pth):
 #             "CMakeLists.txt"],
 #            cwd=pth)
     succeed(["mklink", "CMakeLists.txt", "catkin\\cmake\\toplevel.cmake"],
-            cwd=pth)
+            cwd=pth, shell=True)
 
 
 def succeed(cmd, **kwargs):
@@ -149,7 +150,7 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
     # manually
     def tearDown(self):
         for d in self.directories:
-            shutil.rmtree(self.directories[d], ignoreError=True)
+            shutil.rmtree(self.directories[d], ignore_errors=True)
         self.directories = {}
 
     def cmake(self,
@@ -158,6 +159,7 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
               installdir=None,
               prefix_path=None,
               expect=succeed,
+              use_nmake=False,
               **kwargs):
         """
         invokes cmake
@@ -170,6 +172,9 @@ class AbstractCatkinWorkspaceTest(unittest.TestCase):
         added to the cmake command
         """
         args = []
+        if use_nmake:
+            args += ['-G', 'NMake Makefiles']
+
         if cwd is None:
             cwd = self.builddir
         if srcdir is None:

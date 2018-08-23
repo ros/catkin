@@ -30,50 +30,53 @@ class MockTest(AbstractCatkinWorkspaceTest):
     #     pass
 
     def test_catkin_only(self):
-        self.cmake()
+        MAKE_CMD = ['nmake']
+        self.cmake(use_nmake=True)
         succeed(MAKE_CMD, cwd=self.builddir)
         succeed(MAKE_CMD + ["install"], cwd=self.builddir)
 
         assert_exists(self.installdir,
-                      "env.sh",
-                      "setup.sh",
-                      "setup.zsh")
+                      "env.bat",
+                      "setup.bat")
 
     def test_nolang(self):
+        MAKE_CMD = ['nmake']
         dstdir = os.path.join(self.workspacedir, 'nolangs')
         shutil.copytree(os.path.join(MOCK_DIR, 'src', 'nolangs'), dstdir)
 
         out = self.cmake(CATKIN_WHITELIST_PACKAGES='nolangs',
-                         CATKIN_DPKG_BUILDPACKAGE_FLAGS='-d;-S;-us;-uc')
+                         CATKIN_DPKG_BUILDPACKAGE_FLAGS='-d;-S;-us;-uc',
+                         use_nmake=True)
         self.assertTrue(os.path.exists(self.builddir + "/nolangs"))
         self.assertFalse(os.path.exists(self.builddir + "/std_msgs"))
         self.assertFalse(os.path.exists(self.builddir + "/genmsg"))
         out = succeed(MAKE_CMD, cwd=self.builddir)
         self.assertTrue(os.path.exists(self.builddir +
-                                       "/nolangs/bin/nolangs_exec"))
+                                       "/nolangs/bin/nolangs_exec.exe"))
         out = succeed(MAKE_CMD + ["install"], cwd=self.builddir)
 
         assert_exists(self.installdir,
-                      "bin/nolangs_exec",
+                      "bin/nolangs_exec.exe",
                       "share/nolangs/cmake/nolangsConfig.cmake")
 
         # also test make help
         succeed(MAKE_CMD + ["help"], cwd=self.builddir)
 
     def test_noproject(self):
+        MAKE_CMD = ['nmake']
         # create workspace with just catkin and 'noproject' project
         dstdir = os.path.join(self.workspacedir, 'noproject')
         shutil.copytree(os.path.join(MOCK_DIR, 'src-fail', 'noproject'), dstdir)
         # test with whitelist
-        out = self.cmake(CATKIN_WHITELIST_PACKAGES='catkin')
+        out = self.cmake(CATKIN_WHITELIST_PACKAGES='catkin', use_nmake=True)
         out = succeed(MAKE_CMD + ["install"], cwd=self.builddir)
 
         shutil.rmtree(self.builddir)
         # fail if we try to build noproject stack
         os.makedirs(self.builddir)
 
-        out = self.cmake(CMAKE_PREFIX_PATH=self.installdir,
-                         expect=fail)
+        out = self.cmake(CMAKE_PREFIX_PATH=self.installdir.replace('\\', '/'),
+                         expect=fail, use_nmake=True)
         print("failed as expected, out={}".format(out))
 
         self.assertTrue(b"catkin_package() PROJECT_NAME is set to 'Project'" in out, out)

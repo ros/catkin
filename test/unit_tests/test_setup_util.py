@@ -129,7 +129,7 @@ class SetupUtilTest(unittest.TestCase):
             self.assertEqual(os.pathsep.join([nowslib, foolib]), _rollback_env_variable(mock_env, 'varname', ['lib']))
 
             # windows pathsep
-            os.path.altsep = '\\'
+            os.path.altsep = '/' if sys.platform == 'win32' else '\\'
             self.assertEqual(os.pathsep.join([nowslib, foolib]), _rollback_env_variable(mock_env, 'varname', ['\\lib']))
         finally:
             os.path.altsep = altsep

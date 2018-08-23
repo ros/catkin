@@ -55,14 +55,14 @@ class InterrogateSetupTest(unittest.TestCase):
                          cmake_lines)
 
     def test_get_locations(self):
-        self.assertEqual({'foo': 'foo'}, _get_locations(['foo'], {}))
-        self.assertEqual({'foo': 'src/foo'},
+        self.assertEqual({'foo': os.path.normcase('foo')}, _get_locations(['foo'], {}))
+        self.assertEqual({'foo': os.path.normcase('src/foo')},
                          _get_locations(['foo'], {'': 'src'}))
-        self.assertEqual({'foo': 'src/foo', 'foo.bar': 'src/foo/bar'},
+        self.assertEqual({'foo': os.path.normcase('src/foo'), 'foo.bar': os.path.normcase('src/foo/bar')},
                          _get_locations(['foo.bar'], {'': 'src'}))
-        self.assertEqual({'foo': 'src'}, _get_locations(['foo'],
+        self.assertEqual({'foo': os.path.normcase('src')}, _get_locations(['foo'],
                                                         {'foo': 'src'}))
-        self.assertEqual({'foo': 'src', 'foo.bar': 'src/bar'},
+        self.assertEqual({'foo': os.path.normcase('src'), 'foo.bar': os.path.normcase('src/bar')},
                          _get_locations(['foo.bar'], {'foo': 'src'}))
 
     def test_generate_cmake_file_noallprefix(self):

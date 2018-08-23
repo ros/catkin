@@ -46,35 +46,35 @@ class FindInWorkspaceTest(unittest.TestCase):
         checked = []
         existing = find_in_workspaces(['include'], 'foo', 'foopath', _workspaces=['bar'], considered_paths=checked)
         self.assertEqual([], existing)
-        self.assertEqual(['bar/include/foo/foopath'], checked)
+        self.assertEqual([os.path.normcase('bar/include/foo/foopath')], checked)
         checked = []
         existing = find_in_workspaces(['include'], 'foo', 'foopath', _workspaces=['bar', 'baz'], considered_paths=checked)
         self.assertEqual([], existing)
-        self.assertEqual(['bar/include/foo/foopath', 'baz/include/foo/foopath'], checked)
+        self.assertEqual([os.path.normcase('bar/include/foo/foopath'), os.path.normcase('baz/include/foo/foopath')], checked)
         checked = []
         existing = find_in_workspaces(['include', 'etc', 'libexec'], 'foo', 'foopath', _workspaces=['bar', 'baz'], considered_paths=checked)
         self.assertEqual([], existing)
-        self.assertEqual(['bar/include/foo/foopath',
-                          'bar/etc/foo/foopath',
-                          'bar/lib/foo/foopath',
-                          'bar/libexec/foo/foopath',
-                          'baz/include/foo/foopath',
-                          'baz/etc/foo/foopath',
-                          'baz/lib/foo/foopath',
-                          'baz/libexec/foo/foopath'], checked)
+        self.assertEqual([os.path.normcase('bar/include/foo/foopath'),
+                          os.path.normcase('bar/etc/foo/foopath'),
+                          os.path.normcase('bar/lib/foo/foopath'),
+                          os.path.normcase('bar/libexec/foo/foopath'),
+                          os.path.normcase('baz/include/foo/foopath'),
+                          os.path.normcase('baz/etc/foo/foopath'),
+                          os.path.normcase('baz/lib/foo/foopath'),
+                          os.path.normcase('baz/libexec/foo/foopath')], checked)
         checked = []
         existing = find_in_workspaces(['share', 'etc', 'lib'], None, 'foopath', _workspaces=['bar', 'baz'], considered_paths=checked)
         self.assertEqual([], existing)
-        self.assertEqual(['bar/share/foopath',
-                          'bar/etc/foopath',
-                          'bar/lib/foopath',
-                          'baz/share/foopath',
-                          'baz/etc/foopath',
-                          'baz/lib/foopath'], checked)
+        self.assertEqual([os.path.normcase('bar/share/foopath'),
+                          os.path.normcase('bar/etc/foopath'),
+                          os.path.normcase('bar/lib/foopath'),
+                          os.path.normcase('baz/share/foopath'),
+                          os.path.normcase('baz/etc/foopath'),
+                          os.path.normcase('baz/lib/foopath')], checked)
         checked = []
         existing = find_in_workspaces(None, None, None, _workspaces=['bar'], considered_paths=checked)
         self.assertEqual([], existing)
-        self.assertEqual(['bar/bin', 'bar/etc', 'bar/include', 'bar/lib', 'bar/share'], checked)
+        self.assertEqual([os.path.normcase('bar/bin'), os.path.normcase('bar/etc'), os.path.normcase('bar/include'), os.path.normcase('bar/lib'), os.path.normcase('bar/share')], checked)
 
     def test_with_sourcepath(self):
         def create_mock_workspace(root_dir, ws):
@@ -105,15 +105,15 @@ class FindInWorkspaceTest(unittest.TestCase):
             checked = []
             existing = find_in_workspaces(['share', 'etc'], 'foo', 'foopath', _workspaces=[os.path.join(root_dir, 'ws1')], considered_paths=checked)
             self.assertEqual([os.path.join(root_dir, 'ws1', 'share', 'foo', 'foopath'),
-                              'loc1/foo/foopath',
-                              'loc2/foo/foopath',
+                              os.path.normcase('loc1/foo/foopath'),
+                              os.path.normcase('loc2/foo/foopath'),
                               os.path.join(root_dir, 'ws1', 'etc', 'foo', 'foopath')], checked)
             self.assertEqual([], existing)
             checked = []
             existing = find_in_workspaces(['share', 'etc'], 'foo', None, _workspaces=[os.path.join(root_dir, 'ws1')], considered_paths=checked)
             self.assertEqual([os.path.join(root_dir, 'ws1', 'share', 'foo'),
-                              'loc1/foo',
-                              'loc2/foo',
+                              os.path.normcase('loc1/foo'),
+                              os.path.normcase('loc2/foo'),
                               os.path.join(root_dir, 'ws1', 'etc', 'foo')], checked)
             self.assertEqual([os.path.join(root_dir, 'ws1', 'share', 'foo')], existing)
             # first-only option

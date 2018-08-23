@@ -1,4 +1,5 @@
 import os
+import sys
 import unittest
 import tempfile
 import shutil
@@ -20,6 +21,8 @@ class DowloadCheckMd5Test(unittest.TestCase):
             check_file = os.path.join(rootdir, 'checkfile')
             with open(src_file, 'w') as fhand:
                 fhand.write('foo')
+            if sys.platform == 'win32':
+                src_file = '/' + src_file
             download_md5('file://%s' % src_file, check_file)
             self.assertTrue(os.path.isfile(check_file))
         finally:
@@ -49,12 +52,15 @@ class DowloadCheckMd5Test(unittest.TestCase):
             realmd5 = 'acbd18db4cc2f85cedef654fccc4a4d8'
             with open(src_file, 'w') as fhand:
                 fhand.write('foo')
-            main([os.path.join('file://localhost', src_file), check_file])
+            if sys.platform == 'win32':
+                src_file = '/' + src_file
+            src_file = 'file://localhost'+ src_file
+            main([src_file, check_file])
             self.assertTrue(os.path.isfile(check_file))
             os.remove(check_file)
             self.assertFalse(os.path.isfile(check_file))
-            self.assertNotEqual(main([os.path.join('file://localhost', src_file), check_file, "hello"]), 0)
-            main([os.path.join('file://localhost', src_file), check_file, realmd5])
+            self.assertNotEqual(main([src_file, check_file, "hello"]), 0)
+            main([src_file, check_file, realmd5])
 
         finally:
             shutil.rmtree(rootdir)

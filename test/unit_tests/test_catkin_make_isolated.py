@@ -146,6 +146,8 @@ class CatkinMakeIsolatedTests(unittest.TestCase):
             environ['CMAKE_PREFIX_PATH'] = os.path.join(ws_dir, 'install')
             environ['PWD'] = src_dir
             subprocess.check_output(' '.join([cmi, '-C', '..']), cwd=src_dir, env=environ, shell=True)
+        except Exception as ex_symlink:
+            pass    # skip if synlink is not supported
         except Exception as e:
             error_msg = str(e)
         finally:

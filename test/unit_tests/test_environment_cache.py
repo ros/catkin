@@ -65,18 +65,18 @@ class PlatformTest(unittest.TestCase):
             fake_environ['TRICK'] = '/lib'
             catkin.environment_cache.os.environ = fake_environ
             rootdir = tempfile.mkdtemp()
-            env_file = os.path.join(rootdir, 'env.sh')
+            env_file = os.path.join(rootdir, 'env.bat')
             with open(env_file, 'a') as fhand:
                 fhand.write('''\
-#! /usr/bin/env sh
-export FOO=/foo:/bar
-export TRICK=/usr/lib
-export BAR=/bar
-exec "$@"''')
+@echo off
+set FOO=/foo:/bar
+set TRICK=/usr/lib
+set BAR=/bar
+%*''')
             mode = os.stat(env_file).st_mode
             os.chmod(env_file, mode | stat.S_IXUSR)
             result = generate_environment_script(env_file)
-            self.assertTrue('export FOO="/foo:$FOO"' in result, result)
+            self.assertTrue('export FOO="/foo:/bar"' in result, result)
             self.assertTrue('export TRICK="/usr/lib"' in result, result)
             self.assertTrue('export BAR="/bar"' in result, result)
             self.assertEqual('#!/usr/bin/env sh', result[0])

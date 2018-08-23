@@ -1,4 +1,5 @@
 import os
+import sys
 import unittest
 import tempfile
 import shutil
@@ -23,7 +24,7 @@ class RunTestsTest(unittest.TestCase):
             #     fhand.write('foo')
             # self.assertTrue(os.path.isfile(check_file))
             main([results_file,
-                  'true',
+                  'echo > nul',
                   '--working-dir', rootdir])
             self.assertFalse(os.path.exists(results_file))
             self.assertTrue(os.path.exists(placeholder))
@@ -32,21 +33,26 @@ class RunTestsTest(unittest.TestCase):
             self.assertTrue(results_file in contents)
             os.remove(placeholder)
             ###
+            if sys.platform == 'win32':
+                cmd_to_run = "echo ^<testsuite tests=\"0\" failures=\"0\" errors=\"0\"^>^</testsuite^> > %s" % results_file
+            else:
+                cmd_to_run = "echo '<testsuite tests=\"0\" failures=\"0\" errors=\"0\"></testsuite>' > %s" % results_file
+
             main([results_file,
-                  "echo '<testsuite tests=\"0\" failures=\"0\" errors=\"0\"></testsuite>' > %s" % results_file,
+                  cmd_to_run,
                   '--working-dir', rootdir])
             self.assertTrue(os.path.exists(results_file))
             self.assertFalse(os.path.exists(placeholder))
             os.remove(results_file)
             ### no working dir given
             main([results_file,
-                  "echo '<testsuite tests=\"0\" failures=\"0\" errors=\"0\"></testsuite>' > %s" % results_file])
+                  cmd_to_run])
             self.assertTrue(os.path.exists(results_file))
             self.assertFalse(os.path.exists(placeholder))
             os.remove(results_file)
             ### make sure resultsfile is deleted
             main([results_file,
-                  'true',
+                  'echo > nul',
                   '--working-dir', rootdir])
             self.assertFalse(os.path.exists(results_file))
             self.assertTrue(os.path.exists(placeholder))
