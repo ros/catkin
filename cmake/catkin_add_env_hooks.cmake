@@ -109,7 +109,7 @@ function(catkin_add_env_hooks file_prefix)
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK})
       if(NOT ${ARG_SKIP_INSTALL})
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
-          DESTINATION etc/catkin/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
       endif()
     elseif(EXISTS ${base}.in OR EXISTS ${base}.installspace.in)
       # evaluate in template and install
@@ -123,13 +123,13 @@ function(catkin_add_env_hooks file_prefix)
         @ONLY)
       if(NOT ${ARG_SKIP_INSTALL})
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
-          DESTINATION etc/catkin/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
       endif()
     elseif (EXISTS ${base})
       # install plain file
       if(NOT ${ARG_SKIP_INSTALL})
         install(FILES ${base}
-          DESTINATION etc/catkin/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
       endif()
     endif()
   endforeach()
