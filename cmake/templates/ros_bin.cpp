@@ -82,22 +82,27 @@ int main(int argc, char **argv) {
 			&process_info
 			);
 	if ( result == 0 ) {
-		switch ( result ) {
+		unsigned long last_error = GetLastError();
+		switch ( last_error ) {
 			case ( ERROR_FILE_NOT_FOUND ) : {
 				std::cout << "The python executable could not be found - check it is in your PATH" << std::endl;
 				debug();
 				break;
 			}
 			default: {
-				std::cout << "Process failed with error: " << GetLastError() << std::endl;
+				std::cout << "Process failed with error: " << last_error << std::endl;
 				debug();
 				break;
 			}
 		}
+		return last_error;
 	} else {
 		WaitForSingleObject( process_info.hProcess, INFINITE );
+		unsigned long exit_code = NO_ERROR;
+		GetExitCodeProcess( process_info.hProcess, &exit_code );
 	    CloseHandle( process_info.hProcess );
 	    CloseHandle( process_info.hThread );
+		return exit_code;
 	}
 #else
 	std::cout << "This is a windows application only." << std::endl;
