@@ -265,8 +265,8 @@ if __name__ == '__main__':
         CMAKE_PREFIX_PATH = '@CMAKE_PREFIX_PATH_AS_IS@'.split(';')
         # prepend current workspace if not already part of CPP
         base_path = os.path.dirname(__file__)
-        if base_path not in CMAKE_PREFIX_PATH:
-            CMAKE_PREFIX_PATH.insert(0, base_path)
+        if base_path not in [os.path.normpath(os.path.normcase(p)) for p in CMAKE_PREFIX_PATH]:
+            CMAKE_PREFIX_PATH.insert(0, base_path.replace(os.path.sep, '/'))
         CMAKE_PREFIX_PATH = os.pathsep.join(CMAKE_PREFIX_PATH)
 
         environ = dict(os.environ)
