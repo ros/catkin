@@ -111,7 +111,7 @@ function(catkin_add_env_hooks file_prefix)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
           DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
-          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/catkin_env_hook)
       endif()
     elseif(EXISTS ${base}.in OR EXISTS ${base}.installspace.in)
       # evaluate in template and install
@@ -127,7 +127,7 @@ function(catkin_add_env_hooks file_prefix)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
           DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
-          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/catkin_env_hook)
       endif()
     elseif (EXISTS ${base})
       # install plain file
@@ -135,7 +135,7 @@ function(catkin_add_env_hooks file_prefix)
         install(FILES ${base}
           DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
         install(FILES ${base}
-          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/catkin_env_hook)
       endif()
     endif()
   endforeach()
