@@ -34,6 +34,12 @@
 #
 # looks for files env-hooks/my_prefix.[bash|tcsh|zsh]((.(devel|install)space)?.[em|in])?
 #
+# The environment hooks are installed into two destinations:
+# * ``etc/catkin/profile.d`` where they can be sourced efficiently by the
+#   catkin generated ``setup.<shell>`` scripts
+# * ``share/${PROJECT_NAME}/catkin_env_hook`` where they can be source
+#   efficiently on a per-package base
+#
 # :param file_prefix: the filename prefix
 # :type file_prefix: string
 # :param SHELLS: the shell extensions (e.g.: sh bat bash zsh tcsh)
