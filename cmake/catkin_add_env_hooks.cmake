@@ -37,7 +37,7 @@
 # The environment hooks are installed into two destinations:
 # * ``etc/catkin/profile.d`` where they can be sourced efficiently by the
 #   catkin generated ``setup.<shell>`` scripts
-# * ``share/${PROJECT_NAME}/catkin_env_hook`` where they can be source
+# * ``share/${PROJECT_NAME}/catkin_env_hook`` where they can be sourced
 #   efficiently on a per-package base
 #
 # :param file_prefix: the filename prefix
