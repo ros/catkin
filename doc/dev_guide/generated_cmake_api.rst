@@ -77,10 +77,10 @@ Public CMake functions / macros
  looks for files env-hooks/my_prefix.[bash|tcsh|zsh]((.(devel|install)space)?.[em|in])?
 
  The environment hooks are installed into two destinations:
- * ``etc/catkin/profile.d`` where they can be sourced efficiently by the
-   catkin generated ``setup.<shell>`` scripts
- * ``share/${PROJECT_NAME}/catkin_env_hook`` where they can be sourced
-   efficiently on a per-package base
+  * ``etc/catkin/profile.d`` where they can be sourced efficiently by the
+    catkin generated ``setup.<shell>`` scripts
+  * ``share/${PROJECT_NAME}/catkin_env_hook`` where they can be sourced
+    efficiently on a per-package base
 
  :param file_prefix: the filename prefix
  :type file_prefix: string
@@ -629,6 +629,7 @@ Non-public CMake functions / macros
  or catkin_add_executable_with_gmock instead.
 
  :param type: "gtest" or "gmock"
+
  The remaining arguments are the same as for
  catkin_add_executable_with_gtest and
  catkin_add_executable_with_gmock.
@@ -648,6 +649,7 @@ Non-public CMake functions / macros
  instead.
 
  :param type: "gtest" or "gmock"
+
  The remaining arguments are the same as for catkin_add_gtest and
  catkin_add_gmock.
 
