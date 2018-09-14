@@ -1060,34 +1060,53 @@ def build_workspace_isolated(
     if not os.path.exists(develspace):
         os.makedirs(develspace)
     if not build_packages:
-        generated_env_sh = os.path.join(develspace, 'env.sh')
-        generated_setup_util_py = os.path.join(develspace, '_setup_util.py')
-        if not merge and pkg_develspace:
-            # generate env.sh and setup.sh|bash|zsh which relay to last devel space
-            with open(generated_env_sh, 'w') as f:
-                f.write("""\
+        if sys.platform == 'win32':
+            env_script = 'env.bat'
+            env_script_content = """\
+@echo off
+REM generated from catkin.builder module
+
+call {0} %*
+"""
+            setup_script_content = """\
+@echo off
+REM generated from catkin.builder module
+
+call "{0}/setup.{1}"
+"""
+        else:
+            env_script = 'evn.sh'
+            env_script_content = """\
 #!/usr/bin/env sh
 # generated from catkin.builder module
 
 {0} "$@"
-""".format(os.path.join(pkg_develspace, 'env.sh')))
-            os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
-
-            for shell in ['sh', 'bash', 'zsh']:
-                with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
-                    f.write("""\
+"""
+            setup_script_content = """\
 #!/usr/bin/env {1}
 # generated from catkin.builder module
 
 . "{0}/setup.{1}"
-""".format(pkg_develspace, shell))
+"""
+        generated_env_sh = os.path.join(develspace, env_script)
+        generated_setup_util_py = os.path.join(develspace, '_setup_util.py')
+        if not merge and pkg_develspace:
+            # generate env script and setup.sh|bash|zsh or setup.bat which relay to last devel space
+            with open(generated_env_sh, 'w') as f:
+                f.write(env_script_content.format(os.path.join(pkg_develspace, env_script)))
+            os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
+
+            shells_to_write = ['bat'] if sys.platform == 'win32' else ['sh', 'bash', 'zsh']
+            for shell in shells_to_write:
+                with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
+                    f.write(setup_script_content.format(pkg_develspace, shell))
 
             # remove _setup_util.py file which might have been generated for an empty devel space before
             if os.path.exists(generated_setup_util_py):
                 os.remove(generated_setup_util_py)
 
         elif not pkg_develspace:
-            # generate env.sh and setup.sh|bash|zsh for an empty devel space
+            # generate env script and setup.sh|bash|zsh or setup.bat for an empty devel space
             if 'CMAKE_PREFIX_PATH' in os.environ.keys():
                 variables = {
                     'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
@@ -1105,13 +1124,19 @@ def build_workspace_isolated(
             else:
                 sys.exit("Unable to process CMAKE_PREFIX_PATH from environment. Cannot generate environment files.")
 
-            variables = {'SETUP_FILENAME': 'setup'}
+            variables = {
+                'SETUP_DIR': develspace,
+                'SETUP_FILENAME': 'setup'
+            }
             with open(generated_env_sh, 'w') as f:
-                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', 'env.sh.in'), variables))
+                f.write(configure_file(os.path.join(get_cmake_path(), 'templates', env_script + '.in'), variables))
             os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
 
-            variables = {'SETUP_DIR': develspace}
-            for shell in ['sh', 'bash', 'zsh']:
+            variables = {
+                'PYTHON_EXECUTABLE': sys.executable,
+                'SETUP_DIR': develspace}
+            shells_to_write = ['bat'] if sys.platform == 'win32' else ['sh', 'bash', 'zsh']
+            for shell in shells_to_write:
                 with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
                     f.write(configure_file(
                         os.path.join(get_cmake_path(), 'templates', 'setup.%s.in' % shell),
