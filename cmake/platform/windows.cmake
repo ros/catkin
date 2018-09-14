@@ -54,3 +54,8 @@ if(BUILD_SHARED_LIBS)
     endfunction()
   endif()
 endif()
+
+# For MSVC, add difinitions to exclude the definitions for common names macros that cause name collision
+if(MSVC)
+  add_definitions(-DNOMINMAX)   # not to define min/max macros
+endif()
