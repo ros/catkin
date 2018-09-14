@@ -55,6 +55,11 @@ if(BUILD_SHARED_LIBS)
   endif()
 endif()
 
+# For MSVC, add difinitions to exclude the definitions for common names macros that cause name collision
+if(MSVC)
+  add_definitions(-DNOMINMAX)   # not to define min/max macros
+endif()
+
 #
 # Helper macros added to the catkin system to replace Windows lack of shebang support.
 #
