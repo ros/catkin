@@ -1,3 +1,5 @@
+.. image:: doc/catkin.svg
+   :width: 100px
 catkin
 ======
 
