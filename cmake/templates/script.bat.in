@@ -1,4 +1,4 @@
 @echo off
 REM generated from catkin/cmake/templates/script.bat.in
 
-"@BAT_SCRIPT@" %*
+call "@BAT_SCRIPT@" %*
