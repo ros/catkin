@@ -16,6 +16,27 @@ if NOT EXIST "%_SETUP_UTIL%" (
 REM set the Python executable
 set _PYTHON="@PYTHON_EXECUTABLE@"
 
+REM compute Python home and normalize Python executable path
+set _PYTHONHOME=
+SET _PYTHONEXE=
+FOR /f "usebackq tokens=*" %%a IN ('%_PYTHON%') DO (
+  SET _PYTHONHOME=%%~dpa
+  SET _PYTHONEXE=%%~nxa
+  SET _PYTHON="%%~dpa%%~nxa"
+)
+
+REM add Python home to PATH when needed
+set _PYTHON_FOUND=
+for %%i in (%_PYTHONEXE%) do (
+  set _PYTHON_FOUND="%%~$PATH:i"
+  goto :done
+)
+
+:done
+if not "%_PYTHON_FOUND%" == "%_PYTHON%" (
+  set PATH=%_PYTHONHOME%;%_PYTHONHOME%Scripts;%PATH%
+)
+
 REM generate pseudo random temporary filename
 :GenerateTempFilename
 REM replace leading space of time with zero
@@ -66,6 +87,9 @@ set PATH=%LD_LIBRARY_PATH%;%PATH%
 REM unset temporary variables
 set _SETUP_UTIL=
 set _PYTHON=
+set _PYTHONEXE=
+set _PYTHONHOME=
+set _PYTHON_FOUND=
 set _SETUP_TMP=
 set _CATKIN_ENVIRONMENT_HOOKS_COUNT=
 set _HOOK_COUNT=
