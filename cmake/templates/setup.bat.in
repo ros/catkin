@@ -26,16 +26,16 @@ FOR /f "usebackq tokens=*" %%a IN ('%_PYTHON%') DO (
 )
 
 REM add Python home to PATH when needed
+setlocal enabledelayedexpansion
 set _PYTHON_FOUND=
 for %%i in (%_PYTHONEXE%) do (
   set _PYTHON_FOUND="%%~$PATH:i"
-  goto :done
 )
 
-:done
-if not "%_PYTHON_FOUND%" == "%_PYTHON%" (
-  set PATH=%_PYTHONHOME%;%_PYTHONHOME%Scripts;%PATH%
+if not "!_PYTHON_FOUND!" == "!_PYTHON!" (
+  set PATH=%_PYTHONHOME%;%_PYTHONHOME%Scripts;!PATH!
 )
+endlocal & set PATH=%PATH%
 
 REM generate pseudo random temporary filename
 :GenerateTempFilename
