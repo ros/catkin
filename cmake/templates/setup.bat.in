@@ -17,10 +17,10 @@ REM set the Python executable
 set _PYTHON="@PYTHON_EXECUTABLE@"
 
 REM compute Python home and normalize Python executable path
-set _PYTHONHOME=
+set PYTHONHOME=
 SET _PYTHONEXE=
 FOR /f "usebackq tokens=*" %%a IN ('%_PYTHON%') DO (
-  SET _PYTHONHOME=%%~dpa
+  SET PYTHONHOME=%%~dpa
   SET _PYTHONEXE=%%~nxa
   SET _PYTHON="%%~dpa%%~nxa"
 )
@@ -33,7 +33,7 @@ for %%i in (%_PYTHONEXE%) do (
 )
 
 if not "!_PYTHON_FOUND!" == "!_PYTHON!" (
-  set PATH=%_PYTHONHOME%;%_PYTHONHOME%Scripts;!PATH!
+  set PATH=%PYTHONHOME%;%PYTHONHOME%Scripts;!PATH!
 )
 endlocal & set PATH=%PATH%
 
@@ -88,7 +88,6 @@ REM unset temporary variables
 set _SETUP_UTIL=
 set _PYTHON=
 set _PYTHONEXE=
-set _PYTHONHOME=
 set _PYTHON_FOUND=
 set _SETUP_TMP=
 set _CATKIN_ENVIRONMENT_HOOKS_COUNT=
