@@ -73,6 +73,14 @@ layout, it looks like this::
   
   setup(**setup_args)
 
+Note: As in `setuptools
+<https://packaging.python.org/guides/distributing-packages-using-setuptools/#packages>`_,
+the ``packages`` list is not recursive, and sub-packages must be
+included explicitly (e.g. ``your_package.tools.my_util`` which would
+contain the python modules defined in the folder
+``src/your_package/tools/my_util/``, along with an ``__init__.py``
+file).
+
 This ``setup.py`` is only for use with catkin. Remember *not* to
 invoke it yourself.
 
