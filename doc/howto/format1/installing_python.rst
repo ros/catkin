@@ -73,7 +73,7 @@ layout, it looks like this::
   
   setup(**setup_args)
 
-Note: `As in setuptools
+Note: As in `setuptools
 <https://packaging.python.org/guides/distributing-packages-using-setuptools/#packages>`_,
 the ``packages`` list is not recursive, and sub-packages must be
 included explicitly (e.g. ``your_package.tools.my_util`` which would
