@@ -67,8 +67,12 @@ class InitWorkspaceTest(unittest.TestCase):
             with open(join(root_dir, 'ws2', '.catkin'), 'ab') as fhand:
                 fhand.write(''.encode('UTF-8'))
 
-            init_workspace(join(root_dir, 'ws1'))
-            init_workspace(join(root_dir, 'ws2'))
+            workspace_dir = join(root_dir, 'ws1')
+            os.chdir(workspace_dir)
+            init_workspace(workspace_dir)
+            workspace_dir = join(root_dir, 'ws2')
+            os.chdir(workspace_dir)
+            init_workspace(workspace_dir)
 
             # in same workspace symlink should be relative
             try:
@@ -90,4 +94,5 @@ class InitWorkspaceTest(unittest.TestCase):
 
         finally:
             # pass
+            os.chdir(os.path.dirname(__file__))
             shutil.rmtree(root_dir)
