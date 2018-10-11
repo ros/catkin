@@ -55,7 +55,8 @@ if(BUILD_SHARED_LIBS)
   endif()
 endif()
 
-# For MSVC, add difinitions to exclude the definitions for common names macros that cause name collision
-if(MSVC)
+# For Windows, add difinitions to exclude the definitions for common names macros that cause name collision
+if(WIN32)
   add_definitions(-DNOMINMAX)   # not to define min/max macros
+  add_definitions(-DNO_STRICT)  # not to define STRICT macros (minwindef.h or boost\winapi\basic_types.hpp)
 endif()
