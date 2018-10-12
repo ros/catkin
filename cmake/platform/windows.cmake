@@ -60,4 +60,9 @@ if(WIN32)
   add_definitions(-DNOMINMAX)   # not to define min/max macros
   add_definitions(-DNO_STRICT)  # not to define STRICT macros (minwindef.h or boost\winapi\basic_types.hpp)
   add_definitions(-DQ_NOWINSTRICT)  # not to define STRICT macros (qtgui\qwindowdefs_win.h)
+  add_definitions(-D_USE_MATH_DEFINES)  # enable Math Constants https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants
+endif()
+
+if(MSVC)
+  add_compile_options(/Zc:__cplusplus) # https://blogs.msdn.microsoft.com/vcblog/2018/04/09/msvc-now-correctly-reports-__cplusplus/
 endif()
