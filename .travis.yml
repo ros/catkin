@@ -7,6 +7,6 @@ install:
   - pip install argparse catkin-pkg empy mock nose
 # command to run tests
 script:
-  - nosetests test/unit_tests test/local_tests
+  - nosetests test/unit_tests test/local_tests # does this test work with the latest branch?
 notifications:
   email: false
