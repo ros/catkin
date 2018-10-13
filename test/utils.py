@@ -84,9 +84,8 @@ def create_catkin_workspace(pth):
     workspace_cmake = os.path.join(pth, "CMakeLists.txt")
     if os.path.isfile(workspace_cmake):
         os.remove(workspace_cmake)
-    succeed(["/bin/ln", "-s", "catkin/cmake/toplevel.cmake",
-             "CMakeLists.txt"],
-            cwd=pth)
+    succeed(["/bin/ln", "-s", pth + "/catkin/cmake/toplevel.cmake",
+             pth + "/CMakeLists.txt"])
 
 
 def succeed(cmd, **kwargs):
