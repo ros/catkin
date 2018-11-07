@@ -503,7 +503,7 @@ set PATH={path};%PATH%
 set PKG_CONFIG_PATH={pkgcfg_path};%PKG_CONFIG_PATH%
 set PYTHONPATH={pythonpath};%PYTHONPATH%
 """.format(**variables))
-
+    
 def write_env_script_sh(dest_file, variables):
     with open(os.path.join(dest_file), 'w') as f:
         f.write("""\
