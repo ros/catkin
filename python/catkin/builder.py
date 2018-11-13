@@ -680,8 +680,8 @@ def build_cmake_package(
         subs['path'] = os.path.join(install_target, 'bin')
         arch = get_multiarch()
         if arch:
-            subs['ld_path'] += os.path.join(install_target, 'lib', arch)
-            subs['pkgcfg_path'] += os.path.join(install_target, 'lib', arch, 'pkgconfig')
+            subs['ld_path'] = os.pathsep.join([subs['ld_path'], os.path.join(install_target, 'lib', arch)])
+            subs['pkgcfg_path'] = os.pathsep.join([subs['pkgcfg_path'], os.path.join(install_target, 'lib', arch, 'pkgconfig')])
         if not os.path.exists(os.path.dirname(new_setup_path)):
             os.mkdir(os.path.dirname(new_setup_path))
 
