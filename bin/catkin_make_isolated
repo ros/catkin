@@ -116,8 +116,8 @@ def main():
     opts = parse_args()
     opts = build_platform_specific_defaults(opts)
     
-    # force to use nmake if on Windows
-    if sys.platform == 'win32':
+    # force to use nmake if on Windows if not using ninja
+    if sys.platform == 'win32' and not opts.use_ninja:
         opts.use_nmake = True
     cmake_args, opts = handle_cmake_args(opts.cmake_args, opts)
 
