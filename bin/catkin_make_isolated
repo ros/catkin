@@ -115,10 +115,7 @@ def handle_cmake_args(cmake_args, opts):
 def main():
     opts = parse_args()
     opts = build_platform_specific_defaults(opts)
-    
-    # force to use nmake if on Windows
-    if sys.platform == 'win32':
-        opts.use_nmake = True
+
     cmake_args, opts = handle_cmake_args(opts.cmake_args, opts)
 
     # force --no-color if stdout is non-interactive
