@@ -672,7 +672,8 @@ def build_cmake_package(
     last_setup_env = os.path.join(os.path.dirname(last_env), setup_script) if last_env is not None else None
     if new_setup_path != last_setup_env:
         subs = {}
-        subs['cmake_prefix_path'] = install_target
+        # CMAKE_PREFIX_PATH uses forward slash on all platforms.
+        subs['cmake_prefix_path'] = install_target.replace(os.sep, '/')
         subs['ld_path'] = os.path.join(install_target, 'lib')
         pythonpath = os.path.join(install_target, get_python_install_dir())
         subs['pythonpath'] = pythonpath
