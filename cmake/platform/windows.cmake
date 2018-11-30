@@ -41,9 +41,10 @@ if(BUILD_SHARED_LIBS)
   if(WIN32)
     function(add_library library)
       # Check if its an external, imported library (e.g. boost libs via cmake module definition)
-      list(FIND ARGN "IMPORTED" FIND_POS)
+      list(FIND ARGN "IMPORTED" FIND_IMPORTED)
+      list(FIND ARGN "ALIAS" FIND_ALIAS)
       _add_library(${ARGV0} ${ARGN})
-      if(${FIND_POS} EQUAL -1)
+      if(${FIND_IMPORTED} EQUAL -1 AND ${FIND_ALIAS} EQUAL -1)
         set_target_properties(${ARGV0} 
           PROPERTIES 
               RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}
