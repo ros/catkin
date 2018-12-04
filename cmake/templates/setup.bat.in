@@ -84,9 +84,6 @@ REM 3rdparty packages often put dll's into lib (convention is bin) and
 REM windows finds it's dll's via the PATH variable. Make that happen here!
 set PATH=%LD_LIBRARY_PATH%;%PATH%
 
-REM mimic POSIX environments for 3rdparty packages
-set HOME=%HOMEDRIVE%%HOMEPATH%
-
 REM unset temporary variables
 set _SETUP_UTIL=
 set _PYTHON=
