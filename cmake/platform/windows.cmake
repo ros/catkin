@@ -69,13 +69,6 @@ if(MSVC)
   add_compile_options(/Zc:__cplusplus) # https://blogs.msdn.microsoft.com/vcblog/2018/04/09/msvc-now-correctly-reports-__cplusplus/
 endif()
 
-# https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
-if(BUILD_SHARED_LIBS)
-  if(WIN32)
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-  endif()
-endif()
-
 #
 # Helper macros added to the catkin system to replace Windows lack of shebang support.
 #
