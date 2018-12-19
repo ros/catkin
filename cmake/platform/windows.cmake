@@ -56,6 +56,16 @@ if(BUILD_SHARED_LIBS)
   endif()
 endif()
 
+# Add this as a remediation since not every project has implemented import/export macros.
+#   https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
+# It is still encouraged to follow this guide to make the code cross-platform:
+#   http://wiki.ros.org/win_ros/Contributing/Dll%20Exports
+if(BUILD_SHARED_LIBS)
+  if(WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+  endif()
+endif()
+
 # For Windows, add difinitions to exclude the definitions for common names macros that cause name collision
 if(WIN32)
   add_definitions(-DWIN32_LEAN_AND_MEAN) # keep minimum windows headers inclusion
