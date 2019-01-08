@@ -27,13 +27,13 @@ std::string python_home, python_script, python_exe;
 *****************************************************************************/
 
 void debug() {
-	std::cout << std::endl;
-	std::cout << "Program Variables:" << std::endl;
-	std::cout << "  Python exe: " << python_exe << std::endl;
-	std::cout << "  Executable: " << exe_name << std::endl;
-	std::cout << "  Python script: " << python_script << std::endl;
-	std::cout << "  Arguments: " << arguments.str() << std::endl;
-	std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "Program Variables:" << std::endl;
+    std::cout << "  Python exe: " << python_exe << std::endl;
+    std::cout << "  Executable: " << exe_name << std::endl;
+    std::cout << "  Python script: " << python_script << std::endl;
+    std::cout << "  Arguments: " << arguments.str() << std::endl;
+    std::cout << std::endl;
 }
 
 /*****************************************************************************
@@ -41,75 +41,70 @@ void debug() {
 *****************************************************************************/
 
 int main(int argc, char **argv) {
-
-	exe_name[0] = '\0';
+    exe_name[0] = '\0';
 #ifdef WIN32
-	//_splitpath_s(argv[0], NULL, 0, NULL, 0, name, 256, NULL, 0);
+    //_splitpath_s(argv[0], NULL, 0, NULL, 0, name, 256, NULL, 0);
 
     // could use GetModuleHandleW, WCHAR, GetModuleFileNameW, wcout and wstring here instead.
-	HMODULE hModule = GetModuleHandle(NULL);
+    HMODULE hModule = GetModuleHandle(NULL);
     GetModuleFileName(hModule, exe_name, MAX_PATH);
     python_script = std::string(exe_name);
     python_script.replace(python_script.end()-4, python_script.end(), ""); // replace trailing ".exe" with ""
 
-	python_exe = python_home + std::string("python");
-	arguments << python_exe << " " << python_script;
-	for ( int i = 1; i < argc; ++i ) {
-		// need the quotes to make sure spaces dont muck things up
-		arguments << " \"" << argv[i] << "\"";
-	}
+    python_exe = python_home + std::string("python");
+    arguments << python_exe << " " << python_script;
+    for ( int i = 1; i < argc; ++i ) {
+        // add double quotation marks to handle spaces
+        arguments << " \"" << argv[i] << "\"";
+    }
 
-	/* TODO: Need some validation checks here! */
+    /* TODO: Need some validation checks here! */
 
-	STARTUPINFO startup_info;
-	PROCESS_INFORMATION process_info;
-	memset(&startup_info, 0, sizeof(startup_info));
-	memset(&process_info, 0, sizeof(process_info));
+    STARTUPINFO startup_info;
+    PROCESS_INFORMATION process_info;
+    memset(&startup_info, 0, sizeof(startup_info));
+    memset(&process_info, 0, sizeof(process_info));
 
-	startup_info.cb = sizeof(startup_info);
+    startup_info.cb = sizeof(startup_info);
 
-	int result =
-		CreateProcess(
-			NULL, 
-			const_cast<char*>(arguments.str().c_str()), // bloody windoze
-			NULL,
-			NULL,
-			FALSE,
-			0, // CREATE_NEW_CONSOLE,
-			NULL,
-			NULL,
-			&startup_info,
-			&process_info
-			);
-	if ( result == 0 ) {
-		unsigned long last_error = GetLastError();
-		switch ( last_error ) {
-			case ( ERROR_FILE_NOT_FOUND ) : {
-				std::cout << "The python executable could not be found - check it is in your PATH" << std::endl;
-				debug();
-				break;
-			}
-			default: {
-				std::cout << "Process failed with error: " << last_error << std::endl;
-				debug();
-				break;
-			}
-		}
-		return last_error;
-	} else {
-		WaitForSingleObject( process_info.hProcess, INFINITE );
-		unsigned long exit_code = NO_ERROR;
-		GetExitCodeProcess( process_info.hProcess, &exit_code );
-	    CloseHandle( process_info.hProcess );
-	    CloseHandle( process_info.hThread );
-		return exit_code;
-	}
+    int result =
+        CreateProcess(
+            NULL, 
+            const_cast<char*>(arguments.str().c_str()),
+            NULL,
+            NULL,
+            FALSE,
+            0, // CREATE_NEW_CONSOLE,
+            NULL,
+            NULL,
+            &startup_info,
+            &process_info
+            );
+    if ( !result ) {
+        unsigned long last_error = GetLastError();
+        switch ( last_error ) {
+            case ( ERROR_FILE_NOT_FOUND ) : {
+                std::cout << "The python executable could not be found - check it is in your PATH" << std::endl;
+                debug();
+                break;
+            }
+            default: {
+                std::cout << "Process failed with error: " << last_error << std::endl;
+                debug();
+                break;
+            }
+        }
+        return last_error;
+    } else {
+        WaitForSingleObject( process_info.hProcess, INFINITE );
+        unsigned long exit_code = NO_ERROR;
+        GetExitCodeProcess( process_info.hProcess, &exit_code );
+        CloseHandle( process_info.hProcess );
+        CloseHandle( process_info.hThread );
+        return exit_code;
+    }
 #else
-	std::cout << "This is a windows application only." << std::endl;
+    std::cout << "This is a windows application only." << std::endl;
 #endif
-	return 0;
+    return 0;
 }
-
-
-
-
