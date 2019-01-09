@@ -466,8 +466,9 @@ def has_make_target(path, target, use_ninja=False, use_nmake=False):
 def get_additional_environment(install, destdir, installspace):
     add_env = {}
     if install and destdir:
-        # skip the drive letter if on Windows
-        installspace = os.path.splitdrive(installspace)[1]
+        # exclude drive letter if on Windows, returns the same string on Linux since there is no drive specifications
+        _, installspace = os.path.splitdrive(installspace)
+
         add_env['_CATKIN_SETUP_DIR'] = os.path.join(destdir, installspace[1:])
     return add_env
 
@@ -767,8 +768,9 @@ def get_new_env(package, develspace, installspace, install, last_env, destdir=No
 
 def prefix_destdir(path, destdir=None):
     if destdir is not None:
-        # skip the drive letter if on Windows
-        path = os.path.splitdrive(path)[1]
+        # exclude drive letter if on Windows, returns the same string on Linux since there is no drive specifications
+        _, path = os.path.splitdrive(path)
+
         path = os.path.join(destdir, path[1:])
     return path
 
