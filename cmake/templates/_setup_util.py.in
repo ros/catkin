@@ -265,6 +265,9 @@ if __name__ == '__main__':
         CMAKE_PREFIX_PATH = '@CMAKE_PREFIX_PATH_AS_IS@'.split(';')
         # prepend current workspace if not already part of CPP
         base_path = os.path.dirname(__file__)
+
+        # CMAKE_PREFIX_PATH uses forward slash on all platforms, but os.path.dirname is platform dependent
+        # base_path on Windows contains backward slashes, need to normalize paths in CMAKE_PREFIX_PATH with os.path.normpath for comparison
         if base_path not in [os.path.normpath(os.path.normcase(p)) for p in CMAKE_PREFIX_PATH]:
             CMAKE_PREFIX_PATH.insert(0, base_path.replace(os.path.sep, '/'))
         CMAKE_PREFIX_PATH = os.pathsep.join(CMAKE_PREFIX_PATH)
