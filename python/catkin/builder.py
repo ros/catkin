@@ -1074,8 +1074,9 @@ def build_workspace_isolated(
     if not os.path.exists(develspace):
         os.makedirs(develspace)
     if not build_packages:
+        env_script = 'env'
         if sys.platform == 'win32':
-            env_script = 'env.bat'
+            env_script += '.bat'
             env_script_content = """\
 @echo off
 REM generated from catkin.builder module
@@ -1089,7 +1090,7 @@ REM generated from catkin.builder module
 call "{0}/setup.{1}"
 """
         else:
-            env_script = 'evn.sh'
+            env_script += '.sh'
             env_script_content = """\
 #!/usr/bin/env sh
 # generated from catkin.builder module
@@ -1102,6 +1103,7 @@ call "{0}/setup.{1}"
 
 . "{0}/setup.{1}"
 """
+
         generated_env_sh = os.path.join(develspace, env_script)
         generated_setup_util_py = os.path.join(develspace, '_setup_util.py')
         if not merge and pkg_develspace:
@@ -1120,7 +1122,7 @@ call "{0}/setup.{1}"
                 os.remove(generated_setup_util_py)
 
         elif not pkg_develspace:
-            # generate env script and setup.sh|bash|zsh or setup.bat for an empty devel space
+            # generate env.* and setup.* scripts for an empty devel space
             if 'CMAKE_PREFIX_PATH' in os.environ.keys():
                 variables = {
                     'CATKIN_GLOBAL_BIN_DESTINATION': 'bin',
@@ -1148,7 +1150,8 @@ call "{0}/setup.{1}"
 
             variables = {
                 'PYTHON_EXECUTABLE': sys.executable,
-                'SETUP_DIR': develspace}
+                'SETUP_DIR': develspace
+            }
             shells_to_write = ['bat'] if sys.platform == 'win32' else ['sh', 'bash', 'zsh']
             for shell in shells_to_write:
                 with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
