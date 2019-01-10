@@ -56,27 +56,37 @@ if(BUILD_SHARED_LIBS)
   endif()
 endif()
 
-# Add this as a remediation since not every project has implemented import/export macros.
-#   https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
-# It is still encouraged to follow this guide to make the code cross-platform:
+# It is encouraged to follow this guide to enable exports for dll's in a cross-platform way:
 #   http://wiki.ros.org/win_ros/Contributing/Dll%20Exports
+# however, since not every project has implemented import/export macros, enable CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS as a workaround
+#   https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
 if(BUILD_SHARED_LIBS)
   if(WIN32)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
   endif()
 endif()
 
-# For Windows, add difinitions to exclude the definitions for common names macros that cause name collision
+# For Windows, add difinitions to exclude definitions for common names macros that cause name collision
 if(WIN32)
-  add_definitions(-DWIN32_LEAN_AND_MEAN) # keep minimum windows headers inclusion
-  add_definitions(-DNOMINMAX)   # not to define min/max macros
-  add_definitions(-DNO_STRICT)  # not to define STRICT macros (minwindef.h or boost\winapi\basic_types.hpp)
-  add_definitions(-DQ_NOWINSTRICT)  # not to define STRICT macros (qtgui\qwindowdefs_win.h)
-  add_definitions(-D_USE_MATH_DEFINES)  # enable Math Constants https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants
+  # enable Math Constants (https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants)
+  add_definitions(-D_USE_MATH_DEFINES)
+
+  # do not define STRICT macros (minwindef.h or boost\winapi\basic_types.hpp)
+  add_definitions(-DNO_STRICT)
+
+  # do not define min/max macros
+  add_definitions(-DNOMINMAX)
+
+  # do not define STRICT macros (qtgui\qwindowdefs_win.h)
+  add_definitions(-DQ_NOWINSTRICT)
+
+  # keep minimum windows headers inclusion
+  add_definitions(-DWIN32_LEAN_AND_MEAN)
 endif()
 
 if(MSVC)
-  add_compile_options(/Zc:__cplusplus) # https://blogs.msdn.microsoft.com/vcblog/2018/04/09/msvc-now-correctly-reports-__cplusplus/
+  # https://blogs.msdn.microsoft.com/vcblog/2018/04/09/msvc-now-correctly-reports-__cplusplus/
+  add_compile_options(/Zc:__cplusplus)
 endif()
 
 #
