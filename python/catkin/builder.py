@@ -355,7 +355,7 @@ def build_catkin_package(
     if last_env is not None:
         cprint(
             blue_arrow + " Building with env: " +
-            "'{0}'".format(last_env)
+            "'{0}'".format(sanitize(last_env))
         )
 
     # Check for Makefile and maybe call cmake
@@ -593,7 +593,7 @@ def build_cmake_package(
     # Check last_env
     if last_env is not None:
         cprint(blue_arrow + " Building with env: " +
-               "'{0}'".format(last_env))
+               "'{0}'".format(sanitize(last_env)))
 
     # Check for Makefile and maybe call cmake
     if not use_ninja:

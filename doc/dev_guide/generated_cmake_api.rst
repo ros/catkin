@@ -14,7 +14,9 @@ Public CMake functions / macros
 -------------------------------
 
  * :cmake:macro:`catkin_add_env_hooks`
+ * :cmake:macro:`catkin_add_executable_with_gmock`
  * :cmake:macro:`catkin_add_executable_with_gtest`
+ * :cmake:macro:`catkin_add_gmock`
  * :cmake:macro:`catkin_add_gtest`
  * :cmake:macro:`catkin_add_nosetests`
  * :cmake:macro:`catkin_download`
@@ -74,6 +76,12 @@ Public CMake functions / macros
 
  looks for files env-hooks/my_prefix.[bash|tcsh|zsh]((.(devel|install)space)?.[em|in])?
 
+ The environment hooks are installed into two destinations:
+  * ``etc/catkin/profile.d`` where they can be sourced efficiently by the
+    catkin generated ``setup.<shell>`` scripts
+  * ``share/${PROJECT_NAME}/catkin_env_hook`` where they can be sourced
+    efficiently on a per-package base
+
  :param file_prefix: the filename prefix
  :type file_prefix: string
  :param SHELLS: the shell extensions (e.g.: sh bat bash zsh tcsh)
@@ -84,6 +92,32 @@ Public CMake functions / macros
    in the devel space but not installed
  :type SKIP_INSTALL: option
 
+
+
+.. _`catkin_add_executable_with_gmock_ref`:
+
+`catkin_add_executable_with_gmock`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: catkin_add_executable_with_gmock(target)
+
+ *[function defined in test/gtest.cmake]*
+
+
+ Add a GMock executable target.
+
+ An executable target is created with the source files, it is linked
+ against GTest and GMock.
+ If you also want to register the executable as a test use
+ ``catkin_add_gtest()`` instead.
+
+ :param target: the target name
+ :type target: string
+ :param source_files: a list of source files used to build the test
+   executable
+ :type source_files: list of strings
+
+ Additionally, the option EXCLUDE_FROM_ALL can be specified.
 
 
 .. _`catkin_add_executable_with_gtest_ref`:
@@ -110,6 +144,37 @@ Public CMake functions / macros
  :type source_files: list of strings
 
  Additionally, the option EXCLUDE_FROM_ALL can be specified.
+
+
+.. _`catkin_add_gmock_ref`:
+
+`catkin_add_gmock`
+~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: catkin_add_gmock(target)
+
+ *[function defined in test/gtest.cmake]*
+
+
+ Add a GMock based test target.
+
+ An executable target is created with the source files, it is linked
+ against GTest and GMock and added to the set of unit tests.
+
+ .. note:: The test can be executed by calling the binary directly
+   or using: ``make run_tests_${PROJECT_NAME}_gtest_${target}``
+
+ :param target: the target name
+ :type target: string
+ :param source_files: a list of source files used to build the test
+   executable
+ :type source_files: list of strings
+ :param TIMEOUT: currently not supported
+ :type TIMEOUT: integer
+ :param WORKING_DIRECTORY: the working directory when executing the
+   executable
+ :type WORKING_DIRECTORY: string
+
 
 
 .. _`catkin_add_gtest_ref`:
@@ -444,6 +509,17 @@ Public CMake functions / macros
  :outvar <packagename>_VERSION: the version number
  :outvar <packagename>_MAINTAINER: the name and email of the
    maintainer(s)
+ :outvar <packagename>_PACKAGE_FORMAT: the format version of the manifest
+ :outvar <packagename>_<dep_type>_DEPENDS: the dependencies of a specific
+   type, the following types are available: BUILD, BUILD_EXPORT, BUILDTOOL,
+   BUILDTOOL_EXPORT, EXEC, RUN, TEST, DOC
+ :outvar <packagename>_<dep_type>_DEPENDS_<dep_name>_VERSION_<ver_type>: for
+   each dependency which has a version range specified the version number is
+   provided, the following version types are available: LT, LTE, EQ, GTE, GT
+ :outvar <packagename>_URL_WEBSITE: the url(s) of type `website`
+ :outvar <packagename>_URL_BUGTRACKER: the url(s) of type `bugtracker`
+ :outvar <packagename>_URL_REPOSITORY: the url(s) of type `repository`
+ :outvar <packagename>_DEPRECATED: `TRUE` if the package is deprecated
  :outvar _CATKIN_CURRENT_PACKAGE: the name of the package from the
    manifest
 
@@ -520,27 +596,74 @@ Public CMake functions / macros
 Non-public CMake functions / macros
 -----------------------------------
 
+ * :cmake:macro:`_catkin_add_executable_with_google_test`
+ * :cmake:macro:`_catkin_add_google_test`
  * :cmake:macro:`_generate_function_if_testing_is_disabled`
  * :cmake:macro:`_set_cmake_policy_to_new_if_available`
  * :cmake:macro:`_warn_if_skip_testing`
  * :cmake:macro:`catkin_destinations`
+ * :cmake:macro:`catkin_install_logic`
  * :cmake:macro:`catkin_run_tests_target`
+ * :cmake:macro:`catkin_symlink_install_append_install_code`
+ * :cmake:macro:`catkin_symlink_install_directory`
+ * :cmake:macro:`catkin_symlink_install_files`
+ * :cmake:macro:`catkin_symlink_install_programs`
+ * :cmake:macro:`catkin_symlink_install_targets`
  * :cmake:macro:`catkin_workspace`
  * :cmake:macro:`list_append_deduplicate`
  * :cmake:macro:`list_append_unique`
  * :cmake:macro:`stamp`
  * :cmake:macro:`string_starts_with`
 
+.. _`_catkin_add_executable_with_google_test_ref`:
+
+`_catkin_add_executable_with_google_test`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: _catkin_add_executable_with_google_test(type, target)
+
+ *[function defined in test/gtest.cmake]*
+
+
+ This is an internal function, use catkin_add_executable_with_gtest
+ or catkin_add_executable_with_gmock instead.
+
+ :param type: "gtest" or "gmock"
+
+ The remaining arguments are the same as for
+ catkin_add_executable_with_gtest and
+ catkin_add_executable_with_gmock.
+
+
+.. _`_catkin_add_google_test_ref`:
+
+`_catkin_add_google_test`
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: _catkin_add_google_test(type, target)
+
+ *[function defined in test/gtest.cmake]*
+
+
+ This is an internal function, use catkin_add_gtest or catkin_add_gmock
+ instead.
+
+ :param type: "gtest" or "gmock"
+
+ The remaining arguments are the same as for catkin_add_gtest and
+ catkin_add_gmock.
+
+
 .. _`_generate_function_if_testing_is_disabled_ref`:
 
 `_generate_function_if_testing_is_disabled`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. cmake:macro:: _generate_function_if_testing_is_disabled(funcname)
+.. cmake:macro:: _generate_function_if_testing_is_disabled()
 
  *[macro defined in test/tests.cmake]*
 
- creates a dummy function in case testing has been explicitly disabled (and not only skipping)
+ creates dummy functions in case testing has been explicitly disabled (and not only skipping)
  which outputs an error message when being invoked
 
 .. _`_set_cmake_policy_to_new_if_available_ref`:
@@ -607,6 +730,22 @@ Non-public CMake functions / macros
    See :cmake:data:`CATKIN_GLOBAL_SHARE_DESTINATION`.
 
 
+.. _`catkin_install_logic_ref`:
+
+`catkin_install_logic`
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: catkin_install_logic(signature)
+
+ *[function defined in symlink_install/catkin_install_logic.cmake]*
+
+
+ Custom CMake install logic to use symlinks instead of copying resources.
+
+ :param ARGN: the same arguments as the CMake install command.
+ :type ARGN: various
+
+
 .. _`catkin_run_tests_target_ref`:
 
 `catkin_run_tests_target`
@@ -624,6 +763,92 @@ Non-public CMake functions / macros
 
  This function is only used internally by the various
  catkin_add_*test() functions.
+
+
+.. _`catkin_symlink_install_append_install_code_ref`:
+
+`catkin_symlink_install_append_install_code`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: catkin_symlink_install_append_install_code()
+
+ *[function defined in symlink_install/catkin_symlink_install_append_install_code.cmake]*
+
+
+ Register a CMake script for execution at install time.
+
+ :param ARGN: the list of CMake code lines
+ :type ARGN: list of strings
+ :param COMMENTS: an optional list of comments
+ :type COMMENTS: list of strings
+
+
+.. _`catkin_symlink_install_directory_ref`:
+
+`catkin_symlink_install_directory`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: catkin_symlink_install_directory(directory_keyword)
+
+ *[function defined in symlink_install/catkin_symlink_install_directory.cmake]*
+
+
+ Reimplement CMake install(DIRECTORY) command to use symlinks instead of
+ copying resources.
+
+ :param ARGN: the same arguments as the CMake install command.
+ :type ARGN: various
+
+
+.. _`catkin_symlink_install_files_ref`:
+
+`catkin_symlink_install_files`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: catkin_symlink_install_files(files_keyword)
+
+ *[function defined in symlink_install/catkin_symlink_install_files.cmake]*
+
+
+ Reimplement CMake install(FILES) command to use symlinks instead of copying
+ resources.
+
+ :param ARGN: the same arguments as the CMake install command.
+ :type ARGN: various
+
+
+.. _`catkin_symlink_install_programs_ref`:
+
+`catkin_symlink_install_programs`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: catkin_symlink_install_programs(programs_keyword)
+
+ *[function defined in symlink_install/catkin_symlink_install_programs.cmake]*
+
+
+ Reimplement CMake install(PROGRAMS) command to use symlinks instead of copying
+ resources.
+
+ :param ARGN: the same arguments as the CMake install command.
+ :type ARGN: various
+
+
+.. _`catkin_symlink_install_targets_ref`:
+
+`catkin_symlink_install_targets`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: catkin_symlink_install_targets()
+
+ *[function defined in symlink_install/catkin_symlink_install_targets.cmake]*
+
+
+ Reimplement CMake install(TARGETS) command to use symlinks instead of copying
+ resources.
+
+ :param ARGN: the same arguments as the CMake install command.
+ :type ARGN: various
 
 
 .. _`catkin_workspace_ref`:
@@ -749,6 +974,15 @@ Not documented CMake functions / macros
 .. cmake:macro:: _strip_path_prefix(var, value, prefix)
 
  *[function defined in test/nosetests.cmake]*
+
+.. _`_use_custom_install_ref`:
+
+`_use_custom_install`
+~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: _use_custom_install()
+
+ *[function defined in custom_install.cmake]*
 
 .. _`assert_ref`:
 

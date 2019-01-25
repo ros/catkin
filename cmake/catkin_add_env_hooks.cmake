@@ -34,6 +34,12 @@
 #
 # looks for files env-hooks/my_prefix.[bash|tcsh|zsh]((.(devel|install)space)?.[em|in])?
 #
+# The environment hooks are installed into two destinations:
+#  * ``etc/catkin/profile.d`` where they can be sourced efficiently by the
+#    catkin generated ``setup.<shell>`` scripts
+#  * ``share/${PROJECT_NAME}/catkin_env_hook`` where they can be sourced
+#    efficiently on a per-package base
+#
 # :param file_prefix: the filename prefix
 # :type file_prefix: string
 # :param SHELLS: the shell extensions (e.g.: sh bat bash zsh tcsh)
@@ -109,7 +115,9 @@ function(catkin_add_env_hooks file_prefix)
         ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK})
       if(NOT ${ARG_SKIP_INSTALL})
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
-          DESTINATION etc/catkin/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
+          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/catkin_env_hook)
       endif()
     elseif(EXISTS ${base}.in OR EXISTS ${base}.installspace.in)
       # evaluate in template and install
@@ -123,13 +131,17 @@ function(catkin_add_env_hooks file_prefix)
         @ONLY)
       if(NOT ${ARG_SKIP_INSTALL})
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
-          DESTINATION etc/catkin/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${ENV_HOOK}
+          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/catkin_env_hook)
       endif()
     elseif (EXISTS ${base})
       # install plain file
       if(NOT ${ARG_SKIP_INSTALL})
         install(FILES ${base}
-          DESTINATION etc/catkin/profile.d)
+          DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/catkin/profile.d)
+        install(FILES ${base}
+          DESTINATION ${CATKIN_GLOBAL_SHARE_DESTINATION}/${PROJECT_NAME}/catkin_env_hook)
       endif()
     endif()
   endforeach()
