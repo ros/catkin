@@ -148,7 +148,12 @@ function(catkin_replace_imported_library_targets VAR)
           get_target_property(${lib}_imported_configurations ${lib} IMPORTED_CONFIGURATIONS)
           foreach(cfg ${${lib}_imported_configurations})
             if(WIN32)
+              # check both locations (imported dll and static lib) on Windows
+              # otherwise, for packages exporting static lib, the lib path won't be published correctly to downstream
               get_target_property(${lib}_imported_location_${cfg} ${lib} IMPORTED_IMPLIB_${cfg})
+              if(NOT ${lib}_imported_location_${cfg})
+                get_target_property(${lib}_imported_location_${cfg} ${lib} IMPORTED_LOCATION_${cfg})
+              endif()
             else()
               get_target_property(${lib}_imported_location_${cfg} ${lib} IMPORTED_LOCATION_${cfg})
             endif()
