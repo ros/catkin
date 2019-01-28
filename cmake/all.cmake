@@ -201,7 +201,9 @@ set(SETUP_FILENAME "setup_cached")
 configure_file(${catkin_EXTRAS_DIR}/templates/generate_cached_setup.py.in
   ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_setup.py)
 set(GENERATE_ENVIRONMENT_CACHE_COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/catkin_generated/generate_cached_setup.py)
-# the script is generated once here and refreshed by every call to catkin_add_env_hooks()
+# the script is generated once here and refreshed by
+# every call to catkin_add_env_hooks() and
+# the first call to catkin_python_setup() if the Python install directory didn't exist yet
 safe_execute_process(COMMAND ${GENERATE_ENVIRONMENT_CACHE_COMMAND})
 # generate env_cached which just relays to the setup_cached
 configure_file(${catkin_EXTRAS_DIR}/templates/env.${script_ext}.in

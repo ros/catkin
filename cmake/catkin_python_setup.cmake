@@ -79,6 +79,14 @@ function(catkin_python_setup)
     message(FATAL_ERROR "catkin_python_setup() version in setup.py (${${PROJECT_NAME}_SETUP_PY_VERSION}) differs from version in package.xml (${${PROJECT_NAME}_VERSION})")
   endif()
 
+  # if the Python install directory didn't exist before
+  # the cached environment won't contain it in the PYTHONPATH
+  if(NOT EXISTS "${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}")
+    file(MAKE_DIRECTORY "${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}")
+    # refresh environment cache
+    safe_execute_process(COMMAND ${GENERATE_ENVIRONMENT_CACHE_COMMAND})
+  endif()
+
   # generate relaying __init__.py for each python package
   if(${PROJECT_NAME}_SETUP_PY_PACKAGES)
     list(LENGTH ${PROJECT_NAME}_SETUP_PY_PACKAGES pkgs_count)
