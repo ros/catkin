@@ -66,7 +66,7 @@ if(BUILD_SHARED_LIBS)
   endif()
 endif()
 
-# For Windows, add difinitions to exclude definitions for common names macros that cause name collision
+# For Windows, add definitions to exclude defining common names macros that cause name collision
 if(WIN32)
   # enable Math Constants (https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants)
   add_definitions(-D_USE_MATH_DEFINES)
