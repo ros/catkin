@@ -476,7 +476,7 @@ def get_additional_environment(install, destdir, installspace):
 def write_env_bat(dest_file, variables):
     env_bat_template = """\
 @echo off
-REM generated from catkin.builder module
+REM generated from catkin.builder Python module
 
 if "%1"=="" (
   echo "Usage: env.bat COMMANDS"
@@ -494,7 +494,7 @@ if "%1"=="" (
 def write_setup_bat(dest_file, last_setup_basename, variables):
     setup_bat_header = """\
 @echo off
-REM generated from catkin.builder module
+REM generated from catkin.builder Python module
 """
     setup_bat_template = """\
 REM Prepend to the environment
@@ -514,7 +514,7 @@ set PYTHONPATH={pythonpath};%PYTHONPATH%
 def write_env_sh(dest_file, variables):
     env_sh_template = """\
 #!/usr/bin/env sh
-# generated from catkin.builder module
+# generated from catkin.builder Python module
 
 if [ $# -eq 0 ] ; then
   /bin/echo "Usage: env.sh COMMANDS"
@@ -538,7 +538,7 @@ exec "$@"
 def write_setup_sh(dest_file, last_setup_basename, variables):
     setup_sh_header = """\
 #!/usr/bin/env sh
-# generated from catkin.builder module
+# generated from catkin.builder Python module
 
 # remember type of shell if not already set
 if [ -z "$CATKIN_SHELL" ]; then
@@ -673,7 +673,7 @@ def build_cmake_package(
         if not os.path.exists(os.path.dirname(new_env_path)):
             os.makedirs(os.path.dirname(new_env_path))
         env_script_writer = write_env_bat if sys.platform == 'win32' else write_env_sh
-        env_script_writer(dest_file = new_env_path, variables = variables)
+        env_script_writer(dest_file=new_env_path, variables=variables)
 
     # Generate setup script for chaining to catkin packages
     # except if using --merge which implies that new_setup_path equals last_setup_env
@@ -699,13 +699,13 @@ def build_cmake_package(
             os.mkdir(os.path.dirname(new_setup_path))
         setup_script_writer = write_setup_bat if sys.platform == 'win32' else write_setup_sh
         last_setup_basename = os.path.splitext(last_setup_env)[0] if last_setup_env is not None else None
-        setup_script_writer(dest_file = new_setup_path, last_setup_basename = last_setup_basename, variables = subs)
+        setup_script_writer(dest_file=new_setup_path, last_setup_basename=last_setup_basename, variables=subs)
 
         if sys.platform != 'win32':
             # generate setup.bash|zsh scripts
             setup_script_template = """\
 #!/usr/bin/env {1}
-# generated from catkin.builder module
+# generated from catkin.builder Python module
 
 CATKIN_SHELL={1}
 . "{0}/setup.sh"
@@ -1079,13 +1079,13 @@ def build_workspace_isolated(
             env_script += '.bat'
             env_script_content = """\
 @echo off
-REM generated from catkin.builder module
+REM generated from catkin.builder Python module
 
 call {0} %*
 """
             setup_script_content = """\
 @echo off
-REM generated from catkin.builder module
+REM generated from catkin.builder Python module
 
 call "{0}/setup.{1}"
 """
@@ -1093,13 +1093,13 @@ call "{0}/setup.{1}"
             env_script += '.sh'
             env_script_content = """\
 #!/usr/bin/env sh
-# generated from catkin.builder module
+# generated from catkin.builder Python module
 
 {0} "$@"
 """
             setup_script_content = """\
 #!/usr/bin/env {1}
-# generated from catkin.builder module
+# generated from catkin.builder Python module
 
 . "{0}/setup.{1}"
 """
@@ -1142,7 +1142,7 @@ call "{0}/setup.{1}"
 
             variables = {
                 'SETUP_DIR': develspace,
-                'SETUP_FILENAME': 'setup'
+                'SETUP_FILENAME': 'setup',
             }
             with open(generated_env_sh, 'w') as f:
                 f.write(configure_file(os.path.join(get_cmake_path(), 'templates', env_script + '.in'), variables))
@@ -1150,7 +1150,7 @@ call "{0}/setup.{1}"
 
             variables = {
                 'PYTHON_EXECUTABLE': sys.executable,
-                'SETUP_DIR': develspace
+                'SETUP_DIR': develspace,
             }
             shells_to_write = ['bat'] if sys.platform == 'win32' else ['sh', 'bash', 'zsh']
             for shell in shells_to_write:
