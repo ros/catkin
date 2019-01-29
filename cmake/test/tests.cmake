@@ -97,6 +97,11 @@ function(catkin_run_tests_target type name xunit_filename)
     message(FATAL_ERROR "catkin_run_tests_target() called with unused arguments: ${_testing_UNPARSED_ARGUMENTS}")
   endif()
 
+  # Friendly error message for ros/catkin#961
+  if(TARGET run_tests_${PROJECT_NAME} AND NOT TARGET _run_tests_${PROJECT_NAME})
+    message(FATAL_ERROR "catkin_run_tests_target() needs to create a target called `run_tests_${PROJECT_NAME}`, but it already exists. Please rename the existing `run_tests_${PROJECT_NAME}` target/executable/library to something else.")
+  endif()
+
   # create meta target to trigger all tests of a project
   if(NOT TARGET run_tests_${PROJECT_NAME})
     add_custom_target(run_tests_${PROJECT_NAME})

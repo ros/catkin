@@ -59,6 +59,7 @@ endfunction()
 # instead.
 #
 # :param type: "gtest" or "gmock"
+#
 # The remaining arguments are the same as for catkin_add_gtest and
 # catkin_add_gmock.
 #
@@ -136,6 +137,7 @@ endfunction()
 # or catkin_add_executable_with_gmock instead.
 #
 # :param type: "gtest" or "gmock"
+#
 # The remaining arguments are the same as for
 # catkin_add_executable_with_gtest and
 # catkin_add_executable_with_gmock.

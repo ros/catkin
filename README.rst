@@ -1,3 +1,5 @@
+.. image:: https://www.gravatar.com/avatar/ebfbbd6f16ce1f0dc30fc7c82c38d688
+   :width: 100px
 catkin
 ======
 
