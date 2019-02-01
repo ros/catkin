@@ -101,7 +101,7 @@ library build targets::
   install(TARGETS your_library your_other_library
           ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
           LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-          RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+          RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 The runtime destination is used for `.dll` file on Windows which must
 be placed in the global bin folder.
