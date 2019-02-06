@@ -14,27 +14,27 @@ CMakeLists.txt
 Declare each nose test like this::
 
   if (CATKIN_ENABLE_TESTING)
-    catkin_add_nosetests(tests/test_your_node.py)
+    catkin_add_nosetests(test/test_your_node.py)
   endif()
 
-This example assumes your tests are defined in the ``tests/``
+This example assumes your tests are defined in the ``test/``
 subdirectory in your source tree.
 
 You can also let nosetest find all tests recursively::
 
   if (CATKIN_ENABLE_TESTING)
-    catkin_add_nosetests(tests)
+    catkin_add_nosetests(test)
   endif()
 
 If you used a message of the current package in the nosetest, make sure to
 specify the nosetest like this::
 
-  catkin_add_nosetests(tests/test_your_node.py
+  catkin_add_nosetests(test/test_your_node.py
                        DEPENDENCIES ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 If you used messages from other packages, use::
 
-  catkin_add_nosetests(tests/test_your_node.py
+  catkin_add_nosetests(test/test_your_node.py
                        DEPENDENCIES ${catkin_EXPORTED_TARGETS})
 
 The test will then make sure that the messages used in the test are built
