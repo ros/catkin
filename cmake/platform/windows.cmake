@@ -90,26 +90,30 @@ if(MSVC)
 endif()
 
 #
-# Helper macros added to the catkin system to replace Windows lack of shebang support.
+# Helper function to add Python executable wrapper on Windows due to lack of shebang support
 #
 # Code courtesy of Yujin Robot.  Derived from https://github.com/ros-windows/win_ros
 #
 
-# distutils does not have support for 'entry_points'
-macro(add_windows_python_batch_helper name)
-  set(PYTHON_TARGET ${name})
-  configure_file(${catkin_EXTRAS_DIR}/templates/python_wrapper.bat.in
-                 ${CATKIN_DEVEL_PREFIX}/bin/${name}.bat)
-  install(PROGRAMS ${CATKIN_DEVEL_PREFIX}/bin/${PYTHON_TARGET}.bat 
-          DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-endmacro()
+#
+# Add Python executable wrapper around Python scripts on Windows.
+# Python scripts with (or without) .py extension are not executable on Windows due to lack of shebang support
+#
+# :param script: Python script name that needs a wrapper
+# :type script: string
+# :param target: build target name
+# :type target: string
+#
+# @public
+#
+function(add_python_executable_helper script target)
+  if (WIN32)
+    add_executable(${target} ${catkin_EXTRAS_DIR}/templates/ros_bin.cpp)
+    # The actual file name of the executable built on Windows will be ${script}.exe
+    set_target_properties(${target} PROPERTIES OUTPUT_NAME ${script})
+    set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
 
-# some python scripts need an executable, not a batch file
-macro(add_windows_python_exe_helper name)
-  # make the target name unique so we don't clash (e.g. rosbag target)
-  add_executable(${name}_exe ${catkin_EXTRAS_DIR}/templates/ros_bin.cpp)
-  # ensure the output name isn't mucked up by the unique target name.
-  set_target_properties(${name}_exe PROPERTIES OUTPUT_NAME ${name})
-  set_target_properties(${name}_exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
-  install(TARGETS ${name}_exe RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-endmacro()
+    install(TARGETS ${target}
+      RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+  endif()
+endfunction()
