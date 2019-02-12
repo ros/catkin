@@ -30,7 +30,9 @@ set(PYTHON_SCRIPTS
   catkin_test_results
   catkin_topological_order)
 foreach(script ${PYTHON_SCRIPTS})
-  add_python_executable_helper(${script} ${script}_executable)
+  add_python_executable_helper(
+    SCRIPT_NAME ${script}
+    TARGET_NAME ${script}_executable)
 endforeach()
 
 if(CATKIN_ENABLE_TESTING)

@@ -106,14 +106,21 @@ endif()
 #
 # @public
 #
-function(add_python_executable_helper script target)
-  if (WIN32)
-    add_executable(${target} ${catkin_EXTRAS_DIR}/templates/ros_bin.cpp)
-    # The actual file name of the executable built on Windows will be ${script}.exe
-    set_target_properties(${target} PROPERTIES OUTPUT_NAME ${script})
-    set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
+function(add_python_executable_helper)
+  set(options)
+  set(oneValueArgs SCRIPT_NAME TARGET_NAME)
+  set(multiValueArgs)
+  cmake_parse_arguments(add_python_executable_helper "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    install(TARGETS ${target}
+  if (WIN32)
+    add_executable(${add_python_executable_helper_TARGET_NAME} ${catkin_EXTRAS_DIR}/templates/ros_bin.cpp)
+
+    # The actual file name of the executable built on Windows will be ${add_python_executable_helper_SCRIPT_NAME}.exe
+    set_target_properties(${add_python_executable_helper_TARGET_NAME} PROPERTIES
+      OUTPUT_NAME ${add_python_executable_helper_SCRIPT_NAME}
+      RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
+
+    install(TARGETS ${add_python_executable_helper_TARGET_NAME}
       RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
   endif()
 endfunction()
