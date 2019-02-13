@@ -51,8 +51,8 @@ IS_WINDOWS = (system == 'Windows')
 
 PATH_TO_ADD_SUFFIX = ['@CATKIN_GLOBAL_BIN_DESTINATION@']
 if IS_WINDOWS:
-    # 3rdparty packages often put dll's into lib (convention is bin) and
-    # windows finds it's dll's via the PATH variable. Make that happen here!
+    # while catkin recommends putting dll's into bin, 3rd party packages often put dll's into lib
+    # since Windows finds dll's via the PATH variable, prepend it with path to lib
     PATH_TO_ADD_SUFFIX.extend([@CATKIN_LIB_ENVIRONMENT_PATHS@])
 
 # subfolder of workspace prepended to CMAKE_PREFIX_PATH
