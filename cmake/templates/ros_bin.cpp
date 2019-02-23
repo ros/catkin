@@ -74,9 +74,11 @@ void debug() {
 ** Main
 *****************************************************************************/
 
+#ifdef _WIN32
+
 int main(int argc, char **argv) {
     exe_name[0] = '\0';
-#ifdef _WIN32
+
     //_splitpath_s(argv[0], NULL, 0, NULL, 0, name, 256, NULL, 0);
 
     // could use GetModuleHandleW, WCHAR, GetModuleFileNameW, wcout and wstring here instead.
@@ -137,8 +139,17 @@ int main(int argc, char **argv) {
         CloseHandle( process_info.hThread );
         return exit_code;
     }
-#else
-    std::cout << "This is a windows application only." << std::endl;
-#endif
     return 0;
 }
+
+#else
+
+#error This wrapper should only be created on Windows.
+
+int main()
+{
+    // deliberately add syntax error when the file is not supposed to get compiled
+    return 0
+}
+
+#endif
