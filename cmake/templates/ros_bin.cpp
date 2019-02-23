@@ -40,25 +40,17 @@
  * @date March 2011
  */
 
-/*****************************************************************************
-** Includes
-*****************************************************************************/
+#ifdef _WIN32
 
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
 #include <algorithm>
-#ifdef _WIN32
-  #include <windows.h>
-#endif
+#include <windows.h>
 
 char exe_name[MAX_PATH];
 std::stringstream arguments;
 std::string python_home, python_script, python_exe;
-
-/*****************************************************************************
-** Functions
-*****************************************************************************/
 
 void debug() {
     std::cout << std::endl;
@@ -69,12 +61,6 @@ void debug() {
     std::cout << "  Arguments: " << arguments.str() << std::endl;
     std::cout << std::endl;
 }
-
-/*****************************************************************************
-** Main
-*****************************************************************************/
-
-#ifdef _WIN32
 
 int main(int argc, char **argv) {
     exe_name[0] = '\0';
