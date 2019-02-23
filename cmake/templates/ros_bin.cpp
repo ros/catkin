@@ -48,7 +48,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <algorithm>
-#ifdef _MSC_VER
+#ifdef _WIN32
   #include <windows.h>
 #endif
 
@@ -76,7 +76,7 @@ void debug() {
 
 int main(int argc, char **argv) {
     exe_name[0] = '\0';
-#ifdef WIN32
+#ifdef _WIN32
     //_splitpath_s(argv[0], NULL, 0, NULL, 0, name, 256, NULL, 0);
 
     // could use GetModuleHandleW, WCHAR, GetModuleFileNameW, wcout and wstring here instead.
