@@ -62,7 +62,8 @@ void debug() {
     std::cout << std::endl;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) try
+{
     exe_name[0] = '\0';
 
     //_splitpath_s(argv[0], NULL, 0, NULL, 0, name, 256, NULL, 0);
@@ -80,52 +81,56 @@ int main(int argc, char **argv) {
         arguments << " \"" << argv[i] << "\"";
     }
 
-    /* TODO: Need some validation checks here! */
-
     STARTUPINFO startup_info;
     PROCESS_INFORMATION process_info;
-    memset(&startup_info, 0, sizeof(startup_info));
-    memset(&process_info, 0, sizeof(process_info));
-
+    ::memset(&startup_info, 0, sizeof(startup_info));
+    ::memset(&process_info, 0, sizeof(process_info));
     startup_info.cb = sizeof(startup_info);
 
-    int result =
-        CreateProcess(
-            NULL, 
-            const_cast<char*>(arguments.str().c_str()),
-            NULL,
-            NULL,
-            FALSE,
-            0, // CREATE_NEW_CONSOLE,
-            NULL,
-            NULL,
-            &startup_info,
-            &process_info
-            );
-    if ( !result ) {
-        unsigned long last_error = GetLastError();
-        switch ( last_error ) {
-            case ( ERROR_FILE_NOT_FOUND ) : {
-                std::cout << "The python executable could not be found - check it is in your PATH" << std::endl;
-                debug();
-                break;
-            }
-            default: {
-                std::cout << "Process failed with error: " << last_error << std::endl;
-                debug();
-                break;
-            }
+    auto result = ::CreateProcess(
+        nullptr,                // program to execute (nullptr = execute command line)
+        const_cast<char*>(arguments.str().c_str()),            // command line to execute
+        nullptr,                // process security attributes
+        nullptr,                // thread security attributes
+        false,                  // determines if handles from parent process are inherited
+        0,                      // no creation flags
+        nullptr,                // enviornment (nullptr = use parent's)
+        nullptr,                // current directory (nullptr = use parent's)
+        &startup_info,          // startup info
+        &process_info           // process info
+    );
+    if (!result)
+    {
+        const auto error = ::GetLastError();
+        switch (error)
+        {
+        case ERROR_FILE_NOT_FOUND:
+        {
+            std::cout << "Error! Python executable cannot be found, is it added to PATH?" << std::endl;
+            break;
         }
-        return last_error;
-    } else {
-        WaitForSingleObject( process_info.hProcess, INFINITE );
-        unsigned long exit_code = NO_ERROR;
-        GetExitCodeProcess( process_info.hProcess, &exit_code );
-        CloseHandle( process_info.hProcess );
-        CloseHandle( process_info.hThread );
-        return exit_code;
+        default:
+            std::cout << "Error! CreateProcess failed with error code: " << error << std::endl;
+            break;
+        }
+        throw error;
     }
-    return 0;
+    ::WaitForSingleObject(process_info.hProcess, INFINITE);
+    unsigned long exitCode = NO_ERROR;
+    ::GetExitCodeProcess(process_info.hProcess, &exitCode);
+    ::CloseHandle(process_info.hProcess);
+    ::CloseHandle(process_info.hThread);
+
+#if defined(DEBUG)
+    wprintf(L"[DEBUG] process exist code: %ld\n", exitCode);
+#endif
+
+    return exitCode;
+}
+catch (...)
+{
+    std::cout << "Failed to execute the Python script..." << std::endl;
+    return 1;
 }
 
 #else
