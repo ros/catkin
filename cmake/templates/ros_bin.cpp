@@ -43,42 +43,63 @@
 #ifdef _WIN32
 
 #include <iostream>
-#include <cstdlib>
-#include <sstream>
-#include <algorithm>
 #include <windows.h>
 
-char exe_name[MAX_PATH];
-std::stringstream arguments;
-std::string python_home, python_script, python_exe;
-
-void debug() {
-    std::cout << std::endl;
-    std::cout << "Program Variables:" << std::endl;
-    std::cout << "  Python exe: " << python_exe << std::endl;
-    std::cout << "  Executable: " << exe_name << std::endl;
-    std::cout << "  Python script: " << python_script << std::endl;
-    std::cout << "  Arguments: " << arguments.str() << std::endl;
-    std::cout << std::endl;
-}
-
-int main(int argc, char **argv) try
+int wmain(int argc, wchar_t* argv[]) try
 {
-    exe_name[0] = '\0';
+    const auto GetCurrentModuleName = []() -> std::wstring
+    {
+        // initialize buffer string with at least one character
+        std::wstring moduleName = L" ";
+        while (true)
+        {
+            // retrieves the path of the executable file of the current process
+            auto result = ::GetModuleFileName(nullptr, &moduleName[0], static_cast<DWORD>(moduleName.size()));
+            if (!result)
+            {
+                throw ::GetLastError();
+            }
+            else if (result == moduleName.size() && ::GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+            {
+                // buffer not large enough
+                moduleName.resize(moduleName.size() * 2);
+                continue;
+            }
+            moduleName.resize(result);
+            break;
+        }
+        return moduleName;
+    };
 
-    //_splitpath_s(argv[0], NULL, 0, NULL, 0, name, 256, NULL, 0);
+    const auto FindPythonScript = [](const std::wstring& exeName) -> std::wstring
+    {
+        // this could become more fail-proof and readable with https://en.cppreference.com/w/cpp/filesystem from c++20
+        const std::wstring exeExtension = L".exe";
+        if (exeName.size() <= exeExtension.size() || exeName.substr(exeName.size() - exeExtension.size()) != exeExtension)
+        {
+            throw L"Invalid name.";
+        }
 
-    // could use GetModuleHandleW, WCHAR, GetModuleFileNameW, wcout and wstring here instead.
-    HMODULE hModule = GetModuleHandle(NULL);
-    GetModuleFileName(hModule, exe_name, MAX_PATH);
-    python_script = std::string(exe_name);
-    python_script.replace(python_script.end()-4, python_script.end(), ""); // replace trailing ".exe" with ""
+        // use quoted string to ensure the correct path is used
+        return L" \"" + exeName.substr(0, exeName.size() - exeExtension.size()) + L"\"";
+    };
 
-    python_exe = python_home + std::string("python");
-    arguments << python_exe << " " << python_script;
-    for ( int i = 1; i < argc; ++i ) {
-        // add double quotation marks to handle spaces
-        arguments << " \"" << argv[i] << "\"";
+    const auto GetPythonExecutable = []() -> std::wstring
+    {
+        std::wstring pythonExecutable = L"python";
+
+        // use quoted string to indicate where the file name ends and the arguments begin
+        return L"\"" + pythonExecutable + L"\"";
+    };
+
+    const auto pythonExecutable = GetPythonExecutable();
+    const auto pythonScript = FindPythonScript(GetCurrentModuleName());
+    std::wstring command = pythonExecutable + L" " + pythonScript;
+    for (auto i = 1; i < argc; ++i)
+    {
+        command += L" ";
+        // use quoted strings to handle spaces within each argument
+        command += L" \"" + std::wstring(argv[i]) + L"\"";
     }
 
     STARTUPINFO startup_info;
@@ -89,7 +110,7 @@ int main(int argc, char **argv) try
 
     auto result = ::CreateProcess(
         nullptr,                // program to execute (nullptr = execute command line)
-        const_cast<char*>(arguments.str().c_str()),            // command line to execute
+        &command[0],            // command line to execute
         nullptr,                // process security attributes
         nullptr,                // thread security attributes
         false,                  // determines if handles from parent process are inherited
