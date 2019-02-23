@@ -102,6 +102,16 @@ int wmain(int argc, wchar_t* argv[]) try
         command += L" \"" + std::wstring(argv[i]) + L"\"";
     }
 
+#if defined(DEBUG)
+    for (auto i = 0; i < argc; ++i)
+    {
+        wprintf(L"[DEBUG] %d:\t%s\n", i, argv[i]);
+    }
+
+    wprintf(L"[DEBUG] python script: %s\n", pythonScript.c_str());
+    wprintf(L"[DEBUG] command: %s\n", command.c_str());
+#endif
+
     STARTUPINFO startup_info;
     PROCESS_INFORMATION process_info;
     ::memset(&startup_info, 0, sizeof(startup_info));
