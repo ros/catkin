@@ -113,7 +113,7 @@ function(add_python_executable_helper)
   cmake_parse_arguments(add_python_executable_helper "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (WIN32)
-    add_executable(${add_python_executable_helper_TARGET_NAME} ${catkin_EXTRAS_DIR}/templates/ros_bin.cpp)
+    add_executable(${add_python_executable_helper_TARGET_NAME} ${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp)
 
     # The actual file name of the executable built on Windows will be ${add_python_executable_helper_SCRIPT_NAME}.exe
     set_target_properties(${add_python_executable_helper_TARGET_NAME} PROPERTIES
