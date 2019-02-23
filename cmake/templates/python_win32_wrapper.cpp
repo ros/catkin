@@ -45,12 +45,12 @@
 #include <iostream>
 #include <windows.h>
 
-int wmain(int argc, wchar_t* argv[]) try
+int main(int argc, char* argv[]) try
 {
-    const auto GetCurrentModuleName = []() -> std::wstring
+    const auto GetCurrentModuleName = []() -> std::string
     {
         // initialize buffer string with at least one character
-        std::wstring moduleName = L" ";
+        std::string moduleName = " ";
         while (true)
         {
             // retrieves the path of the executable file of the current process
@@ -71,45 +71,45 @@ int wmain(int argc, wchar_t* argv[]) try
         return moduleName;
     };
 
-    const auto FindPythonScript = [](const std::wstring& exeName) -> std::wstring
+    const auto FindPythonScript = [](const std::string& exeName) -> std::string
     {
         // this could become more fail-proof and readable with https://en.cppreference.com/w/cpp/filesystem from c++20
-        const std::wstring exeExtension = L".exe";
+        const std::string exeExtension = ".exe";
         if (exeName.size() <= exeExtension.size() || exeName.substr(exeName.size() - exeExtension.size()) != exeExtension)
         {
             throw L"Invalid name.";
         }
 
         // use quoted string to ensure the correct path is used
-        return L" \"" + exeName.substr(0, exeName.size() - exeExtension.size()) + L"\"";
+        return "\"" + exeName.substr(0, exeName.size() - exeExtension.size()) + "\"";
     };
 
-    const auto GetPythonExecutable = []() -> std::wstring
+    const auto GetPythonExecutable = []() -> std::string
     {
-        std::wstring pythonExecutable = L"python";
+        std::string pythonExecutable = "python";
 
         // use quoted string to indicate where the file name ends and the arguments begin
-        return L"\"" + pythonExecutable + L"\"";
+        return "\"" + pythonExecutable + "\"";
     };
 
     const auto pythonExecutable = GetPythonExecutable();
     const auto pythonScript = FindPythonScript(GetCurrentModuleName());
-    std::wstring command = pythonExecutable + L" " + pythonScript;
+    std::string command = pythonExecutable + " " + pythonScript;
     for (auto i = 1; i < argc; ++i)
     {
-        command += L" ";
+        command += " ";
         // use quoted strings to handle spaces within each argument
-        command += L" \"" + std::wstring(argv[i]) + L"\"";
+        command += " \"" + std::string(argv[i]) + "\"";
     }
 
 #if defined(DEBUG)
     for (auto i = 0; i < argc; ++i)
     {
-        wprintf(L"[DEBUG] %d:\t%s\n", i, argv[i]);
+        printf("[DEBUG] %d:\t%s\n", i, argv[i]);
     }
 
-    wprintf(L"[DEBUG] python script: %s\n", pythonScript.c_str());
-    wprintf(L"[DEBUG] command: %s\n", command.c_str());
+    printf("[DEBUG] script: %s\n", pythonScript.c_str());
+    printf("[DEBUG] command: %s\n", command.c_str());
 #endif
 
     STARTUPINFO startup_info;
@@ -153,7 +153,7 @@ int wmain(int argc, wchar_t* argv[]) try
     ::CloseHandle(process_info.hThread);
 
 #if defined(DEBUG)
-    wprintf(L"[DEBUG] process exist code: %ld\n", exitCode);
+    printf("[DEBUG] process exist code: %ld\n", exitCode);
 #endif
 
     return exitCode;
