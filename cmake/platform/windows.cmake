@@ -108,19 +108,21 @@ endif()
 #
 function(add_python_executable_helper)
   set(options)
-  set(oneValueArgs SCRIPT_NAME TARGET_NAME)
+  set(oneValueArgs SCRIPT_NAME TARGET_NAME DESTINATION)
   set(multiValueArgs)
   cmake_parse_arguments(add_python_executable_helper "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (WIN32)
-    add_executable(${add_python_executable_helper_TARGET_NAME} ${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp)
+    if (NOT TARGET ${add_python_executable_helper_TARGET_NAME})
+      add_executable(${add_python_executable_helper_TARGET_NAME} ${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp)
 
-    # The actual file name of the executable built on Windows will be ${add_python_executable_helper_SCRIPT_NAME}.exe
-    set_target_properties(${add_python_executable_helper_TARGET_NAME} PROPERTIES
-      OUTPUT_NAME ${add_python_executable_helper_SCRIPT_NAME}
-      RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
+      # The actual file name of the executable built on Windows will be ${add_python_executable_helper_SCRIPT_NAME}.exe
+      set_target_properties(${add_python_executable_helper_TARGET_NAME} PROPERTIES
+        OUTPUT_NAME ${add_python_executable_helper_SCRIPT_NAME}
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/catkin_generated/windows_wrappers)
+    endif()
 
     install(TARGETS ${add_python_executable_helper_TARGET_NAME}
-      RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+      RUNTIME DESTINATION ${add_python_executable_helper_DESTINATION})
   endif()
 endfunction()
