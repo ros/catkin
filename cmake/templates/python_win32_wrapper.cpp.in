@@ -40,8 +40,6 @@
  * @date March 2011
  */
 
-#define DEBUG
-
 #ifdef _WIN32
 
 #include <iostream>
@@ -80,15 +78,14 @@ int main(int argc, char* argv[]) try
         {
             throw L"Invalid name.";
         }
-
-        // use quoted string to ensure the correct path is used
-        auto scriptName = "\"" + exeName.substr(0, exeName.size() - exeExtension.size()) + "\"";
+        auto scriptName = exeName.substr(0, exeName.size() - exeExtension.size());
 
 #if defined(DEBUG)
         fprintf(stderr, "[DEBUG] Python script name: %s\n", scriptName.c_str());
 #endif
 
-        return scriptName;
+        // use quoted string to ensure the correct path is used
+        return "\"" + scriptName + "\"";
     };
 
     const auto GetPythonExecutable = []() -> std::string
