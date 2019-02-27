@@ -49,31 +49,25 @@ int main(int argc, char* argv[]) try
 {
     const auto GetCurrentModuleName = []() -> std::string
     {
-        // initialize buffer string with at least one character
-        std::string moduleName = " ";
-        while (true)
+        char moduleName[MAX_PATH];
+
+        // retrieves the path of the executable file of the current process
+        auto result = ::GetModuleFileName(nullptr, moduleName, MAX_PATH);
+        if (!result || result == MAX_PATH)
         {
-            // retrieves the path of the executable file of the current process
-            auto result = ::GetModuleFileName(nullptr, &moduleName[0], static_cast<DWORD>(moduleName.size()));
-            if (!result)
-            {
-                throw ::GetLastError();
-            }
-            else if (result == moduleName.size() && ::GetLastError() == ERROR_INSUFFICIENT_BUFFER)
-            {
-                // buffer not large enough
-                moduleName.resize(moduleName.size() * 2);
-                continue;
-            }
-            moduleName.resize(result);
-            break;
+            // If the function fails, the return value is 0
+            // If the buffer is too small to hold the module name, the return value is MAX_PATH
+            throw ::GetLastError();
         }
         return moduleName;
     };
 
     const auto FindPythonScript = [](const std::string& exeName) -> std::string
     {
-        // this could become more fail-proof and readable with https://en.cppreference.com/w/cpp/filesystem from c++20
+        // implement a heuristic here to execute a Python script of the same name
+        // when the executable's name is <name>.exe, assume the Python script to be <name>
+        // e.g. script.exe -> script, script.py.exe -> script.py
+        // note: script.exe will not execute script.py
         const std::string exeExtension = ".exe";
         if (exeName.size() <= exeExtension.size() || exeName.substr(exeName.size() - exeExtension.size()) != exeExtension)
         {
