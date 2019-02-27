@@ -105,11 +105,11 @@ int main(int argc, char* argv[]) try
 #if defined(DEBUG)
     for (auto i = 0; i < argc; ++i)
     {
-        printf("[DEBUG] %d:\t%s\n", i, argv[i]);
+        fprintf(stderr, "[DEBUG] %d:\t%s\n", i, argv[i]);
     }
 
-    printf("[DEBUG] script: %s\n", pythonScript.c_str());
-    printf("[DEBUG] command: %s\n", command.c_str());
+    fprintf(stderr, "[DEBUG] script: %s\n", pythonScript.c_str());
+    fprintf(stderr, "[DEBUG] command: %s\n", command.c_str());
 #endif
 
     STARTUPINFO startup_info;
@@ -137,11 +137,11 @@ int main(int argc, char* argv[]) try
         {
         case ERROR_FILE_NOT_FOUND:
         {
-            std::cout << "Error! Python executable cannot be found, is it added to PATH?" << std::endl;
+            fprintf(stderr, "Error! Python executable cannot be found, is it added to PATH?\n");
             break;
         }
         default:
-            std::cout << "Error! CreateProcess failed with error code: " << error << std::endl;
+            fprintf(stderr, "Error! CreateProcess failed with error code: %ld\n", error);
             break;
         }
         throw error;
@@ -153,14 +153,14 @@ int main(int argc, char* argv[]) try
     ::CloseHandle(process_info.hThread);
 
 #if defined(DEBUG)
-    printf("[DEBUG] process exist code: %ld\n", exitCode);
+    fprintf(stderr, "[DEBUG] process exist code: %ld\n", exitCode);
 #endif
 
     return exitCode;
 }
 catch (...)
 {
-    std::cout << "Failed to execute the Python script..." << std::endl;
+    fprintf(stderr, "Failed to execute the Python script...\n");
     return 1;
 }
 

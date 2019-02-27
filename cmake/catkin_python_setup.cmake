@@ -153,12 +153,12 @@ function(catkin_python_setup)
       ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${name}
       @ONLY)
 
-    add_python_executable_helper(SCRIPT_NAME ${name}
-      TARGET_NAME ${name}_executable
+    add_python_executable(SCRIPT_NAME ${name}
+      TARGET_NAME ${name}_executable_devel
       DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
 
-    add_python_executable_helper(SCRIPT_NAME ${name}
-      TARGET_NAME ${name}_executable
+    add_python_executable(SCRIPT_NAME ${name}
+      TARGET_NAME ${name}_executable_install
       DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
   endforeach()
 endfunction()

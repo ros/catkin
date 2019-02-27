@@ -99,30 +99,30 @@ endif()
 # Add Python executable wrapper around Python scripts on Windows.
 # Python scripts with (or without) .py extension are not executable on Windows due to lack of shebang support
 #
-# :param script: Python script name that needs a wrapper
-# :type script: string
-# :param target: build target name
-# :type target: string
+# :param SCRIPT_NAME: Python script name that needs a wrapper
+# :type SCRIPT_NAME: string
+# :param TARGET_NAME: build target name
+# :type TARGET_NAME: string
+# :param DESTINATION: install destination for the build target
+# :type DESTINATION: string
 #
 # @public
 #
-function(add_python_executable_helper)
+function(add_python_executable)
   set(options)
   set(oneValueArgs SCRIPT_NAME TARGET_NAME DESTINATION)
   set(multiValueArgs)
-  cmake_parse_arguments(add_python_executable_helper "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(add_python_executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (WIN32)
-    if (NOT TARGET ${add_python_executable_helper_TARGET_NAME})
-      add_executable(${add_python_executable_helper_TARGET_NAME} ${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp)
+    add_executable(${add_python_executable_TARGET_NAME} ${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp)
 
-      # The actual file name of the executable built on Windows will be ${add_python_executable_helper_SCRIPT_NAME}.exe
-      set_target_properties(${add_python_executable_helper_TARGET_NAME} PROPERTIES
-        OUTPUT_NAME ${add_python_executable_helper_SCRIPT_NAME}
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/catkin_generated/windows_wrappers)
-    endif()
+    # The actual file name of the executable built on Windows will be ${add_python_executable_SCRIPT_NAME}.exe
+    set_target_properties(${add_python_executable_TARGET_NAME} PROPERTIES
+      OUTPUT_NAME ${add_python_executable_SCRIPT_NAME}
+      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/catkin_generated/windows_wrappers)
 
-    install(TARGETS ${add_python_executable_helper_TARGET_NAME}
-      RUNTIME DESTINATION ${add_python_executable_helper_DESTINATION})
+    install(TARGETS ${add_python_executable_TARGET_NAME}
+      RUNTIME DESTINATION ${add_python_executable_DESTINATION})
   endif()
 endfunction()
