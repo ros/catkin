@@ -55,7 +55,7 @@ if NOT EXIST %_SETUP_TMP% (
 )
 
 REM invoke setup script to generate necessary exports of environment variables
-set _SETUP_UTIL_EXE=@SETUP_DIR@/_setup_util.py.exe
+set _SETUP_UTIL_EXE=%_SETUP_UTIL_EXE%.exe
 if EXIST "%_SETUP_UTIL_EXE%" (
   "%_SETUP_UTIL_EXE%" %* > %_SETUP_TMP%
 ) else (
