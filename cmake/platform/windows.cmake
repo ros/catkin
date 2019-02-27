@@ -114,13 +114,19 @@ function(add_python_executable)
   set(multiValueArgs)
   cmake_parse_arguments(add_python_executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if (WIN32)
-    add_executable(${add_python_executable_TARGET_NAME} ${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp)
+  set(WRAPPER_SCRIPT
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/windows_wrappers/${add_python_executable_TARGET_NAME}/${add_python_executable_SCRIPT_NAME}.cpp)
+  configure_file(${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp.in
+    ${WRAPPER_SCRIPT}
+    @ONLY)
 
-    # The actual file name of the executable built on Windows will be ${add_python_executable_SCRIPT_NAME}.exe
+  if (WIN32)
+    add_executable(${add_python_executable_TARGET_NAME} ${WRAPPER_SCRIPT})
+
+    # The actual file name of the executable built on Windows will be ${add_python_executable_SCRIPT_NAME}.exe according to OUTPUT_NAME
     set_target_properties(${add_python_executable_TARGET_NAME} PROPERTIES
       OUTPUT_NAME ${add_python_executable_SCRIPT_NAME}
-      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/catkin_generated/windows_wrappers)
+      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/windows_wrappers/${add_python_executable_TARGET_NAME})
 
     install(TARGETS ${add_python_executable_TARGET_NAME}
       RUNTIME DESTINATION ${add_python_executable_DESTINATION})
