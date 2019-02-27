@@ -90,14 +90,10 @@ if(MSVC)
 endif()
 
 #
-# Helper function to add Python executable wrapper on Windows due to lack of shebang support
-#
-# Code courtesy of Yujin Robot.  Derived from https://github.com/ros-windows/win_ros
-#
-
-#
 # Add Python executable wrapper around Python scripts on Windows.
-# Python scripts with (or without) .py extension are not executable on Windows due to lack of shebang support
+#
+# Python scripts with (or without) .py extension are not executable on Windows
+# due to lack of shebang support.
 #
 # :param SCRIPT_NAME: Python script name that needs a wrapper
 # :type SCRIPT_NAME: string
@@ -109,26 +105,33 @@ endif()
 # @public
 #
 function(add_python_executable)
-  set(options)
-  set(oneValueArgs SCRIPT_NAME TARGET_NAME DESTINATION)
-  set(multiValueArgs)
-  cmake_parse_arguments(add_python_executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  # Code courtesy of Yujin Robot.
+  # Derived from https://github.com/ros-windows/win_ros
+  cmake_parse_arguments(
+    ARG "" "SCRIPT_NAME;TARGET_NAME;DESTINATION" "" ${ARGN})
+  if(ARG_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "add_python_executable() called with unused arguments: ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
 
-  set(WRAPPER_SCRIPT
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/windows_wrappers/${add_python_executable_TARGET_NAME}/${add_python_executable_SCRIPT_NAME}.cpp)
-  configure_file(${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp.in
-    ${WRAPPER_SCRIPT}
-    @ONLY)
+  if(WIN32)
+    set(
+      WRAPPER_SOURCE
+      "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/add_python_executable/${ARG_TARGET_NAME}/${ARG_SCRIPT_NAME}.cpp")
+    configure_file(
+      "${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp.in"
+      "${WRAPPER_SOURCE}"
+      @ONLY)
 
-  if (WIN32)
-    add_executable(${add_python_executable_TARGET_NAME} ${WRAPPER_SCRIPT})
+    add_executable(${ARG_TARGET_NAME} "${WRAPPER_SOURCE}")
 
-    # The actual file name of the executable built on Windows will be ${add_python_executable_SCRIPT_NAME}.exe according to OUTPUT_NAME
-    set_target_properties(${add_python_executable_TARGET_NAME} PROPERTIES
-      OUTPUT_NAME ${add_python_executable_SCRIPT_NAME}
-      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/windows_wrappers/${add_python_executable_TARGET_NAME})
+    # The actual file name of the executable built on Windows will be ${ARG_SCRIPT_NAME}.exe according to OUTPUT_NAME
+    set_target_properties(
+      ${ARG_TARGET_NAME} PROPERTIES
+      OUTPUT_NAME "${ARG_SCRIPT_NAME}"
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/windows_wrappers/${ARG_TARGET_NAME}")
 
-    install(TARGETS ${add_python_executable_TARGET_NAME}
-      RUNTIME DESTINATION ${add_python_executable_DESTINATION})
+    install(
+      TARGETS ${ARG_TARGET_NAME}
+      RUNTIME DESTINATION "${ARG_DESTINATION}")
   endif()
 endfunction()
