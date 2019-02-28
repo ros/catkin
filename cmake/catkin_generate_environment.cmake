@@ -52,6 +52,9 @@ function(catkin_generate_environment)
       atomic_configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
         ${CATKIN_DEVEL_PREFIX}/setup.${shell}
         @ONLY)
+      atomic_configure_file(${catkin_EXTRAS_DIR}/templates/local_setup.${shell}.in
+        ${CATKIN_DEVEL_PREFIX}/local_setup.${shell}
+        @ONLY)
     endforeach()
 
   else()
@@ -63,6 +66,9 @@ function(catkin_generate_environment)
     # generate setup
     atomic_configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.in
       ${CATKIN_DEVEL_PREFIX}/setup.bat
+      @ONLY)
+    atomic_configure_file(${catkin_EXTRAS_DIR}/templates/local_setup.bat.in
+      ${CATKIN_DEVEL_PREFIX}/local_setup.bat
       @ONLY)
   endif()
 
@@ -109,9 +115,13 @@ function(catkin_generate_environment)
       configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
         ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
         @ONLY)
+      configure_file(${catkin_EXTRAS_DIR}/templates/local_setup.${shell}.in
+        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.${shell}
+        @ONLY)
       if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
         install(FILES
           ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
+          ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.${shell}
           DESTINATION ${CMAKE_INSTALL_PREFIX})
       endif()
     endforeach()
@@ -129,8 +139,12 @@ function(catkin_generate_environment)
     configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.in
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.bat
       @ONLY)
+    configure_file(${catkin_EXTRAS_DIR}/templates/local_setup.bat.in
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.bat
+      @ONLY)
     install(FILES
       ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.bat
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.bat
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
 

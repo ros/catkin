@@ -5,6 +5,7 @@ REM Sets various environment variables and sources additional environment hooks.
 REM It tries it's best to undo changes from a previously sourced setup file before.
 REM Supported command line options:
 REM --extend: skips the undoing of changes from a previously sourced setup file
+REM --local: only considers this workspace but not the chained ones
 
 set _SETUP_UTIL=@SETUP_DIR@/_setup_util.py
 
