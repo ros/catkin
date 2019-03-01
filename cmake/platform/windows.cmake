@@ -82,6 +82,9 @@ if(WIN32)
 
   # keep minimum windows headers inclusion
   add_definitions(-DWIN32_LEAN_AND_MEAN)
+
+  # explicitly enable C++ to compile wrapper
+  enable_language(CXX)
 endif()
 
 if(MSVC)
@@ -114,9 +117,6 @@ function(add_python_executable)
   endif()
 
   if(WIN32)
-    # explicitly enable C++ to compile wrapper
-    enable_language(CXX)
-
     set(
       WRAPPER_SOURCE
       "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/add_python_executable/${ARG_TARGET_NAME}/${ARG_SCRIPT_NAME}.cpp")
