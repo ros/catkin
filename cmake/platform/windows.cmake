@@ -114,6 +114,9 @@ function(add_python_executable)
   endif()
 
   if(WIN32)
+    # explicitly enable C++ to compile wrapper
+    enable_language(CXX)
+
     set(
       WRAPPER_SOURCE
       "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/add_python_executable/${ARG_TARGET_NAME}/${ARG_SCRIPT_NAME}.cpp")
