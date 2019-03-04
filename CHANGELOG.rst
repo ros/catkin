@@ -2,6 +2,36 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add local_setup files (`#993 <https://github.com/ros/catkin/issues/993>`_)
+* update docs to suggest 'test' path instead of 'tests'. (`#990 <https://github.com/ros/catkin/issues/990>`_)
+* generate CTest and dart config to avoid warnings (`#987 <https://github.com/ros/catkin/issues/987>`_)
+* fix PYTHONPATH missing in cached environment (`#986 <https://github.com/ros/catkin/issues/986>`_)
+* add double quotes around cmake_command to handle spaces (`#976 <https://github.com/ros/catkin/issues/976>`_)
+* strip "-l" from "-lpthread" library, to fix a build failure on ros-ros-comm (`#975 <https://github.com/ros/catkin/issues/975>`_)
+* correct Python executable in CMake files (`#977 <https://github.com/ros/catkin/issues/977>`_)
+* need to sanitize paths before cprint (`#969 <https://github.com/ros/catkin/issues/969>`_)
+* add friendly error message for `ros/catkin#961 <https://github.com/ros/catkin/issues/961>`_ (`#964 <https://github.com/ros/catkin/issues/964>`_)
+* document how to install python subpackages (`#962 <https://github.com/ros/catkin/issues/962>`_)
+* add existing catkin logo to README (`#959 <https://github.com/ros/catkin/issues/959>`_)
+* fix warnings in docs
+* install environment hooks into a package-specific directory (`#953 <https://github.com/ros/catkin/issues/953>`_)
+* fix race condition with catkin_tools in parallel builds (`#955 <https://github.com/ros/catkin/issues/955>`_)
+* use CATKIN_GLOBAL_ETC_DESTINATION instead of etc (`#954 <https://github.com/ros/catkin/issues/954>`_)
+* remove CMAKE_MODULE_PATH from list of "forbidden" variables (`#951 <https://github.com/ros/catkin/issues/951>`_)
+* Windows related:
+
+  * add win_ros script wrappers to make Python scripts executable (`#978 <https://github.com/ros/catkin/issues/978>`_)
+  * fix python_distutils_install.bat.in (`#992 <https://github.com/ros/catkin/issues/992>`_)
+  * add script.bat.in template for general use (`#981 <https://github.com/ros/catkin/issues/981>`_)
+  * normalize paths in CMAKE_PREFIX_PATH for proper comparison (`#979 <https://github.com/ros/catkin/issues/979>`_)
+  * update windows.cmake to fix common build issues on Windows (`#984 <https://github.com/ros/catkin/issues/984>`_)
+  * update builder.py to add Windows support (`#982 <https://github.com/ros/catkin/issues/982>`_)
+  * ensure desired Python path is added into PATH in setup.bat (`#983 <https://github.com/ros/catkin/issues/983>`_)
+  * check both IMPORTED_IMPLIB\_ and IMPORTED_LOCATION\_ in catkin_libraries.cmake (`#980 <https://github.com/ros/catkin/issues/980>`_)
+  * enable catkin build use_nmake on Windows (`#949 <https://github.com/ros/catkin/issues/949>`_)
+
 0.7.14 (2018-06-06)
 -------------------
 * terminal_color is now in catkin_pkg, regression from 0.7.13 (`#943 <https://github.com/ros/catkin/issues/943>`_)
