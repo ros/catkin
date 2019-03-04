@@ -152,6 +152,14 @@ function(catkin_python_setup)
     atomic_configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
       ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/${name}
       @ONLY)
+
+    add_python_executable(SCRIPT_NAME ${name}
+      TARGET_NAME ${name}_executable_devel
+      DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
+
+    add_python_executable(SCRIPT_NAME ${name}
+      TARGET_NAME ${name}_executable_install
+      DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
   endforeach()
 endfunction()
 

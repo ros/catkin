@@ -47,6 +47,11 @@ function(catkin_install_python signature)
         set(optional_flag "OPTIONAL")
       endif()
       install(PROGRAMS "${file}" DESTINATION "${ARG_DESTINATION}" ${optional_flag})
+
+      get_filename_component(name "${file}" NAME)
+      add_python_executable(SCRIPT_NAME ${name}
+        TARGET_NAME ${name}_executable_install_python
+        DESTINATION "${ARG_DESTINATION}")
     elseif(NOT ARG_OPTIONAL)
       message(FATAL_ERROR "catkin_install_python() called with non-existing file '${file}'.")
     endif()

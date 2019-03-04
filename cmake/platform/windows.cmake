@@ -82,9 +82,59 @@ if(WIN32)
 
   # keep minimum windows headers inclusion
   add_definitions(-DWIN32_LEAN_AND_MEAN)
+
+  # explicitly enable C++ to compile wrapper
+  enable_language(CXX)
 endif()
 
 if(MSVC)
   # https://blogs.msdn.microsoft.com/vcblog/2018/04/09/msvc-now-correctly-reports-__cplusplus/
   add_compile_options(/Zc:__cplusplus)
 endif()
+
+#
+# Add Python executable wrapper around Python scripts on Windows.
+#
+# Python scripts with (or without) .py extension are not executable on Windows
+# due to lack of shebang support.
+#
+# :param SCRIPT_NAME: Python script name that needs a wrapper
+# :type SCRIPT_NAME: string
+# :param TARGET_NAME: build target name
+# :type TARGET_NAME: string
+# :param DESTINATION: install destination for the build target
+# :type DESTINATION: string
+#
+# @public
+#
+function(add_python_executable)
+  # Code courtesy of Yujin Robot.
+  # Derived from https://github.com/ros-windows/win_ros
+  cmake_parse_arguments(
+    ARG "" "SCRIPT_NAME;TARGET_NAME;DESTINATION" "" ${ARGN})
+  if(ARG_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "add_python_executable() called with unused arguments: ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
+
+  if(WIN32)
+    set(
+      WRAPPER_SOURCE
+      "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/add_python_executable/${ARG_TARGET_NAME}/${ARG_SCRIPT_NAME}.cpp")
+    configure_file(
+      "${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp.in"
+      "${WRAPPER_SOURCE}"
+      @ONLY)
+
+    add_executable(${ARG_TARGET_NAME} "${WRAPPER_SOURCE}")
+
+    # The actual file name of the executable built on Windows will be ${ARG_SCRIPT_NAME}.exe according to OUTPUT_NAME
+    set_target_properties(
+      ${ARG_TARGET_NAME} PROPERTIES
+      OUTPUT_NAME "${ARG_SCRIPT_NAME}"
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/windows_wrappers/${ARG_TARGET_NAME}")
+
+    install(
+      TARGETS ${ARG_TARGET_NAME}
+      RUNTIME DESTINATION "${ARG_DESTINATION}")
+  endif()
+endfunction()
