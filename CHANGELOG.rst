@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.15 (2019-03-04)
+-------------------
 * add local_setup files (`#993 <https://github.com/ros/catkin/issues/993>`_)
 * update docs to suggest 'test' path instead of 'tests'. (`#990 <https://github.com/ros/catkin/issues/990>`_)
 * generate CTest and dart config to avoid warnings (`#987 <https://github.com/ros/catkin/issues/987>`_)
