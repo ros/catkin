@@ -1101,7 +1101,7 @@ call "{0}/setup.{1}"
 #!/usr/bin/env {1}
 # generated from catkin.builder Python module
 
-. "{0}/setup.{1}"
+_CATKIN_SETUP_DIR= . "{0}/setup.{1}"
 """
 
         generated_env_sh = os.path.join(develspace, env_script)
