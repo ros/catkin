@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# generated from catkin/cmake/templates/relay_setup.sh.in
+
+: ${_CATKIN_SETUP_DIR:=@SETUP_DIR@}
+_CATKIN_SETUP_DIR=$_CATKIN_SETUP_DIR/@PACKAGE_NAME@
+. "$_CATKIN_SETUP_DIR/@SETUP_FILENAME@.sh"

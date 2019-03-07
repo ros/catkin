@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+# generated from catkin/cmake/templates/relay_setup.zsh.in
+
+_CATKIN_SETUP_DIR=$(builtin cd -q "`dirname "$0"`" > /dev/null && pwd)/@PACKAGE_NAME@
+. "$_CATKIN_SETUP_DIR/@SETUP_FILENAME@.zsh"

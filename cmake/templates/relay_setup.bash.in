@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# generated from catkin/cmake/templates/relay_setup.bash.in
+
+_CATKIN_SETUP_DIR=$(builtin cd "`dirname "${BASH_SOURCE[0]}"`" > /dev/null && pwd)/@PACKAGE_NAME@
+. "$_CATKIN_SETUP_DIR/@SETUP_FILENAME@.bash"

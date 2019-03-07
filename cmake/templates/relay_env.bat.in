@@ -1,0 +1,4 @@
+@echo off
+REM generated from catkin.builder Python module
+
+call @SETUP_DIR@/@PACKAGE_NAME@/env.bat %*

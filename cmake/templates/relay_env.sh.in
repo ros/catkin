@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# generated from catkin.builder Python module
+
+: ${_CATKIN_SETUP_DIR:=@SETUP_DIR@}
+$_CATKIN_SETUP_DIR/@PACKAGE_NAME@/env.sh "$@"

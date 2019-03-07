@@ -1,0 +1,4 @@
+@echo off
+REM generated from catkin/cmake/templates/relay_setup.bat.in
+
+call "@SETUP_DIR@/@PACKAGE_NAME@/@SETUP_FILENAME@.bat"

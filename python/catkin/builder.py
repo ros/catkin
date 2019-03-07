@@ -1077,45 +1077,31 @@ def build_workspace_isolated(
         env_script = 'env'
         if sys.platform == 'win32':
             env_script += '.bat'
-            env_script_content = """\
-@echo off
-REM generated from catkin.builder Python module
-
-call {0} %*
-"""
-            setup_script_content = """\
-@echo off
-REM generated from catkin.builder Python module
-
-call "{0}/setup.{1}"
-"""
         else:
             env_script += '.sh'
-            env_script_content = """\
-#!/usr/bin/env sh
-# generated from catkin.builder Python module
-
-{0} "$@"
-"""
-            setup_script_content = """\
-#!/usr/bin/env {1}
-# generated from catkin.builder Python module
-
-. "{0}/setup.{1}"
-"""
 
         generated_env_sh = os.path.join(develspace, env_script)
         generated_setup_util_py = os.path.join(develspace, '_setup_util.py')
         if not merge and pkg_develspace:
+            variables = {
+                'PACKAGE_NAME': package.name,
+                'SETUP_DIR': develspace,
+                'SETUP_FILENAME': 'setup',
+            }
+
             # generate env script and setup.sh|bash|zsh or setup.bat which relay to last devel space
             with open(generated_env_sh, 'w') as f:
-                f.write(env_script_content.format(os.path.join(pkg_develspace, env_script)))
+                f.write(configure_file(
+                    os.path.join(get_cmake_path(), 'templates', 'relay_' + env_script + '.in'),
+                    variables))
             os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
 
             shells_to_write = ['bat'] if sys.platform == 'win32' else ['sh', 'bash', 'zsh']
             for shell in shells_to_write:
                 with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
-                    f.write(setup_script_content.format(pkg_develspace, shell))
+                    f.write(configure_file(
+                        os.path.join(get_cmake_path(), 'templates', 'relay_setup.%s.in' % shell),
+                        variables))
 
             # remove _setup_util.py file which might have been generated for an empty devel space before
             if os.path.exists(generated_setup_util_py):
