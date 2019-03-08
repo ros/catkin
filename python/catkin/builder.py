@@ -1103,6 +1103,17 @@ call "{0}/setup.{1}"
 
 . "{0}/setup.{1}"
 """
+            setup_sh_content = """\
+#!/usr/bin/env sh
+# generated from catkin.builder Python module
+
+if [ ! -z "$_CATKIN_SETUP_DIR" ] && [ "$_CATKIN_SETUP_DIR" != "{1}" ]; then
+  echo "Relocation of this workspace is not supported"
+  return 1
+fi
+
+_CATKIN_SETUP_DIR= . "{0}/setup.sh"
+"""
 
         generated_env_sh = os.path.join(develspace, env_script)
         generated_setup_util_py = os.path.join(develspace, '_setup_util.py')
@@ -1112,10 +1123,13 @@ call "{0}/setup.{1}"
                 f.write(env_script_content.format(os.path.join(pkg_develspace, env_script)))
             os.chmod(generated_env_sh, stat.S_IXUSR | stat.S_IWUSR | stat.S_IRUSR)
 
-            shells_to_write = ['bat'] if sys.platform == 'win32' else ['sh', 'bash', 'zsh']
+            shells_to_write = ['bat'] if sys.platform == 'win32' else ['bash', 'zsh']
             for shell in shells_to_write:
                 with open(os.path.join(develspace, 'setup.%s' % shell), 'w') as f:
                     f.write(setup_script_content.format(pkg_develspace, shell))
+            if sys.platform != 'win32':
+                with open(os.path.join(develspace, 'setup.sh'), 'w') as f:
+                    f.write(setup_sh_content.format(pkg_develspace, develspace))
 
             # remove _setup_util.py file which might have been generated for an empty devel space before
             if os.path.exists(generated_setup_util_py):
