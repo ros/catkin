@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.16 (2019-03-12)
+-------------------
 * protection against double -l in pkg-config files (`#998 <https://github.com/ros/catkin/issues/998>`_)
 * add error message to the setup.sh if devel space relocation is attempted (`#997 <https://github.com/ros/catkin/issues/997>`_)
 
