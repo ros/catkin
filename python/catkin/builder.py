@@ -655,7 +655,7 @@ def build_cmake_package(
         make_install_cmd = [last_env] + make_install_cmd
     run_command(make_install_cmd, build_dir, quiet)
 
-    env_script = 'env' + '.bat' if sys.platform == 'win32' else '.sh'
+    env_script = 'env' + ('.bat' if sys.platform == 'win32' else '.sh')
     # If an env script already exists, don't overwrite it
     if install and os.path.exists(prefix_destdir(os.path.join(install_target, env_script), destdir)):
         return
@@ -677,7 +677,7 @@ def build_cmake_package(
 
     # Generate setup script for chaining to catkin packages
     # except if using --merge which implies that new_setup_path equals last_setup_env
-    setup_script = 'setup' + '.bat' if sys.platform == 'win32' else '.sh'
+    setup_script = 'setup' + ('.bat' if sys.platform == 'win32' else '.sh')
     new_setup_path = os.path.join(install_target, setup_script)
     if install:
         new_setup_path = prefix_destdir(new_setup_path, destdir)
