@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.17 (2019-03-18)
+-------------------
 * fix setup.sh/env.sh filename, regression from 0.7.15 (`#1000 <https://github.com/ros/catkin/issues/1000>`_)
 
 0.7.16 (2019-03-12)
