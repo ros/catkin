@@ -48,8 +48,10 @@ your package::
 
   catkin_package(CATKIN_DEPENDS dynamic_reconfigure ...)
 
-Since you probably have build targets using the generated header, add
-this to ensure it gets built before any targets needing them::
+If this is a C++ package and you have build targets using the
+generated header, add this to ensure it gets built before any
+targets needing them (this prevents "file not found" errors when
+trying to ``#include`` the generated header)::
 
   add_dependencies(your_program ${${PROJECT_NAME}_EXPORTED_TARGETS})
   add_dependencies(your_library ${${PROJECT_NAME}_EXPORTED_TARGETS})
