@@ -158,7 +158,7 @@ foreach(filename
     tools/libraries
     tools/rt
 
-#    tools/threads
+    tools/threads
   )
   include(${catkin_EXTRAS_DIR}/${filename}.cmake)
 endforeach()
