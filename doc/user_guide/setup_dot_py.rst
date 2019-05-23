@@ -31,14 +31,17 @@ to read the arguments to set up the devel space, and execute setup.py
 with suitable arguments to install to the catkin install space under
 ``CMAKE_INSTALL_PREFIX``.
 
-This means you should not execute your
+This means that if you execute your
 setup.py using::
 
   # DO NOT USE
   # python setup.py install
 
-manually, as that would install to a different location, and you would
-have multiple installed versions that influence each other. Using
+manually, that would install to a different location, and you would
+have multiple installed versions. Python will decide at runtime which
+one to use based on your PYTHONPATH environment variable, and it may
+pick the one you expect it to pick, but we recommend against having
+multiple installed versions in the first place. Using
 setup.py to create a pypi package of your catkin package currently has
 no support for ROS messages and services, and core ROS libraries
 (e.g. rospy) are not available on pypi, so this using setup.py for
