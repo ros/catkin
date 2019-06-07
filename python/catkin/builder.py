@@ -1221,7 +1221,7 @@ def get_package_names_with_recursive_dependencies(packages, pkg_names):
                     check_pkg_names.add(dep)
     return dependencies
 
-def build_platform_specific_defaults(args):
+def apply_platform_specific_defaults(args):
     # add Windows specific defaults
     if sys.platform == 'win32':
         # default to use nmake if on Windows and if not using ninja
