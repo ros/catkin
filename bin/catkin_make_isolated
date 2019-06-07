@@ -115,7 +115,6 @@ def handle_cmake_args(cmake_args, opts):
 def main():
     opts = parse_args()
     apply_platform_specific_defaults(opts)
-
     cmake_args, opts = handle_cmake_args(opts.cmake_args, opts)
 
     # force --no-color if stdout is non-interactive
