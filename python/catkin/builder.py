@@ -1229,6 +1229,5 @@ def apply_platform_specific_defaults(args):
             args.use_nmake = True
         # use RelWithDebInfo as default build type if on Windows
         prefix = '-DCMAKE_BUILD_TYPE='
-        build_type_prefix = [a for a in args.cmake_args if a.startswith(prefix)]
-        if not build_type_prefix:
+        if not any(a.startswith(prefix) for a in args.cmake_args):
             args.cmake_args.append('-DCMAKE_BUILD_TYPE=RelWithDebInfo')
