@@ -2,6 +2,13 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add catkin_make(_isolated) default parameters for Windows developers (`#1011 <https://github.com/ros/catkin/issues/1011>`_)
+* fix order of bin/lib in PATH on Windows (`#1010 <https://github.com/ros/catkin/issues/1010>`_)
+* clarify consequences of running setup.py manually (`#1009 <https://github.com/ros/catkin/issues/1009>`_)
+* update docs for dynamic reconfigure (`#1001 <https://github.com/ros/catkin/issues/1001>`_)
+
 0.7.17 (2019-03-18)
 -------------------
 * fix setup.sh/env.sh filename, regression from 0.7.15 (`#1000 <https://github.com/ros/catkin/issues/1000>`_)
