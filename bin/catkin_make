@@ -19,6 +19,7 @@ from catkin.builder import handle_make_arguments
 from catkin.builder import print_command_banner
 from catkin.builder import run_command
 from catkin.builder import run_command_colorized
+from catkin.builder import apply_platform_specific_defaults
 from catkin_pkg.packages import find_packages
 from catkin_pkg.tool_detection import get_previous_tool_used_on_the_space
 from catkin_pkg.tool_detection import mark_space_as_built_by
@@ -27,6 +28,7 @@ from catkin_pkg.workspaces import ensure_workspace_marker
 
 def main():
     args = _parse_args()
+    apply_platform_specific_defaults(args)
     cmake_args = args.cmake_args
 
     # force --no-color if stdout is non-interactive

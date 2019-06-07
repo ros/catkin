@@ -14,6 +14,7 @@ from catkin.builder import colorize_line
 from catkin.builder import determine_path_argument
 from catkin.builder import extract_cmake_and_make_and_catkin_make_arguments
 from catkin.builder import extract_jobs_flags
+from catkin.builder import apply_platform_specific_defaults
 
 
 def parse_args(args=None):
@@ -113,6 +114,7 @@ def handle_cmake_args(cmake_args, opts):
 
 def main():
     opts = parse_args()
+    apply_platform_specific_defaults(opts)
     cmake_args, opts = handle_cmake_args(opts.cmake_args, opts)
 
     # force --no-color if stdout is non-interactive
