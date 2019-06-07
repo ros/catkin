@@ -13,6 +13,7 @@ This page was auto-generated from cmake source files using generate_cmake_rst.py
 Public CMake functions / macros
 -------------------------------
 
+ * :cmake:macro:`add_python_executable`
  * :cmake:macro:`catkin_add_env_hooks`
  * :cmake:macro:`catkin_add_executable_with_gmock`
  * :cmake:macro:`catkin_add_executable_with_gtest`
@@ -30,6 +31,30 @@ Public CMake functions / macros
  * :cmake:macro:`catkin_python_setup`
  * :cmake:macro:`catkin_replace_imported_library_targets`
  * :cmake:macro:`catkin_unpack_libraries_with_build_configuration`
+
+.. _`add_python_executable_ref`:
+
+`add_python_executable`
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cmake:macro:: add_python_executable()
+
+ *[function defined in platform/windows.cmake]*
+
+
+ Add Python executable wrapper around Python scripts on Windows.
+
+ Python scripts with (or without) .py extension are not executable on Windows
+ due to lack of shebang support.
+
+ :param SCRIPT_NAME: Python script name that needs a wrapper
+ :type SCRIPT_NAME: string
+ :param TARGET_NAME: build target name
+ :type TARGET_NAME: string
+ :param DESTINATION: install destination for the build target
+ :type DESTINATION: string
+
+
 
 .. _`catkin_add_env_hooks_ref`:
 
