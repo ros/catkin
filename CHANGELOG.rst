@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.18 (2019-06-07)
+-------------------
 * add catkin_make(_isolated) default parameters for Windows developers (`#1011 <https://github.com/ros/catkin/issues/1011>`_)
 * fix order of bin/lib in PATH on Windows (`#1010 <https://github.com/ros/catkin/issues/1010>`_)
 * clarify consequences of running setup.py manually (`#1009 <https://github.com/ros/catkin/issues/1009>`_)
