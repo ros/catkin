@@ -1231,4 +1231,3 @@ def apply_platform_specific_defaults(args):
         build_type_prefix = [a for a in args.cmake_args if a.startswith(prefix)]
         if not build_type_prefix:
             args.cmake_args.append('-DCMAKE_BUILD_TYPE=RelWithDebInfo')
-    return args

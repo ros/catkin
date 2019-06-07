@@ -28,7 +28,7 @@ from catkin_pkg.workspaces import ensure_workspace_marker
 
 def main():
     args = _parse_args()
-    args = apply_platform_specific_defaults(args)
+    apply_platform_specific_defaults(args)
     cmake_args = args.cmake_args
 
     # force --no-color if stdout is non-interactive
