@@ -48,6 +48,7 @@ except ImportError:
     from io import StringIO
 import subprocess
 import sys
+from os import environ
 
 try:
     from catkin_pkg.cmake import configure_file, get_metapackage_cmake_template_path
@@ -610,6 +611,11 @@ def build_cmake_package(
             '-DCMAKE_INSTALL_PREFIX=' + install_target
         ]
         cmake_cmd.extend(cmake_args)
+        cmake_cmd.append('-DCATKIN_VERSION:STRING=0.7.18')
+        if 'ROS_VERSION' in environ:
+            cmake_cmd.append('-DCATKIN_ROS_VERSION:STRING=' + environ['ROS_VERSION'])
+        if 'ROS_DISTRO' in environ:
+            cmake_cmd.append('-DCATKIN_ROS_DISTRO:STRING=' + environ['ROS_DISTRO'])
         isolation_print_command(' '.join(cmake_cmd), build_dir)
         if last_env is not None:
             cmake_cmd = [last_env] + cmake_cmd
