@@ -50,7 +50,7 @@ function(catkin_install_python signature)
 
       get_filename_component(name "${file}" NAME)
       add_python_executable(SCRIPT_NAME ${name}
-        # add project name as prefix (set in the most recent project() call)
+        # prefix with project name to avoid collisions across packages
         TARGET_NAME ${PROJECT_NAME}_${name}_exec_install_python
         DESTINATION "${ARG_DESTINATION}")
     elseif(NOT ARG_OPTIONAL)
