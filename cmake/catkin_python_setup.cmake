@@ -154,11 +154,13 @@ function(catkin_python_setup)
       @ONLY)
 
     add_python_executable(SCRIPT_NAME ${name}
-      TARGET_NAME ${name}_executable_devel
+      # prefix with project name to avoid collisions across packages
+      TARGET_NAME ${PROJECT_NAME}_${name}_exec_devel
       DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION})
 
     add_python_executable(SCRIPT_NAME ${name}
-      TARGET_NAME ${name}_executable_install
+      # prefix with project name to avoid collisions across packages
+      TARGET_NAME ${PROJECT_NAME}_${name}_exec_install
       DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
   endforeach()
 endfunction()
