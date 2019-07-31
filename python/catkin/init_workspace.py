@@ -60,12 +60,12 @@ def _fine_toplevel_cmake_in_current_workspace(workspace_dir):
     if os.path.isfile(src):
         if sys.platform.startswith('win32'):
             # use absolute path on Windows due to lack of support for os.symlink
-            src_file_path = src
+            return (src, checked)
         else:
-            src_file_path = os.path.relpath(src, workspace_dir)
+            return (os.path.relpath(src, workspace_dir), checked)
     else:
         checked.append(src)
-    return (src_file_path, checked)
+    return (None, checked)
 
 
 def _find_toplevel_cmake_in_workspaces():
