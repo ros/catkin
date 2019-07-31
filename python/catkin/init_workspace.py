@@ -33,6 +33,7 @@
 from __future__ import print_function
 import os
 import shutil
+import sys
 from catkin.workspace import get_source_paths, get_workspaces
 
 def _symlink_or_copy(src, dst):
@@ -50,6 +51,21 @@ def _symlink_or_copy(src, dst):
             print('Copying file from "%s" to "%s"' % (src, dst))
         except Exception as ex_copy:
             raise RuntimeError('Could neither symlink nor copy file "%s" to "%s":\n- %s\n- %s' % (src, dst, str(ex_symlink), str(ex_copy)))
+
+
+def _fine_toplevel_cmake_in_current_workspace(workspace_dir):
+    checked = []
+
+    src = os.path.join(workspace_dir, 'catkin', 'cmake', 'toplevel.cmake')
+    if os.path.isfile(src):
+        if sys.platform.startswith('win32'):
+            # use absolute path on Windows due to lack of support for os.symlink
+            src_file_path = src
+        else:
+            src_file_path = os.path.relpath(src, workspace_dir)
+    else:
+        checked.append(src)
+    return (src_file_path, checked)
 
 
 def _find_toplevel_cmake_in_workspaces():
@@ -128,12 +144,8 @@ def init_workspace(workspace_dir):
     checked = []
 
     # look in to-be-initialized workspace first
-    src = os.path.join(workspace_dir, 'catkin', 'cmake', 'toplevel.cmake')
-    if os.path.isfile(src):
-        # src_file_path = src
-        src_file_path = os.path.relpath(src, workspace_dir)
-    else:
-        checked.append(src)
+    src_file_path, _checked = _fine_toplevel_cmake_in_current_workspace(workspace_dir)
+    checked += _checked
 
     # search for toplevel file in all workspaces
     if src_file_path is None:
