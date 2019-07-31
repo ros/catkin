@@ -53,64 +53,6 @@ def _symlink_or_copy(src, dst):
             raise RuntimeError('Could neither symlink nor copy file "%s" to "%s":\n- %s\n- %s' % (src, dst, str(ex_symlink), str(ex_copy)))
 
 
-def _fine_toplevel_cmake_in_current_workspace(workspace_dir):
-    checked = []
-
-    src = os.path.join(workspace_dir, 'catkin', 'cmake', 'toplevel.cmake')
-    if os.path.isfile(src):
-        if sys.platform.startswith('win32'):
-            # use absolute path on Windows due to lack of support for os.symlink
-            return (src, checked)
-        else:
-            return (os.path.relpath(src, workspace_dir), checked)
-    else:
-        checked.append(src)
-    return (None, checked)
-
-
-def _find_toplevel_cmake_in_workspaces():
-    checked = []
-
-    workspaces = get_workspaces()
-    for workspace in workspaces:
-        source_paths = get_source_paths(workspace)
-        if len(source_paths) == 0:
-            # try from install space
-            src = os.path.join(workspace, 'catkin', 'cmake', 'toplevel.cmake')
-            if os.path.isfile(src):
-                return (src, checked)
-            else:
-                checked.append(src)
-        else:
-            # try from all source spaces
-            for source_path in source_paths:
-                src = os.path.join(source_path, 'catkin', 'cmake', 'toplevel.cmake')
-                if os.path.isfile(src):
-                    return (src, checked)
-                else:
-                    checked.append(src)
-    return (None, checked)
-
-
-def _find_toplevel_cmake_in_relative_locations():
-    checked = []
-
-    relative_cmake_paths = []
-    # when catkin is in source space
-    relative_cmake_paths.append(os.path.join('..', '..', 'cmake'))
-    # when catkin is installed (with Python code in lib/pythonX.Y/[dist|site]-packages)
-    relative_cmake_paths.append(os.path.join('..', '..', '..', '..', 'share', 'catkin', 'cmake'))
-    # when catkin is installed (with Python code in lib/site-packages)
-    relative_cmake_paths.append(os.path.join('..', '..', '..', 'share', 'catkin', 'cmake'))
-    for relative_cmake_path in relative_cmake_paths:
-        src = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_cmake_path, 'toplevel.cmake'))
-        if os.path.isfile(src):
-            return (src, checked)
-        else:
-            checked.append(src)
-    return (None, checked)
-
-
 def init_workspace(workspace_dir):
     """
     Create a toplevel CMakeLists.txt in the root of a workspace.
@@ -144,18 +86,55 @@ def init_workspace(workspace_dir):
     checked = []
 
     # look in to-be-initialized workspace first
-    src_file_path, _checked = _fine_toplevel_cmake_in_current_workspace(workspace_dir)
-    checked += _checked
+    src = os.path.join(workspace_dir, 'catkin', 'cmake', 'toplevel.cmake')
+    if os.path.isfile(src):
+        if sys.platform.startswith('win32'):
+            # use absolute path on Windows due to lack of support for os.symlink
+            src_file_path = src
+        else:
+            src_file_path = os.path.relpath(src, workspace_dir)
+    else:
+        checked.append(src)
 
     # search for toplevel file in all workspaces
     if src_file_path is None:
-        src_file_path, _checked = _find_toplevel_cmake_in_workspaces()
-        checked += _checked
+        workspaces = get_workspaces()
+        for workspace in workspaces:
+            source_paths = get_source_paths(workspace)
+            if len(source_paths) == 0:
+                # try from install space
+                src = os.path.join(workspace, 'catkin', 'cmake', 'toplevel.cmake')
+                if os.path.isfile(src):
+                    src_file_path = src
+                    break
+                else:
+                    checked.append(src)
+            else:
+                # try from all source spaces
+                for source_path in source_paths:
+                    src = os.path.join(source_path, 'catkin', 'cmake', 'toplevel.cmake')
+                    if os.path.isfile(src):
+                        src_file_path = src
+                        break
+                    else:
+                        checked.append(src)
 
     # search for toplevel file in relative locations
     if src_file_path is None:
-        src_file_path, _checked = _find_toplevel_cmake_in_relative_locations()
-        checked += _checked
+        relative_cmake_paths = []
+        # when catkin is in source space
+        relative_cmake_paths.append(os.path.join('..', '..', 'cmake'))
+        # when catkin is installed (with Python code in lib/pythonX.Y/[dist|site]-packages)
+        relative_cmake_paths.append(os.path.join('..', '..', '..', '..', 'share', 'catkin', 'cmake'))
+        # when catkin is installed (with Python code in lib/site-packages)
+        relative_cmake_paths.append(os.path.join('..', '..', '..', 'share', 'catkin', 'cmake'))
+        for relative_cmake_path in relative_cmake_paths:
+            src = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_cmake_path, 'toplevel.cmake'))
+            if os.path.isfile(src):
+                src_file_path = src
+                break
+            else:
+                checked.append(src)
 
     if src_file_path is None:
         raise RuntimeError('Could neither find file "toplevel.cmake" in any workspace nor relative, checked the following paths:\n%s' % ('\n'.join(checked)))
