@@ -33,6 +33,7 @@
 from __future__ import print_function
 import os
 import shutil
+import sys
 from catkin.workspace import get_source_paths, get_workspaces
 
 def _symlink_or_copy(src, dst):
@@ -87,7 +88,11 @@ def init_workspace(workspace_dir):
     # look in to-be-initialized workspace first
     src = os.path.join(workspace_dir, 'catkin', 'cmake', 'toplevel.cmake')
     if os.path.isfile(src):
-        src_file_path = os.path.relpath(src, workspace_dir)
+        if sys.platform == 'win32':
+            # use absolute path on Windows due to lack of support for os.symlink
+            src_file_path = src
+        else:
+            src_file_path = os.path.relpath(src, workspace_dir)
     else:
         checked.append(src)
 
