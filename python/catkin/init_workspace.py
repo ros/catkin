@@ -88,7 +88,7 @@ def init_workspace(workspace_dir):
     # look in to-be-initialized workspace first
     src = os.path.join(workspace_dir, 'catkin', 'cmake', 'toplevel.cmake')
     if os.path.isfile(src):
-        if sys.platform.startswith('win32'):
+        if sys.platform == 'win32':
             # use absolute path on Windows due to lack of support for os.symlink
             src_file_path = src
         else:
