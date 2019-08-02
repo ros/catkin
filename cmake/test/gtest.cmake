@@ -305,7 +305,7 @@ if(NOT GMOCK_FOUND OR NOT GTEST_FOUND)
                                    gmock_found gmock_include_dir gmock_lib_dir gmock_libs
                                    gmock_main_libs base_dir)
     if (gtest_found AND gmock_found)
-      if(GMOCK_FOUND or GTEST_FOUND)
+      if(GMOCK_FOUND OR GTEST_FOUND)
         message(STATUS "Forcing gtest/gmock from source, though one was otherwise available.")
       endif()
       set(FORCE_GTEST_GMOCK_FROM_SOURCE TRUE)
