@@ -129,7 +129,7 @@ foreach(library ${libraries})
     if(NOT @PROJECT_NAME@_NUM_DUMMY_TARGETS)
         set(@PROJECT_NAME@_NUM_DUMMY_TARGETS 0)
     endif()
-    MATH(EXPR VAR "${@PROJECT_NAME@_NUM_DUMMY_TARGETS}+1")
+    math(EXPR @PROJECT_NAME@_NUM_DUMMY_TARGETS "${@PROJECT_NAME@_NUM_DUMMY_TARGETS}+1")
     add_library("catkin::@PROJECT_NAME@::dummy${@PROJECT_NAME@_NUM_DUMMY_TARGETS}" INTERFACE IMPORTED)
     if("${CMAKE_VERSION}" VERSION_LESS "3.13.0")
         set_target_properties(
