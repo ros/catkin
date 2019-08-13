@@ -133,9 +133,11 @@ foreach(library ${libraries})
     set(interface_target_name "catkin::@PROJECT_NAME@::wrapped-linker-option${@PROJECT_NAME@_NUM_DUMMY_TARGETS}")
     add_library("${interface_target_name}" INTERFACE IMPORTED)
     if("${CMAKE_VERSION}" VERSION_LESS "3.13.0")
-        set_target_properties(
-          "${interface_target_name}"
-          PROPERTIES LINK_FLAGS $<TARGET_PROPERTY:LINK_FLAGS> "${library}")
+        set_property(
+          TARGET
+            "${interface_target_name}"
+          APPEND PROPERTY
+            INTERFACE_LINK_LIBRARIES "${library}")
     else()
         target_link_options("${interface_target_name}" INTERFACE "${library}")
     endif()
