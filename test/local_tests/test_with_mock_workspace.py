@@ -39,6 +39,18 @@ class MockTest(AbstractCatkinWorkspaceTest):
                       "setup.sh",
                       "setup.zsh")
 
+    def test_linker_options_propagation(self):
+        dstdir = os.path.join(self.workspacedir, 'linker_options')
+        shutil.copytree(os.path.join(MOCK_DIR, 'src', 'linker_options'), dstdir)
+        out = self.cmake()
+        succeed(MAKE_CMD, cwd=self.builddir)
+        succeed(MAKE_CMD + ["install"], cwd=self.builddir)
+
+        assert_exists(self.installdir,
+                      "env.sh",
+                      "setup.sh",
+                      "setup.zsh")
+
     def test_nolang(self):
         dstdir = os.path.join(self.workspacedir, 'nolangs')
         shutil.copytree(os.path.join(MOCK_DIR, 'src', 'nolangs'), dstdir)

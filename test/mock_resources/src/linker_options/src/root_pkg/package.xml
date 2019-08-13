@@ -1,0 +1,11 @@
+<package format="2">
+  <name>root_pkg</name>
+  <version>3.4.5</version>
+  <description>Exports library and linker options in ${root_pkg_LIBRARIES}</description>
+  <author>Somebody</author>
+  <maintainer email="Somebody@somewhere.org">Somebody</maintainer>
+  <license>Unknown</license>
+  <url/>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>
