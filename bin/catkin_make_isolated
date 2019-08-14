@@ -57,6 +57,8 @@ def parse_args(args=None):
     pkg.add_argument('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
                      help="Process only specific packages "
                           "(only after catkin_make_isolated has been invoked before with the same install flag)")
+    pkg.add_argument('--ignore-pkg', nargs='+', metavar='PKGNAME', dest='ignore_packages',
+                     help="Ignore specific packages.")
     pkg.add_argument('--from-pkg', metavar='PKGNAME', dest='from_package',
                      help='Restart catkin_make_isolated at the given package continuing from there '
                           '(do not change CMake arguments, add/move/remove packages or toggle the install flag when '
@@ -146,6 +148,7 @@ def main():
         force_cmake=opts.force_cmake,
         colorize=not opts.no_color,
         build_packages=opts.packages or ([] if opts.from_package is None else [opts.from_package]),
+        ignore_packages=opts.ignore_packages,
         quiet=opts.quiet,
         cmake_args=cmake_args,
         make_args=opts.make_args,
