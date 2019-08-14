@@ -148,7 +148,7 @@ def main():
         force_cmake=opts.force_cmake,
         colorize=not opts.no_color,
         build_packages=opts.packages or ([] if opts.from_package is None else [opts.from_package]),
-        blacklisted=opts.ignore_packages,
+        ignore_packages=opts.ignore_packages,
         quiet=opts.quiet,
         cmake_args=cmake_args,
         make_args=opts.make_args,
