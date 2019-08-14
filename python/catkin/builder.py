@@ -809,7 +809,7 @@ def build_workspace_isolated(
     force_cmake=False,
     colorize=True,
     build_packages=None,
-    blacklisted=None,
+    ignore_packages=None,
     quiet=False,
     cmake_args=None,
     make_args=None,
@@ -972,7 +972,7 @@ def build_workspace_isolated(
             sys.exit('Packages not found in the workspace: %s' % ', '.join(unknown_packages))
 
     # Report topological ordering
-    ordered_packages = topological_order_packages(packages, None, blacklisted)
+    ordered_packages = topological_order_packages(packages, whitelisted=None, blacklisted=ignore_packages)
     unknown_build_types = []
     msg = []
     msg.append('@{pf}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' + ('~' * len(str(len(ordered_packages)))))
