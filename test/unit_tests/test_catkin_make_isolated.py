@@ -145,7 +145,7 @@ class CatkinMakeIsolatedTests(unittest.TestCase):
             cmi = os.path.join(os.path.dirname(__file__), '..', '..', 'bin', 'catkin_make_isolated')
             environ['CMAKE_PREFIX_PATH'] = os.path.join(ws_dir, 'install')
             environ['PWD'] = src_dir
-            subprocess.check_output(' '.join([cmi, '-C', '..']), cwd=src_dir, env=environ, shell=True)
+            subprocess.check_output(' '.join([sys.executable, cmi, '-C', '..']), cwd=src_dir, env=environ, shell=True)
         except Exception as e:
             error_msg = str(e)
         finally:
