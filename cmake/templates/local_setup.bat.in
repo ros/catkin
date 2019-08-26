@@ -2,5 +2,5 @@
 REM generated from catkin/cmake/template/local_setup.bat.in
 
 set _CATKIN_SETUP_DIR=@SETUP_DIR@
-call %_CATKIN_SETUP_DIR%/setup.sh --extend --local
+call %_CATKIN_SETUP_DIR%/setup.bat --extend --local
 set _CATKIN_SETUP_DIR=
