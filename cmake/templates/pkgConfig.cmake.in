@@ -127,19 +127,19 @@ foreach(library ${libraries})
     # This is a linker flag/option (like -pthread)
     # There's no standard variable for these, so create an interface library to hold it
     if(NOT @PROJECT_NAME@_NUM_DUMMY_TARGETS)
-        set(@PROJECT_NAME@_NUM_DUMMY_TARGETS 0)
+      set(@PROJECT_NAME@_NUM_DUMMY_TARGETS 0)
     endif()
     math(EXPR @PROJECT_NAME@_NUM_DUMMY_TARGETS "${@PROJECT_NAME@_NUM_DUMMY_TARGETS}+1")
     set(interface_target_name "catkin::@PROJECT_NAME@::wrapped-linker-option${@PROJECT_NAME@_NUM_DUMMY_TARGETS}")
     add_library("${interface_target_name}" INTERFACE IMPORTED)
     if("${CMAKE_VERSION}" VERSION_LESS "3.13.0")
-        set_property(
-          TARGET
-            "${interface_target_name}"
-          APPEND PROPERTY
-            INTERFACE_LINK_LIBRARIES "${library}")
+      set_property(
+        TARGET
+        "${interface_target_name}"
+        APPEND PROPERTY
+        INTERFACE_LINK_LIBRARIES "${library}")
     else()
-        target_link_options("${interface_target_name}" INTERFACE "${library}")
+      target_link_options("${interface_target_name}" INTERFACE "${library}")
     endif()
     list(APPEND @PROJECT_NAME@_LIBRARIES "${interface_target_name}")
   elseif(TARGET ${library})
