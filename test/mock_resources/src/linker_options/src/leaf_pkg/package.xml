@@ -1,0 +1,13 @@
+<package format="2">
+  <name>leaf_pkg</name>
+  <version>3.4.5</version>
+  <description>Checks library and linker options</description>
+  <author>Somebody</author>
+  <maintainer email="Somebody@somewhere.org">Somebody</maintainer>
+  <license>Unknown</license>
+  <url/>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>root_pkg</depend>
+</package>
