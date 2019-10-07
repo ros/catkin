@@ -129,8 +129,12 @@ foreach(library ${libraries})
     if(NOT @PROJECT_NAME@_NUM_DUMMY_TARGETS)
       set(@PROJECT_NAME@_NUM_DUMMY_TARGETS 0)
     endif()
-    math(EXPR @PROJECT_NAME@_NUM_DUMMY_TARGETS "${@PROJECT_NAME@_NUM_DUMMY_TARGETS}+1")
+    # Make sure the target name is unique
     set(interface_target_name "catkin::@PROJECT_NAME@::wrapped-linker-option${@PROJECT_NAME@_NUM_DUMMY_TARGETS}")
+    while(TARGET "${interface_target_name}")
+      math(EXPR @PROJECT_NAME@_NUM_DUMMY_TARGETS "${@PROJECT_NAME@_NUM_DUMMY_TARGETS}+1")
+      set(interface_target_name "catkin::@PROJECT_NAME@::wrapped-linker-option${@PROJECT_NAME@_NUM_DUMMY_TARGETS}")
+    endwhile()
     add_library("${interface_target_name}" INTERFACE IMPORTED)
     if("${CMAKE_VERSION}" VERSION_LESS "3.13.0")
       set_property(
