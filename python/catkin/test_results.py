@@ -129,7 +129,7 @@ def read_junit2(filename):
                 num_failures_sum += num_failures
                 num_skipped_sum += num_skipped
     elif root.tag == 'testsuite':
-        num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(child)
+        num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(root)
         num_tests_sum += num_tests
         num_errors_sum += num_errors
         num_failures_sum += num_failures
