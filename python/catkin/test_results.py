@@ -121,13 +121,26 @@ def read_junit2(filename):
     num_skipped_sum = 0
 
     if root.tag == 'testsuites':
+        try:
+            num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(root)
+        except KeyError:
+            pass
+        else:
+            num_tests_sum += num_tests
+            num_errors_sum += num_errors
+            num_failures_sum += num_failures
+            num_skipped_sum += num_skipped
         for child in root:
             if child.tag == 'testsuite':
-                num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(child)
-                num_tests_sum += num_tests
-                num_errors_sum += num_errors
-                num_failures_sum += num_failures
-                num_skipped_sum += num_skipped
+                try:
+                    num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(child)
+                except KeyError:
+                    pass
+                else:
+                    num_tests_sum += num_tests
+                    num_errors_sum += num_errors
+                    num_failures_sum += num_failures
+                    num_skipped_sum += num_skipped
     elif root.tag == 'testsuite':
         num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(root)
         num_tests_sum += num_tests
