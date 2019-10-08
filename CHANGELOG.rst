@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.19 (2019-10-08)
+-------------------
 * support for pytest 5.1+ jUnit result files (`#1033 <https://github.com/ros/catkin/issues/1033>`_)
 * fix -pthread handling in Debian buster (`#1021 <https://github.com/ros/catkin/issues/1021>`_)
 * gmock from source on Debian buster (`#1022 <https://github.com/ros/catkin/issues/1022>`_)
