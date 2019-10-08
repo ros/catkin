@@ -2,6 +2,24 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* support for pytest 5.1+ jUnit result files (`#1033 <https://github.com/ros/catkin/issues/1033>`_)
+* fix -pthread handling in Debian buster (`#1021 <https://github.com/ros/catkin/issues/1021>`_)
+* gmock from source on Debian buster (`#1022 <https://github.com/ros/catkin/issues/1022>`_)
+* [windows] update a typo in local_setup.bat.in (`#1029 <https://github.com/ros/catkin/issues/1029>`_)
+* fix test when using different Python version (`#1028 <https://github.com/ros/catkin/issues/1028>`_)
+* add a blacklist option to make_isolated (`#1027 <https://github.com/ros/catkin/issues/1027>`_)
+* use condition attributes to specify Python 2 and 3 dependencies (`#1025 <https://github.com/ros/catkin/issues/1025>`_)
+* change relay script to use current Python executable (`#1024 <https://github.com/ros/catkin/issues/1024>`_)
+* remove executable bit and shebang line (`#1023 <https://github.com/ros/catkin/issues/1023>`_)
+* correctly set gtest 1.8 root directory (`#1014 <https://github.com/ros/catkin/issues/1014>`_)
+* fix interface targets that do not have libraries (`#1013 <https://github.com/ros/catkin/issues/1013>`_)
+* fix catkin_make on Windows (`#1020 <https://github.com/ros/catkin/issues/1020>`_)
+* prefix install target with project name (`#1019 <https://github.com/ros/catkin/issues/1019>`_)
+* [Windows][kinetic-devel] fix build issues with specific build type (`#1015 <https://github.com/ros/catkin/issues/1015>`_)
+* fix Python 3 version used by travis (`#1016 <https://github.com/ros/catkin/issues/1016>`_)
+
 0.7.18 (2019-06-07)
 -------------------
 * add catkin_make(_isolated) default parameters for Windows developers (`#1011 <https://github.com/ros/catkin/issues/1011>`_)
