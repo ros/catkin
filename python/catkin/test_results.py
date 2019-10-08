@@ -109,14 +109,56 @@ def read_junit2(filename):
     :param filename: str junit xml file name
     :returns: num_tests, num_errors, num_failures, num_skipped
     :raises ParseError: if xml is not well-formed
+    :raises ValueError: if root the node is neither a testsuites tag nor a testsuite tag
     :raises IOError: if filename does not exist
     """
     tree = ElementTree()
     root = tree.parse(filename)
-    num_tests = int(root.attrib['tests'])
-    num_errors = int(root.attrib['errors'])
-    num_failures = int(root.attrib['failures'])
-    num_skipped = int(root.get('skip', '0')) + int(root.get('disabled', '0'))
+
+    num_tests_sum = 0
+    num_errors_sum = 0
+    num_failures_sum = 0
+    num_skipped_sum = 0
+
+    if root.tag == 'testsuites':
+        try:
+            num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(root)
+        except KeyError:
+            pass
+        else:
+            num_tests_sum += num_tests
+            num_errors_sum += num_errors
+            num_failures_sum += num_failures
+            num_skipped_sum += num_skipped
+        for child in root:
+            if child.tag == 'testsuite':
+                try:
+                    num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(child)
+                except KeyError:
+                    pass
+                else:
+                    num_tests_sum += num_tests
+                    num_errors_sum += num_errors
+                    num_failures_sum += num_failures
+                    num_skipped_sum += num_skipped
+    elif root.tag == 'testsuite':
+        num_tests, num_errors, num_failures, num_skipped = _get_testsuite_stats(root)
+        num_tests_sum += num_tests
+        num_errors_sum += num_errors
+        num_failures_sum += num_failures
+        num_skipped_sum += num_skipped
+    else:
+        raise ValueError(
+            "the root tag is neither 'testsuite' nor 'testsuites'")
+
+    return (num_tests_sum, num_errors_sum, num_failures_sum, num_skipped_sum)
+
+
+def _get_testsuite_stats(node):
+    num_tests = int(node.attrib['tests'])
+    num_errors = int(node.attrib['errors'])
+    num_failures = int(node.attrib['failures'])
+    num_skipped = int(node.get('skip', '0')) + int(node.get('disabled', '0'))
     return (num_tests, num_errors, num_failures, num_skipped)
 
 
