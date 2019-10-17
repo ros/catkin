@@ -401,7 +401,7 @@ function(_catkin_package)
   set(INSTALLSPACE TRUE)
 
   set(PROJECT_SPACE_DIR ${CMAKE_INSTALL_PREFIX})
-  set(PKG_INCLUDE_PREFIX ${PROJECT_SPACE_DIR})
+  set(PKG_INCLUDE_PREFIX "\\\${prefix}")
 
   # absolute path to include dir under install prefix if any include dir is set
   set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "")
