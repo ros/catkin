@@ -212,8 +212,9 @@ endfunction()
 # Google recommends distributing GTest and GMock as source only, to be built with the same
 # flags as that which is being tested.
 #
-# :param[in] include_path: Path to search for Google Test includes
-# :param[in] src_path: Path to search for Google Test sources
+# :param[in] gtest_path: Base path to search for gtest sources and includes, eg /usr
+# :param[in] googletest_path: Base path to search for googletest-packaged gtest/gmock,
+#                             eg, /usr/src/googletest
 # :param[out] gtest_found: Whether or not GTest was found in the paths provided
 # :param[out] gtest_include_dir: The include path to access GTest's headers
 # :param[out] gtest_lib_dir: The library path to access GTest's libraries
@@ -226,16 +227,19 @@ endfunction()
 # :param[out] gmock_main_libs: GMock's main libraries
 # :param[out] base_dir: The base directory containing Google Test and/or GMock CMakeLists.txt
 #
-function(catkin_find_google_test_source include_path src_path
+function(catkin_find_google_test_source gtest_path googletest_path
   gtest_found gtest_include_dir gtest_lib_dir gtest_libs gtest_main_libs
   gmock_found gmock_include_dir gmock_lib_dir gmock_libs gmock_main_libs
   base_dir
 )
-  #Find GTest
-  set(_gtest_include_paths "${include_path}/gtest")
-  set(_gtest_source_paths "${src_path}/gtest/src")
-  list(APPEND _gtest_include_paths "${include_path}/googletest/googletest/include/gtest")
-  list(APPEND _gtest_source_paths "${src_path}/googletest/googletest/src")
+  # Path to gtest from the libgtest-dev Debian package.
+  set(_gtest_include_paths "${gtest_path}/include/gtest")
+  set(_gtest_source_paths "${gtest_path}/src/gtest/src")
+
+  # Path to gtest from the googletest Debian package.
+  list(APPEND _gtest_include_paths "${googletest_path}/googletest/include/gtest")
+  list(APPEND _gtest_source_paths "${googletest_path}/googletest/googletest/src")
+
   if(CATKIN_TOPLEVEL)
     # Ensure current workspace is searched before system path
     list(INSERT _gtest_include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/include/gtest")
@@ -254,11 +258,14 @@ function(catkin_find_google_test_source include_path src_path
   set(${gtest_main_libs} ${_gtest_main_libs} PARENT_SCOPE)
   set(${base_dir} ${_gtest_base_dir} PARENT_SCOPE)
 
-  #Find GMock
-  set(_gmock_include_paths "${include_path}/gmock")
-  set(_gmock_source_paths "${src_path}/gmock/src")
-  list(APPEND _gmock_include_paths "${include_path}/googletest/googlemock/include/gmock")
-  list(APPEND _gmock_source_paths "${src_path}/googletest/googlemock/src")
+  # Path to gmock from the google-mock Debian package before v1.8.0.
+  set(_gmock_include_paths "${gtest_path}/include/gmock")
+  set(_gmock_source_paths "${gtest_path}/src/gmock/src")
+
+  # Path to gmock from the googletest Debian package.
+  list(APPEND _gmock_include_paths "${googletest_path}/googlemock/include/gmock")
+  list(APPEND _gmock_source_paths "${googletest_path}/googlemock/src")
+
   if(CATKIN_TOPLEVEL)
     # Ensure current workspace is searched before system path
     list(INSERT _gmock_include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googlemock/include/gmock")
@@ -281,9 +288,9 @@ function(catkin_find_google_test_source include_path src_path
     set(${base_dir} ${_gmock_base_dir} PARENT_SCOPE)
   endif()
 
-  #In googletest 1.8, gmock and gtest where merged inside googletest
-  #In this case, including gmock builds gmock twice, so instead we need to include googletest
-  #which will include gtest and gmock once
+  # In googletest 1.8, gmock and gtest were merged inside googletest
+  # In this case, including gmock builds gmock twice, so instead we need to include googletest
+  # which will include gtest and gmock once
   if(_gtest_found)
     get_filename_component(_gtest_base_dir_realpath ${_gtest_base_dir} REALPATH)
     get_filename_component(_global_base_dir ${_gtest_base_dir_realpath} PATH)
@@ -299,11 +306,13 @@ if(NOT GMOCK_FOUND OR NOT GTEST_FOUND)
   # If we find one but not the other, see if we can get both from source
   # only add gmock/gtest directory once per workspace
   if(NOT TARGET gtest AND NOT TARGET gmock)
-    # Fall back to system-installed gmock source (e.g. Ubuntu)
-    set(_include_paths "/usr/include" "/usr/src")
-    set(_source_paths "/usr/src")
+    # Path to base of legacy libgtest-dev and google-mock packages.
+    set(_gtest_path "/usr")
 
-    catkin_find_google_test_source("${_include_paths}" "${_source_paths}" gtest_found
+    # Path to base of new googletest package, which includes both gtest and gmock.
+    set(_googletest_path "/usr/src/googletest")
+
+    catkin_find_google_test_source("${_gtest_path}" "${_googletest_path}" gtest_found
                                    gtest_include_dir gtest_lib_dir gtest_libs gtest_main_libs
                                    gmock_found gmock_include_dir gmock_lib_dir gmock_libs
                                    gmock_main_libs base_dir)
