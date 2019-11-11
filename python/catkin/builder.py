@@ -1221,7 +1221,7 @@ def get_package_names_with_recursive_dependencies(packages, pkg_names):
                 pkg.run_depends +
                 (pkg.test_depends if pkg.package_format > 1 else [])
             )
-            for dep in [dep.name for dep in deps_to_iterate_over if d is not False]:
+            for dep in [dep.name for dep in deps_to_iterate_over if dep.evaluated_condition is not False]:
                 if dep in packages_by_name and dep not in check_pkg_names and dep not in dependencies:
                     check_pkg_names.add(dep)
     return dependencies
