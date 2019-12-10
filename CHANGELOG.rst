@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.20 (2019-12-10)
+-------------------
 * fix checking dependency conditions (`#1041 <https://github.com/ros/catkin/issues/1041>`_)
 * fix gtest-not-found bug, regression from 0.7.19 (`#1040 <https://github.com/ros/catkin/issues/1040>`_)
 * support build_type tag with condition attribute (`#1038 <https://github.com/ros/catkin/issues/1038>`_)
