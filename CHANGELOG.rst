@@ -2,6 +2,14 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix checking dependency conditions (`#1041 <https://github.com/ros/catkin/issues/1041>`_)
+* fix gtest-not-found bug, regression from 0.7.19 (`#1040 <https://github.com/ros/catkin/issues/1040>`_)
+* support build_type tag with condition attribute (`#1038 <https://github.com/ros/catkin/issues/1038>`_)
+* use ${prefix} variable in generated pkg-config (`#1037 <https://github.com/ros/catkin/issues/1037>`_)
+* check for INTERFACE library type in add_library function (`#1034 <https://github.com/ros/catkin/issues/1034>`_)
+
 0.7.19 (2019-10-08)
 -------------------
 * support for pytest 5.1+ jUnit result files (`#1033 <https://github.com/ros/catkin/issues/1033>`_)
