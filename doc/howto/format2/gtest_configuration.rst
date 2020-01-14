@@ -8,14 +8,6 @@ pure C++ framework.  No ROS environment is available.  See:
 :ref:`rostest_configuration` if your tests need a running roscore_.
 
 
-package.xml
-:::::::::::
-
-The rosunit_ package is needed for testing::
-
-  <test_depend>rosunit</test_depend>
-
-
 CMakeLists.txt
 ::::::::::::::
 
@@ -34,4 +26,3 @@ If other libraries are needed to compile your test program, see
 
 .. _Gtest: http://wiki.ros.org/gtest
 .. _roscore: http://wiki.ros.org/roscore
-.. _rosunit: http://wiki.ros.org/rosunit
