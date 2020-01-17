@@ -37,7 +37,7 @@ import sys
 
 setup_modules = []
 
-try
+try:
     import distutils.core
     setup_modules.append(distutils.core)
 except ImportError:
