@@ -12,11 +12,6 @@ packages define the installation files in a file called ``setup.py``
 in the project root. The setup.py file uses Python to describe the
 Python content of the stack.
 
-We recommend to prefer distutils package over setuptools/distribute,
-because with distutils we can avoid the creation of egg-info folders
-in the project source folder. The setup.cfg file of distutils2 is not
-supported by catkin.
-
 Catkin allows you to specify the installation of your python files in
 this setup.py and reuse some of the information in your CMakeLists.txt.
 
@@ -26,10 +21,10 @@ You can do so by including the line::
 
 in the CMakeLists.txt of your project.
 
-catkin will execute setup.py with a hot-patched version of distutils
-to read the arguments to set up the devel space, and execute setup.py
-with suitable arguments to install to the catkin install space under
-``CMAKE_INSTALL_PREFIX``.
+catkin will execute setup.py with a hot-patched version of distutils or
+setuptools to read the arguments to set up the devel space, and execute
+setup.py with suitable arguments to install to the catkin install space
+under ``CMAKE_INSTALL_PREFIX``.
 
 This means that if you execute your
 setup.py using::
@@ -50,7 +45,7 @@ pypi is not very useful for ROS nodes.
 For the develspace, the following setup.py arguments to setup() will
 be used by catkin::
 
-  from distutils.core import setup
+  from setuptools import setup
 
   setup(
       version='...',
@@ -101,7 +96,7 @@ Writing a setup.py file without duplicating information contained in
 the package.xml is possible using a catkin_pkg convenience function
 like this::
 
-  from distutils.core import setup
+  from setuptools import setup
   from catkin_pkg.python_setup import generate_distutils_setup
 
   d = generate_distutils_setup(
@@ -130,7 +125,7 @@ one distributes to pypi.
 .. note::
 
   See the note in previous section about the otherwise useful
-  field ``requires`` that's usually a part of distutils setup.
+  field ``requires`` that's usually a part of setuptools setup.
   *Do not use it* in ROS.
 
 
