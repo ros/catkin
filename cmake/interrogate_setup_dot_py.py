@@ -35,11 +35,21 @@ import os
 import runpy
 import sys
 
-import distutils.core
+setup_modules = []
+
 try:
-    import setuptools
+    import distutils.core
+    setup_modules.append(distutils.core)
 except ImportError:
     pass
+
+try:
+    import setuptools
+    setup_modules.append(setuptools)
+except ImportError:
+    pass
+
+assert setup_modules, 'Must have distutils or setuptools installed'
 
 from argparse import ArgumentParser
 
@@ -227,25 +237,19 @@ def main():
 
     # patch setup() function of distutils and setuptools for the
     # context of evaluating setup.py
+    backup_modules = {}
     try:
         fake_setup = _create_mock_setup_function(package_name=args.package_name,
                                                 outfile=args.outfile)
 
-        distutils_backup = distutils.core.setup
-        distutils.core.setup = fake_setup
-        try:
-            setuptools_backup = setuptools.setup
-            setuptools.setup = fake_setup
-        except NameError:
-            pass
+        for module in setup_modules:
+            backup_modules[id(module)] = module.setup
+            module.setup = fake_setup
 
         runpy.run_path(args.setupfile_path)
     finally:
-        distutils.core.setup = distutils_backup
-        try:
-            setuptools.setup = setuptools_backup
-        except NameError:
-            pass
+        for module in setup_modules:
+            module.setup = backup_modules[id(module)]
 
 if __name__ == '__main__':
     main()
