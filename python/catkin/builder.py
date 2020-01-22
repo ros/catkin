@@ -458,8 +458,9 @@ def has_make_target(path, target, use_ninja=False, use_nmake=False, use_gmake=Fa
         output = run_command(['ninja', '-t', 'targets'], path, quiet=True)
     elif use_nmake:
         output = run_command(['nmake', '/PNC'], path, quiet=True)
+    elif use_gmake:
+        output = run_command(['gmake', '-pn'], path, quiet=True)
     else:
-        # no need to check for use_gmake, as it accepts the same arguments as make
         output = run_command(['make', '-pn'], path, quiet=True)
     lines = output.splitlines()
     # strip nanja warnings since they look similar to targets
