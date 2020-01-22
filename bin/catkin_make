@@ -180,6 +180,7 @@ def main():
         elif args.use_nmake:
             cmake_args += ['-G', 'NMake Makefiles']
         else:
+            # no need to check for use_gmake, as it uses the same generator as make
             cmake_args += ['-G', 'Unix Makefiles']
     elif args.use_ninja or args.use_nmake:
         return fmt("@{rf}Error: either specify a generator using '-G...' or '--use-[ninja|nmake]' but not both")
@@ -211,6 +212,8 @@ def main():
             cmd = ['ninja', 'build.ninja']
         elif args.use_nmake:
             cmd = ['nmake', 'cmake_check_build_system']
+        elif args.use_gmake:
+            cmd = ['gmake', 'cmake_check_build_system']
         else:
             cmd = ['make', 'cmake_check_build_system']
         try:
@@ -229,6 +232,8 @@ def main():
         cmd = ['ninja']
     elif args.use_nmake:
         cmd = ['nmake']
+    elif args.use_gmake:
+        cmd = ['gmake']
     else:
         cmd = ['make']
     cmd.extend(handle_make_arguments(args.make_args, append_default_jobs_flags=not args.use_nmake))
@@ -268,6 +273,7 @@ def _parse_args(args=sys.argv[1:]):
     add('--build', help="The path to the build space (default 'workspace_base/build')")
     add('--use-ninja', action='store_true', help="Use 'ninja' instead of 'make'")
     add('--use-nmake', action='store_true', help="Use 'nmake' instead of 'make'")
+    add('--use-gmake', action='store_true', help="Use 'gmake' instead of 'make'")
     add('--force-cmake', action='store_true', help="Invoke 'cmake' even if it has been executed before")
     add('--no-color', action='store_true', help='Disables colored output (only for catkin_make and CMake)')
     add('--pkg', nargs='+', help="Invoke 'make' on specific packages only")
