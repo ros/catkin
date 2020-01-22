@@ -1,7 +1,7 @@
 # toplevel CMakeLists.txt for a catkin workspace
 # catkin/cmake/toplevel.cmake
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 
 set(CATKIN_TOPLEVEL TRUE)
 
