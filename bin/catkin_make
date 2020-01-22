@@ -178,7 +178,7 @@ def main():
         if args.use_ninja:
             cmake_args += ['-G', 'Ninja']
         elif args.use_nmake:
-            cmake_args += ['-G', 'NMake Makefiles']            
+            cmake_args += ['-G', 'NMake Makefiles']
         else:
             # no need to check for use_gmake, as it uses the same generator as make
             cmake_args += ['-G', 'Unix Makefiles']
@@ -213,7 +213,7 @@ def main():
         elif args.use_nmake:
             cmd = ['nmake', 'cmake_check_build_system']
         elif args.use_gmake:
-            cmd = ['gmake', 'cmake_check_build_system']            
+            cmd = ['gmake', 'cmake_check_build_system']
         else:
             cmd = ['make', 'cmake_check_build_system']
         try:
@@ -233,7 +233,7 @@ def main():
     elif args.use_nmake:
         cmd = ['nmake']
     elif args.use_gmake:
-        cmd = ['gmake']        
+        cmd = ['gmake']
     else:
         cmd = ['make']
     cmd.extend(handle_make_arguments(args.make_args, append_default_jobs_flags=not args.use_nmake))

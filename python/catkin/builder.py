@@ -409,7 +409,7 @@ def build_catkin_package(
         elif use_nmake:
             make_check_cmake_cmd = ['nmake', 'cmake_check_build_system']
         elif use_gmake:
-            make_check_cmake_cmd = ['gmake', 'cmake_check_build_system']            
+            make_check_cmake_cmd = ['gmake', 'cmake_check_build_system']
         else:
             make_check_cmake_cmd = ['make', 'cmake_check_build_system']
 
@@ -427,7 +427,7 @@ def build_catkin_package(
     elif use_nmake:
         make_executable = 'nmake'
     elif use_gmake:
-        make_executable = 'gmake'        
+        make_executable = 'gmake'
     else:
         make_executable = 'make'
 
@@ -629,7 +629,7 @@ def build_cmake_package(
         elif use_nmake:
             make_check_cmake_cmd = ['nmake', 'cmake_check_build_system']
         elif use_gmake:
-            make_check_cmake_cmd = ['gmake', 'cmake_check_build_system']            
+            make_check_cmake_cmd = ['gmake', 'cmake_check_build_system']
         else:
             make_check_cmake_cmd = ['make', 'cmake_check_build_system']
 
@@ -646,7 +646,7 @@ def build_cmake_package(
     elif use_nmake:
         make_executable = 'nmake'
     elif use_gmake:
-        make_executable = 'gmake'        
+        make_executable = 'gmake'
     else:
         make_executable = 'make'
     make_cmd = [make_executable]
@@ -867,7 +867,7 @@ def build_workspace_isolated(
     :param destdir: define DESTDIR for cmake/invocation, ``string``
     :param use_ninja: if True, use ninja instead of make, ``bool``
     :param use_nmake: if True, use nmake instead of make, ``bool``
-    :param use_gmake: if True, use gmake instead of make, ``bool``    
+    :param use_gmake: if True, use gmake instead of make, ``bool``
     :param override_build_tool_check: if True, build even if a space was built
         by another tool previously.
     '''
