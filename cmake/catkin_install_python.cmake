@@ -49,8 +49,10 @@ function(catkin_install_python signature)
       if(ARG_OPTIONAL)
         set(optional_flag "OPTIONAL")
       endif()
+      # Install copy of file with re-written shebang to install space
       install(PROGRAMS "${rewritten_file}" DESTINATION "${ARG_DESTINATION}" ${optional_flag})
 
+      # Hook for a platform specific wrapper around the modified python script
       get_filename_component(name "${rewritten_file}" NAME)
       add_python_executable(SCRIPT_NAME ${name}
         # prefix with project name to avoid collisions across packages
