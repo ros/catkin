@@ -58,6 +58,24 @@ function(catkin_install_python signature)
         # prefix with project name to avoid collisions across packages
         TARGET_NAME ${PROJECT_NAME}_${name}_exec_install_python
         DESTINATION "${ARG_DESTINATION}")
+
+      # Create devel-space wrapper if the destination is relative to the install prefix
+      if(NOT IS_ABSOLUTE ${ARG_DESTINATION})
+        message(STATUS "Installing devel-space wrapper ${source_file} to ${CATKIN_DEVEL_PREFIX}/${ARG_DESTINATION}")
+        # Create wrapper in devel space that uses source_file with correct shebang
+        set(PYTHON_SCRIPT ${source_file})
+        atomic_configure_file(${catkin_EXTRAS_DIR}/templates/script.py.in
+          ${CATKIN_DEVEL_PREFIX}/${ARG_DESTINATION}/${name}
+          @ONLY)
+
+        # Hook for a platform specific wrapper around the modified python script
+        add_python_executable(SCRIPT_NAME ${name}
+          # prefix with project name to avoid collisions across packages
+          # cip: avoid conflicting with targets created for scripts installed via setup.py
+          TARGET_NAME ${PROJECT_NAME}_${name}_exec_cip_devel_python
+          DESTINATION "${CATKIN_DEVEL_PREFIX}/${ARG_DESTINATION}")
+      endif()
+
     elseif(NOT ARG_OPTIONAL)
       message(FATAL_ERROR "catkin_install_python() called with non-existing file '${source_file}'.")
     endif()
