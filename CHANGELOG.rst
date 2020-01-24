@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.21 (2020-01-23)
+-------------------
 * bump CMake minimum version in tests and docs (`#1053 <https://github.com/ros/catkin/issues/1053>`_)
 * bump CMake minimum version to use new behavior of CMP0048 (`#1052 <https://github.com/ros/catkin/issues/1052>`_)
 * Prefer setuptools with Python 3 (`#1048 <https://github.com/ros/catkin/issues/1048>`_)
