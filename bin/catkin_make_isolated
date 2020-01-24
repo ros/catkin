@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+
 import argparse
 import os
 import re
@@ -9,12 +10,12 @@ import sys
 # find the import relatively if available to work before installing catkin or overlaying installed version
 if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catkin', '__init__.py')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-from catkin.builder import build_workspace_isolated
-from catkin.builder import colorize_line
-from catkin.builder import determine_path_argument
-from catkin.builder import extract_cmake_and_make_and_catkin_make_arguments
-from catkin.builder import extract_jobs_flags
-from catkin.builder import apply_platform_specific_defaults
+from catkin.builder import apply_platform_specific_defaults  # noqa: E402
+from catkin.builder import build_workspace_isolated  # noqa: E402
+from catkin.builder import colorize_line  # noqa: E402
+from catkin.builder import determine_path_argument  # noqa: E402
+from catkin.builder import extract_cmake_and_make_and_catkin_make_arguments  # noqa: E402
+from catkin.builder import extract_jobs_flags  # noqa: E402
 
 
 def parse_args(args=None):
@@ -56,10 +57,10 @@ def parse_args(args=None):
         help='Disables colored output (only for catkin_make and CMake)')
     pkg = parser.add_mutually_exclusive_group(required=False)
     pkg.add_argument('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
-                     help="Process only specific packages "
-                          "(only after catkin_make_isolated has been invoked before with the same install flag)")
+                     help='Process only specific packages '
+                          '(only after catkin_make_isolated has been invoked before with the same install flag)')
     pkg.add_argument('--ignore-pkg', nargs='+', metavar='PKGNAME', dest='ignore_packages',
-                     help="Ignore specific packages.")
+                     help='Ignore specific packages.')
     pkg.add_argument('--from-pkg', metavar='PKGNAME', dest='from_package',
                      help='Restart catkin_make_isolated at the given package continuing from there '
                           '(do not change CMake arguments, add/move/remove packages or toggle the install flag when '
@@ -98,8 +99,8 @@ def handle_cmake_args(cmake_args, opts):
             else:
                 print(colorize_line(
                     "Warning: both the cmake argument '" + str(arg) + "' " +
-                    "and the --install-space argument have been used, " +
-                    "using the --install-space argument."
+                    'and the --install-space argument have been used, ' +
+                    'using the --install-space argument.'
                 ))
             cmake_args.remove(arg)
         elif arg.startswith('-DCATKIN_DEVEL_PREFIX='):
@@ -108,8 +109,8 @@ def handle_cmake_args(cmake_args, opts):
             else:
                 print(colorize_line(
                     "Warning: both the cmake argument '" + str(arg) + "' " +
-                    "and the --devel-space argument have been used, " +
-                    "using the --devel-space argument."
+                    'and the --devel-space argument have been used, ' +
+                    'using the --devel-space argument.'
                 ))
             cmake_args.remove(arg)
     return cmake_args, opts
@@ -162,6 +163,7 @@ def main():
         use_gmake=opts.use_gmake,
         override_build_tool_check=opts.override_build_tool_check,
     )
+
 
 if __name__ == '__main__':
     main()

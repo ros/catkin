@@ -2,4 +2,3 @@
 namespace d {
   void foo();
 }
-

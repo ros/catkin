@@ -26,6 +26,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-
 find_package(Bzip2)
-

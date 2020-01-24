@@ -1,7 +1,7 @@
 import os
-import unittest
-import tempfile
 import shutil
+import tempfile
+import unittest
 
 from mock import Mock
 
@@ -79,10 +79,10 @@ class FindInWorkspaceTest(unittest.TestCase):
     def test_with_sourcepath(self):
         def create_mock_workspace(root_dir, ws):
             ws1 = os.path.join(root_dir, ws)
-            inc = os.path.join(ws1, "include")
-            share = os.path.join(ws1, "share")
-            p1inc = os.path.join(inc, "foo")
-            p1share = os.path.join(share, "foo")
+            inc = os.path.join(ws1, 'include')
+            share = os.path.join(ws1, 'share')
+            p1inc = os.path.join(inc, 'foo')
+            p1share = os.path.join(share, 'foo')
             os.makedirs(ws1)
             os.makedirs(inc)
             os.makedirs(share)

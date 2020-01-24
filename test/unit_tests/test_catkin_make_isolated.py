@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import imp
 import os
 import shutil
 import subprocess
@@ -14,14 +15,13 @@ except ImportError as e:
         'Please adjust your pythonpath before running this test: %s' % str(e)
     )
 
-import imp
 imp.load_source('catkin_make_isolated',
                 os.path.join(os.path.dirname(__file__),
                              '..', '..', 'bin', 'catkin_make_isolated'))
 
-from catkin_make_isolated import handle_cmake_args
-from catkin_make_isolated import main
-from catkin_make_isolated import parse_args
+from catkin_make_isolated import handle_cmake_args  # noqa: E402
+from catkin_make_isolated import main  # noqa: E402
+from catkin_make_isolated import parse_args  # noqa: E402
 
 
 class CatkinMakeIsolatedTests(unittest.TestCase):
@@ -75,7 +75,7 @@ class CatkinMakeIsolatedTests(unittest.TestCase):
         opts = parse_args(args)
         cmake_args, opts = handle_cmake_args(cmake_args, opts)
         assert cmake_args == [], cmake_args
-        assert opts.install == True
+        assert opts.install
         assert opts.install_space == 'install'
 
         args = [
@@ -87,7 +87,7 @@ class CatkinMakeIsolatedTests(unittest.TestCase):
         opts = parse_args(args)
         cmake_args, opts = handle_cmake_args(cmake_args, opts)
         assert cmake_args == [], cmake_args
-        assert opts.install == True
+        assert opts.install
         assert opts.install_space == 'install_isolated'
 
         args = ['-DCATKIN_DEVEL_PREFIX=devel']

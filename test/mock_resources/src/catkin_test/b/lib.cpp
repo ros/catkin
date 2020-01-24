@@ -3,7 +3,7 @@
 #include <a/foo.hpp>
 
 namespace b {
-  void foo() { 
+  void foo() {
     a::foo();
     std::cout << __PRETTY_FUNCTION__ << "\n";
   }

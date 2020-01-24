@@ -1,4 +1,3 @@
-
 #include<sensor_msgs/PointCloud2.h>
 
 namespace rs = ros::serialization;
@@ -24,4 +23,3 @@ int main()
 
   std::cout << "Its a message again: " << std::endl << pc_2 << std::endl;
 }
-

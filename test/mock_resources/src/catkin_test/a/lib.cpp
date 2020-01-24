@@ -1,7 +1,7 @@
 #include <iostream>
 
 namespace a {
-  void foo() { 
+  void foo() {
     std::cout << __PRETTY_FUNCTION__ << "\n";
   }
 }

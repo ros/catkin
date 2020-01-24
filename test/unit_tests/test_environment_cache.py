@@ -1,8 +1,9 @@
 import os
-import stat
-import unittest
-import tempfile
 import shutil
+import stat
+import tempfile
+import unittest
+
 from mock import Mock
 
 try:
@@ -67,12 +68,12 @@ class PlatformTest(unittest.TestCase):
             rootdir = tempfile.mkdtemp()
             env_file = os.path.join(rootdir, 'env.sh')
             with open(env_file, 'a') as fhand:
-                fhand.write('''\
+                fhand.write("""\
 #! /usr/bin/env sh
 export FOO=/foo:/bar
 export TRICK=/usr/lib
 export BAR=/bar
-exec "$@"''')
+exec \"$@\"""")
             mode = os.stat(env_file).st_mode
             os.chmod(env_file, mode | stat.S_IXUSR)
             result = generate_environment_script(env_file)

@@ -26,6 +26,5 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-
 find_package(Threads)
 set(THREADS_LIBRARY ${CMAKE_THREAD_LIBS_INIT} CACHE FILEPATH "Threads library")

@@ -1,15 +1,13 @@
+import imp
 import os
 import unittest
-import tempfile
-import shutil
-from mock import Mock
 
-import imp
 imp.load_source('order_paths',
                 os.path.join(os.path.dirname(__file__),
                              '..', '..', 'cmake', 'order_paths.py'))
 
-from order_paths import order_paths, main
+from order_paths import order_paths  # noqa: E402
+
 
 class OrderPathsTest(unittest.TestCase):
 

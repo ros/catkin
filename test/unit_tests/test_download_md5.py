@@ -1,14 +1,16 @@
-import os
-import unittest
-import tempfile
-import shutil
-
 import imp
+import os
+import shutil
+import tempfile
+import unittest
+
 imp.load_source('download_checkmd5',
                 os.path.join(os.path.dirname(__file__),
                              '..', '..', 'cmake', 'test', 'download_checkmd5.py'))
 
-from download_checkmd5 import download_md5, checkmd5, main
+from download_checkmd5 import checkmd5  # noqa: E402
+from download_checkmd5 import download_md5  # noqa: E402
+from download_checkmd5 import main  # noqa: E402
 
 
 class DowloadCheckMd5Test(unittest.TestCase):
@@ -32,7 +34,7 @@ class DowloadCheckMd5Test(unittest.TestCase):
             realmd5 = 'acbd18db4cc2f85cedef654fccc4a4d8'
             with open(src_file, 'w') as fhand:
                 fhand.write('foo')
-            result, hexdig = checkmd5(src_file, "hello")
+            result, hexdig = checkmd5(src_file, 'hello')
             self.assertFalse(result)
             self.assertEqual(realmd5, hexdig)
             result, hexdig = checkmd5(src_file, realmd5)
@@ -53,7 +55,7 @@ class DowloadCheckMd5Test(unittest.TestCase):
             self.assertTrue(os.path.isfile(check_file))
             os.remove(check_file)
             self.assertFalse(os.path.isfile(check_file))
-            self.assertNotEqual(main([os.path.join('file://localhost', src_file), check_file, "hello"]), 0)
+            self.assertNotEqual(main([os.path.join('file://localhost', src_file), check_file, 'hello']), 0)
             main([os.path.join('file://localhost', src_file), check_file, realmd5])
 
         finally:

@@ -4,7 +4,7 @@
 #include <c/foo.hpp>
 
 namespace d {
-  void foo() { 
+  void foo() {
     b::foo();
     c::foo();
     std::cout << __PRETTY_FUNCTION__ << "\n";

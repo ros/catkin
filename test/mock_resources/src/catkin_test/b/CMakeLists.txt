@@ -17,8 +17,6 @@ add_message_files(
   FILES BMsg.msg
 )
 
-
-
 # catkin_python_setup()
 # enable_python(b)
 

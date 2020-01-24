@@ -1,12 +1,12 @@
+import imp
 import os
 import unittest
 
-import imp
 imp.load_source('catkin_find',
                 os.path.join(os.path.dirname(__file__),
                              '..', '..', 'bin', 'catkin_find'))
 
-from catkin_find import parse_args
+from catkin_find import parse_args  # noqa: E402
 
 
 class CatkinFindTest(unittest.TestCase):

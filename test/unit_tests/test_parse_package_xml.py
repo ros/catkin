@@ -1,15 +1,17 @@
+import imp
 import os
-import unittest
-import tempfile
 import shutil
+import tempfile
+import unittest
+
 from mock import Mock
 
-import imp
 imp.load_source('parse_package_xml',
                 os.path.join(os.path.dirname(__file__),
                              '..', '..', 'cmake', 'parse_package_xml.py'))
 
-from parse_package_xml import _get_output, main
+from parse_package_xml import _get_output  # noqa: E402
+from parse_package_xml import main  # noqa: E402
 
 
 class ParsePackageXmlTest(unittest.TestCase):
@@ -32,7 +34,7 @@ class ParsePackageXmlTest(unittest.TestCase):
         pack.exports = []
         result = _get_output(pack)
         self.assertEqual(
-            set([
+            {
                 'set(_CATKIN_CURRENT_PACKAGE "foopack")',
                 'set(foopack_MAINTAINER "m1, m2")',
                 'set(foopack_PACKAGE_FORMAT "2")',
@@ -49,7 +51,7 @@ class ParsePackageXmlTest(unittest.TestCase):
                 'set(foopack_URL_BUGTRACKER "")',
                 'set(foopack_URL_REPOSITORY "")',
                 'set(foopack_URL_WEBSITE "")',
-            ]),
+            },
             set(result))
 
     def test_main(self):
@@ -58,7 +60,7 @@ class ParsePackageXmlTest(unittest.TestCase):
             src_file = os.path.join(rootdir, 'package.xml')
             check_file = os.path.join(rootdir, 'foo.cmake')
             with open(src_file, 'w') as fhand:
-                fhand.write('''<package>
+                fhand.write("""<package>
 <name>foopack</name>
 <version>0.1.2</version>
 <description>foo</description>
@@ -71,13 +73,13 @@ class ParsePackageXmlTest(unittest.TestCase):
 <run_depend>rd2</run_depend>
 <build_depend>bd1</build_depend>
 <build_depend>bd2</build_depend>
-</package>''')
+</package>""")
             main([src_file, check_file])
             self.assertTrue(os.path.isfile(check_file))
             with open(check_file, 'r') as fhand:
                 contents = fhand.read()
             self.assertEqual(
-                set([
+                {
                     'set(_CATKIN_CURRENT_PACKAGE "foopack")',
                     'set(foopack_MAINTAINER "foo <foo@bar.com>")',
                     'set(foopack_PACKAGE_FORMAT "1")',
@@ -94,7 +96,7 @@ class ParsePackageXmlTest(unittest.TestCase):
                     'set(foopack_URL_BUGTRACKER "http://www.example.com/issues")',
                     'set(foopack_URL_REPOSITORY "http://www.example.com/repo")',
                     'set(foopack_URL_WEBSITE "http://www.example.com")',
-                ]),
+                },
                 set(contents.splitlines()))
         finally:
             shutil.rmtree(rootdir)

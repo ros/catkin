@@ -1,9 +1,9 @@
 # coding:utf-8
 import os
-import sys
-import unittest
-import tempfile
 import shutil
+import sys
+import tempfile
+import unittest
 try:
     from cStringIO import StringIO
 except ImportError:

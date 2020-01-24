@@ -31,7 +31,7 @@ called "development" packages, and their names generally end in
 The ``<run_depend>`` declares two different types of package
 dependencies.  One is for shared libraries, executables, Python
 modules, launch scripts and other files required for running your
-package.  Specify the run-time rosdep key, if possible, 
+package.  Specify the run-time rosdep key, if possible,
 like this example::
 
   <run_depend>libgstreamer0.10-0</run_depend>

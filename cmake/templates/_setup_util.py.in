@@ -33,9 +33,10 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-'''This file generates shell code for the setup.SHELL scripts to set environment variables'''
+"""This file generates shell code for the setup.SHELL scripts to set environment variables."""
 
 from __future__ import print_function
+
 import argparse
 import copy
 import errno
@@ -66,11 +67,12 @@ ENV_VAR_SUBFOLDERS = {
 
 
 def rollback_env_variables(environ, env_var_subfolders):
-    '''
-    Generate shell code to reset environment variables
+    """
+    Generate shell code to reset environment variables.
+
     by unrolling modifications based on all workspaces in CMAKE_PREFIX_PATH.
     This does not cover modifications performed by environment hooks.
-    '''
+    """
     lines = []
     unmodified_environ = copy.copy(environ)
     for key in sorted(env_var_subfolders.keys()):
@@ -87,12 +89,12 @@ def rollback_env_variables(environ, env_var_subfolders):
 
 
 def _rollback_env_variable(environ, name, subfolders):
-    '''
+    """
     For each catkin workspace in CMAKE_PREFIX_PATH remove the first entry from env[NAME] matching workspace + subfolder.
 
     :param subfolders: list of str '' or subfoldername that may start with '/'
     :returns: the updated value of the environment variable.
-    '''
+    """
     value = environ[name] if name in environ else ''
     env_paths = [path for path in value.split(os.pathsep) if path]
     value_modified = False
@@ -118,11 +120,11 @@ def _rollback_env_variable(environ, name, subfolders):
 
 
 def _get_workspaces(environ, include_fuerte=False, include_non_existing=False):
-    '''
+    """
     Based on CMAKE_PREFIX_PATH return all catkin workspaces.
 
     :param include_fuerte: The flag if paths starting with '/opt/ros/fuerte' should be considered workspaces, ``bool``
-    '''
+    """
     # get all cmake prefix paths
     env_name = 'CMAKE_PREFIX_PATH'
     value = environ[env_name] if env_name in environ else ''
@@ -133,10 +135,7 @@ def _get_workspaces(environ, include_fuerte=False, include_non_existing=False):
 
 
 def prepend_env_variables(environ, env_var_subfolders, workspaces):
-    '''
-    Generate shell code to prepend environment variables
-    for the all workspaces.
-    '''
+    """Generate shell code to prepend environment variables for the all workspaces."""
     lines = []
     lines.append(comment('prepend folders of workspaces to environment variables'))
 
@@ -145,7 +144,7 @@ def prepend_env_variables(environ, env_var_subfolders, workspaces):
     prefix = _prefix_env_variable(environ, 'CMAKE_PREFIX_PATH', paths, '')
     lines.append(prepend(environ, 'CMAKE_PREFIX_PATH', prefix))
 
-    for key in sorted([key for key in env_var_subfolders.keys() if key != 'CMAKE_PREFIX_PATH']):
+    for key in sorted(key for key in env_var_subfolders.keys() if key != 'CMAKE_PREFIX_PATH'):
         subfolder = env_var_subfolders[key]
         prefix = _prefix_env_variable(environ, key, paths, subfolder)
         lines.append(prepend(environ, key, prefix))
@@ -153,9 +152,11 @@ def prepend_env_variables(environ, env_var_subfolders, workspaces):
 
 
 def _prefix_env_variable(environ, name, paths, subfolders):
-    '''
-    Return the prefix to prepend to the environment variable NAME, adding any path in NEW_PATHS_STR without creating duplicate or empty items.
-    '''
+    """
+    Return the prefix to prepend to the environment variable NAME.
+
+    Adding any path in NEW_PATHS_STR without creating duplicate or empty items.
+    """
     value = environ[name] if name in environ else ''
     environ_paths = [path for path in value.split(os.pathsep) if path]
     checked_paths = []
@@ -202,10 +203,7 @@ def prepend(environ, key, prefix):
 
 
 def find_env_hooks(environ, cmake_prefix_path):
-    '''
-    Generate shell code with found environment hooks
-    for the all workspaces.
-    '''
+    """Generate shell code with found environment hooks for the all workspaces."""
     lines = []
     lines.append(comment('found environment hooks in workspaces'))
 

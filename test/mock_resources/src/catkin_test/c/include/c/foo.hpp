@@ -2,4 +2,3 @@
 namespace c {
   void foo();
 }
-

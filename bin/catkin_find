@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+
 import argparse
-import sys
 import os
+import sys
 
 # find the import relatively if available to work before installing catkin or overlaying installed version
 if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catkin', '__init__.py')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-from catkin.find_in_workspaces import find_in_workspaces
+from catkin.find_in_workspaces import find_in_workspaces  # noqa: E402
 
 
 def parse_args(args=sys.argv[1:]):

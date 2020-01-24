@@ -1,29 +1,31 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+
 import argparse
+import os
 import subprocess
 import sys
-import os
 
 # find the import relatively if available to work before installing catkin or overlaying installed version
 if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catkin', '__init__.py')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-from catkin.init_workspace import init_workspace
-from catkin.terminal_color import disable_ANSI_colors, fmt
-from catkin.builder import cmake_input_changed
-from catkin.builder import determine_path_argument
-from catkin.builder import extract_cmake_and_make_arguments
-from catkin.builder import get_package_names_with_recursive_dependencies
-from catkin.builder import handle_make_arguments
-from catkin.builder import print_command_banner
-from catkin.builder import run_command
-from catkin.builder import run_command_colorized
-from catkin.builder import apply_platform_specific_defaults
-from catkin_pkg.packages import find_packages
-from catkin_pkg.tool_detection import get_previous_tool_used_on_the_space
-from catkin_pkg.tool_detection import mark_space_as_built_by
-from catkin_pkg.workspaces import ensure_workspace_marker
+from catkin.builder import apply_platform_specific_defaults  # noqa: E402
+from catkin.builder import cmake_input_changed  # noqa: E402
+from catkin.builder import determine_path_argument  # noqa: E402
+from catkin.builder import extract_cmake_and_make_arguments  # noqa: E402
+from catkin.builder import get_package_names_with_recursive_dependencies  # noqa: E402
+from catkin.builder import handle_make_arguments  # noqa: E402
+from catkin.builder import print_command_banner  # noqa: E402
+from catkin.builder import run_command  # noqa: E402
+from catkin.builder import run_command_colorized  # noqa: E402
+from catkin.init_workspace import init_workspace  # noqa: E402
+from catkin.terminal_color import disable_ANSI_colors, fmt  # noqa: E402
+
+from catkin_pkg.packages import find_packages  # noqa: E402
+from catkin_pkg.tool_detection import get_previous_tool_used_on_the_space  # noqa: E402
+from catkin_pkg.tool_detection import mark_space_as_built_by  # noqa: E402
+from catkin_pkg.workspaces import ensure_workspace_marker  # noqa: E402
 
 
 def main():
@@ -78,12 +80,12 @@ def main():
         if args.override_build_tool_check:
             print(fmt(
                 "@{yf}Warning: build space at '%s' was previously built by '%s', "
-                "but --override-build-tool-check was passed so continuing anyways."
+                'but --override-build-tool-check was passed so continuing anyways.'
                 % (build_path, previous_tool)))
         else:
             return fmt(
                 "@{rf}The build space at '%s' was previously built by '%s'. "
-                "Please remove the build space or pick a different build space."
+                'Please remove the build space or pick a different build space.'
                 % (build_path, previous_tool))
     mark_space_as_built_by(build_path, 'catkin_make')
 
@@ -104,12 +106,12 @@ def main():
         if args.override_build_tool_check:
             print(fmt(
                 "@{yf}Warning: devel space at '%s' was previously built by '%s', "
-                "but --override-build-tool-check was passed so continuing anyways."
+                'but --override-build-tool-check was passed so continuing anyways.'
                 % (devel_path, previous_tool)))
         else:
             return fmt(
                 "@{rf}The devel space at '%s' was previously built by '%s'. "
-                "Please remove the devel space or pick a different devel space."
+                'Please remove the devel space or pick a different devel space.'
                 % (devel_path, previous_tool))
     mark_space_as_built_by(devel_path, 'catkin_make')
 

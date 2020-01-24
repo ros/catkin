@@ -20,10 +20,7 @@ add_message_files(
   FILES CMsg.msg
 )
 
-
-
 # catkin_python_setup()
 # enable_python(c)
 
 # generate_messages(DEPENDENCIES std_msgs a)
-

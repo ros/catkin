@@ -31,9 +31,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
-from collections import OrderedDict
-import sys
+
 import argparse
+import sys
+from collections import OrderedDict
 
 try:
     from catkin_pkg.package import parse_package
@@ -43,7 +44,7 @@ except ImportError as e:
 
 def _get_output(package):
     """
-    returns a list of strings with cmake commands to execute to set cmake variables
+    Return a list of strings with cmake commands to execute to set cmake variables.
 
     :param package: Package object
     :returns: list of str, lines to output
@@ -78,6 +79,7 @@ def _get_output(package):
         output.append('set(%s_%s %s)' % (package.name, k, v))
     return output
 
+
 def _get_dependency_values(key, depends):
     values = OrderedDict()
     values[key] = ' '.join(['"%s"' % str(d) for d in depends])
@@ -91,10 +93,8 @@ def _get_dependency_values(key, depends):
 
 
 def main(argv=sys.argv[1:]):
-    """
-    Reads given package_xml and writes extracted variables to outfile.
-    """
-    parser = argparse.ArgumentParser(description="Read package.xml and write extracted variables to stdout")
+    """Read given package_xml and writes extracted variables to outfile."""
+    parser = argparse.ArgumentParser(description='Read package.xml and write extracted variables to stdout')
     parser.add_argument('package_xml')
     parser.add_argument('outfile')
     args = parser.parse_args(argv)

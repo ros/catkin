@@ -6,24 +6,18 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from test.utils import AbstractCatkinWorkspaceTest, MOCK_DIR, \
-    MAKE_CMD, succeed, assert_exists, fail
+from test.utils import AbstractCatkinWorkspaceTest  # noqa: E402, I202
+from test.utils import MAKE_CMD  # noqa: E402
+from test.utils import MOCK_DIR  # noqa: E402
+from test.utils import assert_exists  # noqa: E402
+from test.utils import fail  # noqa: E402
+from test.utils import succeed  # noqa: E402
 
-
-import em
-import sys
-import stat
-import unittest
-import tempfile
-
-
+import em  # noqa: E402
 
 
 class MockTest(AbstractCatkinWorkspaceTest):
-    """
-    This test case uses workspaces with catkin projects from the
-    test/mock_resources folder.
-    """
+    """This test case uses workspaces with catkin projects from the test/mock_resources folder."""
 
     # uncomment to keep temporary files in /tmp
     # def tearDown(self):
@@ -32,45 +26,45 @@ class MockTest(AbstractCatkinWorkspaceTest):
     def test_catkin_only(self):
         self.cmake()
         succeed(MAKE_CMD, cwd=self.builddir)
-        succeed(MAKE_CMD + ["install"], cwd=self.builddir)
+        succeed(MAKE_CMD + ['install'], cwd=self.builddir)
 
         assert_exists(self.installdir,
-                      "env.sh",
-                      "setup.sh",
-                      "setup.zsh")
+                      'env.sh',
+                      'setup.sh',
+                      'setup.zsh')
 
     def test_linker_options_propagation(self):
         dstdir = os.path.join(self.workspacedir, 'linker_options')
         shutil.copytree(os.path.join(MOCK_DIR, 'src', 'linker_options'), dstdir)
-        out = self.cmake()
+        self.cmake()
         succeed(MAKE_CMD, cwd=self.builddir)
-        succeed(MAKE_CMD + ["install"], cwd=self.builddir)
+        succeed(MAKE_CMD + ['install'], cwd=self.builddir)
 
         assert_exists(self.installdir,
-                      "env.sh",
-                      "setup.sh",
-                      "setup.zsh")
+                      'env.sh',
+                      'setup.sh',
+                      'setup.zsh')
 
     def test_nolang(self):
         dstdir = os.path.join(self.workspacedir, 'nolangs')
         shutil.copytree(os.path.join(MOCK_DIR, 'src', 'nolangs'), dstdir)
 
-        out = self.cmake(CATKIN_WHITELIST_PACKAGES='nolangs',
-                         CATKIN_DPKG_BUILDPACKAGE_FLAGS='-d;-S;-us;-uc')
-        self.assertTrue(os.path.exists(self.builddir + "/nolangs"))
-        self.assertFalse(os.path.exists(self.builddir + "/std_msgs"))
-        self.assertFalse(os.path.exists(self.builddir + "/genmsg"))
-        out = succeed(MAKE_CMD, cwd=self.builddir)
+        self.cmake(CATKIN_WHITELIST_PACKAGES='nolangs',
+                   CATKIN_DPKG_BUILDPACKAGE_FLAGS='-d;-S;-us;-uc')
+        self.assertTrue(os.path.exists(self.builddir + '/nolangs'))
+        self.assertFalse(os.path.exists(self.builddir + '/std_msgs'))
+        self.assertFalse(os.path.exists(self.builddir + '/genmsg'))
+        succeed(MAKE_CMD, cwd=self.builddir)
         self.assertTrue(os.path.exists(self.builddir +
-                                       "/nolangs/bin/nolangs_exec"))
-        out = succeed(MAKE_CMD + ["install"], cwd=self.builddir)
+                                       '/nolangs/bin/nolangs_exec'))
+        succeed(MAKE_CMD + ['install'], cwd=self.builddir)
 
         assert_exists(self.installdir,
-                      "bin/nolangs_exec",
-                      "share/nolangs/cmake/nolangsConfig.cmake")
+                      'bin/nolangs_exec',
+                      'share/nolangs/cmake/nolangsConfig.cmake')
 
         # also test make help
-        succeed(MAKE_CMD + ["help"], cwd=self.builddir)
+        succeed(MAKE_CMD + ['help'], cwd=self.builddir)
 
     def test_noproject(self):
         # create workspace with just catkin and 'noproject' project
@@ -78,7 +72,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
         shutil.copytree(os.path.join(MOCK_DIR, 'src-fail', 'noproject'), dstdir)
         # test with whitelist
         out = self.cmake(CATKIN_WHITELIST_PACKAGES='catkin')
-        out = succeed(MAKE_CMD + ["install"], cwd=self.builddir)
+        out = succeed(MAKE_CMD + ['install'], cwd=self.builddir)
 
         shutil.rmtree(self.builddir)
         # fail if we try to build noproject stack
@@ -86,7 +80,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
 
         out = self.cmake(CMAKE_PREFIX_PATH=self.installdir,
                          expect=fail)
-        print("failed as expected, out={}".format(out))
+        print('failed as expected, out={}'.format(out))
 
         self.assertTrue(b"catkin_package() PROJECT_NAME is set to 'Project'" in out, out)
         # assert 'You must call project() with the same name before.' in out
@@ -106,7 +100,7 @@ class MockTest(AbstractCatkinWorkspaceTest):
         dstdir = os.path.join(self.workspacedir, 'catkin_test')
         shutil.copytree(os.path.join(MOCK_DIR, 'src', 'catkin_test'), dstdir)
         template_file = os.path.join(os.path.dirname(__file__), '..', '..', 'cmake', 'em', 'order_packages.cmake.em')
-        with open (template_file, 'r') as fhand:
+        with open(template_file, 'r') as fhand:
             template = fhand.read()
         gdict = {'CATKIN_DEVEL_PREFIX': '/foo',
                  'CMAKE_PREFIX_PATH': ['/bar'],

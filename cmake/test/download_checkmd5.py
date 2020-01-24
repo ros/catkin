@@ -1,15 +1,16 @@
 from __future__ import print_function
+
 import errno
+import hashlib
 import os
 import sys
 try:
     from urllib.request import addinfourl, BaseHandler, build_opener, Request, URLError
 except ImportError:
     from urllib2 import addinfourl, BaseHandler, build_opener, Request, URLError
-import hashlib
 from argparse import ArgumentParser
 
-NAME = "download_checkmd5.py"
+NAME = 'download_checkmd5.py'
 
 
 class HTTPRangeHandler(BaseHandler):
@@ -65,7 +66,7 @@ def download_with_resume(uri, dest):
                 if not progress:
                     # if no bytes have been received abort download
                     raise IOError("No progress when trying to download '%s'" % uri)
-        except:
+        except Exception:
             if src_file:
                 src_file.close()
             raise
@@ -81,9 +82,7 @@ def download_with_resume(uri, dest):
 
 
 def download_md5(uri, dest):
-    """
-    downloads file from uri to file dest
-    """
+    """Download file from uri to file dest."""
     # Create intermediate directories as necessary, #2970
     dirname = os.path.dirname(dest)
     if len(dirname):
@@ -108,7 +107,8 @@ def download_md5(uri, dest):
 
 def checkmd5(dest, md5sum=None):
     """
-    checks file at dest against md5.
+    Check file at dest against md5.
+
     :returns (boolean, hexdigest): True if dest contents matches md5sum
     """
     if not os.path.exists(dest):
@@ -127,9 +127,7 @@ def checkmd5(dest, md5sum=None):
 
 
 def main(argv=sys.argv[1:]):
-    """
-    Dowloads URI to file dest and checks md5 if given.
-    """
+    """Dowloads URI to file dest and checks md5 if given."""
     parser = ArgumentParser(description='Dowloads URI to file dest. If md5sum is given, checks md5sum. If file existed and mismatch, downloads and checks again')
     parser.add_argument('uri')
     parser.add_argument('dest')

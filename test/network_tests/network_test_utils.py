@@ -1,15 +1,13 @@
 import os
 import shutil
-from test.utils import AbstractCatkinWorkspaceTest, TEMP_DIR, rosinstall, \
-    create_catkin_workspace
+from test.utils import AbstractCatkinWorkspaceTest
+from test.utils import TEMP_DIR
+from test.utils import create_catkin_workspace
+from test.utils import rosinstall
 
 
 class AbstractUnstableTest(AbstractCatkinWorkspaceTest):
-
-    """
-    Parent class for any Test case that download latest ros core
-    stacks from github to build custom stacks against that
-    """
+    """Parent class for any Test case that download latest ros core stacks from github to build custom stacks against that."""
 
     def __init__(self, testCaseName, name):
         # for ROS core integration tests, we reuse the same sources
@@ -30,9 +28,9 @@ class AbstractUnstableTest(AbstractCatkinWorkspaceTest):
 
     def delete_build(self):
         """
-        cleans the build folder, run manually in subtests when
-        appropriate. We don't to this in setup because it takes so
-        long to build all of ros core'
+        Clean the build folder, run manually in subtests when appropriate.
+
+        We don't to this in setup because it takes so long to build all of ros core'
         """
         if os.path.isdir(self.builddir):
             shutil.rmtree(self.builddir)

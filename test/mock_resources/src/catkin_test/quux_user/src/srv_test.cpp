@@ -18,6 +18,4 @@ int main()
   ros::serialization::deserialize(in, msg2);
 
   std::cout << "Im a message again: " << std::endl << msg2 << std::endl;
-
-
 }

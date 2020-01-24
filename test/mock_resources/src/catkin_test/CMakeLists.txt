@@ -5,7 +5,6 @@ find_package(catkin REQUIRED)
 find_package(genmsg REQUIRED)
 find_package(std_msgs REQUIRED)
 
-
 foreach(subdir
     quux_msgs
     quux_user
@@ -16,4 +15,3 @@ foreach(subdir
     )
   add_subdirectory(${subdir})
 endforeach()
-

@@ -22,8 +22,10 @@ with tempfile.NamedTemporaryFile('w+') as setup_util_file:
     import imp
     imp.load_source('setup_util', setup_util_file.name, setup_util_file.file)
 
-import setup_util
-from setup_util import _get_workspaces, _prefix_env_variable, _rollback_env_variable, CATKIN_MARKER_FILE
+from setup_util import CATKIN_MARKER_FILE  # noqa: E402
+from setup_util import _get_workspaces  # noqa: E402
+from setup_util import _prefix_env_variable  # noqa: E402
+from setup_util import _rollback_env_variable  # noqa: E402
 
 
 class SetupUtilTest(unittest.TestCase):

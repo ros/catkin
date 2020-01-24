@@ -33,20 +33,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+
 import argparse
 import json
 import os
 import re
 import sys
 
-'''Simple superficial API doc generator for .cmake files'''
+"""Simple superficial API doc generator for .cmake files"""
 
 
 def crawl_for_cmake(path, excluded_files=None):
-    '''
-    Crawls over path, looking for files named *.cmake,
-    returns tuple of full and relative path.
-    '''
+    """Crawls over path, looking for files named *.cmake, returns tuple of full and relative path."""
     cmake_files = []
     for (parentdir, _, files) in os.walk(path):
         for filename in files:
@@ -60,12 +58,11 @@ def crawl_for_cmake(path, excluded_files=None):
 
 
 def generate_rst(files, skip_private=False, skip_undocumented=False):
-    '''
-    Each of the CMake files is traversed line by line, looking for
-    lines like function(...) or macro(...).  For each of these,
-    multiple lines of reStructured text are added documenting the
-    function.
-    '''
+    """
+    Each of the CMake files is traversed line by line, looking for lines like function(...) or macro(...).
+
+    For each of these, multiple lines of reStructured text are added documenting the function.
+    """
     public = {}
     documented = {}
     undocumented = {}
@@ -82,7 +79,7 @@ def generate_rst(files, skip_private=False, skip_undocumented=False):
                 else:
                     last_block.append(line.rstrip('\n'))
             else:
-                declaration = re.match('[a-zA-Z]+ *\([a-zA-Z0-9_ ]+\)', line)
+                declaration = re.match(r'[a-zA-Z]+ *\([a-zA-Z0-9_ ]+\)', line)
                 if declaration is None:
                     last_block = []
                     last_block_public = False
@@ -94,7 +91,7 @@ def generate_rst(files, skip_private=False, skip_undocumented=False):
                     if dec_type == 'function' or dec_type == 'macro':
                         rst = []
                         # directives defined in catkin-sphinx
-                        dec_line = '.. _`%s_ref`:\n\n`%s`\n%s\n\n.. cmake:macro:: %s(%s)' % (dec_args[0],dec_args[0], '~' * (len(dec_args[0]) + 2), dec_args[0], ', '.join(dec_args[1:]))
+                        dec_line = '.. _`%s_ref`:\n\n`%s`\n%s\n\n.. cmake:macro:: %s(%s)' % (dec_args[0], dec_args[0], '~' * (len(dec_args[0]) + 2), dec_args[0], ', '.join(dec_args[1:]))
                         rst.append(dec_line)
                         rst.append('')
                         rst.append(' *[%s defined in %s]*' % (dec_type, relpath))
@@ -116,7 +113,7 @@ def generate_rst(files, skip_private=False, skip_undocumented=False):
 
     rst = ['Extracted CMake API reference',
            '=============================']
-    rst.append('This page was auto-generated from cmake source files using %s\n'%os.path.basename(__file__))
+    rst.append('This page was auto-generated from cmake source files using %s\n' % os.path.basename(__file__))
     rst.append('.. ' + '!' * 70)
     rst.append('.. !!!!!! Auto-generated file, do not modify')
     rst.append('.. ' + '!' * 70)
@@ -145,7 +142,7 @@ def generate_rst(files, skip_private=False, skip_undocumented=False):
             rst.append('')
             rst.extend(documented[name])
         rst.append('')
-    
+
     if not skip_undocumented:
         rst.append('Not documented CMake functions / macros')
         rst.append('---------------------------------------')
@@ -161,8 +158,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Crawls a path for .cmake files and extract documentation of functions and macros into reStructured text.')
     parser.add_argument('path', nargs='?', default='.', help='The path to be crawled')
     parser.add_argument('-o', '--output', help='The name of the generated rst file')
-    parser.add_argument('--skip_private', action="store_true", help='Skip documented items not marked with @public')
-    parser.add_argument('--skip_undocumented', action="store_true", help='Skip items without documentation.')
+    parser.add_argument('--skip_private', action='store_true', help='Skip documented items not marked with @public')
+    parser.add_argument('--skip_undocumented', action='store_true', help='Skip items without documentation.')
 
     args = parser.parse_args()
 

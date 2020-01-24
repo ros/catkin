@@ -12,7 +12,7 @@ declared in a ``package.xml`` file.
 
 If in fuerte you had a stack with several subprojects acting as
 packages, this should be migrated to one metapackage and several
-packages for groovy. If instead you had a stack with sources, this 
+packages for groovy. If instead you had a stack with sources, this
 can become a single catkin package.
 
 Metapackages are not required for packages, they may just be helpful

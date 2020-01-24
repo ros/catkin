@@ -28,7 +28,6 @@ assert(roscpp_serialization_LIBRARIES)
 find_package(sensor_msgs)
 include_directories(${sensor_msgs_INCLUDE_DIRS})
 
-
 include_directories(${std_msgs_INCLUDE_DIRS} ${quux_msgs_INCLUDE_DIRS})
 
 add_executable(quux_user-exec src/main.cpp)

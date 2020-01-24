@@ -1,8 +1,8 @@
 import os
-from os.path import join
-import unittest
-import tempfile
 import shutil
+import tempfile
+import unittest
+from os.path import join
 
 try:
     from catkin.init_workspace import init_workspace, _symlink_or_copy

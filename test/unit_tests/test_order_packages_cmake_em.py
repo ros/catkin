@@ -1,10 +1,9 @@
-import em
 import os
 import sys
-import stat
 import unittest
-import tempfile
-import shutil
+
+import em
+
 
 class OrderPackagesEmTest(unittest.TestCase):
 
@@ -12,7 +11,7 @@ class OrderPackagesEmTest(unittest.TestCase):
         # hack to fix empy nosetests clash
         sys.stdout = em.ProxyFile(sys.stdout)
         template_file = os.path.join(os.path.dirname(__file__), '..', '..', 'cmake', 'em', 'order_packages.cmake.em')
-        with open (template_file, 'r') as fhand:
+        with open(template_file, 'r') as fhand:
             template = fhand.read()
         gdict = {'CATKIN_DEVEL_PREFIX': '/foo',
                  'CMAKE_PREFIX_PATH': ['/bar'],
