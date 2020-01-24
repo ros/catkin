@@ -2,6 +2,12 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* install devel space wrapper for Python scripts (`#1044 <https://github.com/ros/catkin/issues/1044>`_)
+* various code cleanup (`#1055 <https://github.com/ros/catkin/issues/1055>`_)
+* make catkin_install_python code a little clearer (`#1054 <https://github.com/ros/catkin/issues/1054>`_)
+
 0.7.21 (2020-01-23)
 -------------------
 * bump CMake minimum version in tests and docs (`#1053 <https://github.com/ros/catkin/issues/1053>`_)
