@@ -27,7 +27,7 @@ mention all your message package dependencies here, and substitute
 them all for ``std_msgs`` in the examples that follow.
 
 To generate actions, add ``actionlib_msgs`` as a dependency::
-  
+
   <depend>actionlib_msgs</depend>
 
 

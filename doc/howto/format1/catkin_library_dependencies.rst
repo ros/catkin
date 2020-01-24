@@ -28,7 +28,7 @@ package name::
   <build_depend>roscpp</build_depend>
 
 The ``<run_depend>`` declares two different types of package
-dependencies.  
+dependencies.
 
 One is for shared libraries, executables, Python modules, launch
 scripts and other files required for running your package.

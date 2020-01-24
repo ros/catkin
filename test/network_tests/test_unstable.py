@@ -3,10 +3,14 @@
 import os
 import shutil
 import tempfile
-from test.utils import MOCK_DIR, PYTHON_INSTALL_PATH, \
-    MAKE_CMD, succeed, assert_exists, create_catkin_workspace
-from . import network_test_utils
-from network_test_utils import AbstractUnstableTest
+from test.utils import MAKE_CMD
+from test.utils import MOCK_DIR
+from test.utils import PYTHON_INSTALL_PATH
+from test.utils import assert_exists
+from test.utils import create_catkin_workspace
+from test.utils import succeed
+
+from .network_test_utils import AbstractUnstableTest
 
 
 class SimpleUnstableTest(AbstractUnstableTest):
@@ -19,13 +23,13 @@ class SimpleUnstableTest(AbstractUnstableTest):
         # a bit dirty here, tester needs to manually delete
         # test/tmp/unstable_test/build folder. But else, tests take
         # too long
-        if not os.path.exists(os.path.join(self.builddir, "Makefile")):
+        if not os.path.exists(os.path.join(self.builddir, 'Makefile')):
             self.cmake()
         # if make fails due to DistributionNotFound,
         # tester needs to manually delete test/tmp/unstable_test/src
         succeed(MAKE_CMD, cwd=self.builddir)
 
-        succeed(MAKE_CMD + ["install"], cwd=self.builddir)
+        succeed(MAKE_CMD + ['install'], cwd=self.builddir)
 
     def test_make(self):
         # uses core ros stacks installed in setUp
@@ -60,14 +64,13 @@ class SimpleUnstableTest(AbstractUnstableTest):
             other_develspace_dir = os.path.join(other_build_dir, 'devel')
             shutil.copytree(os.path.join(self.workspacedir, 'common_msgs'),
                             os.path.join(other_src_dir, 'common_msgs'))
-            out = self.cmake(cwd=other_build_dir,
-                             srcdir=other_src_dir)
-            out = succeed(MAKE_CMD, cwd=other_build_dir)
+            self.cmake(cwd=other_build_dir, srcdir=other_src_dir)
+            succeed(MAKE_CMD, cwd=other_build_dir)
             assert_exists(other_develspace_dir,
                           PYTHON_INSTALL_PATH + '/nav_msgs/msg/_GridCells.py',
                           'include/nav_msgs/GridCells.h')
 
-            out = succeed(MAKE_CMD + ['install'], cwd=other_build_dir)
+            succeed(MAKE_CMD + ['install'], cwd=other_build_dir)
 
             assert_exists(self.installdir,
                           'include/geometry_msgs/PointStamped.h',
@@ -98,41 +101,41 @@ class SimpleUnstableTest(AbstractUnstableTest):
             succeed(MAKE_CMD, cwd=other_build_dir)
 
             assert_exists(other_develspace_dir,
-                          "lib/liba.so",
-                          "lib/libb.so",
-                          "lib/libc-one.so",
-                          "lib/libc-two.so",
-                          "lib/libd.so")
+                          'lib/liba.so',
+                          'lib/libb.so',
+                          'lib/libc-one.so',
+                          'lib/libc-two.so',
+                          'lib/libd.so')
             assert_exists(other_build_dir,
-                          # "bin/nolangs_exec",
-                          "catkin_test/quux_user/bin/quux_srv-exec")
+                          # 'bin/nolangs_exec',
+                          'catkin_test/quux_user/bin/quux_srv-exec')
             assert_exists(other_develspace_dir,
-                          PYTHON_INSTALL_PATH + "/a",
-                          # PYTHON_INSTALL_PATH + "/b",
-                          # PYTHON_INSTALL_PATH + "/c",
-                          # PYTHON_INSTALL_PATH + "/d",
-                          PYTHON_INSTALL_PATH + "/a/__init__.py",
-                          PYTHON_INSTALL_PATH + "/quux_msgs/__init__.py")
+                          PYTHON_INSTALL_PATH + '/a',
+                          # PYTHON_INSTALL_PATH + '/b',
+                          # PYTHON_INSTALL_PATH + '/c',
+                          # PYTHON_INSTALL_PATH + '/d',
+                          PYTHON_INSTALL_PATH + '/a/__init__.py',
+                          PYTHON_INSTALL_PATH + '/quux_msgs/__init__.py')
 
             # "DESTDIR="
-            succeed(MAKE_CMD + ["install"],
+            succeed(MAKE_CMD + ['install'],
                     cwd=other_build_dir)
 
             assert_exists(other_install_dir,
-                          "lib/pkgconfig/a.pc",
-                          "lib/pkgconfig/b.pc",
-                          "lib/pkgconfig/c.pc",
-                          "lib/pkgconfig/d.pc",
-                          "lib/pkgconfig/quux_msgs.pc",
-                          PYTHON_INSTALL_PATH + "/a/__init__.py",
-                          PYTHON_INSTALL_PATH + "/quux_msgs/__init__.py")
+                          'lib/pkgconfig/a.pc',
+                          'lib/pkgconfig/b.pc',
+                          'lib/pkgconfig/c.pc',
+                          'lib/pkgconfig/d.pc',
+                          'lib/pkgconfig/quux_msgs.pc',
+                          PYTHON_INSTALL_PATH + '/a/__init__.py',
+                          PYTHON_INSTALL_PATH + '/quux_msgs/__init__.py')
 
             #
             #  make sure python imports work
             #
 
-            # succeed([other_build_dir + "/env.sh", "python -c 'import a'"])
-            # succeed([other_build_dir + "/env.sh", "python -c 'import b'"])
+            # succeed([other_build_dir + '/env.sh", 'python -c 'import a'"])
+            # succeed([other_build_dir + '/env.sh', "python -c 'import b'"])
         finally:
             # pass
             shutil.rmtree(other_root_dir)

@@ -31,6 +31,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+
 import errno
 import os
 import sys
@@ -81,12 +82,12 @@ def ensure_junit_result_exist(filename):
                     raise
         with open(missing_filename, 'w') as f:
             data = {'test': os.path.basename(filename), 'test_file': filename}
-            f.write('''<?xml version="1.0" encoding="UTF-8"?>
+            f.write("""<?xml version="1.0" encoding="UTF-8"?>
 <testsuite tests="1" failures="1" time="1" errors="0" name="%(test)s">
   <testcase name="test_ran" status="run" time="1" classname="Results">
     <failure message="Unable to find test results for %(test)s, test did not run.\nExpected results in %(test_file)s" type=""/>
   </testcase>
-</testsuite>''' % data)
+</testsuite>""" % data)
         return False
     return True
 
@@ -96,15 +97,14 @@ def _get_missing_junit_result_filename(filename):
 
 
 def read_junit(filename):
-    """Same as `read_junit2` except it doesn't return num_skipped."""
+    """Parse xml file similar to `read_junit2` except it doesn't return num_skipped."""
     num_tests, num_errors, num_failures, _ = read_junit2(filename)
     return (num_tests, num_errors, num_failures)
 
 
 def read_junit2(filename):
     """
-    parses xml file expected to follow junit/gtest conventions
-    see http://code.google.com/p/googletest/wiki/AdvancedGuide#Generating_an_XML_Report
+    Parse xml file expected to follow junit/gtest conventions see http://code.google.com/p/googletest/wiki/AdvancedGuide#Generating_an_XML_Report.
 
     :param filename: str junit xml file name
     :returns: num_tests, num_errors, num_failures, num_skipped
@@ -174,14 +174,13 @@ def test_results(test_results_dir, show_verbose=False, show_all=False):
 
 
 def test_results2(test_results_dir, show_verbose=False, show_all=False):
-    '''
-    Collects test results by parsing all xml files in given path,
-    attempting to interpret them as junit results.
+    """
+    Collect test results by parsing all xml files in given path, attempting to interpret them as junit results.
 
     :param test_results_dir: str foldername
     :param show_verbose: bool show output for tests which had errors or failed
     :returns: dict {rel_path, (num_tests, num_errors, num_failures, num_skipped)}
-    '''
+    """
     results = {}
     for dirpath, dirnames, filenames in os.walk(test_results_dir):
         # do not recurse into folders starting with a dot
@@ -206,7 +205,7 @@ def test_results2(test_results_dir, show_verbose=False, show_all=False):
 
 
 def aggregate_results(results, callback_per_result=None):
-    """Same as `aggregate_results2` except it doesn't return num_skipped."""
+    """Aggregate results similar to `aggregate_results2` except it doesn't return num_skipped."""
     callback = None
     if callback_per_result is not None:
         def callback(name, num_tests, num_errors, num_failures, num_skipped):
@@ -218,7 +217,7 @@ def aggregate_results(results, callback_per_result=None):
 
 def aggregate_results2(results, callback_per_result=None):
     """
-    Aggregate results
+    Aggregate results.
 
     :param results: dict as from test_results()
     :returns: tuple (num_tests, num_errors, num_failures, num_skipped)
@@ -237,7 +236,7 @@ def aggregate_results2(results, callback_per_result=None):
 
 
 def print_summary(results, show_stable=False, show_unstable=True):
-    """Same as `print_summary2` except it doesn't print skipped tests."""
+    """Print summary similar to `print_summary2` except it doesn't print skipped tests."""
     print_summary2(
         results, show_stable=show_stable, show_unstable=show_unstable,
         print_skipped=False)
@@ -245,7 +244,7 @@ def print_summary(results, show_stable=False, show_unstable=True):
 
 def print_summary2(results, show_stable=False, show_unstable=True, print_skipped=True):
     """
-    print summary to stdout
+    Print summary to stdout.
 
     :param results: dict as from test_results()
     :param show_stable: print tests without failures extra

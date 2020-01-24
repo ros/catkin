@@ -28,7 +28,7 @@ here, and substitute them all for ``std_msgs`` in the examples that
 follow.
 
 To generate actions, add ``actionlib_msgs`` as a dependency::
-  
+
   <build_depend>actionlib_msgs</build_depend>
   <run_depend>actionlib_msgs</run_depend>
 

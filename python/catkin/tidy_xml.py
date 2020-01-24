@@ -31,6 +31,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import unicode_literals
+
 import codecs
 import os
 import re
@@ -42,8 +43,9 @@ try:
     char = unichr
 except NameError:
     char = chr
-RE_XML_ILLEGAL = ('([%s-%s%s-%s%s-%s%s-%s])' + \
-    '|' + \
+RE_XML_ILLEGAL = (
+    '([%s-%s%s-%s%s-%s%s-%s])' +
+    '|' +
     '([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])') % \
     (char(0x0000), char(0x0008), char(0x000b), char(0x000c),
      char(0x000e), char(0x001f), char(0xfffe), char(0xffff),
@@ -54,12 +56,12 @@ _SAFE_XML_REGEX = re.compile(RE_XML_ILLEGAL)
 
 
 def tidy_xml(filename):
-    '''
-    read in file, screen out unsafe unicode characters, write back file in utf-8
+    """
+    Read in file, screen out unsafe unicode characters, write back file in utf-8.
 
     :param filename: str
     :returns: False if unable to read from file
-    '''
+    """
     if not os.path.isfile(filename):
         raise ValueError('file does not exist')
 

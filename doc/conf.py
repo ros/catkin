@@ -11,12 +11,12 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import catkin_sphinx
 import os
 import sys
-import subprocess
 import time
 from xml.etree.ElementTree import ElementTree
+
+import catkin_sphinx
 
 # -- General configuration -----------------------------------------------------
 

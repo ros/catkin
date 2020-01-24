@@ -1,8 +1,8 @@
 from __future__ import print_function
 
-from argparse import ArgumentParser
 import os
 import sys
+from argparse import ArgumentParser
 
 try:
     from catkin_pkg.workspaces import order_paths
@@ -11,9 +11,7 @@ except ImportError as e:
 
 
 def main():
-    """
-    Order a list of paths according to a list of prefixes which define the order.
-    """
+    """Order a list of paths according to a list of prefixes which define the order."""
     parser = ArgumentParser(description='Utility to order a list of paths according to a list of prefixes. Creates a file with CMake set command setting a variable.')
     parser.add_argument('outfile', help='The filename of the generated CMake file')
     parser.add_argument('--paths-to-order', nargs='*', help='The semicolon-separated paths to order')

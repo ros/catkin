@@ -1,9 +1,8 @@
 from __future__ import print_function
 
 import argparse
-import os
-import sys
 import subprocess
+import sys
 
 from catkin.test_results import ensure_junit_result_exist, remove_junit_result
 

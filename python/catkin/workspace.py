@@ -31,6 +31,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+
 import os
 
 CATKIN_MARKER_FILE = '.catkin'
@@ -38,7 +39,7 @@ CATKIN_MARKER_FILE = '.catkin'
 
 def get_workspaces():
     """
-    Based on CMAKE_PREFIX_PATH return all catkin workspaces
+    Based on CMAKE_PREFIX_PATH return all catkin workspaces.
 
     :param _environ: environment module to use, ``dict``
     """
@@ -52,8 +53,7 @@ def get_workspaces():
 
 def get_source_paths(workspace):
     """
-    reads catkin workspace files and returns the list of all declared
-    source paths
+    Read catkin workspace files and returns the list of all declared source paths.
 
     :param workspace: path to catkin workspace folder, ``str``
     """
@@ -66,7 +66,7 @@ def get_source_paths(workspace):
 
     source_paths = []
     if data != '':
-        real_source_paths = set([])
+        real_source_paths = set()
         for path in data.split(';'):
             real_path = os.path.realpath(path)
             if real_path not in real_source_paths:

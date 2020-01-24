@@ -1,7 +1,7 @@
 import os
-import unittest
-import tempfile
 import shutil
+import tempfile
+import unittest
 
 try:
     from catkin.tidy_xml import tidy_xml, _SAFE_XML_REGEX

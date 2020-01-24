@@ -31,9 +31,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+
 import os
 import runpy
 import sys
+from argparse import ArgumentParser
 
 setup_modules = []
 
@@ -51,13 +53,11 @@ except ImportError:
 
 assert setup_modules, 'Must have distutils or setuptools installed'
 
-from argparse import ArgumentParser
-
 
 def _get_locations(pkgs, package_dir):
     """
-    based on setuptools logic and the package_dir dict, builds a dict
-    of location roots for each pkg in pkgs.
+    Based on setuptools logic and the package_dir dict, builds a dict of location roots for each pkg in pkgs.
+
     See http://docs.python.org/distutils/setupscript.html
 
     :returns: a dict {pkgname: root} for each pkgname in pkgs (and each of their parents)
@@ -94,7 +94,7 @@ def _get_locations(pkgs, package_dir):
 
 def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modules):
     """
-    Generates lines to add to a cmake file which will set variables
+    Generate lines to add to a cmake file which will set variables.
 
     :param version: str, format 'int.int.int'
     :param scripts: [list of str]: relative paths to scripts
@@ -118,7 +118,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     # it passes, we remove submodule packages.
     locations = _get_locations(pkgs, package_dir)
     for pkgname, location in locations.items():
-        if not '.' in pkgname:
+        if '.' not in pkgname:
             continue
         splits = pkgname.split('.')
         # hack: ignore write-combining setup.py files for msg and srv files
@@ -131,7 +131,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
             root_location = os.path.dirname(root_location)
         if root_location != locations[root_name]:
             raise RuntimeError(
-                "catkin_export_python does not support setup.py files that combine across multiple directories: %s in %s, %s in %s" % (pkgname, location, root_name, locations[root_name]))
+                'catkin_export_python does not support setup.py files that combine across multiple directories: %s in %s, %s in %s' % (pkgname, location, root_name, locations[root_name]))
 
     # If checks pass, remove all submodules
     pkgs = [p for p in pkgs if '.' not in p]
@@ -141,7 +141,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
         resolved_pkgs += [locations[pkg]]
 
     result.append(r'set(%s_PACKAGES "%s")' % (prefix, ';'.join(pkgs)))
-    result.append(r'set(%s_PACKAGE_DIRS "%s")' % (prefix, ';'.join(resolved_pkgs).replace("\\", "/")))
+    result.append(r'set(%s_PACKAGE_DIRS "%s")' % (prefix, ';'.join(resolved_pkgs).replace('\\', '/')))
 
     # skip modules which collide with package names
     filtered_modules = []
@@ -155,16 +155,16 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     module_locations = _get_locations(filtered_modules, package_dir)
 
     result.append(r'set(%s_MODULES "%s")' % (prefix, ';'.join(['%s.py' % m.replace('.', '/') for m in filtered_modules])))
-    result.append(r'set(%s_MODULE_DIRS "%s")' % (prefix, ';'.join([module_locations[m] for m in filtered_modules]).replace("\\", "/")))
+    result.append(r'set(%s_MODULE_DIRS "%s")' % (prefix, ';'.join([module_locations[m] for m in filtered_modules]).replace('\\', '/')))
 
     return result
 
 
 def _create_mock_setup_function(package_name, outfile):
     """
-    Creates a function to call instead of distutils.core.setup or
-    setuptools.setup, which just captures some args and writes them
-    into a file that can be used from cmake
+    Create a function to call instead of distutils.core.setup or setuptools.setup.
+
+    It just captures some args and writes them into a file that can be used from cmake.
 
     :param package_name: name of the package
     :param outfile: filename that cmake will use afterwards
@@ -172,12 +172,10 @@ def _create_mock_setup_function(package_name, outfile):
     """
 
     def setup(*args, **kwargs):
-        '''
-        Checks kwargs and writes a scriptfile
-        '''
+        """Check kwargs and write a scriptfile."""
         if 'version' not in kwargs:
             sys.stderr.write("\n*** Unable to find 'version' in setup.py of %s\n" % package_name)
-            raise RuntimeError("version not found in setup.py")
+            raise RuntimeError('version not found in setup.py')
         version = kwargs['version']
         package_dir = kwargs.get('package_dir', {})
 
@@ -197,7 +195,7 @@ def _create_mock_setup_function(package_name, outfile):
             'zip_safe']
         used_unsupported_args = [arg for arg in unsupported_args if arg in kwargs]
         if used_unsupported_args:
-            sys.stderr.write("*** Arguments %s to setup() not supported in catkin devel space in setup.py of %s\n" % (used_unsupported_args, package_name))
+            sys.stderr.write('*** Arguments %s to setup() not supported in catkin devel space in setup.py of %s\n' % (used_unsupported_args, package_name))
 
         result = generate_cmake_file(package_name=package_name,
                                      version=version,
@@ -212,9 +210,7 @@ def _create_mock_setup_function(package_name, outfile):
 
 
 def main():
-    """
-    Script main, parses arguments and invokes Dummy.setup indirectly.
-    """
+    """Script main, parses arguments and invokes Dummy.setup indirectly."""
     parser = ArgumentParser(description='Utility to read setup.py values from cmake macros. Creates a file with CMake set commands setting variables.')
     parser.add_argument('package_name', help='Name of catkin package')
     parser.add_argument('setupfile_path', help='Full path to setup.py')
@@ -239,8 +235,8 @@ def main():
     # context of evaluating setup.py
     backup_modules = {}
     try:
-        fake_setup = _create_mock_setup_function(package_name=args.package_name,
-                                                outfile=args.outfile)
+        fake_setup = _create_mock_setup_function(
+            package_name=args.package_name, outfile=args.outfile)
 
         for module in setup_modules:
             backup_modules[id(module)] = module.setup
@@ -250,6 +246,7 @@ def main():
     finally:
         for module in setup_modules:
             module.setup = backup_modules[id(module)]
+
 
 if __name__ == '__main__':
     main()

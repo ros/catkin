@@ -22,9 +22,7 @@ add_message_files(
   FILES DMsg.msg
 )
 
-
 # catkin_python_setup()
 # enable_python(d)
 
 # generate_messages(DEPENDENCIES std_msgs b c a)
-

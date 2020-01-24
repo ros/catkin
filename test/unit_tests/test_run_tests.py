@@ -1,14 +1,14 @@
-import os
-import unittest
-import tempfile
-import shutil
-
 import imp
+import os
+import shutil
+import tempfile
+import unittest
+
 imp.load_source('run_tests',
                 os.path.join(os.path.dirname(__file__),
                              '..', '..', 'cmake', 'test', 'run_tests.py'))
 
-from run_tests import main
+from run_tests import main  # noqa: E402
 
 
 class RunTestsTest(unittest.TestCase):
@@ -31,20 +31,20 @@ class RunTestsTest(unittest.TestCase):
                 contents = fhand.read()
             self.assertTrue(results_file in contents)
             os.remove(placeholder)
-            ###
+
             main([results_file,
                   "echo '<testsuite tests=\"0\" failures=\"0\" errors=\"0\"></testsuite>' > %s" % results_file,
                   '--working-dir', rootdir])
             self.assertTrue(os.path.exists(results_file))
             self.assertFalse(os.path.exists(placeholder))
             os.remove(results_file)
-            ### no working dir given
+            # no working dir given
             main([results_file,
                   "echo '<testsuite tests=\"0\" failures=\"0\" errors=\"0\"></testsuite>' > %s" % results_file])
             self.assertTrue(os.path.exists(results_file))
             self.assertFalse(os.path.exists(placeholder))
             os.remove(results_file)
-            ### make sure resultsfile is deleted
+            # make sure resultsfile is deleted
             main([results_file,
                   'true',
                   '--working-dir', rootdir])

@@ -18,6 +18,7 @@ class BuilderTest(unittest.TestCase):
         backup_Popen = catkin.builder.subprocess.Popen
 
         class StdOut(object):
+
             def __init__(self, popen):
                 self.__popen = popen
 
@@ -30,6 +31,7 @@ class BuilderTest(unittest.TestCase):
                     return chr(2018)
 
         class MockPopen(object):
+
             def __init__(self, *args, **kwargs):
                 self.returncode = None
                 self.stdout = StdOut(self)
@@ -47,6 +49,7 @@ class BuilderTest(unittest.TestCase):
         backup_Popen = catkin.builder.subprocess.Popen
 
         class StdOut(object):
+
             def __init__(self, popen):
                 self.__popen = popen
 
@@ -60,6 +63,7 @@ class BuilderTest(unittest.TestCase):
                 return s.encode('utf8')
 
         class MockPopen(object):
+
             def __init__(self, *args, **kwargs):
                 self.returncode = None
                 self.stdout = StdOut(self)

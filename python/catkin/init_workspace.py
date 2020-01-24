@@ -31,15 +31,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+
 import os
 import shutil
 import sys
+
 from catkin.workspace import get_source_paths, get_workspaces
 
+
 def _symlink_or_copy(src, dst):
-    """
-    Creates a symlink at dst to src, or if not possible, attempts to copy.
-    """
+    """Create a symlink at dst to src, or if not possible, attempts to copy."""
     # try to symlink file
     try:
         os.symlink(src, dst)

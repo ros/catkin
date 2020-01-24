@@ -31,15 +31,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
+
 import os
+
 from catkin.workspace import get_source_paths, get_workspaces
+
 from catkin_pkg.packages import find_packages
 
 
 def _get_valid_search_dirs(search_dirs, project):
     """
-    compares param collection of search dirs with valid names, raises ValueError if invalid.
-    maintains the order of param if any. If project is given other names are allowed than without.
+    Compare param collection of search dirs with valid names, raises ValueError if invalid.
+
+    Maintains the order of param if any.
+    If project is given other names are allowed than without.
 
     :param search_dirs: collection of foldernames (basename) to search for
     :param project: the project to search in or None
@@ -88,8 +93,9 @@ def _get_valid_search_dirs(search_dirs, project):
 #      add cand to result list if it exists
 #      is not defined for s in ['bin', 'lib'], bailing out
 def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=None, considered_paths=None, first_matching_workspace_only=False, first_match_only=False, workspace_to_source_spaces=None, source_path_to_packages=None):
-    '''
+    """
     Find all paths which match the search criteria.
+
     All workspaces are searched in order.
     Each workspace, each search_in subfolder, the project name and the path are concatenated to define a candidate path.
     If the candidate path exists it is appended to the result list.
@@ -106,7 +112,7 @@ def find_in_workspaces(search_dirs=None, project=None, path=None, _workspaces=No
     :param source_path_to_packages: the dictionary is populated with mappings from source paths to packages, pass in the same dictionary to avoid repeated crawling
     :raises ValueError: if search_dirs contains an invalid folder name
     :returns: List of paths
-    '''
+    """
     search_dirs = _get_valid_search_dirs(search_dirs, project)
     if 'libexec' in search_dirs:
         search_dirs.insert(search_dirs.index('libexec'), 'lib')

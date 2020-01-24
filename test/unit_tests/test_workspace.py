@@ -1,7 +1,7 @@
 import os
-import unittest
-import tempfile
 import shutil
+import tempfile
+import unittest
 
 try:
     from catkin.workspace import get_workspaces, get_source_paths

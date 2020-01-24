@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+
 import argparse
 import os
 import sys
@@ -8,7 +9,9 @@ import sys
 # find the import relatively if available to work before installing catkin or overlaying installed version
 if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'python', 'catkin', '__init__.py')):
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python'))
-from catkin.test_results import aggregate_results, print_summary2, test_results2
+from catkin.test_results import aggregate_results  # noqa: E402
+from catkin.test_results import print_summary2  # noqa: E402
+from catkin.test_results import test_results2  # noqa: E402
 
 
 def main():

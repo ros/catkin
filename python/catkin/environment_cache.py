@@ -39,7 +39,8 @@ import sys
 
 def generate_environment_script(env_script):
     """
-    Generates script code to cache environment changes of a script.
+    Generate script code to cache environment changes of a script.
+
     This code assumes that the script does nothing else than changing
     variables that contain colon separated lists of PATHs, by
     replacing or prepending.
