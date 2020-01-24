@@ -2,6 +2,16 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* bump CMake minimum version in tests and docs (`#1053 <https://github.com/ros/catkin/issues/1053>`_)
+* bump CMake minimum version to use new behavior of CMP0048 (`#1052 <https://github.com/ros/catkin/issues/1052>`_)
+* Prefer setuptools with Python 3 (`#1048 <https://github.com/ros/catkin/issues/1048>`_)
+* Support use of gmake on FreeBSD (`#1051 <https://github.com/ros/catkin/issues/1051>`_)
+* Fix if statement in catkin_libraries (`#1050 <https://github.com/ros/catkin/issues/1050>`_)
+* Update gtest config documentation (`#1046 <https://github.com/ros/catkin/issues/1046>`_)
+* Contributors: Dirk Thomas, Matt Reynolds, Shane Loretz, dodsonmg, poggenhans
+
 0.7.20 (2019-12-10)
 -------------------
 * fix checking dependency conditions (`#1041 <https://github.com/ros/catkin/issues/1041>`_)
