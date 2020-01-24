@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.0 (2020-01-24)
+------------------
 * install devel space wrapper for Python scripts (`#1044 <https://github.com/ros/catkin/issues/1044>`_)
 * various code cleanup (`#1055 <https://github.com/ros/catkin/issues/1055>`_)
 * make catkin_install_python code a little clearer (`#1054 <https://github.com/ros/catkin/issues/1054>`_)
