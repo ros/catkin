@@ -74,7 +74,7 @@ def create_catkin_workspace(pth):
     # avoid copying tmp, as that may contain all of ros core
 
     def notest(folder, contents):
-        if folder.endswith('test'):
+        if str(folder).endswith('test'):
             return ['tmp']
         return []
     shutil.copytree(CATKIN_DIR, catkin_dir, symlinks=True, ignore=notest)
