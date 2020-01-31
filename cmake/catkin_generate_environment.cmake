@@ -99,54 +99,38 @@ function(catkin_generate_environment)
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
 
-  if(NOT WIN32)
-    # non-windows
-    # generate and install env
-    configure_file(${catkin_EXTRAS_DIR}/templates/env.sh.in
-      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.sh
-      @ONLY)
-    if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
-      install(PROGRAMS
-        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.sh
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
-    endif()
-    # generate and install setup for various shells
-    foreach(shell bash sh zsh)
-      configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
-        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
-        @ONLY)
-      configure_file(${catkin_EXTRAS_DIR}/templates/local_setup.${shell}.in
-        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.${shell}
-        @ONLY)
-      if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
-        install(FILES
-          ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
-          ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.${shell}
-          DESTINATION ${CMAKE_INSTALL_PREFIX})
-      endif()
-    endforeach()
+  # initialize shell support per platform.
+  set(CATKIN_ENV_SHELL sh)
+  set(CATKIN_SETUP_SHELL bash sh zsh)
+  if(WIN32)
+    set(CATKIN_ENV_SHELL bat)
+    set(CATKIN_SETUP_SHELL bat)
+  endif()
 
-  else()
-    # windows
-    # generate and install env
-    configure_file(${catkin_EXTRAS_DIR}/templates/env.bat.in
-      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.bat
-      @ONLY)
+  # generate and install env
+  configure_file(${catkin_EXTRAS_DIR}/templates/env.${CATKIN_ENV_SHELL}.in
+    ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.${CATKIN_ENV_SHELL}
+    @ONLY)
+  if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
     install(PROGRAMS
-      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.bat
-      DESTINATION ${CMAKE_INSTALL_PREFIX})
-    # generate and install setup
-    configure_file(${catkin_EXTRAS_DIR}/templates/setup.bat.in
-      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.bat
-      @ONLY)
-    configure_file(${catkin_EXTRAS_DIR}/templates/local_setup.bat.in
-      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.bat
-      @ONLY)
-    install(FILES
-      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.bat
-      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.bat
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/env.${CATKIN_ENV_SHELL}
       DESTINATION ${CMAKE_INSTALL_PREFIX})
   endif()
+  # generate and install setup for various shells
+  foreach(shell ${CATKIN_SETUP_SHELL})
+    configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
+      @ONLY)
+    configure_file(${catkin_EXTRAS_DIR}/templates/local_setup.${shell}.in
+      ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.${shell}
+      @ONLY)
+    if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
+      install(FILES
+        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/setup.${shell}
+        ${CMAKE_BINARY_DIR}/catkin_generated/installspace/local_setup.${shell}
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+    endif()
+  endforeach()
 
   # generate rosinstall file referencing setup.sh
   configure_file(${catkin_EXTRAS_DIR}/templates/rosinstall.in
