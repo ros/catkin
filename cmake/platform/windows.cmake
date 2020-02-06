@@ -132,7 +132,7 @@ function(add_python_executable)
   if(WIN32)
     get_filename_component(WRAPPER_NAME
       "${ARG_TARGET_NAME}"
-      NAME_WLE)
+      NAME_WE)
     set(
       WRAPPER_SOURCE
       "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/add_python_executable/${ARG_TARGET_NAME}/${WRAPPER_NAME}.cpp")
