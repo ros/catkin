@@ -57,6 +57,12 @@ function(catkin_generate_environment)
         @ONLY)
     endforeach()
 
+    # Not windows? There might be multiple python major versions installed
+    # Generate symlink to python so tests in devel space use correct version
+    get_filename_component(absolute_python_executable "${PYTHON_EXECUTABLE}" ABSOLUTE)
+    file(MAKE_DIRECTORY "${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}")
+    _catkin_create_symlink("${absolute_python_executable}" "${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/python")
+
   else()
     # windows
     # generate env
