@@ -130,9 +130,12 @@ function(add_python_executable)
   endif()
 
   if(WIN32)
+    get_filename_component(WRAPPER_NAME
+      "${ARG_SCRIPT_NAME}"
+      NAME_WE)
     set(
       WRAPPER_SOURCE
-      "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/add_python_executable/${ARG_TARGET_NAME}/${ARG_SCRIPT_NAME}.cpp")
+      "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/add_python_executable/${ARG_TARGET_NAME}/${WRAPPER_NAME}.cpp")
     configure_file(
       "${catkin_EXTRAS_DIR}/templates/python_win32_wrapper.cpp.in"
       "${WRAPPER_SOURCE}"
@@ -140,10 +143,10 @@ function(add_python_executable)
 
     add_executable(${ARG_TARGET_NAME} "${WRAPPER_SOURCE}")
 
-    # The actual file name of the executable built on Windows will be ${ARG_SCRIPT_NAME}.exe according to OUTPUT_NAME
+    # The actual file name of the executable built on Windows will be ${WRAPPER_NAME}.exe according to OUTPUT_NAME
     set_target_properties(
       ${ARG_TARGET_NAME} PROPERTIES
-      OUTPUT_NAME "${ARG_SCRIPT_NAME}"
+      OUTPUT_NAME "${WRAPPER_NAME}"
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/windows_wrappers/${ARG_TARGET_NAME}")
 
     install(
