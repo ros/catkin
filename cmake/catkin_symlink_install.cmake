@@ -48,3 +48,32 @@ if(CATKIN_SYMLINK_INSTALL)
   # register script for being executed at install time
   install(SCRIPT "${CATKIN_SYMLINK_INSTALL_INSTALL_SCRIPT}")
 endif()
+
+function(_catkin_create_symlink absolute_file symlink)
+  # avoid any work if correct symlink is already in place
+  if(EXISTS "${symlink}" AND IS_SYMLINK "${symlink}")
+    get_filename_component(destination "${symlink}" REALPATH)
+    get_filename_component(real_absolute_file "${absolute_file}" REALPATH)
+    if(destination STREQUAL real_absolute_file)
+      message(STATUS "Up-to-date symlink: ${symlink}")
+      return()
+    endif()
+  endif()
+
+  message(STATUS "Symlinking: ${symlink}")
+  if(EXISTS "${symlink}" OR IS_SYMLINK "${symlink}")
+    file(REMOVE "${symlink}")
+  endif()
+
+  execute_process(
+    COMMAND "${CMAKE_COMMAND}" "-E" "create_symlink"
+      "${absolute_file}"
+      "${symlink}"
+  )
+  # the CMake command does not provide a return code so check manually
+  if(NOT EXISTS "${symlink}" OR NOT IS_SYMLINK "${symlink}")
+    get_filename_component(destination "${symlink}" REALPATH)
+    message(FATAL_ERROR
+      "Could not create symlink '${symlink}' pointing to '${absolute_file}'")
+  endif()
+endfunction()
