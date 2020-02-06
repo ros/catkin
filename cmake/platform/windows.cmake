@@ -131,7 +131,7 @@ function(add_python_executable)
 
   if(WIN32)
     get_filename_component(WRAPPER_NAME
-      "${ARG_TARGET_NAME}"
+      "${ARG_SCRIPT_NAME}"
       NAME_WE)
     set(
       WRAPPER_SOURCE
