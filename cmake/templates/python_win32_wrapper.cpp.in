@@ -45,6 +45,16 @@
 #include <iostream>
 #include <windows.h>
 
+static std::string dirnameOf(const std::string& fname)
+{
+    size_t pos = fname.find_last_of("\\/");
+    if (std::string::npos == pos)
+    {
+        throw ERROR_PATH_NOT_FOUND;
+    }
+    return fname.substr(0, pos);
+}
+
 int main(int argc, char* argv[]) try
 {
     const auto GetCurrentModuleName = []() -> std::string
@@ -67,38 +77,18 @@ int main(int argc, char* argv[]) try
         return moduleName;
     };
 
-    const auto FindPythonScript = [](const std::string& exeName) -> std::string
+    const auto FindPythonScript = [](const std::string& exeFullPath) -> std::string
     {
-        // implement a heuristic here to execute a Python script of the same name
-        // when the executable's name is <name>.exe, assume the Python script to be
-        // <name>.py or <name> under the same directory.
-        const std::string exeExtension = ".exe";
-        if (exeName.size() <= exeExtension.size() || exeName.substr(exeName.size() - exeExtension.size()) != exeExtension)
-        {
-            throw L"Invalid name.";
-        }
-        auto scriptName = exeName.substr(0, exeName.size() - exeExtension.size());
-        auto scriptNameWithPy = scriptName += ".py";
+        std::string scriptName;
+        scriptName += dirnameOf(exeFullPath);
+        scriptName += "\\@ARG_SCRIPT_NAME@";
 
 #if defined(DEBUG)
         fprintf(stderr, "[DEBUG] Python script name: %s\n", scriptName.c_str());
 #endif
 
-        // search <name>.py first
-        if (INVALID_FILE_ATTRIBUTES != ::GetFileAttributes(scriptNameWithPy.c_str()))
-        {
-            // use quoted string to ensure the correct path is used
-            return "\"" + scriptNameWithPy + "\"";
-        }
-
-        // then fallback to search <name>
-        if (INVALID_FILE_ATTRIBUTES != ::GetFileAttributes(scriptName.c_str()))
-        {
-            // use quoted string to ensure the correct path is used
-            return "\"" + scriptName + "\"";
-        }
-
-        throw ::GetLastError();
+        // use quoted string to ensure the correct path is used
+        return "\"" + scriptName + "\"";
     };
 
     const auto GetPythonExecutable = []() -> std::string
@@ -109,7 +99,7 @@ int main(int argc, char* argv[]) try
         fprintf(stderr, "[DEBUG] Python executable: %s\n", pythonExecutable.c_str());
 #endif
 
-        // use quoted string to indicate where the file name ends and the arguments begin
+        // use quoted string to ensure the correct path is used
         return "\"" + pythonExecutable + "\"";
     };
 
