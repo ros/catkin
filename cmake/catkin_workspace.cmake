@@ -64,8 +64,13 @@ function(catkin_workspace)
         if(EXISTS ${CMAKE_SOURCE_DIR}/${path}/CMakeLists.txt)
           # compare CMakeLists.txt with standard content
           file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/metapackages/${name}/CMakeLists.txt generated_cmakelists)
+          # allow any of CMake minimum version
+          string(REPLACE "2.8.3" "[0-9]+\\.[0-9]+\\.[0-9]+" generated_cmakelists_pattern "${generated_cmakelists}")
+          # need to escape parenthesis
+          string(REPLACE "(" "\\(" generated_cmakelists_pattern "${generated_cmakelists_pattern}")
+          string(REPLACE ")" "\\)" generated_cmakelists_pattern "${generated_cmakelists_pattern}")
           file(STRINGS ${path}/CMakeLists.txt existing_cmakelists)
-          if(NOT "${generated_cmakelists}" STREQUAL "${existing_cmakelists}")
+          if(NOT "${existing_cmakelists}" MATCHES "${generated_cmakelists_pattern}")
             set(CATKIN_NONHOMOGENEOUS_WORKSPACE TRUE)
             message("WARNING: The CMakeLists.txt of the metapackage '${name}' contains non standard content. Use the content of the following file instead: ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/metapackages/${name}/CMakeLists.txt")
           endif()
