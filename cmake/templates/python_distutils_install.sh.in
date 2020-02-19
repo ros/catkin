@@ -9,7 +9,6 @@ if [ -n "$DESTDIR" ] ; then
             /bin/echo "otherwise python's distutils will bork things."
             exit 1
     esac
-    DESTDIR_ARG="--root=$DESTDIR"
 fi
 
 echo_and_run() { echo "+ $@" ; "$@" ; }
@@ -29,5 +28,5 @@ echo_and_run /usr/bin/env \
     "@CMAKE_CURRENT_SOURCE_DIR@/setup.py" \
     build --build-base "@CMAKE_CURRENT_BINARY_DIR@" \
     install \
-    $DESTDIR_ARG \
+    --root="${DESTDIR-/}" \
     @SETUPTOOLS_ARG_EXTRA@ --prefix="@CMAKE_INSTALL_PREFIX@" --install-scripts="@CMAKE_INSTALL_PREFIX@/@CATKIN_GLOBAL_BIN_DESTINATION@"
