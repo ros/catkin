@@ -5,13 +5,13 @@ from setuptools import setup
 import os
 
 catkin_scripts = [
-        'bin/catkin_find',
-        'bin/catkin_init_workspace',
-        'bin/catkin_make',
-        'bin/catkin_make_isolated',
-        'bin/catkin_test_results',
-        'bin/catkin_topological_order',
-    ]
+    'bin/catkin_find',
+    'bin/catkin_init_workspace',
+    'bin/catkin_make',
+    'bin/catkin_make_isolated',
+    'bin/catkin_test_results',
+    'bin/catkin_topological_order',
+]
 
 if os.name == 'nt':
     import sys
