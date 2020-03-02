@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.22 (2020-03-02)
+-------------------
 * [Windows] rename catkin scripts for parallel package parsing support (`#1066 <https://github.com/ros/catkin/issues/1066>`_)
 * allow flexible CMake minimum version in metapackage CMake code (`#1065 <https://github.com/ros/catkin/issues/1065>`_)
 * [Windows] generate executables without extension name (`#1061 <https://github.com/ros/catkin/issues/1061>`_, `#1063 <https://github.com/ros/catkin/issues/1063>`_)
