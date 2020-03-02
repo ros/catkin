@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* always pass --root to setuptools install (`#1068 <https://github.com/ros/catkin/issues/1068>`_)
+
 0.7.22 (2020-03-02)
 -------------------
 * [Windows] rename catkin scripts for parallel package parsing support (`#1066 <https://github.com/ros/catkin/issues/1066>`_)
