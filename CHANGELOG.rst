@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.23 (2020-03-02)
+-------------------
 * always pass --root to setuptools install (`#1068 <https://github.com/ros/catkin/issues/1068>`_)
 
 0.7.22 (2020-03-02)
