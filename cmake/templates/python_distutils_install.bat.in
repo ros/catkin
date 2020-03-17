@@ -17,4 +17,4 @@ set "CATKIN_BINARY_DIR=@CMAKE_BINARY_DIR@"
     install %DESTDIR_ARG% @SETUPTOOLS_ARG_EXTRA@ ^
     --prefix="@SETUPTOOLS_INSTALL_PREFIX@" ^
     --install-scripts="@SETUPTOOLS_INSTALL_PREFIX@\@CATKIN_GLOBAL_BIN_DESTINATION@" ^
-    --root="/"
+    --root=\
