@@ -20,6 +20,6 @@ for /f "usebackq tokens=*" %%a in ('@SETUPTOOLS_INSTALL_PREFIX@') do (
     "@CMAKE_CURRENT_SOURCE_DIR@\setup.py" ^
     build --build-base "@CMAKE_CURRENT_BINARY_DIR@" ^
     install %DESTDIR_ARG% @SETUPTOOLS_ARG_EXTRA@ ^
-    "--prefix=%_SETUPTOOLS_INSTALL_PATH%" ^
-    "--install-scripts=%_SETUPTOOLS_INSTALL_PATH%\@CATKIN_GLOBAL_BIN_DESTINATION@" ^
+    --prefix="%_SETUPTOOLS_INSTALL_PATH%" ^
+    --install-scripts="%_SETUPTOOLS_INSTALL_PATH%\@CATKIN_GLOBAL_BIN_DESTINATION@" ^
     --root=%_SETUPTOOLS_INSTALL_ROOT%\
