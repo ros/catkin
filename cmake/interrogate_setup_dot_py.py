@@ -92,7 +92,7 @@ def _get_locations(pkgs, package_dir):
     return locations
 
 
-def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modules):
+def generate_cmake_file(setup_module, package_name, version, scripts, package_dir, pkgs, modules):
     """
     Generate lines to add to a cmake file which will set variables.
 
@@ -104,6 +104,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     """
     prefix = '%s_SETUP_PY' % package_name
     result = []
+    result.append(r'set(%s_SETUP_MODULE "%s")' % (prefix, setup_module))
     result.append(r'set(%s_VERSION "%s")' % (prefix, version))
     result.append(r'set(%s_SCRIPTS "%s")' % (prefix, ';'.join(scripts)))
 
@@ -160,7 +161,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     return result
 
 
-def _create_mock_setup_function(package_name, outfile):
+def _create_mock_setup_function(setup_module, package_name, outfile):
     """
     Create a function to call instead of distutils.core.setup or setuptools.setup.
 
@@ -197,7 +198,8 @@ def _create_mock_setup_function(package_name, outfile):
         if used_unsupported_args:
             sys.stderr.write('*** Arguments %s to setup() not supported in catkin devel space in setup.py of %s\n' % (used_unsupported_args, package_name))
 
-        result = generate_cmake_file(package_name=package_name,
+        result = generate_cmake_file(setup_module=setup_module,
+                                     package_name=package_name,
                                      version=version,
                                      scripts=scripts,
                                      package_dir=package_dir,
@@ -235,12 +237,11 @@ def main():
     # context of evaluating setup.py
     backup_modules = {}
     try:
-        fake_setup = _create_mock_setup_function(
-            package_name=args.package_name, outfile=args.outfile)
 
         for module in setup_modules:
             backup_modules[id(module)] = module.setup
-            module.setup = fake_setup
+            module.setup = _create_mock_setup_function(
+                setup_module=module.__name__, package_name=args.package_name, outfile=args.outfile)
 
         runpy.run_path(args.setupfile_path)
     finally:
