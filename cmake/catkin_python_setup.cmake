@@ -141,12 +141,13 @@ function(catkin_python_setup)
       DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
   endforeach()
 
-  if(${PROJECT_NAME}_SETUP_PY_SETUP_MODULE STREQUAL setuptools)
-    message(STATUS "Appending egg base")
+  assert(PYTHON_INSTALL_DIR)
+  if(${PROJECT_NAME}_SETUP_PY_SETUP_MODULE STREQUAL "setuptools")
     set(SETUPTOOLS_EGG_INFO "egg_info --egg-base ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}")
+  else()
+    set(SETUPTOOLS_EGG_INFO "")
   endif()
 
-  assert(PYTHON_INSTALL_DIR)
   set(INSTALL_CMD_WORKING_DIRECTORY ${${PROJECT_NAME}_SOURCE_DIR})
   if(NOT WIN32)
     set(INSTALL_SCRIPT
