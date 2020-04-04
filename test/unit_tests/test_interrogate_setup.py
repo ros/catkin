@@ -16,46 +16,55 @@ from interrogate_setup_dot_py import generate_cmake_file  # noqa: E402
 class InterrogateSetupTest(unittest.TestCase):
 
     def test_generate_cmake_file(self):
-        cmake_lines = (generate_cmake_file(setup_module='setuptools',
-                                           package_name='pack1',
+        cmake_lines = (generate_cmake_file(package_name='pack1',
                                            version='0.0.1',
                                            scripts=[],
                                            package_dir={'': 'foopath'},
                                            pkgs=['foo', 'bar', 'bar.sub'],
                                            modules=[]))
-        self.assertEqual(['set(pack1_SETUP_PY_SETUP_MODULE "setuptools")',
-                          'set(pack1_SETUP_PY_VERSION "0.0.1")',
+        self.assertEqual(['set(pack1_SETUP_PY_VERSION "0.0.1")',
                           'set(pack1_SETUP_PY_SCRIPTS "")',
                           'set(pack1_SETUP_PY_PACKAGES "foo;bar")',
                           'set(pack1_SETUP_PY_PACKAGE_DIRS "foopath/foo;foopath/bar")',
                           'set(pack1_SETUP_PY_MODULES "")',
                           'set(pack1_SETUP_PY_MODULE_DIRS "")'],
                          cmake_lines)
-        cmake_lines = (generate_cmake_file(setup_module='setuptools',
-                                           package_name='pack1',
+        cmake_lines = (generate_cmake_file(package_name='pack1',
                                            version='0.0.1',
                                            scripts=[],
                                            package_dir={},
                                            pkgs=['foo', 'bar', 'bar.sub'],
                                            modules=[]))
-        self.assertEqual(['set(pack1_SETUP_PY_SETUP_MODULE "setuptools")',
-                          'set(pack1_SETUP_PY_VERSION "0.0.1")',
+        self.assertEqual(['set(pack1_SETUP_PY_VERSION "0.0.1")',
                           'set(pack1_SETUP_PY_SCRIPTS "")',
                           'set(pack1_SETUP_PY_PACKAGES "foo;bar")',
                           'set(pack1_SETUP_PY_PACKAGE_DIRS "foo;bar")',
                           'set(pack1_SETUP_PY_MODULES "")',
                           'set(pack1_SETUP_PY_MODULE_DIRS "")'],
                          cmake_lines)
-        cmake_lines = (generate_cmake_file(setup_module='setuptools',
-                                           package_name='pack1',
+        cmake_lines = (generate_cmake_file(package_name='pack1',
                                            version='0.0.1',
                                            scripts=['bin/foo', 'nodes/bar'],
                                            package_dir={},
                                            pkgs=['foo', 'bar', 'bar.sub'],
                                            modules=[]))
+        self.assertEqual(['set(pack1_SETUP_PY_VERSION "0.0.1")',
+                          'set(pack1_SETUP_PY_SCRIPTS "bin/foo;nodes/bar")',
+                          'set(pack1_SETUP_PY_PACKAGES "foo;bar")',
+                          'set(pack1_SETUP_PY_PACKAGE_DIRS "foo;bar")',
+                          'set(pack1_SETUP_PY_MODULES "")',
+                          'set(pack1_SETUP_PY_MODULE_DIRS "")'],
+                         cmake_lines)
+        cmake_lines = (generate_cmake_file(package_name='pack1',
+                                           version='0.0.1',
+                                           scripts=[],
+                                           package_dir={},
+                                           pkgs=['foo', 'bar', 'bar.sub'],
+                                           modules=[],
+                                           setup_module='setuptools'))
         self.assertEqual(['set(pack1_SETUP_PY_SETUP_MODULE "setuptools")',
                           'set(pack1_SETUP_PY_VERSION "0.0.1")',
-                          'set(pack1_SETUP_PY_SCRIPTS "bin/foo;nodes/bar")',
+                          'set(pack1_SETUP_PY_SCRIPTS "")',
                           'set(pack1_SETUP_PY_PACKAGES "foo;bar")',
                           'set(pack1_SETUP_PY_PACKAGE_DIRS "foo;bar")',
                           'set(pack1_SETUP_PY_MODULES "")',
@@ -74,16 +83,14 @@ class InterrogateSetupTest(unittest.TestCase):
                          _get_locations(['foo.bar'], {'foo': 'src'}))
 
     def test_generate_cmake_file_noallprefix(self):
-        cmake_lines = (generate_cmake_file(setup_module='setuptools',
-                                           package_name='pack1',
+        cmake_lines = (generate_cmake_file(package_name='pack1',
                                            version='0.0.1',
                                            scripts=[],
                                            package_dir={'foo': 'src',
                                                         'bar': 'lib'},
                                            pkgs=['foo', 'bar', 'bar.sub'],
                                            modules=[]))
-        self.assertEqual(['set(pack1_SETUP_PY_SETUP_MODULE "setuptools")',
-                          'set(pack1_SETUP_PY_VERSION "0.0.1")',
+        self.assertEqual(['set(pack1_SETUP_PY_VERSION "0.0.1")',
                           'set(pack1_SETUP_PY_SCRIPTS "")',
                           'set(pack1_SETUP_PY_PACKAGES "foo;bar")',
                           'set(pack1_SETUP_PY_PACKAGE_DIRS "src;lib")',
@@ -92,8 +99,7 @@ class InterrogateSetupTest(unittest.TestCase):
                          cmake_lines)
 
     def test_generate_cmake_file_msg_srv(self):
-        cmake_lines = (generate_cmake_file(setup_module='setuptools',
-                                           package_name='pack1',
+        cmake_lines = (generate_cmake_file(package_name='pack1',
                                            version='0.0.1',
                                            scripts=[],
                                            package_dir={'foo.msg': 'msg',
@@ -101,8 +107,7 @@ class InterrogateSetupTest(unittest.TestCase):
                                                         '': 'src'},
                                            pkgs=['foo.msg', 'foo.srv', 'foo'],
                                            modules=[]))
-        self.assertEqual(['set(pack1_SETUP_PY_SETUP_MODULE "setuptools")',
-                          'set(pack1_SETUP_PY_VERSION "0.0.1")',
+        self.assertEqual(['set(pack1_SETUP_PY_VERSION "0.0.1")',
                           'set(pack1_SETUP_PY_SCRIPTS "")',
                           'set(pack1_SETUP_PY_PACKAGES "foo")',
                           'set(pack1_SETUP_PY_PACKAGE_DIRS "src/foo")',
@@ -113,7 +118,6 @@ class InterrogateSetupTest(unittest.TestCase):
     def test_generate_cmake_file_invalid(self):
         self.assertRaises(RuntimeError,
                           generate_cmake_file,
-                          setup_module='setuptools',
                           package_name='pack1',
                           version='0.0.1',
                           scripts=[],

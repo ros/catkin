@@ -92,19 +92,21 @@ def _get_locations(pkgs, package_dir):
     return locations
 
 
-def generate_cmake_file(setup_module, package_name, version, scripts, package_dir, pkgs, modules):
+def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modules, setup_module=None):
     """
     Generate lines to add to a cmake file which will set variables.
 
     :param version: str, format 'int.int.int'
     :param scripts: [list of str]: relative paths to scripts
     :param package_dir: {modulename: path}
-    :pkgs: [list of str] python_packages declared in catkin package
-    :modules: [list of str] python modules
+    :param pkgs: [list of str] python_packages declared in catkin package
+    :param modules: [list of str] python modules
+    :param setup_module: str, setuptools or distutils
     """
     prefix = '%s_SETUP_PY' % package_name
     result = []
-    result.append(r'set(%s_SETUP_MODULE "%s")' % (prefix, setup_module))
+    if setup_module:
+        result.append(r'set(%s_SETUP_MODULE "%s")' % (prefix, setup_module))
     result.append(r'set(%s_VERSION "%s")' % (prefix, version))
     result.append(r'set(%s_SCRIPTS "%s")' % (prefix, ';'.join(scripts)))
 
@@ -198,13 +200,13 @@ def _create_mock_setup_function(setup_module, package_name, outfile):
         if used_unsupported_args:
             sys.stderr.write('*** Arguments %s to setup() not supported in catkin devel space in setup.py of %s\n' % (used_unsupported_args, package_name))
 
-        result = generate_cmake_file(setup_module=setup_module,
-                                     package_name=package_name,
+        result = generate_cmake_file(package_name=package_name,
                                      version=version,
                                      scripts=scripts,
                                      package_dir=package_dir,
                                      pkgs=pkgs,
-                                     modules=modules)
+                                     modules=modules,
+                                     setup_module=setup_module)
         with open(outfile, 'w') as out:
             out.write('\n'.join(result))
 
