@@ -31,29 +31,6 @@ function(catkin_python_setup)
     message(FATAL_ERROR "catkin_python_setup() called without 'setup.py' in project folder ' ${${PROJECT_NAME}_SOURCE_DIR}'")
   endif()
 
-  assert(PYTHON_INSTALL_DIR)
-  set(INSTALL_CMD_WORKING_DIRECTORY ${${PROJECT_NAME}_SOURCE_DIR})
-  if(NOT WIN32)
-    set(INSTALL_SCRIPT
-      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/python_distutils_install.sh)
-    configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.sh.in
-      ${INSTALL_SCRIPT}
-      @ONLY)
-  else()
-    # need to convert install prefix to native path for python setuptools --prefix (its fussy about \'s)
-    file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX} PYTHON_INSTALL_PREFIX)
-    set(INSTALL_SCRIPT
-      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/python_distutils_install.bat)
-    configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.bat.in
-      ${INSTALL_SCRIPT}
-      @ONLY)
-  endif()
-
-  # generate python script which gets executed at install time
-  configure_file(${catkin_EXTRAS_DIR}/templates/safe_execute_install.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/safe_execute_install.cmake)
-  install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/safe_execute_install.cmake)
-
   # interrogate setup.py
   stamp(${${PROJECT_NAME}_SOURCE_DIR}/setup.py)
   assert(CATKIN_ENV)
@@ -163,6 +140,35 @@ function(catkin_python_setup)
       TARGET_NAME ${PROJECT_NAME}_${name}_exec_install
       DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
   endforeach()
+
+  assert(PYTHON_INSTALL_DIR)
+  if(${PROJECT_NAME}_SETUP_PY_SETUP_MODULE STREQUAL "setuptools")
+    set(SETUPTOOLS_EGG_INFO "egg_info --egg-base ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}")
+  else()
+    set(SETUPTOOLS_EGG_INFO "")
+  endif()
+
+  set(INSTALL_CMD_WORKING_DIRECTORY ${${PROJECT_NAME}_SOURCE_DIR})
+  if(NOT WIN32)
+    set(INSTALL_SCRIPT
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/python_distutils_install.sh)
+    configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.sh.in
+      ${INSTALL_SCRIPT}
+      @ONLY)
+  else()
+    # need to convert install prefix to native path for python setuptools --prefix (its fussy about \'s)
+    file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX} PYTHON_INSTALL_PREFIX)
+    set(INSTALL_SCRIPT
+      ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/python_distutils_install.bat)
+    configure_file(${catkin_EXTRAS_DIR}/templates/python_distutils_install.bat.in
+      ${INSTALL_SCRIPT}
+      @ONLY)
+  endif()
+
+  # generate python script which gets executed at install time
+  configure_file(${catkin_EXTRAS_DIR}/templates/safe_execute_install.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/safe_execute_install.cmake)
+  install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/safe_execute_install.cmake)
 endfunction()
 
 stamp(${catkin_EXTRAS_DIR}/interrogate_setup_dot_py.py)

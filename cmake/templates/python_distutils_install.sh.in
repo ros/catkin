@@ -26,6 +26,7 @@ echo_and_run /usr/bin/env \
     CATKIN_BINARY_DIR="@CMAKE_BINARY_DIR@" \
     "@PYTHON_EXECUTABLE@" \
     "@CMAKE_CURRENT_SOURCE_DIR@/setup.py" \
+    @SETUPTOOLS_EGG_INFO@ \
     build --build-base "@CMAKE_CURRENT_BINARY_DIR@" \
     install \
     --root="${DESTDIR-/}" \
