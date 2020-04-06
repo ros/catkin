@@ -94,6 +94,7 @@ function(catkin_add_env_hooks file_prefix)
         @ONLY)
     elseif (EXISTS ${base})
       # copy plain file
+      stamp("${base}")
       file(COPY ${base} DESTINATION ${CATKIN_DEVEL_PREFIX}/etc/catkin/profile.d)
     else()
       message(FATAL_ERROR "catkin_add_env_hooks() could not find environment hook.  Either '${base}', '${base}.em', '${base}.develspace.em' or '${base}.in' must exist.")
