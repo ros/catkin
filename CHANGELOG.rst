@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.2 (2020-04-06)
+------------------
 * use Python 3 shebang (`#1076 <https://github.com/ros/catkin/issues/1076>`_)
 * stamp env hook before copying (`#1075 <https://github.com/ros/catkin/issues/1075>`_)
 * set egg-base for setuptools packages (`#1073 <https://github.com/ros/catkin/issues/1073>`_)
