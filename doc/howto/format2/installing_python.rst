@@ -35,7 +35,7 @@ Another good practice is to keep executable scripts very short,
 placing most of the code in a module which the script imports and then
 invokes::
 
-  #! /usr/bin/env python
+  #! /usr/bin/env python3
   import your_package.main
   if __name__ == '__main__':
       your_package.main()
