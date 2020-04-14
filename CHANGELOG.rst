@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* also rewrite shebang lines with whitespace in catkin_install_python (`#1079 <https://github.com/ros/catkin/issues/1079>`_)
+
 0.8.2 (2020-04-06)
 ------------------
 * use Python 3 shebang (`#1076 <https://github.com/ros/catkin/issues/1076>`_)
