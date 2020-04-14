@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.3 (2020-04-14)
+------------------
 * also rewrite shebang lines with whitespace in catkin_install_python (`#1079 <https://github.com/ros/catkin/issues/1079>`_)
 
 0.8.2 (2020-04-06)
