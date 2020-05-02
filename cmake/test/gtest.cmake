@@ -1,6 +1,9 @@
 _generate_function_if_testing_is_disabled(
   "catkin_add_gtest"
   "catkin_add_gmock")
+_generate_function_if_no_cxx_language(
+  "catkin_add_gtest"
+  "catkin_add_gmock")
 
 #
 # Add a GTest based test target.
@@ -299,6 +302,12 @@ function(catkin_find_google_test_source gtest_path googletest_path
     endif()
   endif()
 endfunction()
+
+get_property(ENABLED_LANGUAGES_LIST GLOBAL PROPERTY ENABLED_LANGUAGES)
+list(FIND ENABLED_LANGUAGES_LIST "CXX" _cxx_index)
+if ("${_cxx_index}" EQUAL -1) # if C++ isn't an enabled language
+  return()
+endif()
 
 find_package(GMock QUIET)
 find_package(GTest QUIET)
