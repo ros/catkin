@@ -301,7 +301,13 @@ function(catkin_find_google_test_source gtest_path googletest_path
 endfunction()
 
 find_package(GMock QUIET)
-find_package(GTest QUIET)
+# the GMockConfig.cmake from the Debian package cmake-extras provides all targets
+if(TARGET gtest AND TARGET gtest_main AND TARGET gmock AND TARGET gmock_main)
+  set(GMOCK_FOUND TRUE)
+  set(GTEST_FOUND TRUE)
+else()
+  find_package(GTest QUIET)
+endif()
 if(NOT GMOCK_FOUND OR NOT GTEST_FOUND)
   # If we find one but not the other, see if we can get both from source
   # only add gmock/gtest directory once per workspace
