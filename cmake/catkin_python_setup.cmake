@@ -143,7 +143,7 @@ function(catkin_python_setup)
 
   assert(PYTHON_INSTALL_DIR)
   if(${PROJECT_NAME}_SETUP_PY_SETUP_MODULE STREQUAL "setuptools")
-    set(SETUPTOOLS_EGG_INFO "egg_info --egg-base ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}")
+    set(SETUPTOOLS_EGG_INFO "egg_info --egg-base ${CMAKE_CURRENT_BINARY_DIR}")
   else()
     set(SETUPTOOLS_EGG_INFO "")
   endif()
