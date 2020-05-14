@@ -238,7 +238,7 @@ function(catkin_find_google_test_source gtest_path googletest_path
 
   # Path to gtest from the googletest Debian package.
   list(APPEND _gtest_include_paths "${googletest_path}/googletest/include/gtest")
-  list(APPEND _gtest_source_paths "${googletest_path}/googletest/googletest/src")
+  list(APPEND _gtest_source_paths "${googletest_path}/googletest/src")
 
   if(CATKIN_TOPLEVEL)
     # Ensure current workspace is searched before system path
