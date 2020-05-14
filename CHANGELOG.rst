@@ -2,6 +2,13 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix GTest detection when cmake-extras is installed (`#1091 <https://github.com/ros/catkin/issues/1091>`_)
+* fix gtest_source_paths (`#1088 <https://github.com/ros/catkin/issues/1088>`_)
+* fix -egg-base path to point to the build space (`#1090 <https://github.com/ros/catkin/issues/1090>`_)
+* also rewrite shebang lines with whitespace in catkin_install_python (`#1079 <https://github.com/ros/catkin/issues/1079>`_)
+
 0.7.24 (2020-04-06)
 -------------------
 * stamp env hook before copying (`#1075 <https://github.com/ros/catkin/issues/1075>`_)
