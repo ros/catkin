@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.25 (2020-05-14)
+-------------------
 * fix GTest detection when cmake-extras is installed (`#1091 <https://github.com/ros/catkin/issues/1091>`_)
 * fix gtest_source_paths (`#1088 <https://github.com/ros/catkin/issues/1088>`_)
 * fix -egg-base path to point to the build space (`#1090 <https://github.com/ros/catkin/issues/1090>`_)
