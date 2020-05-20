@@ -108,11 +108,25 @@ int main(int argc, char* argv[]) try
         {
             firstLine.erase(0, SHEBANG.size());
 
-            // trim extra spaces.
-            auto start = firstLine.find_first_not_of(" ");
-            if (std::string::npos != start)
+            // spaces & tabs are considered as extra
+            std::string extra_chars(" \t");
+
+            // left trim extra characters.
+            auto ltrim = firstLine.find_first_not_of(extra_chars);
+            while ((std::string::npos != ltrim) &&
+                   (0 != ltrim))
             {
-                firstLine.erase(0, start);
+                firstLine.erase(0, ltrim);
+                ltrim = firstLine.find_first_not_of(extra_chars);
+            }
+
+            // right trim extra characters.
+            auto rtrim = firstLine.find_last_not_of(extra_chars);
+            while ((std::string::npos != rtrim) &&
+                   (firstLine.size() - 1 != rtrim))
+            {
+                firstLine.erase(rtrim + 1);
+                rtrim = firstLine.find_last_not_of(extra_chars);
             }
         }
 
