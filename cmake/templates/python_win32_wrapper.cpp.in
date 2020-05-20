@@ -113,20 +113,16 @@ int main(int argc, char* argv[]) try
 
             // left trim extra characters.
             auto ltrim = firstLine.find_first_not_of(extra_chars);
-            while ((std::string::npos != ltrim) &&
-                   (0 != ltrim))
+            if (std::string::npos != ltrim)
             {
                 firstLine.erase(0, ltrim);
-                ltrim = firstLine.find_first_not_of(extra_chars);
             }
 
             // right trim extra characters.
             auto rtrim = firstLine.find_last_not_of(extra_chars);
-            while ((std::string::npos != rtrim) &&
-                   (firstLine.size() - 1 != rtrim))
+            if (std::string::npos != rtrim)
             {
                 firstLine.erase(rtrim + 1);
-                rtrim = firstLine.find_last_not_of(extra_chars);
             }
         }
 
