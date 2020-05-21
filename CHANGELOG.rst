@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.5 (2020-05-21)
+------------------
 * stop catkin from trying to find C++ libraries if not needed (`#1083 <https://github.com/ros/catkin/issues/1083>`_)
 * [Windows] make more relocatable wrapper (`#1086 <https://github.com/ros/catkin/issues/1086>`_)
 * suppress FPHSA name mismatch for empy (`#1093 <https://github.com/ros/catkin/issues/1093>`_)
