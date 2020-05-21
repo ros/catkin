@@ -1,6 +1,15 @@
 _generate_function_if_testing_is_disabled(
   "catkin_add_gtest"
-  "catkin_add_gmock")
+  "catkin_add_gmock"
+  "catkin_add_executable_with_gtest"
+  "catkin_add_executable_with_gmock"
+  "catkin_find_google_test_source")
+_generate_function_if_no_cxx_language(
+  "catkin_add_gtest"
+  "catkin_add_gmock"
+  "catkin_add_executable_with_gtest"
+  "catkin_add_executable_with_gmock"
+  "catkin_find_google_test_source")
 
 #
 # Add a GTest based test target.

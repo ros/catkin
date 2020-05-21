@@ -26,6 +26,23 @@ macro(_generate_function_if_testing_is_disabled)
   endif()
 endmacro()
 
+# creates dummy functions in case C++ is not a language specified, which outputs an error
+macro(_generate_function_if_no_cxx_language)
+  get_property(ENABLED_LANGUAGES_LIST GLOBAL PROPERTY ENABLED_LANGUAGES)
+  list(FIND ENABLED_LANGUAGES_LIST "CXX" _cxx_index)
+  if ("${_cxx_index}" EQUAL -1) # if C++ isn't an enabled language
+    foreach(_arg ${ARGN})
+      set(tmp_func_name ${_arg})
+      function(${_arg})
+        message(FATAL_ERROR
+          "${tmp_func_name}() is not available when the CXX language isn't enabled. "
+          "Check the `LANGUAGES` argument of the `project()` function to make sure `CXX` is not excluded.")
+      endfunction()
+    endforeach()
+    return()
+  endif()
+endmacro()
+
 # checks if a function has been called while testing is skipped
 # and outputs a warning message
 macro(_warn_if_skip_testing funcname)
