@@ -36,7 +36,7 @@ macro(_generate_function_if_no_cxx_language)
       function(${_arg})
         message(FATAL_ERROR
           "${tmp_func_name}() is not available when the CXX language isn't enabled. "
-          "Try adding \"project(project_name LANGUAGES CXX)\" to your cmake.")
+          "Check the `LANGUAGES` argument of the `project()` function to make sure `CXX` is not excluded.")
       endfunction()
     endforeach()
     return()
