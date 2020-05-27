@@ -27,7 +27,7 @@ if(NOT EMPY_SCRIPT)
     # On OSX, there's an em.py, but not an executable empy script
     find_python_module(em)
     if(NOT PY_EM)
-      message(FATAL_ERROR "Unable to find either executable 'empy' or Python module 'em'... try installing the package 'python-empy'")
+      message(FATAL_ERROR "Unable to find either executable 'empy' or Python module 'em'... try installing the package 'python3-empy'")
     endif()
     # ensure to use cmake-style path separators on Windows
     file(TO_CMAKE_PATH "${PY_EM}" EMPY_SCRIPT)
