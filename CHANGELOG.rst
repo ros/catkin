@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.6 (2020-05-28)
+------------------
 * error message python-empy -> python3-empy (`#1095 <https://github.com/ros/catkin/issues/1095>`_)
 
 0.8.5 (2020-05-21)
