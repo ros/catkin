@@ -2,6 +2,10 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* error message python-empy -> python3-empy (`#1095 <https://github.com/ros/catkin/issues/1095>`_)
+
 0.8.5 (2020-05-21)
 ------------------
 * stop catkin from trying to find C++ libraries if not needed (`#1083 <https://github.com/ros/catkin/issues/1083>`_)
