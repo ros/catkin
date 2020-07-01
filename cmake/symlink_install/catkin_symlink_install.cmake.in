@@ -11,7 +11,7 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/symlink_install_manifest.txt")
 # :type ARGN: various
 #
 function(catkin_symlink_install_directory)
-  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION" "DIRECTORY;PATTERN;PATTERN_EXCLUDE" ${ARGN})
+  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION;CURRENT_SOURCE_DIR" "DIRECTORY;PATTERN;PATTERN_EXCLUDE" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_symlink_install_directory() called with "
       "unused/unsupported arguments: ${ARG_UNPARSED_ARGUMENTS}")
@@ -34,7 +34,7 @@ function(catkin_symlink_install_directory)
   foreach(dir ${ARG_DIRECTORY})
     # make dir an absolute path
     if(NOT IS_ABSOLUTE "${dir}")
-      set(dir "@CMAKE_CURRENT_SOURCE_DIR@/${dir}")
+      set(dir "${ARG_CURRENT_SOURCE_DIR}/${dir}")
     endif()
 
     if(EXISTS "${dir}")
@@ -108,7 +108,7 @@ endfunction()
 # :type ARGN: various
 #
 function(catkin_symlink_install_files)
-  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION;RENAME" "FILES" ${ARGN})
+  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION;RENAME;CURRENT_SOURCE_DIR" "FILES" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_symlink_install_files() called with "
       "unused/unsupported arguments: ${ARG_UNPARSED_ARGUMENTS}")
@@ -134,7 +134,7 @@ function(catkin_symlink_install_files)
   foreach(file ${ARG_FILES})
     # make file an absolute path
     if(NOT IS_ABSOLUTE "${file}")
-      set(file "@CMAKE_CURRENT_SOURCE_DIR@/${file}")
+      set(file "${ARG_CURRENT_SOURCE_DIR}/${file}")
     endif()
 
     if(EXISTS "${file}")
@@ -163,7 +163,7 @@ endfunction()
 # :type ARGN: various
 #
 function(catkin_symlink_install_programs)
-  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION" "PROGRAMS" ${ARGN})
+  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION;CURRENT_SOURCE_DIR" "PROGRAMS" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_symlink_install_programs() called with "
       "unused/unsupported arguments: ${ARG_UNPARSED_ARGUMENTS}")
@@ -181,7 +181,7 @@ function(catkin_symlink_install_programs)
   foreach(file ${ARG_PROGRAMS})
     # make file an absolute path
     if(NOT IS_ABSOLUTE "${file}")
-      set(file "@CMAKE_CURRENT_SOURCE_DIR@/${file}")
+      set(file "${ARG_CURRENT_SOURCE_DIR}/${file}")
     endif()
 
     if(EXISTS "${file}")
