@@ -38,6 +38,9 @@ function(catkin_install_python signature)
         get_filename_component(filename ${source_file} NAME)
         set(rewritten_file "${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace")
         file(MAKE_DIRECTORY ${rewritten_file})
+        # even though the content of the file is overwritten
+        # the copy makes sure the file has the right permissions
+        file(COPY ${source_file} DESTINATION ${rewritten_file} USE_SOURCE_PERMISSIONS)
         set(rewritten_file "${rewritten_file}/${filename}")
         file(WRITE ${rewritten_file} "${data}")
       else()
