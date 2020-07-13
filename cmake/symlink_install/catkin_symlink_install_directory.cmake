@@ -72,7 +72,7 @@ function(catkin_symlink_install_directory directory_keyword)
 
     string(REPLACE ";" "\" \"" argn_quoted "\"${argn}\"")
     catkin_symlink_install_append_install_code(
-      "catkin_symlink_install_directory(DIRECTORY ${argn_quoted})"
+      "catkin_symlink_install_directory(CURRENT_SOURCE_DIR \"${CMAKE_CURRENT_SOURCE_DIR}\" DIRECTORY ${argn_quoted})"
       COMMENTS "install(DIRECTORY ${argn_quoted})"
     )
   endif()

@@ -44,7 +44,7 @@ function(catkin_symlink_install_programs programs_keyword)
   if(index EQUAL -1)
     string(REPLACE ";" "\" \"" argn_quoted "\"${ARGN}\"")
     catkin_symlink_install_append_install_code(
-      "catkin_symlink_install_programs(PROGRAMS ${argn_quoted})"
+      "catkin_symlink_install_programs(CURRENT_SOURCE_DIR \"${CMAKE_CURRENT_SOURCE_DIR}\" PROGRAMS ${argn_quoted})"
       COMMENTS "install(PROGRAMS ${argn_quoted})"
     )
   endif()
