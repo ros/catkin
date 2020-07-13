@@ -7,11 +7,14 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/symlink_install_manifest.txt")
 # Reimplement CMake install(DIRECTORY) command to use symlinks instead of
 # copying resources.
 #
+# :param CURRENT_SOURCE_DIR: the value of CMAKE_CURRENT_SOURCE_DIR from where
+#   this function is called
+# :type CURRENT_SOURCE_DIR: a path
 # :param ARGN: the same arguments as the CMake install command.
 # :type ARGN: various
 #
 function(catkin_symlink_install_directory)
-  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION" "DIRECTORY;PATTERN;PATTERN_EXCLUDE" ${ARGN})
+  cmake_parse_arguments(ARG "OPTIONAL" "CURRENT_SOURCE_DIR;DESTINATION" "DIRECTORY;PATTERN;PATTERN_EXCLUDE" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_symlink_install_directory() called with "
       "unused/unsupported arguments: ${ARG_UNPARSED_ARGUMENTS}")
@@ -34,7 +37,7 @@ function(catkin_symlink_install_directory)
   foreach(dir ${ARG_DIRECTORY})
     # make dir an absolute path
     if(NOT IS_ABSOLUTE "${dir}")
-      set(dir "@CMAKE_CURRENT_SOURCE_DIR@/${dir}")
+      set(dir "${ARG_CURRENT_SOURCE_DIR}/${dir}")
     endif()
 
     if(EXISTS "${dir}")
@@ -104,11 +107,14 @@ endfunction()
 # Reimplement CMake install(FILES) command to use symlinks instead of copying
 # resources.
 #
+# :param CURRENT_SOURCE_DIR: the value of CMAKE_CURRENT_SOURCE_DIR from where
+#   this function is called
+# :type CURRENT_SOURCE_DIR: a path
 # :param ARGN: the same arguments as the CMake install command.
 # :type ARGN: various
 #
 function(catkin_symlink_install_files)
-  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION;RENAME" "FILES" ${ARGN})
+  cmake_parse_arguments(ARG "OPTIONAL" "CURRENT_SOURCE_DIR;DESTINATION;RENAME" "FILES" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_symlink_install_files() called with "
       "unused/unsupported arguments: ${ARG_UNPARSED_ARGUMENTS}")
@@ -134,7 +140,7 @@ function(catkin_symlink_install_files)
   foreach(file ${ARG_FILES})
     # make file an absolute path
     if(NOT IS_ABSOLUTE "${file}")
-      set(file "@CMAKE_CURRENT_SOURCE_DIR@/${file}")
+      set(file "${ARG_CURRENT_SOURCE_DIR}/${file}")
     endif()
 
     if(EXISTS "${file}")
@@ -159,11 +165,14 @@ endfunction()
 # Reimplement CMake install(PROGRAMS) command to use symlinks instead of copying
 # resources.
 #
+# :param CURRENT_SOURCE_DIR: the value of CMAKE_CURRENT_SOURCE_DIR from where
+#   this function is called
+# :type CURRENT_SOURCE_DIR: a path
 # :param ARGN: the same arguments as the CMake install command.
 # :type ARGN: various
 #
 function(catkin_symlink_install_programs)
-  cmake_parse_arguments(ARG "OPTIONAL" "DESTINATION" "PROGRAMS" ${ARGN})
+  cmake_parse_arguments(ARG "OPTIONAL" "CURRENT_SOURCE_DIR;DESTINATION" "PROGRAMS" ${ARGN})
   if(ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "catkin_symlink_install_programs() called with "
       "unused/unsupported arguments: ${ARG_UNPARSED_ARGUMENTS}")
@@ -181,7 +190,7 @@ function(catkin_symlink_install_programs)
   foreach(file ${ARG_PROGRAMS})
     # make file an absolute path
     if(NOT IS_ABSOLUTE "${file}")
-      set(file "@CMAKE_CURRENT_SOURCE_DIR@/${file}")
+      set(file "${ARG_CURRENT_SOURCE_DIR}/${file}")
     endif()
 
     if(EXISTS "${file}")
