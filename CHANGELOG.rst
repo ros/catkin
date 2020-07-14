@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.27 (2020-07-14)
+-------------------
 * explicitly call project() in toplevel CMakeLists.txt (`#1106 <https://github.com/ros/catkin/issues/1106>`_)
 * add Arch Linux gtest path (`#1105 <https://github.com/ros/catkin/issues/1105>`_)
 * fix symlink install python when shebang line is rewritten (`#1100 <https://github.com/ros/catkin/issues/1100>`_)
