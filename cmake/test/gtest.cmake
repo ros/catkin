@@ -249,6 +249,10 @@ function(catkin_find_google_test_source gtest_path googletest_path
   list(APPEND _gtest_include_paths "${googletest_path}/googletest/include/gtest")
   list(APPEND _gtest_source_paths "${googletest_path}/googletest/src")
 
+  # Path to gtest from the gtest Arch Linux package. Header location already included
+  # list(APPEND _gtest_include_paths "${gtest_path}/include/gtest")
+  list(APPEND _gtest_source_paths "${googletest_path}/src")
+
   if(CATKIN_TOPLEVEL)
     # Ensure current workspace is searched before system path
     list(INSERT _gtest_include_paths 0 "${CMAKE_SOURCE_DIR}/googletest/googletest/include/gtest")
