@@ -3,6 +3,8 @@
 
 cmake_minimum_required(VERSION 3.0.2)
 
+project(Project)
+
 set(CATKIN_TOPLEVEL TRUE)
 
 # search for catkin within the workspace
