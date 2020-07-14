@@ -2,6 +2,14 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* explicitly call project() in toplevel CMakeLists.txt (`#1106 <https://github.com/ros/catkin/issues/1106>`_)
+* add Arch Linux gtest path (`#1105 <https://github.com/ros/catkin/issues/1105>`_)
+* fix symlink install python when shebang line is rewritten (`#1100 <https://github.com/ros/catkin/issues/1100>`_)
+* fix CATKIN_SYMLINK_INSTALL with add_subdirectory() (`#1102 <https://github.com/ros/catkin/issues/1102>`_)
+* define GMOCK\_* and GTEST\_* variables in a new subproject (`#1101 <https://github.com/ros/catkin/issues/1101>`_)
+
 0.7.26 (2020-05-21)
 -------------------
 * stop catkin from trying to find C++ libraries if not needed (`#1083 <https://github.com/ros/catkin/issues/1083>`_)
