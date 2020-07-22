@@ -74,7 +74,7 @@ def generate_environment_script(env_script):
     code.append('')
     _append_comment(code, 'new environment variables')
     for key in sorted(added.keys()):
-        _set_variable(code, key, added[key])
+        _set_variable(code, key, added[key], single_quote=True)
 
     code.append('')
     _append_comment(code, 'modified environment variables')

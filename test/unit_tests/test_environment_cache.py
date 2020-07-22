@@ -43,6 +43,9 @@ class PlatformTest(unittest.TestCase):
         code = []
         _set_variable(code, 'foo', 'bar')
         self.assertEqual(['export foo="bar"'], code)
+        code = []
+        _set_variable(code, 'foo', 'bar', single_quote=True)
+        self.assertEqual(['export foo=\'bar\''], code)
 
     def test_appends_windows(self):
         catkin.environment_cache.platform = self.winplatform
