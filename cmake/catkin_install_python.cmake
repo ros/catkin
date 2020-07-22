@@ -40,7 +40,10 @@ function(catkin_install_python signature)
         file(MAKE_DIRECTORY ${rewritten_file})
         # even though the content of the file is overwritten
         # the copy makes sure the file has the right permissions
-        file(COPY ${source_file} DESTINATION ${rewritten_file} USE_SOURCE_PERMISSIONS)
+        if(NOT IS_SYMLINK ${source_file} AND WIN32)
+          # file copying is not supported on Windows symlinks by CMake
+          file(COPY ${source_file} DESTINATION ${rewritten_file} USE_SOURCE_PERMISSIONS)
+        endif()
         set(rewritten_file "${rewritten_file}/${filename}")
         file(WRITE ${rewritten_file} "${data}")
       else()
