@@ -44,7 +44,7 @@ class PlatformTest(unittest.TestCase):
         _set_variable(code, 'foo', 'bar')
         self.assertEqual(['export foo="bar"'], code)
         code = []
-        _set_variable(code, 'foo', 'bar', single_quote=True)
+        _set_variable(code, 'foo', 'bar')
         self.assertEqual(['export foo=\'bar\''], code)
 
     def test_appends_windows(self):
