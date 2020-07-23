@@ -73,6 +73,12 @@ function(catkin_symlink_install_targets)
           "'${target}' is an imported target")
       endif()
       list(APPEND target_files "$<TARGET_FILE:${target}>")
+      if(WIN32)
+        get_target_property(target_type "${target}" TYPE)
+        if("${target_type}" STREQUAL "SHARED_LIBRARY")
+          list(APPEND target_files "$<TARGET_LINKER_FILE:${target}>")
+        endif()
+      endif()
     endforeach()
 
     string(REPLACE ";" "\" \"" target_files_quoted
