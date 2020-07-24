@@ -42,6 +42,9 @@ class PlatformTest(unittest.TestCase):
         self.assertEqual(['# foo'], code)
         code = []
         _set_variable(code, 'foo', 'bar')
+        self.assertEqual(["export foo='bar'"], code)
+        code = []
+        _set_variable(code, 'foo', '"bar"')
         self.assertEqual(['export foo="bar"'], code)
 
     def test_appends_windows(self):
@@ -73,13 +76,17 @@ class PlatformTest(unittest.TestCase):
 export FOO=/foo:/bar
 export TRICK=/usr/lib
 export BAR=/bar
+export BOO=boo
+export BAZ='${dollar}'
 exec \"$@\"""")
             mode = os.stat(env_file).st_mode
             os.chmod(env_file, mode | stat.S_IXUSR)
             result = generate_environment_script(env_file)
             self.assertTrue('export FOO="/foo:$FOO"' in result, result)
-            self.assertTrue('export TRICK="/usr/lib"' in result, result)
-            self.assertTrue('export BAR="/bar"' in result, result)
+            self.assertTrue("export TRICK='/usr/lib'" in result, result)
+            self.assertTrue("export BAR='/bar'" in result, result)
+            self.assertTrue("export BOO='boo'" in result, result)
+            self.assertTrue("export BAZ='${dollar}'" in result, result)
             self.assertEqual('#!/usr/bin/env sh', result[0])
         finally:
             os.environ = old_environ

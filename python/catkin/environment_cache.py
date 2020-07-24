@@ -82,7 +82,10 @@ def generate_environment_script(env_script):
         (old_value, new_value) = modified[key]
         if new_value.endswith(os.pathsep + old_value):
             variable = ('$%s' if _is_not_windows() else '%%%s%%') % key
-            _set_variable(code, key, new_value[:-len(old_value)] + variable)
+            new_value = new_value[:-len(old_value)] + variable
+            if _is_not_windows():
+                new_value = '"%s"' % new_value
+            _set_variable(code, key, new_value)
         else:
             _set_variable(code, key, new_value)
 
@@ -113,6 +116,8 @@ def _append_comment(code, value):
 
 def _set_variable(code, key, value):
     if _is_not_windows():
-        code.append('export %s="%s"' % (key, value))
+        if not value.startswith('"') or not value.endswith('"'):
+            value = "'%s'" % value
+        code.append('export %s=%s' % (key, value))
     else:
         code.append('set %s=%s' % (key, value))
