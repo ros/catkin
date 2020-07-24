@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.8 (2020-07-24)
+------------------
 * use single quote for cached environment values without old values (`#1108 <https://github.com/ros/catkin/issues/1108>`_)
 * [Windows] avoid file COPY for symlink sources (`#1109 <https://github.com/ros/catkin/issues/1109>`_)
 * [Windows] add .lib into the symlink install file list (`#1110 <https://github.com/ros/catkin/issues/1110>`_)
