@@ -2,6 +2,12 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* use single quote for cached environment values without old values (`#1108 <https://github.com/ros/catkin/issues/1108>`_)
+* [Windows] avoid file COPY for symlink sources (`#1109 <https://github.com/ros/catkin/issues/1109>`_)
+* [Windows] add .lib into the symlink install file list (`#1110 <https://github.com/ros/catkin/issues/1110>`_)
+
 0.8.7 (2020-07-14)
 ------------------
 * explicitly call project() in toplevel CMakeLists.txt (`#1106 <https://github.com/ros/catkin/issues/1106>`_)
