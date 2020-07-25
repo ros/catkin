@@ -182,6 +182,15 @@ set(CATKIN_GLOBAL_LIBEXEC_DESTINATION lib)
 set(CATKIN_GLOBAL_PYTHON_DESTINATION ${PYTHON_INSTALL_DIR})
 set(CATKIN_GLOBAL_SHARE_DESTINATION share)
 
+# create the placeholder directories required for _setup_util.py
+if(WIN32)
+  file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/bin)
+  file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/lib)
+  file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/share)
+  file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/etc)
+  file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/include)
+endif()
+
 # undefine CATKIN_ENV since it might be set in the cache from a previous build
 set(CATKIN_ENV "" CACHE INTERNAL "catkin environment" FORCE)
 
