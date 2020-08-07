@@ -7,9 +7,6 @@ foreach(_space ${CATKIN_DEVEL_PREFIX} ${CATKIN_WORKSPACES})
   if(NOT EXISTS "${_space}/.catkin")
     message(FATAL_ERROR "The path '${_space}' is in CATKIN_WORKSPACES but does not have a .catkin file")
   endif()
-  # prepend to existing list of sourcespaces
-  file(READ "${_space}/.catkin" _sourcespaces)
-  list(APPEND CATKIN_ORDERED_SPACES ${_sourcespaces})
 endforeach()
 
 debug_message(10 "CATKIN_ORDERED_SPACES ${CATKIN_ORDERED_SPACES}")

@@ -18,6 +18,12 @@ def main():
     parser.add_argument('--prefixes', nargs='*', help='The semicolon-separated prefixes defining the order')
     args = parser.parse_args()
 
+    # resolve the source space if any
+    spaces = []
+    for prefix in args.prefixes:
+        spaces += [prefix]
+        spaces += get_spaces([prefix])
+
     ordered_paths = order_paths(args.paths_to_order, args.prefixes)
 
     # create directory if necessary
