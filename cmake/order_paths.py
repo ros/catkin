@@ -24,7 +24,7 @@ def main():
         spaces += [prefix]
         spaces += get_spaces([prefix])
 
-    ordered_paths = order_paths(args.paths_to_order, args.prefixes)
+    ordered_paths = order_paths(args.paths_to_order, spaces)
 
     # create directory if necessary
     outdir = os.path.dirname(args.outfile)
