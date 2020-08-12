@@ -25,7 +25,7 @@ def main():
     # resolve the source space if any
     spaces = []
     for prefix in args.prefixes:
-        spaces += [prefix]
+        spaces.append(prefix)
         spaces += get_spaces([prefix])
 
     ordered_paths = order_paths(args.paths_to_order, spaces)
