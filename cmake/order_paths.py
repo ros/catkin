@@ -5,9 +5,13 @@ import sys
 from argparse import ArgumentParser
 
 try:
-    from catkin_pkg.workspaces import order_paths, get_spaces
+    from catkin_pkg.workspaces import get_spaces
 except ImportError as e:
-    sys.exit('ImportError: "from catkin_pkg.package import parse_package" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH.' % e)
+    sys.exit('ImportError: "catkin_pkg.workspaces import get_spaces" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH.' % e)
+try:
+    from catkin_pkg.workspaces import order_paths
+except ImportError as e:
+    sys.exit('ImportError: "from catkin_pkg.workspaces import order_paths" failed: %s\nMake sure that you have installed "catkin_pkg", it is up to date and on the PYTHONPATH.' % e)
 
 
 def main():
