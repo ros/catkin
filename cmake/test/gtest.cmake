@@ -444,6 +444,13 @@ endif()
 
 if(NOT GTEST_FOUND)
   # attempt to find the modern GTest config.
+  # some package managers, such as Vcpkg, modify the GTest output layout,
+  # (it moves the gtest_main.lib and gmock_main.lib into a subfolder called lib/manual-link)
+  # and which in turn makes the stock FindGTest.cmake not able to locate all libraries.
+  # 
+  # Luckily, since the GTest 1.8.1, it started to release its own Config files,
+  # (Vcpkg port keeps the GTest config files compatible)
+  # and this section is to give it another chance to discover the GTest config files.
   find_package(GTest 1.8.1 QUIET CONFIG)
   if(GTest_FOUND AND TARGET GTest::gtest AND TARGET GTest::gtest_main)
     set(GTEST_FOUND TRUE)
