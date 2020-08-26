@@ -39,30 +39,8 @@ if not "!_PYTHON_FOUND!" == "!_PYTHON!" (
 )
 endlocal & set PATH=%PATH%
 
-REM generate pseudo random temporary filename
-:GenerateTempFilename
-REM replace leading space of time with zero
-set _SETUP_TMP=%Time: =0%
-REM remove time delimiters
-set _SETUP_TMP=%_SETUP_TMP::=%
-set _SETUP_TMP=%_SETUP_TMP:.=%
-set _SETUP_TMP=%_SETUP_TMP:,=%
-set _SETUP_TMP=%Temp%\setup.%_SETUP_TMP%.bat
-if EXIST %_SETUP_TMP% do goto GenerateTempFilename
-type NUL > "%_SETUP_TMP%"
-if NOT EXIST %_SETUP_TMP% (
-  echo "Could not create temporary file: %_SETUP_TMP%"
-  exit 1
-)
-
 REM invoke Python script to generate necessary exports of environment variables
-%_PYTHON% "%_SETUP_UTIL%" %* > %_SETUP_TMP%
-if NOT EXIST %_SETUP_TMP% (
-  echo "Could not create temporary file: %_SETUP_TMP%"
-  return 1
-)
-call %_SETUP_TMP%
-del %_SETUP_TMP%
+FOR /F "delims=" %%i IN ('^"%_PYTHON% "%_SETUP_UTIL%" %*^"') DO call %%i
 
 REM source all environment hooks
 set _HOOK_COUNT=0
@@ -87,6 +65,5 @@ set _SETUP_UTIL=
 set _PYTHON=
 set _PYTHONEXE=
 set _PYTHON_FOUND=
-set _SETUP_TMP=
 set _CATKIN_ENVIRONMENT_HOOKS_COUNT=
 set _HOOK_COUNT=
