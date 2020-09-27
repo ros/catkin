@@ -158,7 +158,7 @@ def _get_testsuite_stats(node):
     num_tests = int(node.attrib['tests'])
     num_errors = int(node.attrib['errors'])
     num_failures = int(node.attrib['failures'])
-    num_skipped = int(node.get('skip', '0')) + int(node.get('disabled', '0'))
+    num_skipped = int(node.get('skip', '0')) + int(node.get('skipped', '0')) + int(node.get('disabled', '0'))
     return (num_tests, num_errors, num_failures, num_skipped)
 
 
