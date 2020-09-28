@@ -36,6 +36,11 @@ They only contain relative paths and are supposed to be relative to the ``${CMAK
    This is set to ``${CATKIN_GLOBAL_LIB_DESTINATION}``.
    All libraries go into a global folder.  Still use this variable instead of ``CATKIN_GLOBAL_LIB_DESTINATION`` for package libraries.
 
+.. cmake:data:: CATKIN_PACKAGE_LIBEXEC_DESTINATION
+
+   This is set to ``${CATKIN_GLOBAL_LIB_DESTINATION}``/${PROJECT_NAME}.
+   All package-specific executables go into this folder.
+
 .. cmake:data:: CATKIN_PACKAGE_PYTHON_DESTINATION
 
    This is set to ``${CATKIN_GLOBAL_PYTHON_DESTINATION}/${PROJECT_NAME}``.
