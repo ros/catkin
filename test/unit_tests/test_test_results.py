@@ -48,6 +48,20 @@ class TestResultsTest(unittest.TestCase):
         finally:
             shutil.rmtree(rootdir)
 
+    def test_read_junit_skipped(self):
+        try:
+            rootdir = tempfile.mkdtemp()
+
+            result_file = os.path.join(rootdir, 'test1.xml')
+            with open(result_file, 'w') as fhand:
+                fhand.write('<testsuites tests="5" failures="3" errors="1" skipped="2" time="35" name="AllTests"></testsuites>')
+            (num_tests, num_errors, num_failures) = catkin_test_results.read_junit(result_file)
+            self.assertEqual((5, 1, 3), (num_tests, num_errors, num_failures))
+            (num_tests, num_errors, num_failures, num_skipped) = catkin_test_results.read_junit2(result_file)
+            self.assertEqual((5, 1, 3, 2), (num_tests, num_errors, num_failures, num_skipped))
+        finally:
+            shutil.rmtree(rootdir)
+
     def test_test_results(self):
         try:
             rootdir = tempfile.mkdtemp()
