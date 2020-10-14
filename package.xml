@@ -6,7 +6,8 @@
   <name>catkin</name>
   <version>0.8.8</version>
   <description>Low-level build system macros and infrastructure for ROS.</description>
-  <maintainer email="dthomas@osrfoundation.org">Dirk Thomas</maintainer>
+  <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
+  <maintainer email="tfoote@openrobotics.org">Tully Foote</maintainer>
   <license>BSD</license>
 
   <url type="website">http://wiki.ros.org/catkin</url>
