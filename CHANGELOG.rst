@@ -2,6 +2,15 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* set CATKIN_PACKAGE_LIBEXEC_DESTINATION which was documented but not set (`#1122 <https://github.com/ros/catkin/issues/1122>`_)
+* count 'skipped' tests as skipped (`#1121 <https://github.com/ros/catkin/issues/1121>`_)
+* check PYTHON_INSTALL_DIR before making directory (`#1120 <https://github.com/ros/catkin/issues/1120>`_)
+* execute the output of _setup_util.py in place (`#1116 <https://github.com/ros/catkin/issues/1116>`_)
+* use raw string literal (`#1117 <https://github.com/ros/catkin/issues/1117>`_)
+* [Windows] offload source spaces into order_paths.py (`#1113 <https://github.com/ros/catkin/issues/1113>`_)
+
 0.8.8 (2020-07-24)
 ------------------
 * use single quote for cached environment values without old values (`#1108 <https://github.com/ros/catkin/issues/1108>`_)
