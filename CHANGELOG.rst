@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.29 (2020-10-14)
+-------------------
 * set CATKIN_PACKAGE_LIBEXEC_DESTINATION which was documented but not set (`#1122 <https://github.com/ros/catkin/issues/1122>`_)
 * count 'skipped' tests as skipped (`#1121 <https://github.com/ros/catkin/issues/1121>`_)
 * check PYTHON_INSTALL_DIR before making directory (`#1120 <https://github.com/ros/catkin/issues/1120>`_)
