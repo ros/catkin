@@ -123,13 +123,13 @@ def main():
     apply_platform_specific_defaults(opts)
     cmake_args, opts = handle_cmake_args(opts.cmake_args, opts)
 
-    if not args.no_color:
+    if not opts.no_color:
         # Use color if --force-color is set
-        if args.force_color:
-            args.no_color = False
+        if opts.force_color:
+            opts.no_color = False
         # use --no-color as fallback if stdout is non-interactive
         elif not sys.stdout.isatty():
-            args.no_color = True
+            opts.no_color = True
 
     # use PWD in order to work when being invoked in a symlinked location
     cwd = os.getenv('PWD', os.curdir)
