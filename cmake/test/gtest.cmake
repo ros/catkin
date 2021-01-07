@@ -388,7 +388,7 @@ if(FORCE_GTEST_GMOCK_FROM_SOURCE OR (NOT GMOCK_FOUND AND NOT GTEST_FOUND))
     set(_CATKIN_SKIP_INSTALL_RULES FALSE)
     set_target_properties(${gtest_libs} ${gtest_main_libs}
                           PROPERTIES EXCLUDE_FROM_ALL 1)
-    if(gmock_found)
+    if(gmock_found AND TARGET gmock AND TARGET gmock_main)
       set_target_properties(${gmock_libs} ${gmock_main_libs}
                             PROPERTIES EXCLUDE_FROM_ALL 1)
     endif()
