@@ -33,6 +33,7 @@
 from __future__ import print_function
 
 import argparse
+import os
 import sys
 from collections import OrderedDict
 
@@ -82,7 +83,7 @@ def _get_output(package):
 
 def _get_dependency_values(key, depends):
     values = OrderedDict()
-    values[key] = ' '.join(['"%s"' % str(d) for d in depends])
+    values[key] = ' '.join(['"%s"' % str(d) for d in depends if d.evaluated_condition is not False])
     for d in depends:
         comparisons = ['version_lt', 'version_lte', 'version_eq', 'version_gte', 'version_gt']
         for comp in comparisons:
@@ -99,6 +100,7 @@ def main(argv=sys.argv[1:]):
     parser.add_argument('outfile')
     args = parser.parse_args(argv)
     package = parse_package(args.package_xml)
+    package.evaluate_conditions(os.environ)
 
     # Force utf8 encoding for python3.
     # This way unicode files can still be processed on non-unicode locales.
