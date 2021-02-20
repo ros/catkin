@@ -83,13 +83,14 @@ def _get_output(package):
 
 def _get_dependency_values(key, depends):
     values = OrderedDict()
-    values[key] = ' '.join(['"%s"' % str(d) for d in depends if d.evaluated_condition is not False])
-    for d in depends:
+    filtered_deps = [d for d in depends if d.evaluated_condition is not False]
+    values[key] = ' '.join(['"%s"' % d.name for d in filtered_deps])
+    for d in filtered_deps:
         comparisons = ['version_lt', 'version_lte', 'version_eq', 'version_gte', 'version_gt']
         for comp in comparisons:
             value = getattr(d, comp, None)
             if value is not None:
-                values['%s_%s_%s' % (key, str(d), comp.upper())] = '"%s"' % value
+                values['%s_%s_%s' % (key, d.name, comp.upper())] = '"%s"' % value
     return values
 
 
