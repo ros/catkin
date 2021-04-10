@@ -313,7 +313,9 @@ function(catkin_find_google_test_source gtest_path googletest_path
   endif()
 endfunction()
 
-find_package(GMock QUIET)
+if (NOT TARGET GMock)
+  find_package(GMock QUIET)
+endif()
 # the GMockConfig.cmake from the Debian package cmake-extras provides all targets
 if(TARGET gtest AND TARGET gtest_main AND TARGET gmock AND TARGET gmock_main)
   set(GMOCK_FOUND TRUE)
@@ -337,7 +339,9 @@ if(TARGET gtest AND TARGET gtest_main AND TARGET gmock AND TARGET gmock_main)
     set(GTEST_BOTH_LIBRARIES ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
   endif()
 else()
-  find_package(GTest QUIET)
+  if (NOT TARGET GTest)
+    find_package(GTest QUIET)
+  endif()
 endif()
 if(NOT GMOCK_FOUND OR NOT GTEST_FOUND)
   # If we find one but not the other, see if we can get both from source
