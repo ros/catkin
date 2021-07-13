@@ -382,15 +382,23 @@ if(FORCE_GTEST_GMOCK_FROM_SOURCE OR (NOT GMOCK_FOUND AND NOT GTEST_FOUND))
   if(base_dir)
     # overwrite CMake install command to skip install rules for gtest targets
     # which have been added in version 1.8.0
+    # Googletest 1.10 has a INSTALL_GTEST option that we can override,
+    # so we do that, too.
+    option(INSTALL_GTEST "This option must be turned OFF" OFF)
     _use_custom_install()
     set(_CATKIN_SKIP_INSTALL_RULES TRUE)
     add_subdirectory(${base_dir} ${gtest_lib_dir})
     set(_CATKIN_SKIP_INSTALL_RULES FALSE)
+    # Fix output directories, which conflict with Python's setup.py
     set_target_properties(${gtest_libs} ${gtest_main_libs}
-                          PROPERTIES EXCLUDE_FROM_ALL 1)
+                          PROPERTIES EXCLUDE_FROM_ALL 1
+                          LIBRARY_OUTPUT_DIRECTORY ${gtest_lib_dir}/lib
+                          ARCHIVE_OUTPUT_DIRECTORY ${gtest_lib_dir}/lib)
     if(gmock_found)
       set_target_properties(${gmock_libs} ${gmock_main_libs}
-                            PROPERTIES EXCLUDE_FROM_ALL 1)
+                            PROPERTIES EXCLUDE_FROM_ALL 1
+                            LIBRARY_OUTPUT_DIRECTORY ${gtest_lib_dir}/lib
+                            ARCHIVE_OUTPUT_DIRECTORY ${gtest_lib_dir}/lib)
     endif()
   endif()
 

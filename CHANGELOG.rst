@@ -2,6 +2,13 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.8.10 (2021-04-22)
+-------------------
+* Fix problem with Googletest's LIBRARY_OUTPUT_DIRECTORY (`#1135 <https://github.com/ros/catkin/issues/1135>`_)
+* deduplicate dependency lists of exported code generation targets (`#1123 <https://github.com/ros/catkin/issues/1123>`_)
+* Update maintainers (`#1124 <https://github.com/ros/catkin/issues/1124>`_)
+* Contributors: Michael Carroll, Timo Röhling, pseyfert
+
 0.8.9 (2020-10-14)
 ------------------
 * set CATKIN_PACKAGE_LIBEXEC_DESTINATION which was documented but not set (`#1122 <https://github.com/ros/catkin/issues/1122>`_)
