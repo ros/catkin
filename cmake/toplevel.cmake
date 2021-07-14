@@ -17,7 +17,7 @@ execute_process(COMMAND ${_cmd}
   ERROR_STRIP_TRAILING_WHITESPACE
 )
 if(NOT _res EQUAL 0 AND NOT _res EQUAL 2)
-  # searching fot catkin resulted in an error
+  # searching for catkin resulted in an error
   string(REPLACE ";" " " _cmd_str "${_cmd}")
   message(FATAL_ERROR "Search for 'catkin' in workspace failed (${_cmd_str}): ${_err}")
 endif()
