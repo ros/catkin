@@ -89,7 +89,7 @@ function(catkin_python_setup)
       endif()
       # Extend PACKAGE_PYTHONPATH with current pkg's path
       get_filename_component(path ${pkg_dir} PATH)
-      list(APPEND PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${path})
+      list_append_deduplicate(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${path})
       configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in ${target_init_file} @ONLY)
     endforeach()
   endif()
