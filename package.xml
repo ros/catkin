@@ -18,6 +18,8 @@
   <author>Morten Kjaergaard</author>
   <author>Brian Gerkey</author>
   <author>Dirk Thomas</author>
+  <author email="michael@openrobotics.org">Michael Carroll</author>
+  <author email="tfoote@openrobotics.org">Tully Foote</author>
 
   <depend condition="$ROS_PYTHON_VERSION == 2">python-argparse</depend>
   <depend condition="$ROS_PYTHON_VERSION == 2" version_gt="0.4.3">python-catkin-pkg</depend>
