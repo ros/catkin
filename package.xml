@@ -7,7 +7,7 @@
   <version>0.8.10</version>
   <description>Low-level build system macros and infrastructure for ROS.</description>
   <maintainer email="geoff@openrobotics.org">Geoffrey Biggs</maintainer>
-  <maintainer email="ivan@ekumenlabs.com">Ivan Santiago Paunovic</maintainer>
+  <maintainer email="ivanpauno@ekumenlabs.com">Ivan Santiago Paunovic</maintainer>
   <license>BSD</license>
 
   <url type="website">http://wiki.ros.org/catkin</url>
