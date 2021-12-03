@@ -27,7 +27,7 @@ function(catkin_install_python signature)
       stamp(${source_file})
       # read file and check shebang line
       file(READ ${source_file} data)
-      set(regex "^#![ \t]*/([^\r\n]+)/env[ \t]+python([\r\n])")
+      set(regex "^#![ \t]*/([^\r\n]+)/env[ \t]+python([ \t]*[\r\n])")
       string(REGEX MATCH "${regex}" shebang_line "${data}")
       string(LENGTH "${shebang_line}" length)
       string(SUBSTRING "${data}" 0 ${length} prefix)
