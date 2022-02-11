@@ -40,18 +40,12 @@ from argparse import ArgumentParser
 setup_modules = []
 
 try:
-    import distutils.core
-    setup_modules.append(distutils.core)
-except ImportError:
-    pass
-
-try:
     import setuptools
     setup_modules.append(setuptools)
 except ImportError:
     pass
 
-assert setup_modules, 'Must have distutils or setuptools installed'
+assert setup_modules, 'Must have setuptools installed'
 
 
 def _get_locations(pkgs, package_dir):
@@ -101,7 +95,7 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     :param package_dir: {modulename: path}
     :param pkgs: [list of str] python_packages declared in catkin package
     :param modules: [list of str] python modules
-    :param setup_module: str, setuptools or distutils
+    :param setup_module: str, setuptools
     """
     prefix = '%s_SETUP_PY' % package_name
     result = []
@@ -165,13 +159,13 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
 
 def _create_mock_setup_function(setup_module, package_name, outfile):
     """
-    Create a function to call instead of distutils.core.setup or setuptools.setup.
+    Create a function to call instead of setuptools.setup.
 
     It just captures some args and writes them into a file that can be used from cmake.
 
     :param package_name: name of the package
     :param outfile: filename that cmake will use afterwards
-    :returns: a function to replace disutils.core.setup and setuptools.setup
+    :returns: a function to replace setuptools.setup
     """
 
     def setup(*args, **kwargs):
@@ -235,7 +229,7 @@ def main():
     # so the import of __version__ works
     os.chdir(os.path.dirname(os.path.abspath(args.setupfile_path)))
 
-    # patch setup() function of distutils and setuptools for the
+    # patch setup() function of setuptools for the
     # context of evaluating setup.py
     backup_modules = {}
     try:
