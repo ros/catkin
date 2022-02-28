@@ -48,7 +48,7 @@ function(catkin_generate_environment)
       ${CATKIN_DEVEL_PREFIX}/env.sh
       @ONLY)
     # generate setup for various shells
-    foreach(shell bash sh zsh)
+    foreach(shell bash sh zsh fish)
       atomic_configure_file(${catkin_EXTRAS_DIR}/templates/setup.${shell}.in
         ${CATKIN_DEVEL_PREFIX}/setup.${shell}
         @ONLY)
@@ -101,7 +101,7 @@ function(catkin_generate_environment)
 
   # initialize shell support per platform.
   set(CATKIN_ENV_SHELL sh)
-  set(CATKIN_SETUP_SHELL bash sh zsh)
+  set(CATKIN_SETUP_SHELL bash sh zsh fish)
   if(WIN32)
     set(CATKIN_ENV_SHELL bat)
     set(CATKIN_SETUP_SHELL bat)
