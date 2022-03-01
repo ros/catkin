@@ -26,7 +26,7 @@ end
 
 # detect if running on Darwin platform
 set _UNAME (uname -s)
-set _IS_DARWIN test "$_UNAME" -eq Darwin
+set _IS_DARWIN 0
 
 if test "$_UNAME" = Darwin
     set _IS_DARWIN 1
