@@ -74,7 +74,7 @@ set _RC $status
 if test $_RC -ne 0
     if test $_RC -eq 2
         then
-        echo "Could not write the output of '$_SETUP_UTIL' to temporary file '$_SETUP_TMP': may be the disk if full?"
+        echo "Could not write the output of '$_SETUP_UTIL' to temporary file '$_SETUP_TMP': maybe the disk is full?"
     else
         echo "Failed to run '\"$_SETUP_UTIL\" $argv': return code $_RC"
     end
