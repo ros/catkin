@@ -68,7 +68,7 @@ if test $status -ne 0 -o ! -f "$_SETUP_TMP"
     exit 1
 end
 
-set CATKIN_SHELL "$CATKIN_SHELL" "$_SETUP_UTIL" "$argv" "$CATKIN_SETUP_UTIL_ARGS" >>"$_SETUP_TMP"
+CATKIN_SHELL=$CATKIN_SHELL "$_SETUP_UTIL" "$argv" "$CATKIN_SETUP_UTIL_ARGS" >> "$_SETUP_TMP"
 set _RC $status
 
 if test $_RC -ne 0
