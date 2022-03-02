@@ -35,17 +35,17 @@ end
 set -e _UNAME
 
 # make sure to export all environment variables
-set -x CMAKE_PREFIX_PATH
+set -x CMAKE_PREFIX_PATH $CMAKE_PREFIX_PATH
 if test $_IS_DARWIN -eq 0
-    set -x LD_LIBRARY_PATH
+    set -x LD_LIBRARY_PATH $LD_LIBRARY_PATH
 else
-    set -x DYLD_LIBRARY_PATH
+    set -x DYLD_LIBRARY_PATH $DYLD_LIBRARY_PATH
 end
 
 set -e _IS_DARWIN
-set -x PATH
-set -x PKG_CONFIG_PATH
-set -x PYTHONPATH
+set -x PATH $PATH
+set -x PKG_CONFIG_PATH $PKG_CONFIG_PATH
+set -x PYTHONPATH $PYTHONPATH
 
 # remember type of shell if not already set
 if test -z "$CATKIN_SHELL"
