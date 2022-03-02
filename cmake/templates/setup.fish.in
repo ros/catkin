@@ -94,6 +94,9 @@ set -e _SETUP_TMP
 # source all environment hooks
 set _i 0
 while test $_i -lt $_CATKIN_ENVIRONMENT_HOOKS_COUNT
+    # fish doesn't allow use of ${} to delimit variables within a string
+    set _i_WORKSPACE (string join "" "$i" "_WORKSPACE")
+
     eval set _envfile \$_CATKIN_ENVIRONMENT_HOOKS_$_i
     set -e _CATKIN_ENVIRONMENT_HOOKS_$_i
     eval set _envfile_workspace \$_CATKIN_ENVIRONMENT_HOOKS_$_i_WORKSPACE
