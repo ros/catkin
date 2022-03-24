@@ -62,7 +62,7 @@ CATKIN_SHELL=$CATKIN_SHELL "$_SETUP_UTIL" $@ ${CATKIN_SETUP_UTIL_ARGS:-} >> "$_S
 _RC=$?
 if [ $_RC -ne 0 ]; then
   if [ $_RC -eq 2 ]; then
-    echo "Could not write the output of '$_SETUP_UTIL' to temporary file '$_SETUP_TMP': may be the disk if full?"
+    echo "Could not write the output of '$_SETUP_UTIL' to temporary file '$_SETUP_TMP': maybe the disk is full?"
   else
     echo "Failed to run '\"$_SETUP_UTIL\" $@': return code $_RC"
   fi

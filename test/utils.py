@@ -95,7 +95,7 @@ def succeed(cmd, **kwargs):
     """
     print(">>>", cmd, kwargs)
     (r, out, err) = run(cmd, **kwargs)
-    print("<<<", out)
+    print("<<<", out.decode("utf-8"))
     assert r == 0, "cmd failed with result %s:\n %s " % (r, str(cmd))
     return out
 
@@ -106,7 +106,7 @@ def fail(cmd, **kwargs):
     """
     print(">>>", cmd, kwargs)
     (r, out, err) = run(cmd, withexitstatus=True, **kwargs)
-    print("<<<", out)
+    print("<<<", out.decode("utf-8"))
     assert 0 != r, """cmd succeeded, though should fail: %s
   result=%u\n  output=\n%s""" % (cmd, r, out)
     return out
