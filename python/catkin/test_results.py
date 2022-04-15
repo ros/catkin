@@ -248,7 +248,7 @@ def print_summary2(results, show_stable=False, show_unstable=True, print_skipped
 
     :param results: dict as from test_results()
     :param show_stable: print tests without failures extra
-    :param show_stable: print tests with failures extra
+    :param show_unstable: print tests with failures extra
     :param print_skipped: include skipped tests in output
     """
     def callback(name, num_tests, num_errors, num_failures, num_skipped):
