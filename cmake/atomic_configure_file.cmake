@@ -1,5 +1,5 @@
 function(atomic_configure_file input output)
-string(RANDOM random_id)
+  string(RANDOM random_id)
   get_filename_component(output_file_name ${output} NAME)
   get_filename_component(atomic_file ${output} NAME)
   set(atomic_file "${CMAKE_BINARY_DIR}/atomic_configure/${atomic_file}.${random_id}")
