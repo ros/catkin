@@ -53,8 +53,10 @@ def parse_args(args=None):
         help='Causes each catkin package to be installed.')
     add('--force-cmake', action='store_true', default=False,
         help='Runs cmake explicitly for each catkin package.')
+    add('--force-color', action='store_true', default=False,
+        help='Enforces colored output (only for catkin_make and CMake)')
     add('--no-color', action='store_true', default=False,
-        help='Disables colored output (only for catkin_make and CMake)')
+        help='Disables colored output (only for catkin_make and CMake). Overrides --force-color.')
     pkg = parser.add_mutually_exclusive_group(required=False)
     pkg.add_argument('--pkg', nargs='+', metavar='PKGNAME', dest='packages',
                      help='Process only specific packages '
@@ -121,9 +123,13 @@ def main():
     apply_platform_specific_defaults(opts)
     cmake_args, opts = handle_cmake_args(opts.cmake_args, opts)
 
-    # force --no-color if stdout is non-interactive
-    if not sys.stdout.isatty():
-        opts.no_color = True
+    if not opts.no_color:
+        # Use color if --force-color is set
+        if opts.force_color:
+            opts.no_color = False
+        # use --no-color as fallback if stdout is non-interactive
+        elif not sys.stdout.isatty():
+            opts.no_color = True
 
     # use PWD in order to work when being invoked in a symlinked location
     cwd = os.getenv('PWD', os.curdir)
