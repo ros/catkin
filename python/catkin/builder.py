@@ -327,7 +327,7 @@ def handle_make_arguments(input_make_args, append_default_jobs_flags=True):
                         # it's not available on all platforms
                         jobs = len(os.sched_getaffinity(0))
                     else:
-                        # cpu_count returns the number of all CPUs (available or not)
+                        # cpu_count returns the number of CPUs (usable or not)
                         jobs = multiprocessing.cpu_count()
 
                     make_args.append('-j{0}'.format(jobs))
