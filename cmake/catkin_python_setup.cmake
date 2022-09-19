@@ -80,11 +80,17 @@ function(catkin_python_setup)
       if(NOT ("${pkg}" STREQUAL "${name}"))
         message(FATAL_ERROR "The package name '${pkg}' differs from the basename of the path '${pkg_dir}' in project '${PROJECT_NAME}'")
       endif()
+      # Retrieve PACKAGE_PYTHONPATH from existing __init__.py
+      set(target_init_file ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/${pkg}/__init__.py)
+      if(EXISTS ${target_init_file})
+        file(READ ${target_init_file} file_content)
+        string(REGEX MATCH "__extended_path *= *'(.*)'\\.split" _ "${file_content}")
+        set(PACKAGE_PYTHONPATH ${CMAKE_MATCH_1})
+      endif()
+      # Extend PACKAGE_PYTHONPATH with current pkg's path
       get_filename_component(path ${pkg_dir} PATH)
-      set(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${path})
-      configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in
-        ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/${pkg}/__init__.py
-        @ONLY)
+      list_append_deduplicate(PACKAGE_PYTHONPATH ${CMAKE_CURRENT_SOURCE_DIR}/${path})
+      configure_file(${catkin_EXTRAS_DIR}/templates/__init__.py.in ${target_init_file} @ONLY)
     endforeach()
   endif()
 
