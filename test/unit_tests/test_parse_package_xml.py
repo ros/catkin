@@ -17,19 +17,28 @@ from parse_package_xml import main  # noqa: E402
 class ParsePackageXmlTest(unittest.TestCase):
 
     def test_get_output(self):
+        class MockDependency(object):
+            __slots__ = [
+                'name',
+                'evaluated_condition',
+            ]
+            def __init__(self, name):
+                self.name = name
+                self.evaluated_condition = None
+
         pack = Mock()
         pack.package_format = 2
         pack.name = 'foopack'
         pack.version = '0.1.2'
         pack.maintainers = ['m1', 'm2']
-        pack.build_depends = ['bd1', 'bd2']
-        pack.buildtool_depends = ['catkin']
-        pack.build_export_depends = ['bed1', 'bed2']
-        pack.buildtool_export_depends = ['bted1', 'bted2']
-        pack.exec_depends = ['ed1', 'ed2']
-        pack.run_depends = ['rd1', 'rd2']
-        pack.test_depends = ['td1', 'td2']
-        pack.doc_depends = ['dd1', 'dd2']
+        pack.build_depends = [MockDependency(name) for name in ['bd1', 'bd2']]
+        pack.buildtool_depends = [MockDependency(name) for name in ['catkin']]
+        pack.build_export_depends = [MockDependency(name) for name in ['bed1', 'bed2']]
+        pack.buildtool_export_depends = [MockDependency(name) for name in ['bted1', 'bted2']]
+        pack.exec_depends = [MockDependency(name) for name in ['ed1', 'ed2']]
+        pack.run_depends = [MockDependency(name) for name in ['rd1', 'rd2']]
+        pack.test_depends = [MockDependency(name) for name in ['td1', 'td2']]
+        pack.doc_depends = [MockDependency(name) for name in ['dd1', 'dd2']]
         pack.urls = []
         pack.exports = []
         result = _get_output(pack)
