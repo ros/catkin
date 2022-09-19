@@ -16,7 +16,7 @@ option(SETUPTOOLS_DEB_LAYOUT "Enable debian style python package layout" ${enabl
 if(SETUPTOOLS_DEB_LAYOUT)
   message(STATUS "Using Debian Python package layout")
   set(PYTHON_PACKAGES_DIR dist-packages)
-  set(SETUPTOOLS_ARG_EXTRA "--install-layout=deb")
+  set(SETUPTOOLS_ARG_EXTRA "")
   # use major version only when installing 3.x with debian layout
   if("${PYTHON_VERSION_MAJOR}" STREQUAL "3")
     set(_PYTHON_PATH_VERSION_SUFFIX "${PYTHON_VERSION_MAJOR}")
