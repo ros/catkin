@@ -322,7 +322,14 @@ def handle_make_arguments(input_make_args, append_default_jobs_flags=True):
             elif append_default_jobs_flags:
                 # Else Use the number of CPU cores
                 try:
-                    jobs = multiprocessing.cpu_count()
+                    if "sched_getaffinity" in dir(os):
+                        # Using sched_getaffinity we get the number of usable CPUs but
+                        # it's not available on all platforms
+                        jobs = len(os.sched_getaffinity(0))
+                    else:
+                        # cpu_count returns the number of CPUs (usable or not)
+                        jobs = multiprocessing.cpu_count()
+
                     make_args.append('-j{0}'.format(jobs))
                     make_args.append('-l{0}'.format(jobs))
                 except NotImplementedError:
