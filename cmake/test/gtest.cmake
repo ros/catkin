@@ -175,7 +175,7 @@ function(_catkin_add_executable_with_google_test type target)
   endif()
 
   # create the executable, with basic + gtest/gmock build flags
-  include_directories(${${type_upper}_INCLUDE_DIRS})
+  include_directories(SYSTEM ${${type_upper}_INCLUDE_DIRS})
   link_directories(${${type_upper}_LIBRARY_DIRS})
   add_executable(${target} ${ARG_UNPARSED_ARGUMENTS})
   if(ARG_EXCLUDE_FROM_ALL)
