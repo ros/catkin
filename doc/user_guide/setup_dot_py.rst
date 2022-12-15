@@ -158,7 +158,7 @@ Those features will only work correctly for the install space.
 genmsg interaction
 ==================
 
-genmsg is an external catkin package that provideslanguage bindings
+genmsg is an external catkin package that provides language bindings
 for ROS messages. When using the genmsg macro, ordering constraints
 exist, in that case you have to invoke the macros in this order::
 
