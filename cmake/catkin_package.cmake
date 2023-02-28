@@ -286,7 +286,8 @@ function(_catkin_package)
   set(DEVELSPACE TRUE)
   set(INSTALLSPACE FALSE)
 
-  set(PROJECT_SPACE_DIR ${CATKIN_DEVEL_PREFIX})
+  set(PROJECT_SPACE_LIBDIR ${CATKIN_DEVEL_PREFIX}/lib)
+  set(PROJECT_SPACE_DATADIR ${CATKIN_DEVEL_PREFIX}/share)
   set(PKG_INCLUDE_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
 
   # absolute path to include dirs and validate that they are existing either absolute or relative to packages source
@@ -314,8 +315,8 @@ function(_catkin_package)
 
   # prepend library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
-  list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
-  set(PKG_CMAKE_DIR ${PROJECT_SPACE_DIR}/share/${PROJECT_NAME}/cmake)
+  list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_LIBDIR})
+  set(PKG_CMAKE_DIR ${PROJECT_SPACE_DATADIR}/${PROJECT_NAME}/cmake)
   if("${PROJECT_NAME}" STREQUAL "catkin")
     set(PKG_CMAKE_DIR "${catkin_EXTRAS_DIR}")
   endif()
@@ -400,12 +401,14 @@ function(_catkin_package)
   set(DEVELSPACE FALSE)
   set(INSTALLSPACE TRUE)
 
-  set(PROJECT_SPACE_DIR ${CMAKE_INSTALL_PREFIX})
+  set(PROJECT_SPACE_LIBDIR ${CMAKE_INSTALL_PREFIX}/${CATKIN_GLOBAL_LIB_DESTINATION})
+  set(PROJECT_SPACE_DATADIR ${CMAKE_INSTALL_PREFIX}/${CATKIN_GLOBAL_SHARE_DESTINATION})
   set(PKG_INCLUDE_PREFIX "\\\${prefix}")
 
   # absolute path to include dir under install prefix if any include dir is set
   set(PROJECT_CMAKE_CONFIG_INCLUDE_DIRS "")
   set(PROJECT_PKG_CONFIG_INCLUDE_DIRS "")
+
   foreach(idir ${PROJECT_INCLUDE_DIRS})
     # include dirs in source / build / devel space are handled like relative ones
     # since these files are supposed to be installed to the include folder in install space
@@ -433,9 +436,9 @@ function(_catkin_package)
     list_append_unique(PROJECT_PKG_CONFIG_INCLUDE_DIRS ${PROJECT_DEPENDENCIES_INCLUDE_DIRS})
   endif()
 
-  # prepend library path of this workspace
+  # prepend installed library path of this workspace
   set(PKG_CONFIG_LIB_PATHS ${lib_paths})
-  list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_DIR}/lib)
+  list(INSERT PKG_CONFIG_LIB_PATHS 0 ${PROJECT_SPACE_LIBDIR})
   # package cmake dir is the folder where the generated pkgConfig.cmake is located
   set(PKG_CMAKE_DIR "\${${PROJECT_NAME}_DIR}")
 
@@ -448,7 +451,7 @@ function(_catkin_package)
       ${catkin_EXTRAS_DIR}/em/pkg.pc.em
       ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}.pc
-      DESTINATION lib/pkgconfig
+      DESTINATION ${PROJECT_SPACE_LIBDIR}/pkgconfig
     )
   endif()
 
@@ -495,7 +498,7 @@ function(_catkin_package)
   endforeach()
   install(FILES
     ${installable_cfg_extras}
-    DESTINATION share/${PROJECT_NAME}/cmake
+    DESTINATION ${PROJECT_SPACE_DATADIR}/${PROJECT_NAME}/cmake
   )
 
   if(NOT PROJECT_SKIP_CMAKE_CONFIG_GENERATION)
@@ -521,12 +524,12 @@ function(_catkin_package)
     install(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config.cmake
       ${CMAKE_CURRENT_BINARY_DIR}/catkin_generated/installspace/${PROJECT_NAME}Config-version.cmake
-      DESTINATION share/${PROJECT_NAME}/cmake
+      DESTINATION ${PROJECT_SPACE_DATADIR}/${PROJECT_NAME}/cmake
     )
   endif()
 
   # install package.xml
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/package.xml
-    DESTINATION share/${PROJECT_NAME}
+    DESTINATION ${PROJECT_SPACE_DATADIR}/${PROJECT_NAME}
   )
 endfunction()
