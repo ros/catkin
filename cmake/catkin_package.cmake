@@ -401,8 +401,18 @@ function(_catkin_package)
   set(DEVELSPACE FALSE)
   set(INSTALLSPACE TRUE)
 
-  set(PROJECT_SPACE_LIBDIR ${CMAKE_INSTALL_PREFIX}/${CATKIN_GLOBAL_LIB_DESTINATION})
-  set(PROJECT_SPACE_DATADIR ${CMAKE_INSTALL_PREFIX}/${CATKIN_GLOBAL_SHARE_DESTINATION})
+  # Guarding the prefix insertion on whether the destination vars are specified as absolute
+  # paths permits both the GNUInstallDirs vars and CMAKE_PREFIX_PATH to be set.
+  if(IS_ABSOLUTE ${CATKIN_GLOBAL_LIB_DESTINATION})
+    set(PROJECT_SPACE_LIBDIR ${CATKIN_GLOBAL_LIB_DESTINATION})
+  else()
+    set(PROJECT_SPACE_LIBDIR ${CMAKE_INSTALL_PREFIX}/${CATKIN_GLOBAL_LIB_DESTINATION})
+  endif()
+  if(IS_ABSOLUTE ${CATKIN_GLOBAL_SHARE_DESTINATION})
+    set(PROJECT_SPACE_DATADIR ${CATKIN_GLOBAL_SHARE_DESTINATION})
+  else()
+    set(PROJECT_SPACE_DATADIR ${CMAKE_INSTALL_PREFIX}/${CATKIN_GLOBAL_SHARE_DESTINATION})
+  endif()
   set(PKG_INCLUDE_PREFIX "\\\${prefix}")
 
   # absolute path to include dir under install prefix if any include dir is set
