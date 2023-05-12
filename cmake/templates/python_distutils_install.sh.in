@@ -15,8 +15,10 @@ echo_and_run() { echo "+ $@" ; "$@" ; }
 
 echo_and_run cd "@INSTALL_CMD_WORKING_DIRECTORY@"
 
-# ensure that Python install destination exists
-echo_and_run mkdir -p "$DESTDIR@CMAKE_INSTALL_PREFIX@/@PYTHON_INSTALL_DIR@"
+# Ensure that Python install destination exists. The .. is necessary since we
+# want to use the GNUInstallDirs-aware location variable, but PYTHON_INSTALL_DIR
+# already includes the "lib" prefix.
+echo_and_run mkdir -p "$DESTDIR@CMAKE_INSTALL_PREFIX@/@CATKIN_GLOBAL_LIB_DESTINATION@/../@PYTHON_INSTALL_DIR@"
 
 # Note that PYTHONPATH is pulled from the environment to support installing
 # into one location when some dependencies were installed in another
@@ -30,4 +32,7 @@ echo_and_run /usr/bin/env \
     build --build-base "@CMAKE_CURRENT_BINARY_DIR@" \
     install \
     --root="${DESTDIR-/}" \
-    @SETUPTOOLS_ARG_EXTRA@ --prefix="@CMAKE_INSTALL_PREFIX@" --install-scripts="@CMAKE_INSTALL_PREFIX@/@CATKIN_GLOBAL_BIN_DESTINATION@"
+    @SETUPTOOLS_ARG_EXTRA@ \
+    --prefix="@CMAKE_INSTALL_PREFIX@" \
+    --install-scripts="@CMAKE_INSTALL_PREFIX@/@CATKIN_GLOBAL_BIN_DESTINATION@" \
+    --install-lib="@CMAKE_INSTALL_PREFIX@/@CATKIN_GLOBAL_LIB_DESTINATION@/../@PYTHON_INSTALL_DIR@"
