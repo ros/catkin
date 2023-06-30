@@ -1101,7 +1101,7 @@ def build_workspace_isolated(
     # Provide a top level devel space environment setup script
     if not os.path.exists(develspace):
         os.makedirs(develspace)
-    if not build_packages:
+    if not build_packages or package.name in build_packages:
         env_script = 'env'
         if sys.platform == 'win32':
             env_script += '.bat'
