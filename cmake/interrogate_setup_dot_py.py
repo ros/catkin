@@ -32,26 +32,14 @@
 
 from __future__ import print_function
 
+import importlib
+import contextlib
 import os
 import runpy
 import sys
 from argparse import ArgumentParser
 
-setup_modules = []
-
-try:
-    import distutils.core
-    setup_modules.append(distutils.core)
-except ImportError:
-    pass
-
-try:
-    import setuptools
-    setup_modules.append(setuptools)
-except ImportError:
-    pass
-
-assert setup_modules, 'Must have distutils or setuptools installed'
+setup_module_names = ("setuptools", "distutils.core")
 
 
 def _get_locations(pkgs, package_dir):
@@ -163,18 +151,22 @@ def generate_cmake_file(package_name, version, scripts, package_dir, pkgs, modul
     return result
 
 
-def _create_mock_setup_function(setup_module, package_name, outfile):
+@contextlib.contextmanager
+def _patched_setup_module(setup_module, package_name):
     """
     Create a function to call instead of distutils.core.setup or setuptools.setup.
 
     It just captures some args and writes them into a file that can be used from cmake.
 
+    :param setup_module: setuptools or distutils.core to be patched
     :param package_name: name of the package
-    :param outfile: filename that cmake will use afterwards
     :returns: a function to replace disutils.core.setup and setuptools.setup
     """
 
-    def setup(*args, **kwargs):
+    result = []
+    original_setup = setup_module.setup
+
+    def patched_setup(*args, **kwargs):
         """Check kwargs and write a scriptfile."""
         if 'version' not in kwargs:
             sys.stderr.write("\n*** Unable to find 'version' in setup.py of %s\n" % package_name)
@@ -200,17 +192,18 @@ def _create_mock_setup_function(setup_module, package_name, outfile):
         if used_unsupported_args:
             sys.stderr.write('*** Arguments %s to setup() not supported in catkin devel space in setup.py of %s\n' % (used_unsupported_args, package_name))
 
-        result = generate_cmake_file(package_name=package_name,
-                                     version=version,
-                                     scripts=scripts,
-                                     package_dir=package_dir,
-                                     pkgs=pkgs,
-                                     modules=modules,
-                                     setup_module=setup_module)
-        with open(outfile, 'w') as out:
-            out.write('\n'.join(result))
-
-    return setup
+        result.extend(generate_cmake_file(package_name=package_name,
+                                          version=version,
+                                          scripts=scripts,
+                                          package_dir=package_dir,
+                                          pkgs=pkgs,
+                                          modules=modules,
+                                          setup_module=setup_module))
+    try:
+        setup_module.setup = patched_setup
+        yield result
+    finally:
+        setup_module.setup = original_setup
 
 
 def main():
@@ -222,33 +215,25 @@ def main():
 
     args = parser.parse_args()
 
-    # print("%s" % sys.argv)
-    # PACKAGE_NAME = sys.argv[1]
-    # OUTFILE = sys.argv[3]
-    # print("Interrogating setup.py for package %s into %s " % (PACKAGE_NAME, OUTFILE),
-    #      file=sys.stderr)
-
-    # print("executing %s" % args.setupfile_path)
-
     # be sure you're in the directory containing
     # setup.py so the sys.path manipulation works,
     # so the import of __version__ works
     os.chdir(os.path.dirname(os.path.abspath(args.setupfile_path)))
 
-    # patch setup() function of distutils and setuptools for the
-    # context of evaluating setup.py
-    backup_modules = {}
-    try:
+    with open(args.setupfile_path) as f:
+        setupfile_contents = f.read()
 
-        for module in setup_modules:
-            backup_modules[id(module)] = module.setup
-            module.setup = _create_mock_setup_function(
-                setup_module=module.__name__, package_name=args.package_name, outfile=args.outfile)
+    setup_module = None
+    for name in setup_module_names:
+        if name in setupfile_contents:
+            setup_module = importlib.import_module(name)
+            with _patched_setup_module(setup_module, args.package_name) as cmake_lines:
+                runpy.run_path(args.setupfile_path)
+                with open(args.outfile, 'w') as f:
+                    f.write('\n'.join(cmake_lines))
+            return
 
-        runpy.run_path(args.setupfile_path)
-    finally:
-        for module in setup_modules:
-            module.setup = backup_modules[id(module)]
+    raise RuntimeError(f"File at {args.setupfile_path} appears not to reference any of the supported setup modules")
 
 
 if __name__ == '__main__':
