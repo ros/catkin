@@ -24,10 +24,25 @@ echo_and_run mkdir -p "$DESTDIR@CMAKE_INSTALL_PREFIX@/@PYTHON_INSTALL_DIR@"
 echo_and_run /usr/bin/env \
     PYTHONPATH="@CMAKE_INSTALL_PREFIX@/@PYTHON_INSTALL_DIR@:@CMAKE_BINARY_DIR@/@PYTHON_INSTALL_DIR@:$PYTHONPATH" \
     CATKIN_BINARY_DIR="@CMAKE_BINARY_DIR@" \
-    "@PYTHON_EXECUTABLE@" \
-    "@CMAKE_CURRENT_SOURCE_DIR@/setup.py" \
-    @SETUPTOOLS_EGG_INFO@ \
-    build --build-base "@CMAKE_CURRENT_BINARY_DIR@" \
-    install \
-    --root="${DESTDIR-/}" \
-    @SETUPTOOLS_ARG_EXTRA@ --prefix="@CMAKE_INSTALL_PREFIX@" --install-scripts="@CMAKE_INSTALL_PREFIX@/@CATKIN_GLOBAL_BIN_DESTINATION@"
+    "@PYTHON_EXECUTABLE@" "-m" "build" \
+    "--no-isolation" \
+    "--wheel" \
+    "--outdir" "@CMAKE_CURRENT_BINARY_DIR@/wheel" \
+    "@CMAKE_CURRENT_SOURCE_DIR@"
+
+# Use pip to install the whl archive into the workspace's install directory
+WHEELFILE=$(ls "@CMAKE_CURRENT_BINARY_DIR@"/wheel/*.whl)
+echo_and_run /usr/bin/env \
+    PYTHONPATH="@CMAKE_INSTALL_PREFIX@/@PYTHON_INSTALL_DIR@:@CMAKE_BINARY_DIR@/@PYTHON_INSTALL_DIR@:$PYTHONPATH" \
+    CATKIN_BINARY_DIR="@CMAKE_BINARY_DIR@" \
+    PYTHONUSERBASE="@CMAKE_INSTALL_PREFIX@" \
+    "@PYTHON_EXECUTABLE@" "-m" "pip" "install" \
+    "--root" "/" \
+    "--isolated" \
+    "--no-deps" \
+    "--no-index" \
+    "--progress-bar" "off" \
+    "--disable-pip-version-check" \
+    "--user" \
+    "--upgrade" \
+    "$WHEELFILE"
