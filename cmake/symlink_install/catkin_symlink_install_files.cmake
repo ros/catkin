@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set(__CATKIN_SYMLINK_INSTALL_FILES_INDEX "0"
+  CACHE INTERNAL "Index for unique symlink install files")
+
 #
 # Reimplement CMake install(FILES) command to use symlinks instead of copying
 # resources.
@@ -42,8 +45,22 @@ function(catkin_symlink_install_files files_keyword)
 
   if(index EQUAL -1)
     string(REPLACE ";" "\" \"" argn_quoted "\"${ARGN}\"")
+
+    # generate unique files
+    set(generated_file_base
+      "${CMAKE_CURRENT_BINARY_DIR}/catkin_symlink_install_files_${__CATKIN_SYMLINK_INSTALL_FILES_INDEX}")
+    set(generated_file_generator_suffix "${generated_file_base}_$<CONFIG>.cmake")
+    set(generated_file_variable_suffix "${generated_file_base}_\${CMAKE_INSTALL_CONFIG_NAME}.cmake")
+    math(EXPR __CATKIN_SYMLINK_INSTALL_FILES_INDEX
+      "${__CATKIN_SYMLINK_INSTALL_FILES_INDEX} + 1")
+    set(__CATKIN_SYMLINK_INSTALL_FILES_INDEX "${__CATKIN_SYMLINK_INSTALL_FILES_INDEX}"
+      CACHE INTERNAL "Index for unique symlink install files")
+
+    file(GENERATE OUTPUT "${generated_file_generator_suffix}"
+      CONTENT
+      "catkin_symlink_install_files(CURRENT_SOURCE_DIR \"${CMAKE_CURRENT_SOURCE_DIR}\" FILES ${argn_quoted})\n")
     catkin_symlink_install_append_install_code(
-      "catkin_symlink_install_files(CURRENT_SOURCE_DIR \"${CMAKE_CURRENT_SOURCE_DIR}\" FILES ${argn_quoted})"
+      "include(\"${generated_file_variable_suffix}\")"
       COMMENTS "install(FILES ${argn_quoted})"
     )
   endif()
