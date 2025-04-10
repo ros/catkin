@@ -2,6 +2,19 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Port symlink_install fixes from ament_cmake to catkin (`#1199 <https://github.com/ros/catkin/issues/1199>`_)
+* Fix symlink install versioned shared library (`#1197 <https://github.com/ros/catkin/issues/1197>`_)
+* Default to number of usable CPUs if possible (`#1180 <https://github.com/ros/catkin/issues/1180>`_)
+* Fix non-atomic atomic_configure_file (`#1150 <https://github.com/ros/catkin/issues/1150>`_)
+* Fix typo in docstring (`#1172 <https://github.com/ros/catkin/issues/1172>`_)
+* Add native support to fish shell (`#1168 <https://github.com/ros/catkin/issues/1168>`_)
+* Update package maintainers (`#1157 <https://github.com/ros/catkin/issues/1157>`_)
+* Fix catkin_install_python(): ignore whitespaces in shebang (`#1156 <https://github.com/ros/catkin/issues/1156>`_)
+* Fix typo (`#1147 <https://github.com/ros/catkin/issues/1147>`_)
+* Contributors: Felipe Gomes de Melo, G.A. vd. Hoorn, Gašper Simonič, Geoffrey Biggs, Matthijs van der Burgh, Scott K Logan, Tully Foote, wico-silva, zig-for
+
 0.8.10 (2021-04-22)
 -------------------
 * Fix problem with Googletest's LIBRARY_OUTPUT_DIRECTORY (`#1135 <https://github.com/ros/catkin/issues/1135>`_)
