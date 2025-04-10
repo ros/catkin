@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.11 (2025-04-10)
+-------------------
 * Port symlink_install fixes from ament_cmake to catkin (`#1199 <https://github.com/ros/catkin/issues/1199>`_)
 * Fix symlink install versioned shared library (`#1197 <https://github.com/ros/catkin/issues/1197>`_)
 * Default to number of usable CPUs if possible (`#1180 <https://github.com/ros/catkin/issues/1180>`_)
