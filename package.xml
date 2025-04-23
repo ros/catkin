@@ -40,7 +40,6 @@
   <build_export_depend condition="$ROS_PYTHON_VERSION == 3">python3-nose</build_export_depend>
 
   <test_depend condition="$ROS_PYTHON_VERSION == 2">python-mock</test_depend>
-  <test_depend condition="$ROS_PYTHON_VERSION == 3">python3-mock</test_depend>
   <test_depend condition="$ROS_PYTHON_VERSION == 2">python-nose</test_depend>
   <test_depend condition="$ROS_PYTHON_VERSION == 3">python3-nose</test_depend>
 

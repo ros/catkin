@@ -4,7 +4,10 @@ import shutil
 import tempfile
 import unittest
 
-from mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 imp.load_source('parse_package_xml',
                 os.path.join(os.path.dirname(__file__),
