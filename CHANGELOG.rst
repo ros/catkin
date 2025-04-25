@@ -2,8 +2,8 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.8.12 (2025-04-25)
+-------------------
 * Ignore generator expressions used in PKG_CONFIG_LIBRARIES (`#1181 <https://github.com/ros/catkin/issues/1181>`_)
 * fix typo in user guide docs (`#1183 <https://github.com/ros/catkin/issues/1183>`_)
 * Use the newer unittest.mock from standard library on Python 3 (`#1193 <https://github.com/ros/catkin/issues/1193>`_)
