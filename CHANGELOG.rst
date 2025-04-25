@@ -2,6 +2,13 @@
 Changelog for package catkin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Ignore generator expressions used in PKG_CONFIG_LIBRARIES (`#1181 <https://github.com/ros/catkin/issues/1181>`_)
+* fix typo in user guide docs (`#1183 <https://github.com/ros/catkin/issues/1183>`_)
+* Use the newer unittest.mock from standard library on Python 3 (`#1193 <https://github.com/ros/catkin/issues/1193>`_)
+* Contributors: Alexandre Detiste, Paul Draghicescu, Robert Haschke
+
 0.8.11 (2025-04-10)
 -------------------
 * Port symlink_install fixes from ament_cmake to catkin (`#1199 <https://github.com/ros/catkin/issues/1199>`_)
